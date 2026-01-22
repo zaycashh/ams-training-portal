@@ -71,15 +71,30 @@ function submitAnswer(selected) {
   }
 }
 
+const PASS_PERCENTAGE = 80;
+let quizPassed = false;
+
 function showQuizResult() {
   const section = document.getElementById("quizSection");
-  const passed = score === quizData.length;
+
+  const percentage = Math.round((score / quizData.length) * 100);
+  quizPassed = percentage >= PASS_PERCENTAGE;
+
+  if (quizPassed) {
+    unlockCertificate();
+  }
 
   section.innerHTML = `
-    <h2>${passed ? "Passed" : "Failed"}</h2>
-    <p>You scored ${score} / ${quizData.length}</p>
+    <h2>${quizPassed ? "Passed" : "Failed"}</h2>
+    <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
+    ${
+      quizPassed
+        ? "<p>You may now access your certificate.</p>"
+        : "<p>Please review the content and try again.</p>"
+    }
   `;
 }
+
 const PASS_PERCENTAGE = 80;
 let quizPassed = false;
 function unlockCertificate() {
@@ -92,4 +107,3 @@ function unlockCertificate() {
     certBtn.classList.remove("disabled");
   }
 }
-
