@@ -3,3 +3,37 @@
   "intro": "Welcome to the Designated Employer Representative (DER) training.",
   "startButton": "Start Training"
 }
+{
+  "title": "DER Training",
+  "contentTitle": "DER Training Content",
+  "contentIntro": "DER training content will be displayed here.",
+
+  "quizTitle": "DER Quiz",
+  "quizIntro": "Answer all questions to continue.",
+
+  "quiz": [
+    {
+      "question": "What does DER stand for?",
+      "options": [
+        "Designated Employer Representative",
+        "Drug Enforcement Registry",
+        "Department of Employee Relations",
+        "Driver Evaluation Report"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Who can receive drug test results?",
+      "options": [
+        "Any supervisor",
+        "The employee only",
+        "The DER",
+        "The public"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "passMessage": "You passed the quiz.",
+  "failMessage": "You did not pass. Please try again."
+}
