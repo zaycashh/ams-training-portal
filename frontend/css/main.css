@@ -176,3 +176,45 @@ button.secondary {
 .module-card.locked button {
   background: #2563eb;
 }
+/* ===============================
+   MODULE
+================================ */
+.module-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.module-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.module-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.module-nav button {
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.module-section {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.hidden {
+  display: none;
+}
