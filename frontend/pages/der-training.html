@@ -55,35 +55,43 @@
     </section>
 
     <!-- CERTIFICATE -->
-    <section id="certificateSection" class="module-section hidden">
-      <h2 data-lang="certificateTitle">Certificate</h2>
+<section id="certificateSection" class="module-section hidden">
+  <h2 data-lang="certificateTitle">Certificate of Completion</h2>
 
-      <p data-lang="certificateIntro">
-        Congratulations! You have completed the DER Training.
-      </p>
+  <p data-lang="certificateIntro">
+    Congratulations! You have completed the DER Training.
+  </p>
 
-      <div class="certificate-form">
-        <label>
-          Full Name:
-          <input
-            type="text"
-            id="certName"
-            placeholder="Enter your full name"
-          />
-        </label>
+  <p>
+    <strong>Full Name:</strong>
+    <span id="certName"></span>
+  </p>
 
-        <button class="btn-primary" onclick="generateCertificate()">
-          Download Certificate (PDF)
-        </button>
-      </div>
-    </section>
+  <p>
+    <strong>Date Issued:</strong>
+    <span id="certDate"></span>
+  </p>
+
+  <p>
+    <strong>Verification ID:</strong>
+    <span id="certVerify"></span>
+  </p>
+
+  <div id="certQR" style="margin-top:12px;"></div>
+
+  <button class="btn-primary" onclick="generateCertificate()">
+    Download Certificate (PDF)
+  </button>
+</section>
 
   </main>
 
   <!-- SCRIPTS -->
-  <script src="../js/lang-loader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="../js/module.js"></script>
+<script src="../js/lang-loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="../js/module.js"></script>
+
 
   <script>
     loadLanguage("der", "en");
