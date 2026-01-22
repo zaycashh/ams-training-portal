@@ -11,6 +11,11 @@ async function loadLanguage(module, lang = "es") {
         el.textContent = data[key];
       }
     });
+    // Load quiz if available
+      if (typeof loadQuiz === "function" && data.quiz) {
+        loadQuiz(data);
+}
+
   } catch (err) {
     console.error("Language load error:", err);
   }
