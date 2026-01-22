@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Certificate Verification | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <link rel="stylesheet" href="../css/main.css" />
+
+  <style>
+    .verify-box {
+      max-width: 480px;
+      margin: 60px auto;
+      padding: 24px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .status-valid {
+      color: #1b7f3b;
+      font-weight: bold;
+    }
+
+    .status-invalid {
+      color: #b00020;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="verify-box">
+
+    <h2>Certificate Verification</h2>
+
+    <p id="verifyStatus">Verifying certificate…</p>
+
+    <div id="verifyDetails" style="display:none;">
+      <p><strong>Verification ID:</strong></p>
+      <p id="verifyId"></p>
+
+      <p><strong>Issued Date:</strong></p>
+      <p id="verifyDate"></p>
+
+      <p><strong>Status:</strong></p>
+      <p id="verifyResult"></p>
+    </div>
+
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    const statusEl = document.getElementById("verifyStatus");
+    const detailsEl = document.getElementById("verifyDetails");
+    const idEl = document.getElementById("verifyId");
+    const dateEl = document.getElementById("verifyDate");
+    const resultEl = document.getElementById("verifyResult");
+
+    if (!id) {
+      statusEl.textContent = "No verification ID provided.";
+      statusEl.className = "status-invalid";
+    } else {
+      const record = JSON.parse(
+        localStorage.getItem("derCertificateVerification") || "null"
+      );
+
+      if (record && record.id === id) {
+        statusEl.textContent = "Certificate Verified";
+        statusEl.className = "status-valid";
+
+        idEl.textContent = record.id;
+        dateEl.textContent = new Date(record.issuedAt).toLocaleDateString();
+        resultEl.textContent = "VALID";
+        resultEl.className = "status-valid";
+
+        detailsEl.style.display = "block";
+      } else {
+        statusEl.textContent = "Certificate Not Found";
+        statusEl.className = "status-invalid";
+
+        resultEl.textContent = "INVALID";
+        resultEl.className = "status-invalid";
+
+        detailsEl.style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>
