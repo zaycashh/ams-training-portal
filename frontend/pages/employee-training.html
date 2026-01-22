@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Employee Training | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <main class="module-container">
+
+    <header class="module-header">
+      <h1 id="moduleTitle">Employee Training</h1>
+
+      <div class="module-controls">
+        <select id="languageToggle">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+
+        <button class="btn-secondary" onclick="goDashboard()">Back to Dashboard</button>
+      </div>
+    </header>
+
+    <nav class="module-nav">
+      <button onclick="showSection('content')">Content</button>
+      <button onclick="showSection('quiz')">Quiz</button>
+      <button onclick="showSection('certificate')">Certificate</button>
+    </nav>
+
+    <section id="contentSection" class="module-section">
+      <h2>Employee Training Content</h2>
+      <p>Employee training content will be displayed here.</p>
+    </section>
+
+    <section id="quizSection" class="module-section hidden">
+      <h2>Employee Quiz</h2>
+      <p>Quiz questions will appear here.</p>
+    </section>
+
+    <section id="certificateSection" class="module-section hidden">
+      <h2>Certificate</h2>
+      <p>Certificate available after quiz completion.</p>
+    </section>
+
+  </main>
+
+  <script src="../js/module.js"></script>
+</body>
+</html>
