@@ -48,6 +48,23 @@
       <p data-lang="quizIntro">Quiz questions will appear here.</p>
 
 <section id="certificateSection" class="module-section hidden">
+  <h2 data-lang="certificateTitle">Certificate</h2>
+
+  <p data-lang="certificateIntro">
+    Congratulations! You have passed the DER Training.
+  </p>
+
+  <div class="certificate-form">
+    <label>
+      Full Name:
+      <input type="text" id="certName" placeholder="Enter your full name" />
+    </label>
+
+    <button class="btn-primary" onclick="generateCertificate()">
+      Download Certificate (PDF)
+    </button>
+  </div>
+</section>
 
   <h2 data-lang="certificateTitle">Training Certificate</h2>
 
@@ -77,6 +94,7 @@
   </main>
 
   <script src="../js/lang-loader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="../js/module.js"></script>
 
   <script>
