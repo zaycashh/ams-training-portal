@@ -120,4 +120,42 @@ function populateCertificate() {
   const today = new Date().toLocaleDateString();
   dateEl.textContent = today;
 }
+function generateCertificate() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
+  // Demo name for now (later we’ll wire real user data)
+  const userName = "Employee Name";
+  const moduleName = "DER Training";
+  const date = new Date().toLocaleDateString();
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.text("Certificate of Completion", 105, 40, { align: "center" });
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    `This certifies that`,
+    105,
+    60,
+    { align: "center" }
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(userName, 105, 75, { align: "center" });
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text(
+    `has successfully completed the ${moduleName} module`,
+    105,
+    90,
+    { align: "center" }
+  );
+
+  doc.text(`Date: ${date}`, 105, 110, { align: "center" });
+
+  doc.save(`${moduleName}-Certificate.pdf`);
+}
