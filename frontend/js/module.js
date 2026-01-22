@@ -34,6 +34,40 @@ const ATTEMPT_KEY = "derQuizAttempts";
 const PASS_KEY = "derQuizPassed";
 
 /* =========================
+   CERT VERIFICATION
+========================= */
+
+const CERT_VERIFY_KEY = "derCertificateVerification";
+
+function generateVerificationId() {
+  return (
+    "AMS-" +
+    Math.random().toString(36).substring(2, 6).toUpperCase() +
+    "-" +
+    Date.now().toString().slice(-6)
+  );
+}
+
+function getOrCreateVerification() {
+  let record = JSON.parse(
+    localStorage.getItem(CERT_VERIFY_KEY) || "null"
+  );
+
+  if (!record) {
+    record = {
+      id: generateVerificationId(),
+      issuedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem(
+      CERT_VERIFY_KEY,
+      JSON.stringify(record)
+    );
+  }
+
+  return record;
+}
+/* =========================
    QUIZ STATE
 ========================= */
 
@@ -180,11 +214,37 @@ function unlockCertificate() {
 function populateCertificate() {
   const nameEl = document.getElementById("certName");
   const dateEl = document.getElementById("certDate");
+  const verifyEl = document.getElementById("certVerify");
 
   if (!nameEl || !dateEl) return;
 
+  const verify = getOrCreateVerification();
+
   nameEl.textContent = "Employee Name";
-  dateEl.textContent = new Date().toLocaleDateString();
+  dateEl.textContent = new Date(verify.issuedAt).toLocaleDateString();
+
+  if (verifyEl) {
+    verifyEl.textContent = verify.id;
+  }
+
+  renderCertificateQR(verify.id);
+}
+function renderCertificateQR(verificationId) {
+  const qrContainer = document.getElementById("certQR");
+  if (!qrContainer) return;
+
+  const verifyUrl =
+    window.location.origin +
+    "/verify.html?id=" +
+    encodeURIComponent(verificationId);
+
+  qrContainer.innerHTML = "";
+
+  new QRCode(qrContainer, {
+    text: verifyUrl,
+    width: 128,
+    height: 128
+  });
 }
 
 function generateCertificate() {
