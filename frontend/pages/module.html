@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMS Training Portal – Module</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <main class="module-container">
+
+    <header class="module-header">
+      <h1 id="moduleTitle">Training Module</h1>
+
+      <div class="module-controls">
+        <select id="languageToggle">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+
+        <button class="btn-secondary" onclick="goDashboard()">
+          Back to Dashboard
+        </button>
+      </div>
+    </header>
+
+    <nav class="module-nav">
+      <button onclick="showSection('content')">Content</button>
+      <button onclick="showSection('quiz')">Quiz</button>
+      <button onclick="showSection('certificate')">Certificate</button>
+    </nav>
+
+    <!-- CONTENT -->
+    <section id="contentSection" class="module-section">
+      <h2>Module Content</h2>
+      <div id="moduleContent">
+        <p>Training content will appear here.</p>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quizSection" class="module-section hidden">
+      <h2>Quiz</h2>
+      <p>Quiz questions will appear here.</p>
+      <button class="btn-primary">Submit Quiz</button>
+    </section>
+
+    <!-- CERTIFICATE -->
+    <section id="certificateSection" class="module-section hidden">
+      <h2>Certificate</h2>
+      <p>Certificate will unlock after quiz completion.</p>
+      <button class="btn-primary">Download Certificate</button>
+    </section>
+
+  </main>
+
+  <script src="../js/module.js"></script>
+</body>
+</html>
