@@ -12,7 +12,7 @@
   <main class="module-container">
 
     <header class="module-header">
-      <h1 id="moduleTitle">DER Training</h1>
+      <h1 id="moduleTitle" data-lang="title">DER Training</h1>
 
       <div class="module-controls">
         <select id="languageToggle">
@@ -31,22 +31,31 @@
     </nav>
 
     <section id="contentSection" class="module-section">
-      <h2>DER Training Content</h2>
-      <p>DER training content will be displayed here.</p>
+      <h2 data-lang="contentTitle">DER Training Content</h2>
+      <p data-lang="contentIntro">DER training content will be displayed here.</p>
+
     </section>
 
     <section id="quizSection" class="module-section hidden">
-      <h2>DER Quiz</h2>
-      <p>Quiz questions will appear here.</p>
+      <h2 data-lang="quizTitle">DER Quiz</h2>
+      <p data-lang="quizIntro">Quiz questions will appear here.</p>
+
     </section>
 
     <section id="certificateSection" class="module-section hidden">
-      <h2>Certificate</h2>
-      <p>Certificate available after quiz completion.</p>
+      <h2 data-lang="certificateTitle">Certificate</h2>
+      <p data-lang="certificateIntro">Certificate available after quiz completion.</p>
+
     </section>
 
   </main>
 
+  <script src="../js/lang-loader.js"></script>
   <script src="../js/module.js"></script>
+
+  <script>
+    loadLanguage("der", "es");
+  </script>
+
 </body>
 </html>
