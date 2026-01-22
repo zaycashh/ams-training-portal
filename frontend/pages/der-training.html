@@ -11,6 +11,7 @@
 
   <main class="module-container">
 
+    <!-- HEADER -->
     <header class="module-header">
       <h1 id="moduleTitle" data-lang="title">DER Training</h1>
 
@@ -24,76 +25,62 @@
       </div>
     </header>
 
+    <!-- NAV -->
     <nav class="module-nav">
       <button onclick="showSection('content')">Content</button>
       <button onclick="showSection('quiz')">Quiz</button>
       <button
-  onclick="showSection('certificate')"
-  class="disabled"
-  disabled
->
-  Certificate
-</button>
-
+        onclick="showSection('certificate')"
+        class="disabled"
+        disabled
+      >
+        Certificate
+      </button>
     </nav>
 
+    <!-- CONTENT -->
     <section id="contentSection" class="module-section">
       <h2 data-lang="contentTitle">DER Training Content</h2>
-      <p data-lang="contentIntro">DER training content will be displayed here.</p>
-
+      <p data-lang="contentIntro">
+        DER training content will be displayed here.
+      </p>
     </section>
 
+    <!-- QUIZ -->
     <section id="quizSection" class="module-section hidden">
       <h2 data-lang="quizTitle">DER Quiz</h2>
-      <p data-lang="quizIntro">Quiz questions will appear here.</p>
+      <p data-lang="quizIntro">
+        Quiz questions will appear here.
+      </p>
+    </section>
 
-      <section id="certificateSection" class="module-section hidden">
-  <h2 data-lang="certificateTitle">Certificate</h2>
+    <!-- CERTIFICATE -->
+    <section id="certificateSection" class="module-section hidden">
+      <h2 data-lang="certificateTitle">Certificate</h2>
 
-  <p data-lang="certificateIntro">
-    Congratulations! You have completed the DER Training.
-  </p>
+      <p data-lang="certificateIntro">
+        Congratulations! You have completed the DER Training.
+      </p>
 
-  <div class="certificate-form">
-    <label>
-      Full Name:
-      <input type="text" id="certName" placeholder="Enter your full name" />
-    </label>
+      <div class="certificate-form">
+        <label>
+          Full Name:
+          <input
+            type="text"
+            id="certName"
+            placeholder="Enter your full name"
+          />
+        </label>
 
-    <button class="btn-primary" onclick="generateCertificate()">
-      Download Certificate (PDF)
-    </button>
-  </div>
-</section>
-
-
-  <h2 data-lang="certificateTitle">Training Certificate</h2>
-
-  <div class="certificate-card">
-    <p data-lang="certificateText">
-      This certifies that
-    </p>
-
-    <h3 id="certName">Employee Name</h3>
-
-    <p data-lang="certificateCompletion">
-      has successfully completed the DER Training Module
-    </p>
-
-    <p>
-      <strong>Date:</strong>
-      <span id="certDate"></span>
-    </p>
-
-    <button class="btn-primary" disabled>
-      Download Certificate (PDF)
-    </button>
-  </div>
-
-</section>
+        <button class="btn-primary" onclick="generateCertificate()">
+          Download Certificate (PDF)
+        </button>
+      </div>
+    </section>
 
   </main>
 
+  <!-- SCRIPTS -->
   <script src="../js/lang-loader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="../js/module.js"></script>
