@@ -1,3 +1,7 @@
+/* =========================
+   SECTION NAVIGATION
+========================= */
+
 function showSection(section) {
   document.getElementById("contentSection").classList.add("hidden");
   document.getElementById("quizSection").classList.add("hidden");
@@ -21,14 +25,51 @@ function goDashboard() {
 }
 
 /* =========================
-   QUIZ LOGIC
+   DOT COMPLIANCE CONSTANTS
+========================= */
+
+const PASS_PERCENTAGE = 80;
+const MAX_ATTEMPTS = 3;
+const ATTEMPT_KEY = "derQuizAttempts";
+const PASS_KEY = "derQuizPassed";
+
+/* =========================
+   QUIZ STATE
 ========================= */
 
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
+let quizPassed = false;
+
+/* =========================
+   ATTEMPT HELPERS
+========================= */
+
+function getAttempts() {
+  return parseInt(localStorage.getItem(ATTEMPT_KEY) || "0", 10);
+}
+
+function incrementAttempts() {
+  const attempts = getAttempts() + 1;
+  localStorage.setItem(ATTEMPT_KEY, attempts);
+  return attempts;
+}
+
+function isLockedOut() {
+  return getAttempts() >= MAX_ATTEMPTS && !quizPassed;
+}
+
+/* =========================
+   QUIZ LOGIC
+========================= */
 
 function loadQuiz(data) {
+  if (isLockedOut()) {
+    showLockoutMessage();
+    return;
+  }
+
   quizData = data.quiz || [];
   currentQuestion = 0;
   score = 0;
@@ -73,11 +114,57 @@ function submitAnswer(selected) {
 }
 
 /* =========================
-   PASS / CERTIFICATE LOGIC
+   RESULTS / DOT ENFORCEMENT
 ========================= */
 
-const PASS_PERCENTAGE = 80;
-let quizPassed = false;
+function showQuizResult() {
+  const section = document.getElementById("quizSection");
+
+  const attempts = incrementAttempts();
+  const percentage = Math.round((score / quizData.length) * 100);
+
+  quizPassed = percentage >= PASS_PERCENTAGE;
+
+  if (quizPassed) {
+    localStorage.setItem(PASS_KEY, "true");
+    unlockCertificate();
+    populateCertificate();
+  }
+
+  if (!quizPassed && attempts >= MAX_ATTEMPTS) {
+    showLockoutMessage();
+    return;
+  }
+
+  section.innerHTML = `
+    <h2>${quizPassed ? "Passed" : "Failed"}</h2>
+    <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
+    ${
+      quizPassed
+        ? "<p>You may now access your certificate.</p>"
+        : `<p>You have ${MAX_ATTEMPTS - attempts} attempt(s) remaining.</p>`
+    }
+  `;
+}
+
+function showLockoutMessage() {
+  const section = document.getElementById("quizSection");
+
+  section.innerHTML = `
+    <h2>Training Locked</h2>
+    <p>
+      You have reached the maximum number of quiz attempts.
+    </p>
+    <p>
+      DOT regulations require retraining before another attempt.
+    </p>
+    <p><strong>Please contact your administrator.</strong></p>
+  `;
+}
+
+/* =========================
+   CERTIFICATE ACCESS
+========================= */
 
 function unlockCertificate() {
   const certBtn = document.querySelector(
@@ -89,33 +176,6 @@ function unlockCertificate() {
     certBtn.classList.remove("disabled");
   }
 }
-
-function showQuizResult() {
-  const section = document.getElementById("quizSection");
-
-  const percentage = Math.round((score / quizData.length) * 100);
-  quizPassed = percentage >= PASS_PERCENTAGE;
-
-  if (quizPassed) {
-    unlockCertificate();
-    populateCertificate();
-    localStorage.setItem("derQuizPassed", "true");
-  }
-
-  section.innerHTML = `
-    <h2>${quizPassed ? "Passed" : "Failed"}</h2>
-    <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
-    ${
-      quizPassed
-        ? "<p>You may now access your certificate.</p>"
-        : "<p>Please review the content and try again.</p>"
-    }
-  `;
-}
-
-/* =========================
-   CERTIFICATE
-========================= */
 
 function populateCertificate() {
   const nameEl = document.getElementById("certName");
@@ -162,14 +222,13 @@ function generateCertificate() {
 }
 
 /* =========================
-   RESTORE STATE
+   RESTORE STATE (DOT SAFE)
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const passed = localStorage.getItem("derQuizPassed") === "true";
+  quizPassed = localStorage.getItem(PASS_KEY) === "true";
 
-  if (passed) {
-    quizPassed = true;
+  if (quizPassed) {
     unlockCertificate();
     populateCertificate();
   }
