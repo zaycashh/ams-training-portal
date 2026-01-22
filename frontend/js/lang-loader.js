@@ -15,3 +15,15 @@ async function loadLanguage(module, lang = "es") {
     console.error("Language load error:", err);
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("languageToggle");
+
+  if (!toggle) return;
+
+  toggle.addEventListener("change", (e) => {
+    const selectedLang = e.target.value;
+
+    // "der" is the module key you already used
+    loadLanguage("der", selectedLang);
+  });
+});
