@@ -81,8 +81,9 @@ function showQuizResult() {
   quizPassed = percentage >= PASS_PERCENTAGE;
 
   if (quizPassed) {
-    unlockCertificate();
-  }
+  unlockCertificate();
+  populateCertificate();
+}
 
   section.innerHTML = `
     <h2>${quizPassed ? "Passed" : "Failed"}</h2>
@@ -107,3 +108,16 @@ function unlockCertificate() {
     certBtn.classList.remove("disabled");
   }
 }
+function populateCertificate() {
+  const nameEl = document.getElementById("certName");
+  const dateEl = document.getElementById("certDate");
+
+  if (!nameEl || !dateEl) return;
+
+  // TEMP placeholder (later replaced with real user)
+  nameEl.textContent = "Employee Name";
+
+  const today = new Date().toLocaleDateString();
+  dateEl.textContent = today;
+}
+
