@@ -82,3 +82,14 @@ function showQuizResult() {
 }
 const PASS_PERCENTAGE = 80;
 let quizPassed = false;
+function unlockCertificate() {
+  const certBtn = document.querySelector(
+    "button[onclick=\"showSection('certificate')\"]"
+  );
+
+  if (certBtn) {
+    certBtn.disabled = false;
+    certBtn.classList.remove("disabled");
+  }
+}
+
