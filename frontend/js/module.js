@@ -80,4 +80,5 @@ function showQuizResult() {
     <p>You scored ${score} / ${quizData.length}</p>
   `;
 }
-
+const PASS_PERCENTAGE = 80;
+let quizPassed = false;
