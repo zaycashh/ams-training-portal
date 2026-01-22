@@ -83,6 +83,7 @@ function showQuizResult() {
   if (quizPassed) {
   unlockCertificate();
   populateCertificate();
+  localStorage.setItem("derQuizPassed", "true");
 }
 
   section.innerHTML = `
@@ -95,13 +96,6 @@ function showQuizResult() {
     }
   `;
 }
-
-const PASS_PERCENTAGE = 80;
-let quizPassed = false;
-function unlockCertificate() {
-  const certBtn = document.querySelector(
-    "button[onclick=\"showSection('certificate')\"]"
-  );
 
   if (certBtn) {
     certBtn.disabled = false;
@@ -159,3 +153,12 @@ function generateCertificate() {
 
   doc.save(`${moduleName}-Certificate.pdf`);
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const passed = localStorage.getItem("derQuizPassed") === "true";
+
+  if (passed) {
+    quizPassed = true;
+    unlockCertificate();
+    populateCertificate();
+  }
+});
