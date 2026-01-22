@@ -20,10 +20,10 @@ function goDashboard() {
   window.location.href = "dashboard.html";
 }
 
-document.getElementById("languageToggle").addEventListener("change", (e) => {
-  const lang = e.target.value;
-  alert("Language switched to: " + (lang === "en" ? "English" : "Spanish"));
-});
+/* =========================
+   QUIZ LOGIC
+========================= */
+
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
@@ -37,6 +37,7 @@ function loadQuiz(data) {
 
 function renderQuestion() {
   const section = document.getElementById("quizSection");
+
   if (!quizData.length) {
     section.innerHTML = "<p>No quiz available.</p>";
     return;
@@ -71,8 +72,23 @@ function submitAnswer(selected) {
   }
 }
 
+/* =========================
+   PASS / CERTIFICATE LOGIC
+========================= */
+
 const PASS_PERCENTAGE = 80;
 let quizPassed = false;
+
+function unlockCertificate() {
+  const certBtn = document.querySelector(
+    "button[onclick=\"showSection('certificate')\"]"
+  );
+
+  if (certBtn) {
+    certBtn.disabled = false;
+    certBtn.classList.remove("disabled");
+  }
+}
 
 function showQuizResult() {
   const section = document.getElementById("quizSection");
@@ -81,10 +97,10 @@ function showQuizResult() {
   quizPassed = percentage >= PASS_PERCENTAGE;
 
   if (quizPassed) {
-  unlockCertificate();
-  populateCertificate();
-  localStorage.setItem("derQuizPassed", "true");
-}
+    unlockCertificate();
+    populateCertificate();
+    localStorage.setItem("derQuizPassed", "true");
+  }
 
   section.innerHTML = `
     <h2>${quizPassed ? "Passed" : "Failed"}</h2>
@@ -97,28 +113,24 @@ function showQuizResult() {
   `;
 }
 
-  if (certBtn) {
-    certBtn.disabled = false;
-    certBtn.classList.remove("disabled");
-  }
-}
+/* =========================
+   CERTIFICATE
+========================= */
+
 function populateCertificate() {
   const nameEl = document.getElementById("certName");
   const dateEl = document.getElementById("certDate");
 
   if (!nameEl || !dateEl) return;
 
-  // TEMP placeholder (later replaced with real user)
   nameEl.textContent = "Employee Name";
-
-  const today = new Date().toLocaleDateString();
-  dateEl.textContent = today;
+  dateEl.textContent = new Date().toLocaleDateString();
 }
+
 function generateCertificate() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Demo name for now (later we’ll wire real user data)
   const userName = "Employee Name";
   const moduleName = "DER Training";
   const date = new Date().toLocaleDateString();
@@ -129,12 +141,7 @@ function generateCertificate() {
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
-  doc.text(
-    `This certifies that`,
-    105,
-    60,
-    { align: "center" }
-  );
+  doc.text("This certifies that", 105, 60, { align: "center" });
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
@@ -153,6 +160,11 @@ function generateCertificate() {
 
   doc.save(`${moduleName}-Certificate.pdf`);
 }
+
+/* =========================
+   RESTORE STATE
+========================= */
+
 document.addEventListener("DOMContentLoaded", () => {
   const passed = localStorage.getItem("derQuizPassed") === "true";
 
