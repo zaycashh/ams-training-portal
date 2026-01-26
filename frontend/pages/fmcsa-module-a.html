@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FMCSA – Reasonable Suspicion Training</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<main class="module-container">
+
+  <!-- HEADER -->
+  <header class="module-header">
+    <h1>Supervisor Reasonable Suspicion Awareness Training</h1>
+
+    <button class="btn-secondary" onclick="goBack()">Back to FMCSA</button>
+  </header>
+
+  <!-- INFO -->
+  <section class="module-section">
+    <p>
+      This training must be completed within <strong>30 days</strong> of purchase.
+      You must review all content before taking the quiz.
+    </p>
+  </section>
+
+  <!-- CONTENT SECTION -->
+  <section class="module-section" id="contentSection">
+    <h2>Training Content</h2>
+
+    <!-- Replace these with slideshow embeds later -->
+    <div class="content-block">
+      <p>✔ Signs & symptoms of drug use</p>
+      <p>✔ Behavioral indicators</p>
+      <p>✔ Physical indicators</p>
+      <p>✔ Documentation requirements</p>
+      <p>✔ Supervisor responsibilities</p>
+    </div>
+
+    <button class="btn-primary" onclick="markContentComplete()">
+      I Have Completed the Training Content
+    </button>
+  </section>
+
+  <!-- QUIZ LOCKED -->
+  <section class="module-section hidden" id="quizUnlockSection">
+    <h2>Quiz Unlocked</h2>
+
+    <p>You may now begin the quiz. A score of <strong>80%</strong> is required to pass.</p>
+
+    <button class="btn-primary" onclick="startQuiz()">
+      Start Quiz
+    </button>
+  </section>
+
+</main>
+
+<script>
+/* ===========================
+   NAVIGATION
+=========================== */
+function goBack() {
+  window.location.href = "fmcsa.html";
+}
+
+/* ===========================
+   CONTENT COMPLETION
+=========================== */
+function markContentComplete() {
+  localStorage.setItem("fmcsa_module_a_content", "completed");
+
+  document.getElementById("quizUnlockSection").classList.remove("hidden");
+  alert("Content completed. Quiz unlocked.");
+}
+
+/* ===========================
+   START QUIZ (NEXT STEP)
+=========================== */
+function startQuiz() {
+  // quiz page will be added next
+  alert("Quiz engine coming next step.");
+}
+</script>
+
+</body>
+</html>
