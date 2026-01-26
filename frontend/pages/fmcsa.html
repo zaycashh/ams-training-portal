@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FMCSA Supervisor Training | AMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<main class="module-container">
+
+  <header class="module-header">
+    <h1>FMCSA Supervisor Training</h1>
+    <button class="btn-secondary" onclick="window.location.href='dashboard.html'">
+      Back to Dashboard
+    </button>
+  </header>
+
+  <section class="module-section">
+
+    <p>
+      This FMCSA Supervisor Training package must be completed
+      <strong>within 30 days of purchase</strong>.
+      All modules are required and must be completed in order.
+    </p>
+
+    <div class="module-card">
+      <h3>1. Supervisor Reasonable Suspicion Awareness Training</h3>
+      <button id="mod1Btn" onclick="startMod1()">Start Module</button>
+    </div>
+
+    <div class="module-card">
+      <h3>2. Drug General Awareness Training</h3>
+      <button id="mod2Btn" disabled>Locked</button>
+    </div>
+
+    <div class="module-card">
+      <h3>3. Alcohol General Awareness Training</h3>
+      <button id="mod3Btn" disabled>Locked</button>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+/* =========================
+   FMCSA ACCESS CONTROL
+========================= */
+
+const DAY_MS = 86400000;
+const LIMIT_DAYS = 30;
+
+function hasPaid() {
+  return localStorage.getItem("paid_fmcsa") === "true";
+}
+
+function expired() {
+  const start = localStorage.getItem("fmcsa_start_date");
+  if (!start) return false;
+  return (Date.now() - Number(start)) > LIMIT_DAYS * DAY_MS;
+}
+
+function resetFMCSA() {
+  [
+    "paid_fmcsa",
+    "fmcsa_start_date",
+    "fmcsa_mod1_passed",
+    "fmcsa_mod2_passed",
+    "fmcsa_mod3_passed"
+  ].forEach(k => localStorage.removeItem(k));
+}
+
+function initFMCSA() {
+
+  // Must pay first
+  if (!hasPaid()) {
+    alert("Please purchase the FMCSA Supervisor Training to continue.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // 30-day enforcement
+  if (expired()) {
+    alert("Your 30-day training window has expired. Please repurchase to restart.");
+    resetFMCSA();
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // Unlock logic
+  const mod1 = localStorage.getItem("fmcsa_mod1_passed") === "true";
+  const mod2 = localStorage.getItem("fmcsa_mod2_passed") === "true";
+
+  if (mod1) {
+    document.getElementById("mod2Btn").disabled = false;
+    document.getElementById("mod2Btn").textContent = "Start Module";
+    document.getElementById("mod2Btn").onclick = () =>
+      window.location.href = "fmcsa/drug-awareness.html";
+  }
+
+  if (mod2) {
+    document.getElementById("mod3Btn").disabled = false;
+    document.getElementById("mod3Btn").textContent = "Start Module";
+    document.getElementById("mod3Btn").onclick = () =>
+      window.location.href = "fmcsa/alcohol-awareness.html";
+  }
+}
+
+function startMod1() {
+  window.location.href = "fmcsa/reasonable-suspicion.html";
+}
+
+document.addEventListener("DOMContentLoaded", initFMCSA);
+</script>
+
+</body>
+</html>
