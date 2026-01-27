@@ -3,45 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <title>AMS Training Portal – Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="stylesheet" href="./frontend/css/main.css" />
+  <link rel="stylesheet" href="frontend/css/styles.css" />
 </head>
 <body>
 
-  <main class="auth-container">
-
+  <div class="login-container">
     <h1>AMS Training Portal</h1>
 
-    <form onsubmit="login(event)">
+    <form id="loginForm">
       <label>Email</label>
-      <input type="email" required />
+      <input type="email" id="email" required />
 
       <label>Password</label>
-      <input type="password" required />
+      <input type="password" id="password" required />
 
-      <button type="submit" class="btn-primary">
-        Log In
-      </button>
+      <button type="submit">Login</button>
     </form>
 
-    <p style="margin-top:16px;">
+    <p>
       Don’t have an account?
-      <a href="./frontend/pages/register.html">Create one</a>
+      <a href="frontend/pages/register.html">Create one</a>
     </p>
-
-  </main>
+  </div>
 
   <script>
-    function login(e) {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
-      // TEMP login flag
-      localStorage.setItem("logged_in", "true");
+      // TEMP auth (replace later with real backend)
+      localStorage.setItem("loggedIn", "true");
 
-      // Go to dashboard
-      window.location.href = "./frontend/pages/dashboard.html";
-    }
+      window.location.href = "frontend/pages/dashboard.html";
+    });
   </script>
 
 </body>
