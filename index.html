@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>AMS Training Portal</title>
-    <meta http-equiv="refresh" content="0; url=frontend/pages/der-training.html">
-  </head>
-  <body>
-    Redirecting to AMS Training Portal…
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMS Training Portal – Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="./frontend/css/main.css" />
+</head>
+<body>
+
+  <main class="auth-container">
+
+    <h1>AMS Training Portal</h1>
+
+    <form onsubmit="login(event)">
+      <label>Email</label>
+      <input type="email" required />
+
+      <label>Password</label>
+      <input type="password" required />
+
+      <button type="submit" class="btn-primary">
+        Log In
+      </button>
+    </form>
+
+    <p style="margin-top:16px;">
+      Don’t have an account?
+      <a href="./frontend/pages/register.html">Create one</a>
+    </p>
+
+  </main>
+
+  <script>
+    function login(e) {
+      e.preventDefault();
+
+      // TEMP login flag
+      localStorage.setItem("logged_in", "true");
+
+      // Go to dashboard
+      window.location.href = "./frontend/pages/dashboard.html";
+    }
+  </script>
+
+</body>
 </html>
