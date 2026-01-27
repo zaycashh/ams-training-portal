@@ -57,5 +57,16 @@
       </main>
 
   <script src="../js/dashboard.js"></script>
+        <script>
+  (function () {
+    const user = localStorage.getItem("amsUser");
+
+    if (!user) {
+      // Not logged in → kick back to login
+      window.location.href = "login.html";
+    }
+  })();
+</script>
+
 </body>
 </html>
