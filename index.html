@@ -1,41 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AMS Training Portal – Login</title>
-  <link rel="stylesheet" href="frontend/css/styles.css" />
+  <meta charset="UTF-8">
+  <title>AMS Training Portal</title>
 </head>
 <body>
+  <h1>AMS Training Portal</h1>
+  <p>If you see this, GitHub Pages is working.</p>
 
-  <div class="login-container">
-    <h1>AMS Training Portal</h1>
-
-    <form id="loginForm">
-      <label>Email</label>
-      <input type="email" id="email" required />
-
-      <label>Password</label>
-      <input type="password" id="password" required />
-
-      <button type="submit">Login</button>
-    </form>
-
-    <p>
-      Don’t have an account?
-      <a href="frontend/pages/register.html">Create one</a>
-    </p>
-  </div>
-
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      // TEMP auth (replace later with real backend)
-      localStorage.setItem("loggedIn", "true");
-
-      window.location.href = "frontend/pages/dashboard.html";
-    });
-  </script>
-
+  <a href="frontend/pages/login.html">Go to Login</a>
 </body>
 </html>
