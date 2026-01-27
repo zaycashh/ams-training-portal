@@ -10,6 +10,7 @@
 <body>
 
   <main class="dashboard-container">
+
     <header class="dashboard-header">
       <h1>Welcome to AMS Training Portal</h1>
       <button class="btn-secondary" onclick="logout()">Log Out</button>
@@ -21,52 +22,60 @@
       <div class="module-card locked">
         <h2>DER Training</h2>
         <p>Designated Employer Representative Training</p>
-        <button class="btn-primary" onclick="window.location.href='der-training.html'">
-  Start Module
-</button>
+        <button
+          class="btn-primary"
+          onclick="window.location.href='der-training.html'">
+          Start Module
+        </button>
+      </div>
 
       <!-- Supervisor Training -->
       <div class="module-card locked">
         <h2>Supervisor Training</h2>
         <p>Drug & Alcohol Supervisor Training</p>
-        <button class="btn-primary" onclick="window.location.href='supervisor-training.html'">
-  Start Module
-</button>
-
+        <button
+          class="btn-primary"
+          onclick="window.location.href='supervisor-training.html'">
+          Start Module
+        </button>
+      </div>
 
       <!-- Employee Training -->
       <div class="module-card locked">
         <h2>Employee Training</h2>
         <p>Drug & Alcohol Awareness Training</p>
-        <button class="btn-primary" onclick="window.location.href='employee-training.html'">
-  Start Module
-</button>
+        <button
+          class="btn-primary"
+          onclick="window.location.href='employee-training.html'">
+          Start Module
+        </button>
+      </div>
 
     </section>
-        
-<div class="training-card">
-  <h2>FMCSA Supervisor Training</h2>
-  <p>
-    Reasonable Suspicion, Drug & Alcohol Awareness Training<br>
-    <strong>FMCSA / DOT Compliant</strong>
-  </p>
 
-  <button onclick="startFMCSA()">Start FMCSA Training</button>
-</div>
-  
-      </main>
+    <!-- FMCSA Training -->
+    <div class="training-card">
+      <h2>FMCSA Supervisor Training</h2>
+      <p>
+        Reasonable Suspicion, Drug & Alcohol Awareness Training<br />
+        <strong>FMCSA / DOT Compliant</strong>
+      </p>
+      <button onclick="startFMCSA()">Start FMCSA Training</button>
+    </div>
+
+  </main>
 
   <script src="../js/dashboard.js"></script>
-        <script>
-  (function () {
-    const user = localStorage.getItem("amsUser");
 
-    if (!user) {
-      // Not logged in → kick back to login
-      window.location.href = "login.html";
-    }
-  })();
-</script>
+  <!-- 🔒 AUTH GUARD -->
+  <script>
+    (function () {
+      const user = localStorage.getItem("amsUser");
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    })();
+  </script>
 
 </body>
 </html>
