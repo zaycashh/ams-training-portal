@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
-
   if (!form) return;
 
   form.addEventListener("submit", (e) => {
@@ -10,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const lastName = document.getElementById("lastName").value.trim();
     const company = document.getElementById("company").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
@@ -28,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Password rules
+    // Password rules (keep your strong rule ✅)
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
     if (!passwordRegex.test(password)) {
       alert(
@@ -43,21 +42,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Success (placeholder)
-    alert("Account created successfully. Backend coming next.");
-    form.reset();
+    // Save user (MVP local auth)
+    const user = {
+      firstName,
+      lastName,
+      company,
+      phone,
+      email,
+      createdAt: new Date().toISOString()
+    };
+
+    localStorage.setItem("amsUser", JSON.stringify(user));
+
+    alert("Account created successfully. Please log in.");
+
+    // ✅ OPTION A: Go back to login
+    window.location.href = "login.html";
   });
-});
-document.getElementById("registerForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const password = document.getElementById("password").value;
-  const confirm = document.getElementById("confirmPassword").value;
-
-  if (password !== confirm) {
-    alert("Passwords do not match");
-    return;
-  }
-
-  alert("Account created (backend coming next)");
 });
