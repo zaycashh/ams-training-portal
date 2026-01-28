@@ -7,7 +7,7 @@ function logout() {
   // localStorage.removeItem("fmcsa_start_date");
 
   // Silent redirect (no popup)
-  window.location.href = "login.html";
+  window.location.replace("login.html");
 }
 
 function startFMCSA() {
