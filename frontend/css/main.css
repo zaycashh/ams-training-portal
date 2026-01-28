@@ -257,16 +257,23 @@ button.secondary {
   color: #8a5a00;
   font-weight: 500;
 }
+
 .dashboard-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 25px;
 }
-.dashboard-header .btn-secondary {
+
+.dashboard-header button {
+  width: auto !important;
   padding: 8px 14px;
   font-size: 0.9rem;
-  width: auto;
-  min-width: unset;
   border-radius: 4px;
+  margin-top: 0;
+}
+
+.dashboard-header button {
+  width: auto !important;
+  margin-top: 0;
 }
