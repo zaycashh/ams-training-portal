@@ -1,23 +1,45 @@
+/* =========================
+   COURSE KEYS
+========================= */
 const COURSE_KEYS = {
+  der: "paid_der",
+  supervisor: "paid_supervisor",
+  employee: "paid_employee",
+  fmcsa: "paid_fmcsa"
+};
+
+/* =========================
+   LOGOUT
+========================= */
 function logout() {
-  // Clear session
+  // Clear user session
   localStorage.removeItem("amsUser");
 
-  // Optional: clear FMCSA session flags if you want a full reset
+  // Optional full reset (leave commented unless needed)
+  // localStorage.removeItem("paid_der");
+  // localStorage.removeItem("paid_supervisor");
+  // localStorage.removeItem("paid_employee");
   // localStorage.removeItem("paid_fmcsa");
   // localStorage.removeItem("fmcsa_start_date");
 
-  // Silent redirect (no popup)
+  // Silent redirect
   window.location.replace("login.html");
 }
-  function hasAccess(course) {
+
+/* =========================
+   ACCESS CHECK
+========================= */
+function hasAccess(course) {
   const key = COURSE_KEYS[course];
   return localStorage.getItem(key) === "true";
 }
 
+/* =========================
+   FMCSA START
+========================= */
 function startFMCSA() {
-  const paid = localStorage.getItem("paid_fmcsa");
-  const startDate = localStorage.getItem("fmcsa_start_date");
+  let paid = localStorage.getItem("paid_fmcsa");
+  let startDate = localStorage.getItem("fmcsa_start_date");
 
   // Simulated payment for now
   if (!paid) {
@@ -25,9 +47,9 @@ function startFMCSA() {
     localStorage.setItem("fmcsa_start_date", Date.now());
   }
 
-  // Redirect to FMCSA hub
-  window.location.href = "./fmcsa.html";
+  window.location.href = "fmcsa.html";
 }
+
 /* =========================
    FAA MODULE ACCESS CONTROL
 ========================= */
@@ -51,4 +73,3 @@ function startFAA(course) {
     window.location.href = "employee-training.html";
   }
 }
-
