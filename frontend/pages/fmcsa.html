@@ -7,6 +7,26 @@
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
+  
+  <script>
+  (function () {
+    const user = localStorage.getItem("amsUser");
+    const paid = localStorage.getItem("paid_fmcsa");
+
+    // Must be logged in
+    if (!user) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    // Must have paid/unlocked FMCSA
+    if (!paid) {
+      alert("FMCSA training is locked. Please select this module first.");
+      window.location.replace("dashboard.html");
+    }
+  })();
+</script>
+
 
 <main class="module-container">
 
