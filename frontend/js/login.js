@@ -3,19 +3,23 @@
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  // Simple validation
   if (!email || !password) {
     alert("Please enter email and password");
     return;
   }
 
-  // TEMP: mark user as logged in
-  localStorage.setItem("ams_logged_in", "true");
-  localStorage.setItem("ams_user_email", email);
+  // TEMP user session object
+  const user = {
+    email: email,
+    firstName: "User" // placeholder until backend
+  };
 
-  // Redirect to dashboard
-  window.location.href = "dashboard.html";
+  // ✅ SINGLE SOURCE OF TRUTH
+  localStorage.setItem("amsUser", JSON.stringify(user));
+
+  // Redirect AFTER session is written
+  window.location.replace("dashboard.html");
 });
