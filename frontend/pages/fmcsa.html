@@ -6,23 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
 </head>
-<body>
-  
-  <script>
-/* =========================
-   AUTH + FMCSA ACCESS CONTROL
-========================= */
 
-// 🔒 Must be logged in
-const user = localStorage.getItem("amsUser");
-if (!user) {
-  window.location.replace("login.html");
-}
-  
-  <script>
+<body>
+
+<!-- 🔒 AUTH + PAYMENT GUARD (RUNS FIRST) -->
+<script>
   (function () {
     const user = localStorage.getItem("amsUser");
-    const paid = localStorage.getItem("paid_fmcsa");
 
     // Must be logged in
     if (!user) {
@@ -30,14 +20,15 @@ if (!user) {
       return;
     }
 
-    // Must have paid/unlocked FMCSA
-    if (!paid) {
-      alert("FMCSA training is locked. Please select this module first.");
+    // Must have purchased FMCSA
+    const paid = localStorage.getItem("paid_fmcsa");
+    if (paid !== "true") {
+      alert("FMCSA training is locked. Please select this module from the dashboard.");
       window.location.replace("dashboard.html");
+      return;
     }
   })();
 </script>
-
 
 <main class="module-container">
 
@@ -105,37 +96,33 @@ function resetFMCSA() {
 
 function initFMCSA() {
 
-  // Must pay first
   if (!hasPaid()) {
-    alert("Please purchase the FMCSA Supervisor Training to continue.");
-    window.location.href = "dashboard.html";
+    window.location.replace("dashboard.html");
     return;
   }
 
-  // 30-day enforcement
   if (expired()) {
     alert("Your 30-day training window has expired. Please repurchase to restart.");
     resetFMCSA();
-    window.location.href = "dashboard.html";
+    window.location.replace("dashboard.html");
     return;
   }
 
-  // Unlock logic
   const mod1 = localStorage.getItem("fmcsa_mod1_passed") === "true";
   const mod2 = localStorage.getItem("fmcsa_mod2_passed") === "true";
 
   if (mod1) {
-    document.getElementById("mod2Btn").disabled = false;
-    document.getElementById("mod2Btn").textContent = "Start Module";
-    document.getElementById("mod2Btn").onclick = () =>
-      window.location.href = "fmcsa/drug-awareness.html";
+    const btn = document.getElementById("mod2Btn");
+    btn.disabled = false;
+    btn.textContent = "Start Module";
+    btn.onclick = () => window.location.href = "fmcsa/drug-awareness.html";
   }
 
   if (mod2) {
-    document.getElementById("mod3Btn").disabled = false;
-    document.getElementById("mod3Btn").textContent = "Start Module";
-    document.getElementById("mod3Btn").onclick = () =>
-      window.location.href = "fmcsa/alcohol-awareness.html";
+    const btn = document.getElementById("mod3Btn");
+    btn.disabled = false;
+    btn.textContent = "Start Module";
+    btn.onclick = () => window.location.href = "fmcsa/alcohol-awareness.html";
   }
 }
 
