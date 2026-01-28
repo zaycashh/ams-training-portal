@@ -23,40 +23,29 @@ function startFMCSA() {
   // Redirect to FMCSA hub
   window.location.href = "./fmcsa.html";
 }
-/* ===============================
+/* =========================
    FAA MODULE ACCESS CONTROL
-================================ */
+========================= */
 
 function startFAA(type) {
-  const modules = {
-    der: {
-      key: "paid_der",
-      page: "der-training.html",
-      name: "DER Training"
-    },
-    supervisor: {
-      key: "paid_supervisor",
-      page: "supervisor-training.html",
-      name: "Supervisor Training"
-    },
-    employee: {
-      key: "paid_employee",
-      page: "employee-training.html",
-      name: "Employee Training"
-    }
-  };
+  const key = `paid_${type}`;
 
-  const mod = modules[type];
-  if (!mod) return;
-
-  const paid = localStorage.getItem(mod.key);
-
-  if (paid !== "true") {
+  // Not purchased yet
+  if (localStorage.getItem(key) !== "true") {
     alert(
-      `${mod.name} is locked.\n\nPlease purchase this course to continue.`
+      `${type.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
     );
     return;
   }
 
-  window.location.href = mod.page;
+  // Redirect if purchased
+  if (type === "der") {
+    window.location.href = "der-training.html";
+  }
+  if (type === "supervisor") {
+    window.location.href = "supervisor-training.html";
+  }
+  if (type === "employee") {
+    window.location.href = "employee-training.html";
+  }
 }
