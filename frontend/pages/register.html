@@ -12,33 +12,55 @@
   <div class="auth-container">
     <h1>Create Account</h1>
 
-    <form id="registerForm">
+    <form id="registerForm" class="auth-form">
 
-      <label>First Name</label>
-      <input type="text" id="firstName" required />
+  <div class="form-row">
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" required />
+  </div>
 
-      <label>Last Name</label>
-      <input type="text" id="lastName" required />
+  <div class="form-row">
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" required />
+  </div>
 
-      <label>Company Name</label>
-      <input type="text" id="company" required />
+  <div class="form-row">
+    <label for="company">Company Name</label>
+    <input type="text" id="company" required />
+  </div>
 
-      <label>Phone Number</label>
-      <input type="tel" id="phone" required />
+  <div class="form-row">
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" required />
+  </div>
 
-      <label>Email Address</label>
-      <input type="email" id="email" required />
+  <div class="form-row">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" required />
+  </div>
 
-      <label>Password</label>
-      <input type="password" id="password" required />
+  <div class="form-row">
+    <label for="password">Password</label>
+    <input type="password" id="password" required />
+  </div>
 
-      <label>Confirm Password</label>
-      <input type="password" id="confirmPassword" required />
+  <div class="form-row">
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" required />
+  </div>
 
-      <button type="submit">Create Account</button>
-      <button type="button" class="secondary">Cancel</button>
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">Create Account</button>
+    <button
+      type="button"
+      class="btn-secondary"
+      onclick="window.location.href='login.html'">
+      Cancel
+    </button>
+  </div>
 
-    </form>
+</form>
+
   </div>
 
   <!-- Register JS -->
