@@ -218,3 +218,42 @@ button.secondary {
 .hidden {
   display: none;
 }
+/* =========================
+   Dashboard Section Polish
+========================= */
+
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+}
+
+.section-note {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+/* Divider between FAA/DOT and FMCSA */
+.section-divider {
+  margin: 40px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+/* FMCSA special section */
+.fmcsa-section {
+  background: #fff8e6;
+  border: 1px solid #f0d28c;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.fmcsa-section h2 {
+  margin-top: 0;
+}
+
+.fmcsa-section .section-note {
+  color: #8a5a00;
+  font-weight: 500;
+}
