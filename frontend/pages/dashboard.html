@@ -11,11 +11,13 @@
   
   <script>
   (function () {
-    const user = localStorage.getItem("amsUser");
-    if (!user) {
-      // Hard redirect, no bounce
-      window.location.replace("login.html");
-    }
+    setTimeout(() => {
+      const user = localStorage.getItem("amsUser");
+      if (!user) {
+        // Hard redirect, no bounce
+        window.location.replace("login.html");
+      }
+    }, 50);
   })();
 </script>
 
