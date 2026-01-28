@@ -11,15 +11,21 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // TEMP user session object
+  // 🔐 TEMP password check (DEV ONLY)
+  const DEV_PASSWORD = "AMS!Dev2026";
+
+  if (password !== DEV_PASSWORD) {
+    alert("Invalid email or password");
+    return;
+  }
+
+  // TEMP user session
   const user = {
-    email: email,
-    firstName: "User" // placeholder until backend
+    email,
+    firstName: "User"
   };
 
-  // ✅ SINGLE SOURCE OF TRUTH
   localStorage.setItem("amsUser", JSON.stringify(user));
 
-  // Redirect AFTER session is written
   window.location.replace("dashboard.html");
 });
