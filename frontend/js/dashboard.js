@@ -10,6 +10,10 @@ function logout() {
   // Silent redirect (no popup)
   window.location.replace("login.html");
 }
+  function hasAccess(course) {
+  const key = COURSE_KEYS[course];
+  return localStorage.getItem(key) === "true";
+}
 
 function startFMCSA() {
   const paid = localStorage.getItem("paid_fmcsa");
@@ -27,26 +31,24 @@ function startFMCSA() {
 /* =========================
    FAA MODULE ACCESS CONTROL
 ========================= */
-
-function startFAA(type) {
-  const key = `paid_${type}`;
-
-  // Not purchased yet
-  if (localStorage.getItem(key) !== "true") {
+function startFAA(course) {
+  if (!hasAccess(course)) {
     alert(
-      `${type.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
+      `${course.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
     );
     return;
   }
 
-  // Redirect if purchased
-  if (type === "der") {
+  if (course === "der") {
     window.location.href = "der-training.html";
   }
-  if (type === "supervisor") {
+
+  if (course === "supervisor") {
     window.location.href = "supervisor-training.html";
   }
-  if (type === "employee") {
+
+  if (course === "employee") {
     window.location.href = "employee-training.html";
   }
 }
+
