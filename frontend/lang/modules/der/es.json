@@ -1,39 +1,9 @@
 {
   "title": "Capacitación DER",
   "intro": "Bienvenido al entrenamiento del Representante Designado del Empleador (DER).",
-  "startButton": "Comenzar Entrenamiento"
-}
-{
-  "title": "Capacitación DER",
+
   "contentTitle": "Contenido de Capacitación DER",
   "contentIntro": "El contenido de capacitación DER se mostrará aquí.",
 
-  "quizTitle": "Examen DER",
-  "quizIntro": "Responda todas las preguntas para continuar.",
-
-  "quiz": [
-    {
-      "question": "¿Qué significa DER?",
-      "options": [
-        "Representante Designado del Empleador",
-        "Registro de Control de Drogas",
-        "Departamento de Relaciones Laborales",
-        "Reporte de Evaluación del Conductor"
-      ],
-      "answer": 0
-    },
-    {
-      "question": "¿Quién puede recibir los resultados de una prueba de drogas?",
-      "options": [
-        "Cualquier supervisor",
-        "Solo el empleado",
-        "El DER",
-        "El público"
-      ],
-      "answer": 2
-    }
-  ],
-
-  "passMessage": "Aprobaste el examen.",
-  "failMessage": "No aprobaste. Inténtalo de nuevo."
+  "startButton": "Comenzar Entrenamiento"
 }
