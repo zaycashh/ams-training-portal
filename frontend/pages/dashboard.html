@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
+  
+  <script>
+  (function () {
+    const user = localStorage.getItem("amsUser");
+    if (!user) {
+      // Hard redirect, no bounce
+      window.location.replace("login.html");
+    }
+  })();
+</script>
 
   <main class="dashboard-container">
 
@@ -66,16 +76,6 @@
   </main>
 
   <script src="../js/dashboard.js"></script>
-
-  <!-- 🔒 AUTH GUARD -->
-  <script>
-    (function () {
-      const user = localStorage.getItem("amsUser");
-      if (!user) {
-        window.location.href = "login.html";
-      }
-    })();
-  </script>
 
 </body>
 </html>
