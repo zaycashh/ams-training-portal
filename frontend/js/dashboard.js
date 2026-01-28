@@ -1,3 +1,4 @@
+const COURSE_KEYS = {
 function logout() {
   // Clear session
   localStorage.removeItem("amsUser");
