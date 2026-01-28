@@ -9,6 +9,17 @@
 <body>
   
   <script>
+/* =========================
+   AUTH + FMCSA ACCESS CONTROL
+========================= */
+
+// 🔒 Must be logged in
+const user = localStorage.getItem("amsUser");
+if (!user) {
+  window.location.replace("login.html");
+}
+  
+  <script>
   (function () {
     const user = localStorage.getItem("amsUser");
     const paid = localStorage.getItem("paid_fmcsa");
