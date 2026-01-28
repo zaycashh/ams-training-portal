@@ -1,4 +1,4 @@
-async function loadLanguage(module, lang = "en") {
+async function loadLanguage(module, lang = "es") {
   try {
     const response = await fetch(
       `/frontend/lang/modules/${module}/${lang}.json`
@@ -6,22 +6,11 @@ async function loadLanguage(module, lang = "en") {
     const data = await response.json();
 
     document.querySelectorAll("[data-lang]").forEach(el => {
-      const keyPath = el.getAttribute("data-lang").split(".");
-      let value = data;
-
-      keyPath.forEach(k => {
-        if (value) value = value[k];
-      });
-
-      if (value) {
-        el.textContent = value;
+      const key = el.getAttribute("data-lang");
+      if (data[key]) {
+        el.textContent = data[key];
       }
     });
-
-    // Load quiz if available
-    if (typeof loadQuiz === "function" && data.quiz) {
-      loadQuiz(data);
-    }
 
   } catch (err) {
     console.error("Language load error:", err);
@@ -32,9 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("languageToggle");
   if (!toggle) return;
 
-  loadLanguage("der", toggle.value || "en");
-
-  toggle.addEventListener("change", (e) => {
+  toggle.addEventListener("change", e => {
     loadLanguage("der", e.target.value);
   });
 });
