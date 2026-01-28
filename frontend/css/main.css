@@ -277,3 +277,10 @@ button.secondary {
   width: auto !important;
   margin-top: 0;
 }
+.dashboard-header .btn-secondary {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  margin-top: 0;
+}
