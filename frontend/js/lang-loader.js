@@ -1,7 +1,7 @@
 async function loadLanguage(module, lang = "en") {
   try {
     const response = await fetch(
-      `/frontend/lang/modules/${module}/${lang}.json`
+      `/ams-training-portal/frontend/lang/modules/${module}/${lang}.json`
     );
 
     if (!response.ok) {
@@ -24,13 +24,10 @@ async function loadLanguage(module, lang = "en") {
 
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("languageToggle");
-
   const initialLang = toggle?.value || "en";
 
-  // Load DER language on page load
   loadLanguage("der", initialLang);
 
-  // Handle language switch
   if (toggle) {
     toggle.addEventListener("change", e => {
       loadLanguage("der", e.target.value);
