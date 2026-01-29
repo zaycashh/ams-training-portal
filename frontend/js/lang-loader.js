@@ -4,7 +4,9 @@ async function loadLanguage(module, lang = "en") {
       `/frontend/lang/modules/${module}/${lang}.json`
     );
 
-    if (!response.ok) throw new Error("Language file not found");
+    if (!response.ok) {
+      throw new Error("Language file not found");
+    }
 
     const data = await response.json();
 
@@ -23,13 +25,12 @@ async function loadLanguage(module, lang = "en") {
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("languageToggle");
 
-  // 🔹 Determine initial language
   const initialLang = toggle?.value || "en";
 
-  // 🔹 Load DER language on page load
+  // Load DER language on page load
   loadLanguage("der", initialLang);
 
-  // 🔹 Listen for language changes
+  // Handle language switch
   if (toggle) {
     toggle.addEventListener("change", e => {
       loadLanguage("der", e.target.value);
