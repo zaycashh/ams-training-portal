@@ -13,7 +13,7 @@
 
     <!-- HEADER -->
     <header class="module-header">
-      <h1 id="moduleTitle" data-lang="title">DER Training</h1>
+      <h1 id="moduleTitle" data-lang="title"></h1>
 
       <div class="module-controls">
         <select id="languageToggle">
@@ -21,81 +21,71 @@
           <option value="es">Español</option>
         </select>
 
-        <button class="btn-secondary" onclick="goDashboard()">Back to Dashboard</button>
+        <button class="btn-secondary" onclick="goDashboard()">
+          Back to Dashboard
+        </button>
       </div>
     </header>
 
     <!-- NAV -->
     <nav class="module-nav">
-      <button onclick="showSection('content')">Content</button>
-      <button onclick="showSection('quiz')">Quiz</button>
+      <button onclick="showSection('content')" data-lang="navContent"></button>
+      <button onclick="showSection('quiz')" data-lang="navQuiz"></button>
       <button
         onclick="showSection('certificate')"
         class="disabled"
         disabled
-      >
-        Certificate
-      </button>
+        data-lang="navCertificate"
+      ></button>
     </nav>
 
     <!-- CONTENT -->
     <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle">DER Training Content</h2>
-      <p data-lang="contentIntro">
-        DER training content will be displayed here.
-      </p>
+      <h2 data-lang="contentTitle"></h2>
+      <p data-lang="contentIntro"></p>
     </section>
 
     <!-- QUIZ -->
     <section id="quizSection" class="module-section hidden">
-      <h2 data-lang="quizTitle">DER Quiz</h2>
-      <p data-lang="quizIntro">
-        Quiz questions will appear here.
-      </p>
+      <h2 data-lang="quizTitle"></h2>
+      <p data-lang="quizIntro"></p>
     </section>
 
     <!-- CERTIFICATE -->
-<section id="certificateSection" class="module-section hidden">
-  <h2 data-lang="certificateTitle">Certificate of Completion</h2>
+    <section id="certificateSection" class="module-section hidden">
+      <h2 data-lang="certificateTitle"></h2>
 
-  <p data-lang="certificateIntro">
-    Congratulations! You have completed the DER Training.
-  </p>
+      <p data-lang="certificateIntro"></p>
 
-  <p>
-    <strong>Full Name:</strong>
-    <span id="certName"></span>
-  </p>
+      <p>
+        <strong>Full Name:</strong>
+        <span id="certName"></span>
+      </p>
 
-  <p>
-    <strong>Date Issued:</strong>
-    <span id="certDate"></span>
-  </p>
+      <p>
+        <strong>Date Issued:</strong>
+        <span id="certDate"></span>
+      </p>
 
-  <p>
-    <strong>Verification ID:</strong>
-    <span id="certVerify"></span>
-  </p>
+      <p>
+        <strong>Verification ID:</strong>
+        <span id="certVerify"></span>
+      </p>
 
-  <div id="certQR" style="margin-top:12px;"></div>
+      <div id="certQR" style="margin-top:12px;"></div>
 
-  <button class="btn-primary" onclick="generateCertificate()">
-    Download Certificate (PDF)
-  </button>
-</section>
+      <button class="btn-primary" onclick="generateCertificate()">
+        Download Certificate (PDF)
+      </button>
+    </section>
 
   </main>
 
   <!-- SCRIPTS -->
-<script src="../js/lang-loader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-<script src="../js/module.js"></script>
-
-
-  <script>
-    loadLanguage("der", "en");
-  </script>
+  <script src="../js/lang-loader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="../js/module.js"></script>
 
 </body>
 </html>
