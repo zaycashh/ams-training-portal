@@ -1,5 +1,13 @@
 {
   "title": "Módulo de Capacitación DER",
-  "intro": "Este curso explica las responsabilidades de un Representante del Empleador Designado bajo las regulaciones del DOT.",
+  "contentTitle": "Contenido de Capacitación DER",
+  "contentIntro": "El contenido de capacitación DER se mostrará aquí.",
+  "quizTitle": "Examen DER",
+  "quizIntro": "Las preguntas del examen aparecerán aquí.",
+  "certificateTitle": "Certificado de Finalización",
+  "certificateIntro": "¡Felicidades! Has completado la capacitación DER.",
+  "navContent": "Contenido",
+  "navQuiz": "Examen",
+  "navCertificate": "Certificado",
   "startButton": "Iniciar Capacitación"
 }
