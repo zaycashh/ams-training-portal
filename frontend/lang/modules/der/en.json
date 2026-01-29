@@ -1,5 +1,13 @@
 {
   "title": "DER Training Module",
-  "intro": "This course explains the responsibilities of a Designated Employer Representative under DOT regulations.",
+  "contentTitle": "DER Training Content",
+  "contentIntro": "DER training content will be displayed here.",
+  "quizTitle": "DER Quiz",
+  "quizIntro": "Quiz questions will appear here.",
+  "certificateTitle": "Certificate of Completion",
+  "certificateIntro": "Congratulations! You have completed the DER Training.",
+  "navContent": "Content",
+  "navQuiz": "Quiz",
+  "navCertificate": "Certificate",
   "startButton": "Start Training"
 }
