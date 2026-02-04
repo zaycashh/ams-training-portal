@@ -1,16 +1,16 @@
 {
-  "title": "Módulo de Capacitación DER",
+  "title": "Capacitación DER",
 
   "navContent": "Contenido",
   "navQuiz": "Examen",
   "navCertificate": "Certificado",
 
   "contentTitle": "Contenido de Capacitación DER",
-  "contentIntro": "El contenido de capacitación DER se mostrará aquí.",
+  "contentIntro": "Esta capacitación cubre las responsabilidades del programa de drogas y alcohol para los Representantes Designados del Empleador (DER).",
 
   "quizTitle": "Examen DER",
-  "quizIntro": "Las preguntas del examen aparecerán aquí.",
+  "quizIntro": "Complete el examen para finalizar la capacitación.",
 
-  "certificateTitle": "Certificado de Finalización",
-  "certificateIntro": "¡Felicidades! Has completado la capacitación DER."
+  "certificateTitle": "Certificado",
+  "certificateIntro": "Su certificado estará disponible después de completar la capacitación."
 }
