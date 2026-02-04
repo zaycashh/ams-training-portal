@@ -1,12 +1,16 @@
 {
   "title": "Módulo de Capacitación para Supervisores",
-  "contentTitle": "Contenido de Capacitación para Supervisores",
-  "contentIntro": "Esta capacitación cubre las responsabilidades de drogas y alcohol para supervisores.",
-  "quizTitle": "Examen para Supervisores",
-  "quizIntro": "completar el examen para finalizar la capacitación.",
-  "certificateTitle": "Certificado de Finalización",
-  "certificateIntro": "Su certificado estará disponible después de completar la capacitación.",
+
   "navContent": "Contenido",
   "navQuiz": "Examen",
-  "navCertificate": "Certificado"
+  "navCertificate": "Certificado",
+
+  "contentTitle": "Contenido de Capacitación para Supervisores",
+  "contentIntro": "Esta capacitación cubre las responsabilidades de drogas y alcohol para supervisores.",
+
+  "quizTitle": "Examen para Supervisores",
+  "quizIntro": "Complete el examen para finalizar la capacitación.",
+
+  "certificateTitle": "Certificado",
+  "certificateIntro": "Su certificado estará disponible después de completar la capacitación."
 }
