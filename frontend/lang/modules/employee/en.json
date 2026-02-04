@@ -1,0 +1,12 @@
+{
+  "title": "Employee Training Module",
+  "contentTitle": "Employee Training Content",
+  "contentIntro": "This training provides drug and alcohol awareness for employees.",
+  "quizTitle": "Employee Quiz",
+  "quizIntro": "Complete the quiz to finish the training.",
+  "certificateTitle": "Certificate of Completion",
+  "certificateIntro": "Your certificate will be available after completion.",
+  "navContent": "Content",
+  "navQuiz": "Quiz",
+  "navCertificate": "Certificate"
+}
