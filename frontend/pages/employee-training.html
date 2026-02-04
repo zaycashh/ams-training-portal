@@ -12,7 +12,7 @@
   <main class="module-container">
 
     <header class="module-header">
-      <h1 data-lang="title">Employee Training</h1>
+      <h1 data-lang="title"></h1>
 
       <div class="module-controls">
         <select id="languageToggle">
@@ -23,16 +23,18 @@
         <button class="btn-secondary" onclick="goDashboard()">Back to Dashboard</button>
       </div>
     </header>
-
+    
     <nav class="module-nav">
-      <button onclick="showSection('content')">Content</button>
-      <button onclick="showSection('quiz')">Quiz</button>
-      <button onclick="showSection('certificate')">Certificate</button>
+      <button onclick="showSection('content')" data-lang="navContent"></button>
+      <button onclick="showSection('quiz')" data-lang="navQuiz"></button>
+      <button onclick="showSection('certificate')" data-lang="navCertificate"></button>
     </nav>
 
+
     <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle">Employee Training Content</h2>
-      <p data-lang="contentIntro">
+      <h2 data-lang="contentTitle"></h2>
+      <p data-lang="contentIntro"></p>
+
         This training provides drug and alcohol awareness for employees.
       </p>
     </section>
