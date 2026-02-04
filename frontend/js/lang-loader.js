@@ -1,18 +1,11 @@
-async function loadLanguage(lang = "en") {
+async function loadLanguage(module, lang = "en") {
   try {
-    const module = document.body.dataset.module;
-
-    if (!module) {
-      console.error("❌ data-module missing on <body>");
-      return;
-    }
-
     const response = await fetch(
       `/ams-training-portal/frontend/lang/modules/${module}/${lang}.json`
     );
 
     if (!response.ok) {
-      throw new Error(`Language file not found: ${module}/${lang}`);
+      throw new Error("Language file not found");
     }
 
     const data = await response.json();
@@ -24,19 +17,28 @@ async function loadLanguage(lang = "en") {
       }
     });
 
-    console.log(`🌐 Loaded language: ${module} / ${lang}`);
+    console.log(`Loaded language: ${module} / ${lang}`);
   } catch (err) {
     console.error("Language load error:", err);
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const module = document.body.dataset.module; // 🔥 THIS FIXES EVERYTHING
   const toggle = document.getElementById("languageToggle");
   const initialLang = toggle?.value || "en";
 
-  loadLanguage(initialLang);
+  if (!module) {
+    console.error("Missing data-module on body");
+    return;
+  }
 
-  toggle?.addEventListener("change", e => {
-    loadLanguage(e.target.value);
-  });
+  loadLanguage(module, initialLang);
+
+  if (toggle) {
+    toggle.addEventListener("change", e => {
+      loadLanguage(module, e.target.value);
+    });
+  }
 });
+
