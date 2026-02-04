@@ -1,16 +1,16 @@
 {
-  "title": "DER Training Module",
+  "title": DER Training Module",
 
   "navContent": "Content",
   "navQuiz": "Quiz",
   "navCertificate": "Certificate",
 
   "contentTitle": "DER Training Content",
-  "contentIntro": "DER training content will be displayed here.",
+  "contentIntro": "This training provides drug and alcohol awareness for DER.",
 
   "quizTitle": "DER Quiz",
-  "quizIntro": "Quiz questions will appear here.",
+  "quizIntro": "Complete the quiz to finish the training.",
 
-  "certificateTitle": "Certificate of Completion",
+  "certificateTitle": "Certificate",
   "certificateIntro": "Your certificate will be available after completion."
 }
