@@ -38,13 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (
-    module === "employee" &&
-    localStorage.getItem("employeeTrainingCompleted") === "true"
-  ) {
-    alert("Employee training already completed.");
-    showSection("content");
-    return;
-  }
+  module === "employee" &&
+  localStorage.getItem("employeeTrainingCompleted") === "true"
+) {
+  alert("Employee training already completed.");
+  showSection("content");
+  return;
+}
 
   /* =========================
      DEFAULT START
