@@ -30,8 +30,14 @@ function logout() {
    ACCESS CHECK
 ========================= */
 function hasAccess(course) {
-  const key = COURSE_KEYS[course];
-  return localStorage.getItem(key) === "true";
+  const paidKey = COURSE_KEYS[course];
+  const isPaid = localStorage.getItem(paidKey) === "true";
+
+  // STEP 23: training unlock (DER, Supervisor, Employee)
+  const isUnlocked =
+    localStorage.getItem(`ams_${course}_unlocked`) === "true";
+
+  return isPaid || isUnlocked;
 }
 
 /* =========================
