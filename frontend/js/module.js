@@ -105,13 +105,15 @@ async function loadModuleQuiz() {
    ATTEMPT HELPERS (DER SAFE FOR NOW)
 ========================= */
 
+const ATTEMPT_KEY = "ams_der_quiz_attempts";
+
 function getAttempts() {
-  return parseInt(localStorage.getItem("ams_quiz_attempts") || "0", 10);
+  return parseInt(localStorage.getItem(ATTEMPT_KEY) || "0", 10);
 }
 
 function incrementAttempts() {
   const attempts = getAttempts() + 1;
-  localStorage.setItem("ams_quiz_attempts", attempts);
+  localStorage.setItem(ATTEMPT_KEY, attempts);
   return attempts;
 }
 
@@ -142,7 +144,7 @@ function isInCooldown() {
 
 function resetAfterCooldownIfExpired() {
   if (!isInCooldown() && getAttempts() >= MAX_ATTEMPTS) {
-    localStorage.removeItem("ams_der_quiz_attempts");
+    localStorage.removeItem(ATTEMPT_KEY);
     localStorage.removeItem("ams_der_cooldown_until");
   }
 }
