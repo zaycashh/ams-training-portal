@@ -1,8 +1,40 @@
 document.addEventListener("DOMContentLoaded", () => {
   const module = document.body.dataset.module;
 
-  if (module === "der") {
-    showSection("content");
+  /* =========================
+     🔐 PAYWALL CHECKS
+  ========================= */
+
+  // Employee = per-employee license
+  if (
+    module === "employee" &&
+    localStorage.getItem("paid_employee") !== "true"
+  ) {
+    alert("Employee Training requires purchase.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // DER = paid compliance module
+  if (
+    module === "der" &&
+    localStorage.getItem("paid_der") !== "true"
+  ) {
+    alert("DER Training requires purchase.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  /* =========================
+     HARD LOCK AFTER COMPLETION
+  ========================= */
+
+  if (
+    module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true"
+  ) {
+    showSection("certificate");
+    return;
   }
 
   if (
@@ -10,8 +42,17 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem("employeeTrainingCompleted") === "true"
   ) {
     alert("Employee training already completed.");
+    showSection("content");
+    return;
   }
+
+  /* =========================
+     DEFAULT START
+  ========================= */
+
+  showSection("content");
 });
+
 /* =========================
    SECTION NAVIGATION (STEP 22.3 ENFORCED)
 ========================= */
