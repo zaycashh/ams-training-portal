@@ -1,1 +1,24 @@
-
+{
+  "quiz": [
+    {
+      "question": "What does DER stand for?",
+      "options": [
+        "Drug Enforcement Regulation",
+        "Designated Employer Representative",
+        "Department of Employment Relations",
+        "Driver Eligibility Record"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Who is responsible for managing DOT drug and alcohol testing?",
+      "options": [
+        "The employee",
+        "The medical review officer",
+        "The DER",
+        "The supervisor"
+      ],
+      "answer": 2
+    }
+  ]
+}
