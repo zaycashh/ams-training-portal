@@ -1,8 +1,17 @@
 /* =========================
-   SECTION NAVIGATION
+   SECTION NAVIGATION (STEP 22.3 ENFORCED)
 ========================= */
 
 function showSection(section) {
+  // Enforce Step 22 authority
+  if (section === "quiz" && typeof hasCompletedContent === "function") {
+    if (!hasCompletedContent()) return;
+  }
+
+  if (section === "certificate" && typeof hasPassedQuiz === "function") {
+    if (!hasPassedQuiz()) return;
+  }
+
   document.getElementById("contentSection").classList.add("hidden");
   document.getElementById("quizSection").classList.add("hidden");
   document.getElementById("certificateSection").classList.add("hidden");
@@ -30,14 +39,12 @@ function goDashboard() {
 
 const PASS_PERCENTAGE = 80;
 const MAX_ATTEMPTS = 3;
-const ATTEMPT_KEY = "derQuizAttempts";
-const PASS_KEY = "derQuizPassed";
 
 /* =========================
-   CERT VERIFICATION
+   CERT VERIFICATION (SAFE)
 ========================= */
 
-const CERT_VERIFY_KEY = "derCertificateVerification";
+const CERT_VERIFY_KEY = "ams_certificate_verification";
 
 function generateVerificationId() {
   return (
@@ -49,49 +56,43 @@ function generateVerificationId() {
 }
 
 function getOrCreateVerification() {
-  let record = JSON.parse(
-    localStorage.getItem(CERT_VERIFY_KEY) || "null"
-  );
+  let record = JSON.parse(localStorage.getItem(CERT_VERIFY_KEY) || "null");
 
   if (!record) {
     record = {
       id: generateVerificationId(),
       issuedAt: new Date().toISOString()
     };
-
-    localStorage.setItem(
-      CERT_VERIFY_KEY,
-      JSON.stringify(record)
-    );
+    localStorage.setItem(CERT_VERIFY_KEY, JSON.stringify(record));
   }
 
   return record;
 }
+
 /* =========================
-   QUIZ STATE
+   QUIZ STATE (LOCAL ONLY)
 ========================= */
 
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
-let quizPassed = false;
 
 /* =========================
-   ATTEMPT HELPERS
+   ATTEMPT HELPERS (DER SAFE FOR NOW)
 ========================= */
 
 function getAttempts() {
-  return parseInt(localStorage.getItem(ATTEMPT_KEY) || "0", 10);
+  return parseInt(localStorage.getItem("ams_quiz_attempts") || "0", 10);
 }
 
 function incrementAttempts() {
   const attempts = getAttempts() + 1;
-  localStorage.setItem(ATTEMPT_KEY, attempts);
+  localStorage.setItem("ams_quiz_attempts", attempts);
   return attempts;
 }
 
 function isLockedOut() {
-  return getAttempts() >= MAX_ATTEMPTS && !quizPassed;
+  return getAttempts() >= MAX_ATTEMPTS;
 }
 
 /* =========================
@@ -148,7 +149,7 @@ function submitAnswer(selected) {
 }
 
 /* =========================
-   RESULTS / DOT ENFORCEMENT
+   RESULTS (STEP 22 AUTHORITY)
 ========================= */
 
 function showQuizResult() {
@@ -156,25 +157,24 @@ function showQuizResult() {
 
   const attempts = incrementAttempts();
   const percentage = Math.round((score / quizData.length) * 100);
+  const passed = percentage >= PASS_PERCENTAGE;
 
-  quizPassed = percentage >= PASS_PERCENTAGE;
-
-  if (quizPassed) {
-    localStorage.setItem(PASS_KEY, "true");
-    unlockCertificate();
+  if (passed) {
+    // Step 22 owns progression
+    markQuizPassed();
     populateCertificate();
   }
 
-  if (!quizPassed && attempts >= MAX_ATTEMPTS) {
+  if (!passed && attempts >= MAX_ATTEMPTS) {
     showLockoutMessage();
     return;
   }
 
   section.innerHTML = `
-    <h2>${quizPassed ? "Passed" : "Failed"}</h2>
+    <h2>${passed ? "Passed" : "Failed"}</h2>
     <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
     ${
-      quizPassed
+      passed
         ? "<p>You may now access your certificate.</p>"
         : `<p>You have ${MAX_ATTEMPTS - attempts} attempt(s) remaining.</p>`
     }
@@ -186,30 +186,15 @@ function showLockoutMessage() {
 
   section.innerHTML = `
     <h2>Training Locked</h2>
-    <p>
-      You have reached the maximum number of quiz attempts.
-    </p>
-    <p>
-      DOT regulations require retraining before another attempt.
-    </p>
+    <p>You have reached the maximum number of quiz attempts.</p>
+    <p>DOT regulations require retraining before another attempt.</p>
     <p><strong>Please contact your administrator.</strong></p>
   `;
 }
 
 /* =========================
-   CERTIFICATE ACCESS
+   CERTIFICATE DISPLAY ONLY
 ========================= */
-
-function unlockCertificate() {
-  const certBtn = document.querySelector(
-    "button[onclick=\"showSection('certificate')\"]"
-  );
-
-  if (certBtn) {
-    certBtn.disabled = false;
-    certBtn.classList.remove("disabled");
-  }
-}
 
 function populateCertificate() {
   const nameEl = document.getElementById("certName");
@@ -229,6 +214,7 @@ function populateCertificate() {
 
   renderCertificateQR(verify.id);
 }
+
 function renderCertificateQR(verificationId) {
   const qrContainer = document.getElementById("certQR");
   if (!qrContainer) return;
@@ -246,50 +232,3 @@ function renderCertificateQR(verificationId) {
     height: 128
   });
 }
-
-function generateCertificate() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  const userName = "Employee Name";
-  const moduleName = "DER Training";
-  const date = new Date().toLocaleDateString();
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("Certificate of Completion", 105, 40, { align: "center" });
-
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text("This certifies that", 105, 60, { align: "center" });
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text(userName, 105, 75, { align: "center" });
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text(
-    `has successfully completed the ${moduleName} module`,
-    105,
-    90,
-    { align: "center" }
-  );
-
-  doc.text(`Date: ${date}`, 105, 110, { align: "center" });
-
-  doc.save(`${moduleName}-Certificate.pdf`);
-}
-
-/* =========================
-   RESTORE STATE (DOT SAFE)
-========================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  quizPassed = localStorage.getItem(PASS_KEY) === "true";
-
-  if (quizPassed) {
-    unlockCertificate();
-    populateCertificate();
-  }
-});
