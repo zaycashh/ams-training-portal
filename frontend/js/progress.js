@@ -17,7 +17,9 @@ function hasCompletedContent() {
 
 function hasPassedQuiz() {
   const module = getModule();
-  return localStorage.getItem(`ams_${module}_quiz`) === "passed";
+  if (!module) return false;
+
+  return localStorage.getItem(`ams_${module}_unlocked`) === "true";
 }
 
 /* -------------------------
