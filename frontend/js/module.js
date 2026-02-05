@@ -40,6 +40,7 @@ function goDashboard() {
 
 const PASS_PERCENTAGE = 80;
 const MAX_ATTEMPTS = 3;
+const COOLDOWN_MINUTES = 15;
 
 /* =========================
    CERT VERIFICATION (SAFE)
@@ -116,6 +117,37 @@ function incrementAttempts() {
 
 function isLockedOut() {
   return getAttempts() >= MAX_ATTEMPTS;
+}
+/* =========================
+   COOLDOWN HELPERS (STEP 24)
+========================= */
+
+function getCooldownUntil() {
+  return parseInt(
+    localStorage.getItem("ams_der_cooldown_until") || "0",
+    10
+  );
+}
+
+function startCooldown() {
+  const until =
+    Date.now() + COOLDOWN_MINUTES * 60 * 1000;
+
+  localStorage.setItem(
+    "ams_der_cooldown_until",
+    until
+  );
+}
+
+function isInCooldown() {
+  return Date.now() < getCooldownUntil();
+}
+
+function resetAfterCooldownIfExpired() {
+  if (!isInCooldown() && getAttempts() >= MAX_ATTEMPTS) {
+    localStorage.removeItem("ams_der_quiz_attempts");
+    localStorage.removeItem("ams_der_cooldown_until");
+  }
 }
 
 /* =========================
