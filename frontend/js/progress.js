@@ -32,7 +32,12 @@ function markContentComplete() {
 
 function markQuizPassed() {
   const module = getModule();
-  localStorage.setItem(`ams_${module}_quiz`, "passed");
+  if (!module) return;
+
+  // STEP 23 authority: single unlock flag
+  localStorage.setItem(`ams_${module}_unlocked`, "true");
+
+  // UI-only unlock
   unlockCertificate();
 }
 
