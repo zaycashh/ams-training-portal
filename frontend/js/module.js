@@ -17,16 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================= */
 
 function showSection(section) {
-  // 🔒 HARD LOCK after DER completion (FIX 2 — ADD THIS)
-  if (
-    document.body.dataset.module === "der" &&
-    localStorage.getItem("derTrainingCompleted") === "true" &&
-    section !== "certificate"
-  ) {
-    alert("This training has already been completed.");
-    return;
-  }
-
   // Enforce Step 22 authority (KEEP THIS)
   if (section === "quiz" && typeof hasCompletedContent === "function") {
     if (!hasCompletedContent()) return;
