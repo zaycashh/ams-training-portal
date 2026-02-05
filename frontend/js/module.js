@@ -115,9 +115,6 @@ function incrementAttempts() {
   return attempts;
 }
 
-function isLockedOut() {
-  return getAttempts() >= MAX_ATTEMPTS;
-}
 /* =========================
    COOLDOWN HELPERS (STEP 24)
 ========================= */
@@ -155,8 +152,11 @@ function resetAfterCooldownIfExpired() {
 ========================= */
 
 function loadQuiz(data) {
-  if (isLockedOut()) {
-    showLockoutMessage();
+  // STEP 24.3 — cooldown enforcement
+  resetAfterCooldownIfExpired();
+
+  if (isInCooldown()) {
+    showCooldownMessage();
     return;
   }
 
@@ -218,11 +218,6 @@ function showQuizResult() {
     // Step 22 owns progression
     markQuizPassed();
     populateCertificate();
-  }
-
-  if (!passed && attempts >= MAX_ATTEMPTS) {
-    showLockoutMessage();
-    return;
   }
 
   section.innerHTML = `
