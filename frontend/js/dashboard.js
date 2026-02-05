@@ -31,13 +31,7 @@ function logout() {
 ========================= */
 function hasAccess(course) {
   const paidKey = COURSE_KEYS[course];
-  const isPaid = localStorage.getItem(paidKey) === "true";
-
-  // STEP 23: training unlock (DER, Supervisor, Employee)
-  const isUnlocked =
-    localStorage.getItem(`ams_${course}_unlocked`) === "true";
-
-  return isPaid || isUnlocked;
+  return localStorage.getItem(paidKey) === "true";
 }
 
 /* =========================
