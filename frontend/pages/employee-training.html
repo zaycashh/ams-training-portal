@@ -1,85 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Employee Training | AMS Training Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+/* =========================
+   EMPLOYEE TRAINING LOGIC
+========================= */
 
-  <link rel="stylesheet" href="../css/main.css" />
-</head>
+document.addEventListener("DOMContentLoaded", () => {
+  const module = document.body.dataset.module;
+  if (module !== "employee") return;
 
-<body data-module="employee">
+  // 🔐 Paywall check
+  if (localStorage.getItem("paid_employee") !== "true") {
+    alert("Employee Training requires purchase.");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
-  <main class="module-container">
+  // ✅ Already completed
+  if (localStorage.getItem("employeeTrainingCompleted") === "true") {
+    alert("Employee training already completed.");
+    showSection("content");
+  }
+});
 
-    <!-- HEADER -->
-    <header class="module-header">
-      <h1 data-lang="title"></h1>
+/* =========================
+   EMPLOYEE QUIZ RESULT
+========================= */
 
-      <div class="module-controls">
-        <select id="languageToggle">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-        </select>
+function handleEmployeeQuizResult(score, total) {
+  const percentage = Math.round((score / total) * 100);
 
-        <button class="btn-secondary" onclick="goDashboard()">
-          Back to Dashboard
-        </button>
-      </div>
-    </header>
+  document.getElementById("quizSection").innerHTML = `
+    <h2>Training Completed</h2>
+    <p>You scored ${percentage}%</p>
+    <p>This training has been successfully completed.</p>
 
-    <!-- NAV -->
-    <nav class="module-nav">
-      <button
-        id="tabContent"
-        onclick="showSection('content')"
-        data-lang="navContent">
-      </button>
+    <button class="btn-primary" onclick="finishEmployeeTraining()">
+      Return to Dashboard
+    </button>
+  `;
+}
 
-      <button
-        id="tabQuiz"
-        onclick="showSection('quiz')"
-        data-lang="navQuiz">
-      </button>
+/* =========================
+   COMPLETE TRAINING
+========================= */
 
-      <button
-        id="tabCertificate"
-        onclick="showSection('certificate')"
-        data-lang="navCertificate">
-      </button>
-    </nav>
-
-    <!-- CONTENT -->
-    <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle"></h2>
-      <p data-lang="contentIntro"></p>
-
-      <button class="btn-primary" onclick="markContentComplete()">
-        Continue to Quiz
-      </button>
-    </section>
-
-    <!-- QUIZ -->
-    <section id="quizSection" class="module-section hidden">
-      <h2 data-lang="quizTitle"></h2>
-      <p data-lang="quizIntro"></p>
-    </section>
-
-    <!-- CERTIFICATE -->
-    <section id="certificateSection" class="module-section hidden">
-      <h2 data-lang="certificateTitle"></h2>
-      <p data-lang="certificateIntro"></p>
-    </section>
-
-  </main>
-
-<!-- SCRIPTS (ORDER MATTERS) -->
-<script src="../js/access-guard.js"></script>
-<script src="../js/lang-loader.js"></script>
-<script src="../js/progress.js"></script>
-
-<script src="../js/core.js"></script>
-<script src="../js/employee.js"></script>
-
-</body>
-</html>
+function finishEmployeeTraining() {
+  localStorage.setItem("employeeTrainingCompleted", "true");
+  window.location.href = "dashboard.html";
+}
