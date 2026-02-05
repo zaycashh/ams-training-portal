@@ -17,7 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================= */
 
 function showSection(section) {
-  // Enforce Step 22 authority
+  // 🔒 HARD LOCK after DER completion (FIX 2 — ADD THIS)
+  if (
+    document.body.dataset.module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true" &&
+    section !== "certificate"
+  ) {
+    alert("This training has already been completed.");
+    return;
+  }
+
+  // Enforce Step 22 authority (KEEP THIS)
   if (section === "quiz" && typeof hasCompletedContent === "function") {
     if (!hasCompletedContent()) return;
   }
@@ -35,9 +45,9 @@ function showSection(section) {
   }
 
   if (section === "quiz") {
-  document.getElementById("quizSection").classList.remove("hidden");
-  loadModuleQuiz();
-}
+    document.getElementById("quizSection").classList.remove("hidden");
+    loadModuleQuiz();
+  }
 
   if (section === "certificate") {
     document.getElementById("certificateSection").classList.remove("hidden");
