@@ -1,3 +1,11 @@
+document.addEventListener("DOMContentLoaded", () => {
+  if (
+    document.body.dataset.module === "employee" &&
+    localStorage.getItem("employeeTrainingCompleted") === "true"
+  ) {
+    alert("Employee training already completed.");
+  }
+});
 /* =========================
    SECTION NAVIGATION (STEP 22.3 ENFORCED)
 ========================= */
@@ -305,4 +313,12 @@ function renderCertificateQR(verificationId) {
     width: 128,
     height: 128
   });
+}
+/* =========================
+   EMPLOYEE TRAINING COMPLETION
+========================= */
+
+function completeEmployeeTraining() {
+  localStorage.setItem("employeeTrainingCompleted", "true");
+  alert("Employee training completed.");
 }
