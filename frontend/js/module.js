@@ -148,6 +148,25 @@ function resetAfterCooldownIfExpired() {
     localStorage.removeItem("ams_der_cooldown_until");
   }
 }
+/* =========================
+   COOLDOWN MESSAGE (STEP 24.3 UI)
+========================= */
+function showCooldownMessage() {
+  const section = document.getElementById("quizSection");
+  if (!section) return;
+
+  const until = getCooldownUntil();
+  const minutesLeft = Math.max(
+    1,
+    Math.ceil((until - Date.now()) / 60000)
+  );
+
+  section.innerHTML = `
+    <h2>Quiz Temporarily Locked</h2>
+    <p>You have reached the maximum number of attempts.</p>
+    <p>Please wait <strong>${minutesLeft} minute(s)</strong> before trying again.</p>
+  `;
+}
 
 /* =========================
    QUIZ LOGIC
