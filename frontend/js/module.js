@@ -25,27 +25,32 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  /* 🔒 HARD LOCK — DER AFTER COMPLETION */
+  /* =========================
+     🔒 HARD LOCK AFTER COMPLETION (DER)
+  ========================= */
+
   if (
-    document.body.dataset.module === "der" &&
-    localStorage.getItem("derTrainingCompleted") === "true" &&
-    section !== "certificate"
+    module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true"
   ) {
-    // Force certificate only
     document.getElementById("contentSection")?.classList.add("hidden");
     document.getElementById("quizSection")?.classList.add("hidden");
     document.getElementById("certificateSection")?.classList.remove("hidden");
     return;
   }
-  
+
+  /* =========================
+     EMPLOYEE COMPLETION (SOFT)
+  ========================= */
+
   if (
-  module === "employee" &&
-  localStorage.getItem("employeeTrainingCompleted") === "true"
-) {
-  alert("Employee training already completed.");
-  showSection("content");
-  return;
-}
+    module === "employee" &&
+    localStorage.getItem("employeeTrainingCompleted") === "true"
+  ) {
+    alert("Employee training already completed.");
+    showSection("content");
+    return;
+  }
 
   /* =========================
      DEFAULT START
@@ -59,30 +64,44 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================= */
 
 function showSection(section) {
-  // Enforce Step 22 authority (KEEP THIS)
+
+  /* 🔒 HARD LOCK — DER AFTER COMPLETION (GLOBAL) */
+  if (
+    document.body.dataset.module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true" &&
+    section !== "certificate"
+  ) {
+    document.getElementById("contentSection")?.classList.add("hidden");
+    document.getElementById("quizSection")?.classList.add("hidden");
+    document.getElementById("certificateSection")?.classList.remove("hidden");
+    return;
+  }
+
+  // Step 22 — Content → Quiz
   if (section === "quiz" && typeof hasCompletedContent === "function") {
     if (!hasCompletedContent()) return;
   }
 
+  // Step 23 — Quiz → Certificate
   if (section === "certificate" && typeof hasPassedQuiz === "function") {
     if (!hasPassedQuiz()) return;
   }
 
-  document.getElementById("contentSection").classList.add("hidden");
-  document.getElementById("quizSection").classList.add("hidden");
-  document.getElementById("certificateSection").classList.add("hidden");
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.add("hidden");
 
   if (section === "content") {
-    document.getElementById("contentSection").classList.remove("hidden");
+    document.getElementById("contentSection")?.classList.remove("hidden");
   }
 
   if (section === "quiz") {
-    document.getElementById("quizSection").classList.remove("hidden");
+    document.getElementById("quizSection")?.classList.remove("hidden");
     loadModuleQuiz();
   }
 
   if (section === "certificate") {
-    document.getElementById("certificateSection").classList.remove("hidden");
+    document.getElementById("certificateSection")?.classList.remove("hidden");
   }
 }
 
@@ -128,14 +147,15 @@ function getOrCreateVerification() {
 }
 
 /* =========================
-   QUIZ STATE (LOCAL ONLY)
+   QUIZ STATE
 ========================= */
 
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
+
 /* =========================
-   MODULE QUIZ LOADER (STEP 23.3)
+   MODULE QUIZ LOADER
 ========================= */
 
 async function loadModuleQuiz() {
@@ -147,18 +167,16 @@ async function loadModuleQuiz() {
     if (!res.ok) throw new Error("Quiz not found");
 
     const data = await res.json();
-    loadQuiz(data); // existing quiz engine
+    loadQuiz(data);
   } catch (err) {
     console.error("Quiz load failed:", err);
-    const quizSection = document.getElementById("quizSection");
-    if (quizSection) {
-      quizSection.innerHTML = "<p>Quiz unavailable.</p>";
-    }
+    document.getElementById("quizSection").innerHTML =
+      "<p>Quiz unavailable.</p>";
   }
 }
 
 /* =========================
-   ATTEMPT HELPERS (DER SAFE FOR NOW)
+   ATTEMPTS + COOLDOWN
 ========================= */
 
 const ATTEMPT_KEY = "ams_der_quiz_attempts";
@@ -173,24 +191,14 @@ function incrementAttempts() {
   return attempts;
 }
 
-/* =========================
-   COOLDOWN HELPERS (STEP 24)
-========================= */
-
 function getCooldownUntil() {
-  return parseInt(
-    localStorage.getItem("ams_der_cooldown_until") || "0",
-    10
-  );
+  return parseInt(localStorage.getItem("ams_der_cooldown_until") || "0", 10);
 }
 
 function startCooldown() {
-  const until =
-    Date.now() + COOLDOWN_MINUTES * 60 * 1000;
-
   localStorage.setItem(
     "ams_der_cooldown_until",
-    until
+    Date.now() + COOLDOWN_MINUTES * 60000
   );
 }
 
@@ -204,32 +212,12 @@ function resetAfterCooldownIfExpired() {
     localStorage.removeItem("ams_der_cooldown_until");
   }
 }
-/* =========================
-   COOLDOWN MESSAGE (STEP 24.3 UI)
-========================= */
-function showCooldownMessage() {
-  const section = document.getElementById("quizSection");
-  if (!section) return;
-
-  const until = getCooldownUntil();
-  const minutesLeft = Math.max(
-    1,
-    Math.ceil((until - Date.now()) / 60000)
-  );
-
-  section.innerHTML = `
-    <h2>Quiz Temporarily Locked</h2>
-    <p>You have reached the maximum number of attempts.</p>
-    <p>Please wait <strong>${minutesLeft} minute(s)</strong> before trying again.</p>
-  `;
-}
 
 /* =========================
-   QUIZ LOGIC
+   QUIZ ENGINE
 ========================= */
 
 function loadQuiz(data) {
-  // STEP 24.3 — cooldown enforcement
   resetAfterCooldownIfExpired();
 
   if (isInCooldown()) {
@@ -244,33 +232,20 @@ function loadQuiz(data) {
 }
 
 function renderQuestion() {
-  const section = document.getElementById("quizSection");
-
-  if (!quizData.length) {
-    section.innerHTML = "<p>No quiz available.</p>";
-    return;
-  }
-
   const q = quizData[currentQuestion];
 
-  section.innerHTML = `
+  document.getElementById("quizSection").innerHTML = `
     <h2>${q.question}</h2>
     <div class="quiz-options">
       ${q.options
-        .map(
-          (opt, i) =>
-            `<button onclick="submitAnswer(${i})">${opt}</button>`
-        )
+        .map((opt, i) => `<button onclick="submitAnswer(${i})">${opt}</button>`)
         .join("")}
     </div>
   `;
 }
 
 function submitAnswer(selected) {
-  if (selected === quizData[currentQuestion].answer) {
-    score++;
-  }
-
+  if (selected === quizData[currentQuestion].answer) score++;
   currentQuestion++;
 
   if (currentQuestion < quizData.length) {
@@ -281,92 +256,63 @@ function submitAnswer(selected) {
 }
 
 /* =========================
-   RESULTS (STEP 22 AUTHORITY)
+   QUIZ RESULT
 ========================= */
 
 function showQuizResult() {
-  const section = document.getElementById("quizSection");
-
   const attempts = incrementAttempts();
   const percentage = Math.round((score / quizData.length) * 100);
-  const passed = percentage >= PASS_PERCENTAGE;
 
-  if (passed) {
-    // User passed — final success
+  if (percentage >= PASS_PERCENTAGE) {
     markQuizPassed();
     populateCertificate();
-
-    section.innerHTML = `
-      <h2>Passed</h2>
-      <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
-      <p>You may now access your certificate.</p>
-    `;
     return;
   }
 
-  // STEP 24.4 — start cooldown after 3 failed attempts
   if (attempts >= MAX_ATTEMPTS) {
     startCooldown();
     showCooldownMessage();
     return;
   }
 
-  // Failed attempt but still allowed to retry
-  section.innerHTML = `
+  document.getElementById("quizSection").innerHTML = `
     <h2>Failed</h2>
-    <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
-    <p>You have ${MAX_ATTEMPTS - attempts} attempt(s) remaining.</p>
+    <p>You scored ${percentage}%</p>
+    <p>${MAX_ATTEMPTS - attempts} attempt(s) remaining</p>
   `;
 }
 
 /* =========================
-   CERTIFICATE DISPLAY ONLY
+   CERTIFICATE
 ========================= */
 
 function populateCertificate() {
-  const nameEl = document.getElementById("certName");
-  const dateEl = document.getElementById("certDate");
-  const verifyEl = document.getElementById("certVerify");
-
-  if (!nameEl || !dateEl) return;
-
   const verify = getOrCreateVerification();
 
-  nameEl.textContent = "Employee Name";
-  dateEl.textContent = new Date(verify.issuedAt).toLocaleDateString();
-
-  if (verifyEl) {
-    verifyEl.textContent = verify.id;
-  }
+  document.getElementById("certName").textContent = "Employee Name";
+  document.getElementById("certDate").textContent =
+    new Date(verify.issuedAt).toLocaleDateString();
+  document.getElementById("certVerify").textContent = verify.id;
 
   renderCertificateQR(verify.id);
-   
-  // 🔒 DER TRAINING COMPLETED — LOCK FOREVER
-localStorage.setItem("derTrainingCompleted", "true");
 
-  // 🔒 FORCE certificate-only view
+  localStorage.setItem("derTrainingCompleted", "true");
   showSection("certificate");
 }
 
-function renderCertificateQR(verificationId) {
-  const qrContainer = document.getElementById("certQR");
-  if (!qrContainer) return;
+function renderCertificateQR(id) {
+  const el = document.getElementById("certQR");
+  el.innerHTML = "";
 
-  const verifyUrl =
-    window.location.origin +
-    "/verify.html?id=" +
-    encodeURIComponent(verificationId);
-
-  qrContainer.innerHTML = "";
-
-  new QRCode(qrContainer, {
-    text: verifyUrl,
+  new QRCode(el, {
+    text: `${location.origin}/verify.html?id=${id}`,
     width: 128,
     height: 128
   });
 }
+
 /* =========================
-   EMPLOYEE TRAINING COMPLETION
+   EMPLOYEE COMPLETION
 ========================= */
 
 function completeEmployeeTraining() {
