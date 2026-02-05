@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.dataset.module === "der") {
-    // Force initial DER view
+  const module = document.body.dataset.module;
+
+  if (module === "der") {
     showSection("content");
   }
-});
-document.addEventListener("DOMContentLoaded", () => {
+
   if (
-    document.body.dataset.module === "employee" &&
+    module === "employee" &&
     localStorage.getItem("employeeTrainingCompleted") === "true"
   ) {
     alert("Employee training already completed.");
