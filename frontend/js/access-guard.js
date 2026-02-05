@@ -1,7 +1,6 @@
 /* =========================================================
-   AMS TRAINING ACCESS GUARD (STEP 22.4)
+   AMS TRAINING ACCESS GUARD (FIXED)
 ========================================================= */
-
 (function () {
   const DEV_OVERRIDE = localStorage.getItem("ams_dev_override") === "true";
 
@@ -17,12 +16,13 @@
   // If no module defined, nothing to guard
   if (!module) return;
 
-  // Module unlock key (future payment hook)
-  const unlocked = localStorage.getItem(`ams_${module}_unlocked`) === "true";
+  // 🔑 PAYMENT CHECK (NOT QUIZ PASS)
+  const paidKey = `paid_${module}`;
+  const isPaid = localStorage.getItem(paidKey) === "true";
 
-  // Block direct URL access
-  if (!unlocked && !DEV_OVERRIDE) {
-    console.warn(`🔒 Access blocked to ${module} module`);
+  if (!isPaid && !DEV_OVERRIDE) {
+    console.warn(`🔒 ${module} not purchased`);
     window.location.replace("dashboard.html");
+    return;
   }
 })();
