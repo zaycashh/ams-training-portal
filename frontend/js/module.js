@@ -21,8 +21,9 @@ function showSection(section) {
   }
 
   if (section === "quiz") {
-    document.getElementById("quizSection").classList.remove("hidden");
-  }
+  document.getElementById("quizSection").classList.remove("hidden");
+  loadModuleQuiz();
+}
 
   if (section === "certificate") {
     document.getElementById("certificateSection").classList.remove("hidden");
@@ -76,6 +77,28 @@ function getOrCreateVerification() {
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
+/* =========================
+   MODULE QUIZ LOADER (STEP 23.3)
+========================= */
+
+async function loadModuleQuiz() {
+  const module = document.body.getAttribute("data-module");
+  if (!module) return;
+
+  try {
+    const res = await fetch(`../quizzes/${module}.json`);
+    if (!res.ok) throw new Error("Quiz not found");
+
+    const data = await res.json();
+    loadQuiz(data); // existing quiz engine
+  } catch (err) {
+    console.error("Quiz load failed:", err);
+    const quizSection = document.getElementById("quizSection");
+    if (quizSection) {
+      quizSection.innerHTML = "<p>Quiz unavailable.</p>";
+    }
+  }
+}
 
 /* =========================
    ATTEMPT HELPERS (DER SAFE FOR NOW)
