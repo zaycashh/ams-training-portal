@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="../css/main.css" />
 </head>
+
 <body data-module="der">
 
   <main class="module-container">
@@ -29,20 +30,33 @@
 
     <!-- NAV -->
     <nav class="module-nav">
-      <button onclick="showSection('content')" data-lang="navContent"></button>
-      <button onclick="showSection('quiz')" data-lang="navQuiz"></button>
       <button
+        id="tabContent"
+        onclick="showSection('content')"
+        data-lang="navContent">
+      </button>
+
+      <button
+        id="tabQuiz"
+        onclick="showSection('quiz')"
+        data-lang="navQuiz">
+      </button>
+
+      <button
+        id="tabCertificate"
         onclick="showSection('certificate')"
-        class="disabled"
-        disabled
-        data-lang="navCertificate"
-      ></button>
+        data-lang="navCertificate">
+      </button>
     </nav>
 
     <!-- CONTENT -->
     <section id="contentSection" class="module-section">
       <h2 data-lang="contentTitle"></h2>
       <p data-lang="contentIntro"></p>
+
+      <button class="btn-primary" onclick="markContentComplete()">
+        Continue to Quiz
+      </button>
     </section>
 
     <!-- QUIZ -->
@@ -54,7 +68,6 @@
     <!-- CERTIFICATE -->
     <section id="certificateSection" class="module-section hidden">
       <h2 data-lang="certificateTitle"></h2>
-
       <p data-lang="certificateIntro"></p>
 
       <p>
@@ -81,12 +94,12 @@
 
   </main>
 
-  <!-- SCRIPTS -->
+  <!-- SCRIPTS (ORDER MATTERS) -->
   <script src="../js/lang-loader.js"></script>
+  <script src="../js/progress.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <script src="../js/module.js"></script>
-  <script src="../js/progress.js"></script>
 
 </body>
 </html>
