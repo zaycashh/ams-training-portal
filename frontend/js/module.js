@@ -227,6 +227,17 @@ function resetAfterCooldownIfExpired() {
   }
 }
 
+function showCooldownMessage() {
+  const minutesLeft = Math.ceil(
+    (getCooldownUntil() - Date.now()) / 60000
+  );
+
+  document.getElementById("quizSection").innerHTML = `
+    <h2>Quiz Locked</h2>
+    <p>You have reached the maximum number of attempts.</p>
+    <p>Please wait <strong>${minutesLeft}</strong> minute(s) before retrying.</p>
+  `;
+}
 /* =========================
    QUIZ ENGINE
 ========================= */
