@@ -30,14 +30,22 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
 
   if (
-    module === "der" &&
-    localStorage.getItem("derTrainingCompleted") === "true"
-  ) {
-    document.getElementById("contentSection")?.classList.add("hidden");
-    document.getElementById("quizSection")?.classList.add("hidden");
-    document.getElementById("certificateSection")?.classList.remove("hidden");
-    return;
-  }
+  module === "der" &&
+  localStorage.getItem("derTrainingCompleted") === "true"
+) {
+  // Hide everything else
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+
+  // Show certificate
+  const cert = document.getElementById("certificateSection");
+  cert?.classList.remove("hidden");
+
+  // 🔑 IMPORTANT: rehydrate certificate data
+  populateCertificate();
+
+  return;
+}
 
   /* =========================
      EMPLOYEE COMPLETION (SOFT)
