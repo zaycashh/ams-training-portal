@@ -25,19 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-/* =========================
-   HARD LOCK AFTER COMPLETION (DER)
-========================= */
-
-if (
-  module === "der" &&
-  localStorage.getItem("derTrainingCompleted") === "true"
-) {
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-  document.getElementById("certificateSection")?.classList.remove("hidden");
-  return;
-}
+  /* 🔒 HARD LOCK — DER AFTER COMPLETION */
+  if (
+    document.body.dataset.module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true" &&
+    section !== "certificate"
+  ) {
+    // Force certificate only
+    document.getElementById("contentSection")?.classList.add("hidden");
+    document.getElementById("quizSection")?.classList.add("hidden");
+    document.getElementById("certificateSection")?.classList.remove("hidden");
+    return;
+  }
   
   if (
   module === "employee" &&
