@@ -1,167 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const module = document.body.dataset.module;
-
-  /* =========================
-     🔐 PAYWALL CHECKS
-  ========================= */
-
-  // Employee = per-employee license
-  if (
-    module === "employee" &&
-    localStorage.getItem("paid_employee") !== "true"
-  ) {
-    alert("Employee Training requires purchase.");
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  // DER = paid compliance module
-  if (
-    module === "der" &&
-    localStorage.getItem("paid_der") !== "true"
-  ) {
-    alert("DER Training requires purchase.");
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  /* =========================
-     🔒 HARD LOCK AFTER COMPLETION (DER)
-  ========================= */
-
-  if (
-  module === "der" &&
-  localStorage.getItem("derTrainingCompleted") === "true"
-) {
-  // Hide everything else
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-
-  // Show certificate
-  const cert = document.getElementById("certificateSection");
-  cert?.classList.remove("hidden");
-
-  // 🔑 IMPORTANT: rehydrate certificate data
-  populateCertificate();
-
-  return;
-}
-
-  /* =========================
-     EMPLOYEE COMPLETION (SOFT)
-  ========================= */
-
-  if (
-    module === "employee" &&
-    localStorage.getItem("employeeTrainingCompleted") === "true"
-  ) {
-    alert("Employee training already completed.");
-    showSection("content");
-    return;
-  }
-
-  /* =========================
-     DEFAULT START
-  ========================= */
-
-  showSection("content");
-});
+/* =========================================================
+   AMS TRAINING PORTAL — CORE LOGIC (SHARED)
+   ❌ NO DER / EMPLOYEE / SUPERVISOR SPECIFIC CODE
+========================================================= */
 
 /* =========================
-   SECTION NAVIGATION (STEP 22.3 ENFORCED)
-========================= */
-
-function showSection(section) {
-
-  /* 🔒 HARD LOCK — DER AFTER COMPLETION (GLOBAL) */
-  if (
-    document.body.dataset.module === "der" &&
-    localStorage.getItem("derTrainingCompleted") === "true" &&
-    section !== "certificate"
-  ) {
-    document.getElementById("contentSection")?.classList.add("hidden");
-    document.getElementById("quizSection")?.classList.add("hidden");
-    document.getElementById("certificateSection")?.classList.remove("hidden");
-    return;
-  }
-
-  // Step 22 — Content → Quiz
-  if (section === "quiz" && typeof hasCompletedContent === "function") {
-    if (!hasCompletedContent()) return;
-  }
-  // Step 23 — Quiz → Certificate (skip if DER already completed)
-if (
-  section === "certificate" &&
-  typeof hasPassedQuiz === "function" &&
-  !(
-    document.body.dataset.module === "der" &&
-    localStorage.getItem("derTrainingCompleted") === "true"
-  )
-) {
-  if (!hasPassedQuiz()) return;
-}
-
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-  document.getElementById("certificateSection")?.classList.add("hidden");
-
-  if (section === "content") {
-    document.getElementById("contentSection")?.classList.remove("hidden");
-  }
-
-  if (section === "quiz") {
-    document.getElementById("quizSection")?.classList.remove("hidden");
-    loadModuleQuiz();
-  }
-
-  if (section === "certificate") {
-    document.getElementById("certificateSection")?.classList.remove("hidden");
-  }
-}
-
-function goDashboard() {
-  window.location.href = "dashboard.html";
-}
-
-/* =========================
-   DOT COMPLIANCE CONSTANTS
-========================= */
-
-const PASS_PERCENTAGE = 80;
-const MAX_ATTEMPTS = 3;
-const COOLDOWN_MINUTES = 15;
-
-/* =========================
-   CERT VERIFICATION (SAFE)
-========================= */
-
-const CERT_VERIFY_KEY = "ams_certificate_verification";
-
-function generateVerificationId() {
-  return (
-    "AMS-" +
-    Math.random().toString(36).substring(2, 6).toUpperCase() +
-    "-" +
-    Date.now().toString().slice(-6)
-  );
-}
-
-function getOrCreateVerification() {
-  let record = JSON.parse(localStorage.getItem(CERT_VERIFY_KEY) || "null");
-
-  if (!record) {
-    record = {
-      id: generateVerificationId(),
-      issuedAt: new Date().toISOString()
-    };
-    localStorage.setItem(CERT_VERIFY_KEY, JSON.stringify(record));
-  }
-
-  return record;
-}
-
-/* =========================
-   QUIZ STATE
+   GLOBAL STATE
 ========================= */
 
 let quizData = [];
@@ -169,7 +12,43 @@ let currentQuestion = 0;
 let score = 0;
 
 /* =========================
-   MODULE QUIZ LOADER
+   DOM READY
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Default entry point
+  showSection("content");
+});
+
+/* =========================
+   SECTION NAVIGATION
+========================= */
+
+function showSection(section) {
+  const content = document.getElementById("contentSection");
+  const quiz = document.getElementById("quizSection");
+  const cert = document.getElementById("certificateSection");
+
+  content?.classList.add("hidden");
+  quiz?.classList.add("hidden");
+  cert?.classList.add("hidden");
+
+  if (section === "content") {
+    content?.classList.remove("hidden");
+  }
+
+  if (section === "quiz") {
+    quiz?.classList.remove("hidden");
+    loadModuleQuiz();
+  }
+
+  if (section === "certificate") {
+    cert?.classList.remove("hidden");
+  }
+}
+
+/* =========================
+   MODULE QUIZ LOADER (SHARED)
 ========================= */
 
 async function loadModuleQuiz() {
@@ -184,93 +63,53 @@ async function loadModuleQuiz() {
     loadQuiz(data);
   } catch (err) {
     console.error("Quiz load failed:", err);
-    document.getElementById("quizSection").innerHTML =
-      "<p>Quiz unavailable.</p>";
+    const quiz = document.getElementById("quizSection");
+    if (quiz) quiz.innerHTML = "<p>Quiz unavailable.</p>";
   }
 }
 
 /* =========================
-   ATTEMPTS + COOLDOWN
-========================= */
-
-const ATTEMPT_KEY = "ams_der_quiz_attempts";
-
-function getAttempts() {
-  return parseInt(localStorage.getItem(ATTEMPT_KEY) || "0", 10);
-}
-
-function incrementAttempts() {
-  const attempts = getAttempts() + 1;
-  localStorage.setItem(ATTEMPT_KEY, attempts);
-  return attempts;
-}
-
-function getCooldownUntil() {
-  return parseInt(localStorage.getItem("ams_der_cooldown_until") || "0", 10);
-}
-
-function startCooldown() {
-  localStorage.setItem(
-    "ams_der_cooldown_until",
-    Date.now() + COOLDOWN_MINUTES * 60000
-  );
-}
-
-function isInCooldown() {
-  return Date.now() < getCooldownUntil();
-}
-
-function resetAfterCooldownIfExpired() {
-  if (!isInCooldown() && getAttempts() >= MAX_ATTEMPTS) {
-    localStorage.removeItem(ATTEMPT_KEY);
-    localStorage.removeItem("ams_der_cooldown_until");
-  }
-}
-
-function showCooldownMessage() {
-  const minutesLeft = Math.ceil(
-    (getCooldownUntil() - Date.now()) / 60000
-  );
-
-  document.getElementById("quizSection").innerHTML = `
-    <h2>Quiz Locked</h2>
-    <p>You have reached the maximum number of attempts.</p>
-    <p>Please wait <strong>${minutesLeft}</strong> minute(s) before retrying.</p>
-  `;
-}
-/* =========================
-   QUIZ ENGINE
+   QUIZ ENGINE (GENERIC)
 ========================= */
 
 function loadQuiz(data) {
-  resetAfterCooldownIfExpired();
-
-  if (isInCooldown()) {
-    showCooldownMessage();
-    return;
-  }
-
   quizData = data.quiz || [];
   currentQuestion = 0;
   score = 0;
+
+  if (!quizData.length) {
+    document.getElementById("quizSection").innerHTML =
+      "<p>No quiz questions available.</p>";
+    return;
+  }
+
   renderQuestion();
 }
 
 function renderQuestion() {
   const q = quizData[currentQuestion];
+  if (!q) return;
 
   document.getElementById("quizSection").innerHTML = `
     <h2>${q.question}</h2>
     <div class="quiz-options">
       ${q.options
-        .map((opt, i) => `<button onclick="submitAnswer(${i})">${opt}</button>`)
+        .map(
+          (opt, i) =>
+            `<button onclick="submitAnswer(${i})">${opt}</button>`
+        )
         .join("")}
     </div>
   `;
 }
 
-function submitAnswer(selected) {
-  if (selected === quizData[currentQuestion].answer) score++;
+function submitAnswer(selectedIndex) {
+  const correct = quizData[currentQuestion].answer;
+
+  if (selectedIndex === correct) {
+    score++;
+  }
+
   currentQuestion++;
 
   if (currentQuestion < quizData.length) {
@@ -281,66 +120,47 @@ function submitAnswer(selected) {
 }
 
 /* =========================
-   QUIZ RESULT
+   QUIZ RESULT (DELEGATES)
 ========================= */
 
 function showQuizResult() {
-  const attempts = incrementAttempts();
-  const percentage = Math.round((score / quizData.length) * 100);
+  const module = document.body.getAttribute("data-module");
 
-  if (percentage >= PASS_PERCENTAGE) {
-    markQuizPassed();
-    populateCertificate();
+  // Delegate result handling to module-specific JS
+  if (module === "der" && typeof handleDerQuizResult === "function") {
+    handleDerQuizResult(score, quizData.length);
     return;
   }
 
-  if (attempts >= MAX_ATTEMPTS) {
-    startCooldown();
-    showCooldownMessage();
+  if (
+    module === "employee" &&
+    typeof handleEmployeeQuizResult === "function"
+  ) {
+    handleEmployeeQuizResult(score, quizData.length);
     return;
   }
 
+  if (
+    module === "supervisor" &&
+    typeof handleSupervisorQuizResult === "function"
+  ) {
+    handleSupervisorQuizResult(score, quizData.length);
+    return;
+  }
+
+  // Fallback (should not happen)
   document.getElementById("quizSection").innerHTML = `
-    <h2>Failed</h2>
-    <p>You scored ${percentage}%</p>
-    <p>${MAX_ATTEMPTS - attempts} attempt(s) remaining</p>
+    <h2>Quiz Complete</h2>
+    <p>You scored ${Math.round(
+      (score / quizData.length) * 100
+    )}%</p>
   `;
 }
 
 /* =========================
-   CERTIFICATE
+   DASHBOARD NAV
 ========================= */
 
-function populateCertificate() {
-  const verify = getOrCreateVerification();
-
-  document.getElementById("certName").textContent = "Employee Name";
-  document.getElementById("certDate").textContent =
-    new Date(verify.issuedAt).toLocaleDateString();
-  document.getElementById("certVerify").textContent = verify.id;
-
-  renderCertificateQR(verify.id);
-
-  localStorage.setItem("derTrainingCompleted", "true");
-  showSection("certificate");
-}
-
-function renderCertificateQR(id) {
-  const el = document.getElementById("certQR");
-  el.innerHTML = "";
-
-  new QRCode(el, {
-    text: `${location.origin}/verify.html?id=${id}`,
-    width: 128,
-    height: 128
-  });
-}
-
-/* =========================
-   EMPLOYEE COMPLETION
-========================= */
-
-function completeEmployeeTraining() {
-  localStorage.setItem("employeeTrainingCompleted", "true");
-  alert("Employee training completed.");
+function goDashboard() {
+  window.location.href = "../pages/dashboard.html";
 }
