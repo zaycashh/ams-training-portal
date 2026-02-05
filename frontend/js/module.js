@@ -215,30 +215,30 @@ function showQuizResult() {
   const passed = percentage >= PASS_PERCENTAGE;
 
   if (passed) {
-    // Step 22 owns progression
+    // User passed — final success
     markQuizPassed();
     populateCertificate();
+
+    section.innerHTML = `
+      <h2>Passed</h2>
+      <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
+      <p>You may now access your certificate.</p>
+    `;
+    return;
   }
 
+  // STEP 24.4 — start cooldown after 3 failed attempts
+  if (attempts >= MAX_ATTEMPTS) {
+    startCooldown();
+    showCooldownMessage();
+    return;
+  }
+
+  // Failed attempt but still allowed to retry
   section.innerHTML = `
-    <h2>${passed ? "Passed" : "Failed"}</h2>
+    <h2>Failed</h2>
     <p>You scored ${score} / ${quizData.length} (${percentage}%)</p>
-    ${
-      passed
-        ? "<p>You may now access your certificate.</p>"
-        : `<p>You have ${MAX_ATTEMPTS - attempts} attempt(s) remaining.</p>`
-    }
-  `;
-}
-
-function showLockoutMessage() {
-  const section = document.getElementById("quizSection");
-
-  section.innerHTML = `
-    <h2>Training Locked</h2>
-    <p>You have reached the maximum number of quiz attempts.</p>
-    <p>DOT regulations require retraining before another attempt.</p>
-    <p><strong>Please contact your administrator.</strong></p>
+    <p>You have ${MAX_ATTEMPTS - attempts} attempt(s) remaining.</p>
   `;
 }
 
