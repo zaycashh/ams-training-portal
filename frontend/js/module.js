@@ -81,11 +81,17 @@ function showSection(section) {
   if (section === "quiz" && typeof hasCompletedContent === "function") {
     if (!hasCompletedContent()) return;
   }
-
-  // Step 23 — Quiz → Certificate
-  if (section === "certificate" && typeof hasPassedQuiz === "function") {
-    if (!hasPassedQuiz()) return;
-  }
+  // Step 23 — Quiz → Certificate (skip if DER already completed)
+if (
+  section === "certificate" &&
+  typeof hasPassedQuiz === "function" &&
+  !(
+    document.body.dataset.module === "der" &&
+    localStorage.getItem("derTrainingCompleted") === "true"
+  )
+) {
+  if (!hasPassedQuiz()) return;
+}
 
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
