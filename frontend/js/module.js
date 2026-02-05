@@ -284,6 +284,9 @@ function populateCertificate() {
   }
 
   renderCertificateQR(verify.id);
+   
+  // 🔒 DER TRAINING COMPLETED — LOCK FOREVER
+localStorage.setItem("derTrainingCompleted", "true");
 }
 
 function renderCertificateQR(verificationId) {
