@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Already completed
   if (localStorage.getItem("employeeTrainingCompleted") === "true") {
-    showSection("content");
+    showSection("certificate");
   }
 });
 
@@ -30,7 +30,7 @@ function handleEmployeeQuizResult(score, total) {
     <p>You scored ${percentage}%</p>
 
     <button class="btn-primary" onclick="finishEmployeeTraining()">
-      Return to Dashboard
+      Finish Training
     </button>
   `;
 }
@@ -41,5 +41,5 @@ function handleEmployeeQuizResult(score, total) {
 
 function finishEmployeeTraining() {
   localStorage.setItem("employeeTrainingCompleted", "true");
-  window.location.href = "dashboard.html";
+  showSection("certificate");
 }
