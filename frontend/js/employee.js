@@ -3,8 +3,7 @@
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const module = document.body.dataset.module;
-  if (module !== "employee") return;
+  if (document.body.dataset.module !== "employee") return;
 
   // 🔐 Paywall
   if (localStorage.getItem("paid_employee") !== "true") {
@@ -27,11 +26,11 @@ function handleEmployeeQuizResult(score, total) {
   const percentage = Math.round((score / total) * 100);
 
   document.getElementById("quizSection").innerHTML = `
-    <h2>Quiz Complete</h2>
+    <h2>Training Completed</h2>
     <p>You scored ${percentage}%</p>
 
     <button class="btn-primary" onclick="finishEmployeeTraining()">
-      Finish Training
+      Return to Dashboard
     </button>
   `;
 }
