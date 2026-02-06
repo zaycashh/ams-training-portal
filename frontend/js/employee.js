@@ -208,3 +208,9 @@ function populateEmployeeCertificate() {
     console.warn("QR container or QRCode library missing");
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("continueToQuizBtn");
+  if (btn) {
+    btn.addEventListener("click", completeEmployeeContent);
+  }
+});
