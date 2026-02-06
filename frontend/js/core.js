@@ -126,27 +126,21 @@ function submitAnswer(selectedIndex) {
 function showQuizResult() {
   const module = document.body.getAttribute("data-module");
 
-  // Delegate result handling to module-specific JS
   if (module === "der" && typeof handleDerQuizResult === "function") {
     handleDerQuizResult(score, quizData.length);
     return;
   }
 
-  if (
-    module === "employee" &&
-    typeof handleEmployeeQuizResult === "function"
-  ) {
+  if (module === "employee" && typeof handleEmployeeQuizResult === "function") {
     handleEmployeeQuizResult(score, quizData.length);
     return;
   }
 
-  if (
-    module === "supervisor" &&
-    typeof handleSupervisorQuizResult === "function"
-  ) {
+  if (module === "supervisor" && typeof handleSupervisorQuizResult === "function") {
     handleSupervisorQuizResult(score, quizData.length);
     return;
   }
+}
 
   // Fallback (should not happen)
   document.getElementById("quizSection").innerHTML = `
