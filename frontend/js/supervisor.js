@@ -41,8 +41,8 @@ function setActiveTab(tab) {
 /* =========================
    SECTION NAVIGATION (GUARDED)
 ========================= */
-function showSection(section) {
 
+function showSection(section) {
   if (localStorage.getItem(SUPERVISOR_COMPLETED_KEY) === "true") {
     lockToSupervisorCertificate();
     return;
@@ -157,7 +157,15 @@ function handleSupervisorQuizResult(score, total) {
 /* =========================
    FINALIZE TRAINING
 ========================= */
+
 function finishSupervisorTraining() {
+  if (!localStorage.getItem(SUPERVISOR_CERT_CODE_KEY)) {
+    localStorage.setItem(
+      SUPERVISOR_CERT_CODE_KEY,
+      "AMS-SUP-" + Date.now()
+    );
+  }
+
   localStorage.setItem(SUPERVISOR_COMPLETED_KEY, "true");
   lockToSupervisorCertificate();
 }
