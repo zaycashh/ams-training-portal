@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ✅ THIS IS THE MISSING PIECE
     setActiveTab(section);
-  }
 }
 
 /* =========================
