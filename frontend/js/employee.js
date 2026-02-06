@@ -1,22 +1,3 @@
-/* =========================
-   DER CERTIFICATE HARD LOCK
-========================= */
-
-function lockToDerCertificate() {
-  // 🔒 Hide content + quiz
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-
-  // 🔒 Disable tab buttons if present
-  document
-    .querySelectorAll(".module-nav button")
-    .forEach(btn => (btn.disabled = true));
-
-  // ✅ Show certificate ONLY
-  document
-    .getElementById("certificateSection")
-    ?.classList.remove("hidden");
-}
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
    (MATCHES DER LOGIC EXACTLY)
