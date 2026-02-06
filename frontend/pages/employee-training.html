@@ -1,33 +1,71 @@
-/* =========================
-   EMPLOYEE QUIZ RESULT
-========================= */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Employee Training | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-function handleEmployeeQuizResult(score, total) {
-  const percentage = Math.round((score / total) * 100);
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
 
-  document.getElementById("quizSection").innerHTML = `
-    <h2>Training Completed</h2>
-    <p>You scored ${percentage}%</p>
-    <p>This training has been successfully completed.</p>
+<body data-module="employee">
 
-    <button class="btn-primary" onclick="finishEmployeeTraining()">
-      Return to Dashboard
-    </button>
-  `;
-}
+  <main class="module-container">
 
-/* =========================
-   COMPLETE TRAINING
-========================= */
+    <!-- HEADER -->
+    <header class="module-header">
+      <h1 data-lang="title"></h1>
 
-function finishEmployeeTraining() {
-  localStorage.setItem("employeeTrainingCompleted", "true");
-  window.location.href = "dashboard.html";
-}
-<!-- SCRIPTS -->
-<script src="../js/access-guard.js"></script>
-<script src="../js/lang-loader.js"></script>
-<script src="../js/progress.js"></script>
+      <div class="module-controls">
+        <select id="languageToggle">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
 
-<script src="../js/core.js"></script>
-<script src="../js/employee.js"></script>
+        <button class="btn-secondary" onclick="goDashboard()">
+          Back to Dashboard
+        </button>
+      </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="module-nav">
+      <button id="tabContent" onclick="showSection('content')" data-lang="navContent"></button>
+      <button id="tabQuiz" onclick="showSection('quiz')" data-lang="navQuiz"></button>
+      <button id="tabCertificate" onclick="showSection('certificate')" data-lang="navCertificate"></button>
+    </nav>
+
+    <!-- CONTENT -->
+    <section id="contentSection" class="module-section">
+      <h2 data-lang="contentTitle"></h2>
+      <p data-lang="contentIntro"></p>
+
+      <button class="btn-primary" onclick="showSection('quiz')">
+        Continue to Quiz
+      </button>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quizSection" class="module-section hidden">
+      <h2 data-lang="quizTitle"></h2>
+      <p data-lang="quizIntro"></p>
+    </section>
+
+    <!-- CERTIFICATE / COMPLETION -->
+    <section id="certificateSection" class="module-section hidden">
+      <h2>Training Completed</h2>
+      <p>This training has been successfully completed.</p>
+    </section>
+
+  </main>
+
+  <!-- SCRIPTS (NO INLINE JS) -->
+  <script src="../js/access-guard.js"></script>
+  <script src="../js/lang-loader.js"></script>
+  <script src="../js/progress.js"></script>
+
+  <script src="../js/core.js"></script>
+  <script src="../js/employee.js"></script>
+
+</body>
+</html>
