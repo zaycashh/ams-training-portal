@@ -122,11 +122,21 @@ function finishEmployeeTraining() {
 }
 
 /* =========================
-   CERTIFICATE LOCK
+   EMPLOYEE CERTIFICATE HARD LOCK
 ========================= */
 
 function lockToEmployeeCertificate() {
+  // 🔒 Hide everything
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
-  document.getElementById("certificateSection")?.classList.remove("hidden");
+
+  // 🔒 Disable nav buttons (this is the missing piece)
+  document
+    .querySelectorAll(".module-nav button")
+    .forEach(btn => (btn.disabled = true));
+
+  // ✅ Show certificate ONLY
+  document
+    .getElementById("certificateSection")
+    ?.classList.remove("hidden");
 }
