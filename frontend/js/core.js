@@ -1,3 +1,20 @@
+/* =========================
+   TAB ACTIVE STATE HANDLER
+========================= */
+
+function setActiveTab(tabName) {
+  document.querySelectorAll(".module-nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  const activeBtn = document.querySelector(
+    `.module-nav button[data-tab="${tabName}"]`
+  );
+
+  if (activeBtn) {
+    activeBtn.classList.add("active");
+  }
+}
 /* =========================================================
    AMS TRAINING PORTAL — CORE LOGIC (SHARED)
    ⚠️ NO MODULE-SPECIFIC CODE HERE
