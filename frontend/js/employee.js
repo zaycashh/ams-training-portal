@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
    CONTENT COMPLETION
 ========================= */
 function completeEmployeeContent() {
-  localStorage.setItem(EMPLOYEE_CONTENT_DONE_KEY, "true");
+  localStorage.setItem("employeeContentCompleted", "true");
   showSection("quiz");
 }
 
