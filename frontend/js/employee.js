@@ -1,11 +1,16 @@
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
-   (MATCHES DER LOGIC EXACTLY)
+   (EXACT DER PARITY – HARD LOCK ENFORCED)
 ========================================================= */
 
 const EMPLOYEE_MAX_ATTEMPTS = 3;
 const EMPLOYEE_PASS_PERCENTAGE = 80;
 const EMPLOYEE_COOLDOWN_MINUTES = 15;
+
+const EMPLOYEE_COMPLETED_KEY = "employeeTrainingCompleted";
+const EMPLOYEE_PASSED_KEY = "employeeQuizPassed";
+const EMPLOYEE_ATTEMPTS_KEY = "employeeQuizAttempts";
+const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 
 /* =========================
    TAB ACTIVE STATE
@@ -28,79 +33,106 @@ function setActiveTab(tab) {
 /* =========================
    STATE HELPERS
 ========================= */
-
-function getEmployeeAttempts() {
-  return parseInt(localStorage.getItem("employeeQuizAttempts") || "0", 10);
+function getAttempts() {
+  return parseInt(localStorage.getItem(EMPLOYEE_ATTEMPTS_KEY) || "0", 10);
 }
 
-function setEmployeeAttempts(val) {
-  localStorage.setItem("employeeQuizAttempts", val);
+function setAttempts(v) {
+  localStorage.setItem(EMPLOYEE_ATTEMPTS_KEY, v);
 }
 
-function getEmployeeCooldown() {
-  return parseInt(
-    localStorage.getItem("employeeQuizCooldownUntil") || "0",
-    10
-  );
+function getCooldownUntil() {
+  return parseInt(localStorage.getItem(EMPLOYEE_COOLDOWN_KEY) || "0", 10);
 }
 
-function setEmployeeCooldown(ts) {
-  localStorage.setItem("employeeQuizCooldownUntil", ts);
+/* =========================
+   SECTION NAVIGATION (GUARDED)
+========================= */
+function showSection(section) {
+
+  /* 🔒 HARD LOCK AFTER COMPLETION */
+  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
+    lockToEmployeeCertificate();
+    return;
+  }
+
+  /* 🧱 AUTHORITY RULES */
+  if (section === "quiz") {
+    if (localStorage.getItem(EMPLOYEE_PASSED_KEY) === "true") return;
+  }
+
+  if (section === "certificate") {
+    if (localStorage.getItem(EMPLOYEE_PASSED_KEY) !== "true") return;
+  }
+
+  document.getElementById("contentSection").classList.add("hidden");
+  document.getElementById("quizSection").classList.add("hidden");
+  document.getElementById("certificateSection").classList.add("hidden");
+
+  if (section === "content") {
+    document.getElementById("contentSection").classList.remove("hidden");
+    setActiveTab("content");
+  }
+
+  if (section === "quiz") {
+    document.getElementById("quizSection").classList.remove("hidden");
+    loadModuleQuiz();
+    setActiveTab("quiz");
+  }
+
+  if (section === "certificate") {
+    document.getElementById("certificateSection").classList.remove("hidden");
+    setActiveTab("certificate");
+    populateEmployeeCertificate();
+  }
 }
 
 /* =========================
    PAGE LOAD GUARD
 ========================= */
-
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.module !== "employee") return;
 
-  // 🔐 Paywall
+  /* 🔐 PAYWALL */
   if (localStorage.getItem("paid_employee") !== "true") {
     alert("Employee Training requires purchase.");
     window.location.href = "dashboard.html";
     return;
   }
 
-  // 🏁 Training fully completed → certificate ONLY
-  if (localStorage.getItem("employeeTrainingCompleted") === "true") {
+  /* 🏁 COMPLETED → CERTIFICATE ONLY */
+  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToEmployeeCertificate();
-    setActiveTab("certificate");
     return;
   }
 
-  // 🧠 Quiz passed but training not finalized
-  if (localStorage.getItem("employeeQuizPassed") === "true") {
-    showSection("quiz");
-    setActiveTab("quiz");
+  /* 🧠 PASSED QUIZ → CERTIFICATE TAB */
+  if (localStorage.getItem(EMPLOYEE_PASSED_KEY) === "true") {
+    showSection("certificate");
     return;
   }
 
-  // 🧱 Default → content
+  /* 📘 DEFAULT */
   showSection("content");
-  setActiveTab("content");
 });
 
 /* =========================
    QUIZ RESULT HANDLER
 ========================= */
-
 function handleEmployeeQuizResult(score, total) {
-  const percentage = Math.round((score / total) * 100);
-  const attempts = getEmployeeAttempts() + 1;
-  setEmployeeAttempts(attempts);
+  const percent = Math.round((score / total) * 100);
+  const attempts = getAttempts() + 1;
+  setAttempts(attempts);
 
-  // ✅ PASSED
-  if (percentage >= EMPLOYEE_PASS_PERCENTAGE) {
-    localStorage.setItem("employeeQuizPassed", "true");
-     setActiveTab("certificate");
-    setEmployeeAttempts(0);
-    localStorage.removeItem("employeeQuizCooldownUntil");
+  /* ✅ PASS */
+  if (percent >= EMPLOYEE_PASS_PERCENTAGE) {
+    localStorage.setItem(EMPLOYEE_PASSED_KEY, "true");
+    setAttempts(0);
+    localStorage.removeItem(EMPLOYEE_COOLDOWN_KEY);
 
     document.getElementById("quizSection").innerHTML = `
       <h2>Training Completed</h2>
-      <p>You scored ${percentage}%</p>
-
+      <p>You scored ${percent}%</p>
       <button class="btn-primary" onclick="finishEmployeeTraining()">
         Finish Training
       </button>
@@ -108,27 +140,25 @@ function handleEmployeeQuizResult(score, total) {
     return;
   }
 
-  // ❌ FAILED — LOCKOUT
+  /* ❌ MAX ATTEMPTS */
   if (attempts >= EMPLOYEE_MAX_ATTEMPTS) {
-    const cooldownUntil =
-      Date.now() + EMPLOYEE_COOLDOWN_MINUTES * 60 * 1000;
-    setEmployeeCooldown(cooldownUntil);
+    localStorage.setItem(
+      EMPLOYEE_COOLDOWN_KEY,
+      Date.now() + EMPLOYEE_COOLDOWN_MINUTES * 60 * 1000
+    );
 
     document.getElementById("quizSection").innerHTML = `
       <h2>Too Many Attempts</h2>
-      <p>You must wait ${EMPLOYEE_COOLDOWN_MINUTES} minutes before retrying.</p>
+      <p>Please wait ${EMPLOYEE_COOLDOWN_MINUTES} minutes.</p>
     `;
     return;
   }
 
-  // ❌ FAILED — RETRY ALLOWED
+  /* ❌ RETRY */
   document.getElementById("quizSection").innerHTML = `
     <h2>Quiz Failed</h2>
-    <p>You scored ${percentage}%</p>
-    <p>Attempts remaining: ${
-      EMPLOYEE_MAX_ATTEMPTS - attempts
-    }</p>
-
+    <p>You scored ${percent}%</p>
+    <p>Attempts remaining: ${EMPLOYEE_MAX_ATTEMPTS - attempts}</p>
     <button class="btn-primary" onclick="showSection('quiz')">
       Retry Quiz
     </button>
@@ -136,39 +166,36 @@ function handleEmployeeQuizResult(score, total) {
 }
 
 /* =========================
-   FINISH TRAINING (HARD LOCK)
+   FINALIZE TRAINING (HARD LOCK)
 ========================= */
-
 function finishEmployeeTraining() {
-  localStorage.setItem("employeeTrainingCompleted", "true");
+  localStorage.setItem(EMPLOYEE_COMPLETED_KEY, "true");
   lockToEmployeeCertificate();
 }
 
 /* =========================
-   EMPLOYEE CERTIFICATE HARD LOCK
+   CERTIFICATE HARD LOCK
 ========================= */
-
 function lockToEmployeeCertificate() {
-  // 🔒 Hide everything
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.remove("hidden");
 
-  // 🔒 Disable nav buttons (this is the missing piece)
   document
     .querySelectorAll(".module-nav button")
-    .forEach(btn => (btn.disabled = true));
+    .forEach(btn => {
+      btn.disabled = true;
+      btn.classList.remove("active");
+    });
 
-  // ✅ Show certificate ONLY
-  document
-    .getElementById("certificateSection")
-    ?.classList.remove("hidden");
+  setActiveTab("certificate");
+  populateEmployeeCertificate();
 }
-/* =========================
-   EMPLOYEE CERTIFICATE
-========================= */
 
+/* =========================
+   CERTIFICATE DATA
+========================= */
 function populateEmployeeCertificate() {
-  // You can later swap this for real user data
   document.getElementById("certName").textContent = "Employee Name";
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
