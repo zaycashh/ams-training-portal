@@ -39,24 +39,25 @@ document.addEventListener("DOMContentLoaded", () => {
 /* =========================
    SECTION NAVIGATION
 ========================= */
-function showSection(section) {
-  const content = document.getElementById("contentSection");
-  const quiz = document.getElementById("quizSection");
-  const cert = document.getElementById("certificateSection");
+  function showSection(section) {
+    document.getElementById("contentSection")?.classList.add("hidden");
+    document.getElementById("quizSection")?.classList.add("hidden");
+    document.getElementById("certificateSection")?.classList.add("hidden");
 
-  content?.classList.add("hidden");
-  quiz?.classList.add("hidden");
-  cert?.classList.add("hidden");
+    if (section === "content") {
+      document.getElementById("contentSection")?.classList.remove("hidden");
+    }
 
-  if (section === "content") content?.classList.remove("hidden");
+    if (section === "quiz") {
+      document.getElementById("quizSection")?.classList.remove("hidden");
+    }
 
-  if (section === "quiz") {
-    quiz?.classList.remove("hidden");
-    loadModuleQuiz();
-  }
+    if (section === "certificate") {
+      document.getElementById("certificateSection")?.classList.remove("hidden");
+    }
 
-  if (section === "certificate") {
-    cert?.classList.remove("hidden");
+    // ✅ THIS IS THE MISSING PIECE
+    setActiveTab(section);
   }
 }
 
