@@ -96,7 +96,6 @@ function handleDerQuizResult(score, total) {
 
   // ✅ PASSED
   if (percentage >= DER_PASS_PERCENTAGE) {
-    // do NOT mark completed yet
     document.getElementById("quizSection").innerHTML = `
       <h2>Training Completed</h2>
       <p>You scored ${percentage}%</p>
@@ -126,6 +125,23 @@ function handleDerQuizResult(score, total) {
     </button>
   `;
 }
+/* =========================
+   FINISH TRAINING (HARD LOCK)
+========================= */
+
+function finishDerTraining() {
+  localStorage.setItem("derTrainingCompleted", "true");
+
+  // 🔒 Hide everything else
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+
+  // ✅ Show certificate ONLY
+  document.getElementById("certificateSection")?.classList.remove("hidden");
+
+  populateDerCertificate();
+}
+
 /* =========================
    DER CERTIFICATE
 ========================= */
