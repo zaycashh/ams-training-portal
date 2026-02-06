@@ -121,20 +121,15 @@ function handleDerQuizResult(score, total) {
     </button>
   `;
 }
+
 /* =========================
-   FINISH TRAINING (HARD LOCK)
+   FINISH DER TRAINING (HARD LOCK)
 ========================= */
 
 function finishDerTraining() {
   localStorage.setItem("derTrainingCompleted", "true");
 
-  // 🔒 Hide everything else
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-
-  // ✅ Show certificate ONLY
-  document.getElementById("certificateSection")?.classList.remove("hidden");
-
+  lockToDerCertificate();
   populateDerCertificate();
 }
 
