@@ -6,22 +6,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const module = document.body.dataset.module;
   if (module !== "der") return;
 
-  /* =========================
-     🔐 DER PAYWALL
-  ========================= */
+  // 🔐 DER PAYWALL
   if (localStorage.getItem("paid_der") !== "true") {
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
     return;
   }
 
-     /* =========================
-    🔒 HARD LOCK AFTER COMPLETION
-   ========================= */
-   if (localStorage.getItem("derTrainingCompleted") === "true") {
-     lockToDerCertificate();
-     populateDerCertificate();
-     return;
+  /* =========================
+     🔒 HARD LOCK AFTER COMPLETION
+  ========================= */
+  if (localStorage.getItem("derTrainingCompleted") === "true") {
+    lockToDerCertificate();
+    populateDerCertificate();
+    return;
   }
 });
 
