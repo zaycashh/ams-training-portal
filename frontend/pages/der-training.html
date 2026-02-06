@@ -14,7 +14,7 @@
 
     <!-- HEADER -->
     <header class="module-header">
-      <h1 id="moduleTitle" data-lang="title"></h1>
+      <h1 data-lang="title">DER Training Module</h1>
 
       <div class="module-controls">
         <select id="languageToggle">
@@ -28,82 +28,79 @@
       </div>
     </header>
 
-    <!-- NAV -->
+    <!-- NAV (IDS MUST MATCH EMPLOYEE LOGIC) -->
     <nav class="module-nav">
-      <button
-        id="tabContent"
-        onclick="showSection('content')"
-        data-lang="navContent">
+      <button id="btnContent" onclick="showSection('content')">
+        Content
       </button>
 
-      <button
-        id="tabQuiz"
-        onclick="showSection('quiz')"
-        data-lang="navQuiz">
+      <button id="btnQuiz" onclick="showSection('quiz')">
+        Quiz
       </button>
 
-      <button
-        id="tabCertificate"
-        onclick="showSection('certificate')"
-        data-lang="navCertificate">
+      <button id="btnCertificate" onclick="showSection('certificate')">
+        Certificate
       </button>
     </nav>
 
     <!-- CONTENT -->
     <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle"></h2>
-      <p data-lang="contentIntro"></p>
+      <h2 data-lang="contentTitle">DER Training Content</h2>
+      <p data-lang="contentIntro">
+        This training covers the responsibilities of the Designated Employer Representative (DER).
+      </p>
 
-      <button class="btn-primary" onclick="showSection('quiz')">
+      <!-- 🔒 MUST CALL DER CONTENT COMPLETION -->
+      <button class="btn-primary" onclick="completeDerContent()">
         Continue to Quiz
       </button>
     </section>
 
     <!-- QUIZ -->
     <section id="quizSection" class="module-section hidden">
-      <h2 data-lang="quizTitle"></h2>
-      <p data-lang="quizIntro"></p>
+      <h2 data-lang="quizTitle">DER Quiz</h2>
+      <p data-lang="quizIntro">Complete the quiz to finish training.</p>
+
+      <!-- REQUIRED QUIZ MOUNT -->
+      <div id="quizContainer"></div>
     </section>
 
     <!-- CERTIFICATE -->
     <section id="certificateSection" class="module-section hidden">
-      <h2 data-lang="certificateTitle"></h2>
-      <p data-lang="certificateIntro"></p>
+      <h2 data-lang="certificateTitle">Training Certificate</h2>
 
       <p>
-        <strong>Full Name:</strong>
-        <span id="certName"></span>
+        This certifies that
+        <strong id="certName">DER Name</strong>
+        has successfully completed DER Training.
       </p>
 
-      <p>
-        <strong>Date Issued:</strong>
-        <span id="certDate"></span>
-      </p>
+      <p>Date Issued: <span id="certDate"></span></p>
+      <p>Verification Code: <span id="certVerify"></span></p>
 
-      <p>
-        <strong>Verification ID:</strong>
-        <span id="certVerify"></span>
-      </p>
+      <!-- ✅ QR CODE TARGET -->
+      <div id="certQR" style="margin-top:16px;"></div>
 
-      <div id="certQR" style="margin-top:12px;"></div>
-
-      <button class="btn-primary" disabled>
-        Download Certificate (PDF)
+      <button class="btn-primary" onclick="goDashboard()">
+        Return to Dashboard
       </button>
     </section>
 
   </main>
-  
-<!-- SCRIPTS (ORDER MATTERS) -->
-<script src="../js/access-guard.js"></script>
-<script src="../js/lang-loader.js"></script>
-<script src="../js/progress.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <!-- SCRIPTS (ORDER IS CRITICAL) -->
+  <script src="../js/access-guard.js"></script>
+  <script src="../js/lang-loader.js"></script>
+  <script src="../js/progress.js"></script>
 
-<script src="../js/core.js"></script>
-<script src="../js/der.js"></script>
+  <!-- CORE QUIZ ENGINE -->
+  <script src="../js/core.js"></script>
+
+  <!-- QR LIBRARY -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+  <!-- DER MODULE (MUST BE LAST) -->
+  <script src="../js/der.js"></script>
 
 </body>
 </html>
