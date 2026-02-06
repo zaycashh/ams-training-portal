@@ -61,28 +61,24 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "dashboard.html";
     return;
   }
-   
-/* =========================
-   🔒 HARD LOCK AFTER COMPLETION
-========================= */
-if (localStorage.getItem("employeeTrainingCompleted") === "true") {
-  lockToEmployeeCertificate();
-  return;
-}
-   
-  // ✅ Already completed → certificate ONLY
+
+  // 🏁 Training fully completed → certificate ONLY
   if (localStorage.getItem("employeeTrainingCompleted") === "true") {
     lockToEmployeeCertificate();
+    setActiveTab("certificate");
     return;
   }
 
-  // ⏳ Cooldown enforcement
-  const cooldownUntil = getEmployeeCooldown();
-  if (cooldownUntil && Date.now() < cooldownUntil) {
-    const mins = Math.ceil((cooldownUntil - Date.now()) / 60000);
-    alert(`Too many failed attempts. Try again in ${mins} minutes.`);
-    showSection("content");
+  // 🧠 Quiz passed but training not finalized
+  if (localStorage.getItem("employeeQuizPassed") === "true") {
+    showSection("quiz");
+    setActiveTab("quiz");
+    return;
   }
+
+  // 🧱 Default → content
+  showSection("content");
+  setActiveTab("content");
 });
 
 /* =========================
