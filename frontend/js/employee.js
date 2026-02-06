@@ -1,6 +1,6 @@
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
-   (EXACT DER PARITY – HARD LOCK ENFORCED)
+   (EXACT DER PARITY – HARD LOCK + UI STATES)
 ========================================================= */
 
 const EMPLOYEE_MAX_ATTEMPTS = 3;
@@ -13,12 +13,12 @@ const EMPLOYEE_ATTEMPTS_KEY = "employeeQuizAttempts";
 const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 
 /* =========================
-   TAB ACTIVE STATE
+   TAB ACTIVE / COMPLETED STATE
 ========================= */
 function setActiveTab(tab) {
-  document
-    .querySelectorAll(".module-nav button")
-    .forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".module-nav button").forEach(btn => {
+    btn.classList.remove("active");
+  });
 
   const map = {
     content: "btnContent",
@@ -28,6 +28,11 @@ function setActiveTab(tab) {
 
   const el = document.getElementById(map[tab]);
   if (el) el.classList.add("active");
+}
+
+function markCompletedTabs() {
+  document.getElementById("btnContent")?.classList.add("completed");
+  document.getElementById("btnQuiz")?.classList.add("completed");
 }
 
 /* =========================
@@ -41,10 +46,6 @@ function setAttempts(v) {
   localStorage.setItem(EMPLOYEE_ATTEMPTS_KEY, v);
 }
 
-function getCooldownUntil() {
-  return parseInt(localStorage.getItem(EMPLOYEE_COOLDOWN_KEY) || "0", 10);
-}
-
 /* =========================
    SECTION NAVIGATION (GUARDED)
 ========================= */
@@ -56,32 +57,27 @@ function showSection(section) {
     return;
   }
 
-  /* 🧱 AUTHORITY RULES */
-  if (section === "quiz") {
-    if (localStorage.getItem(EMPLOYEE_PASSED_KEY) === "true") return;
-  }
+  /* 🚫 AUTHORITY RULES */
+  if (section === "quiz" && localStorage.getItem(EMPLOYEE_PASSED_KEY) === "true") return;
+  if (section === "certificate" && localStorage.getItem(EMPLOYEE_PASSED_KEY) !== "true") return;
 
-  if (section === "certificate") {
-    if (localStorage.getItem(EMPLOYEE_PASSED_KEY) !== "true") return;
-  }
-
-  document.getElementById("contentSection").classList.add("hidden");
-  document.getElementById("quizSection").classList.add("hidden");
-  document.getElementById("certificateSection").classList.add("hidden");
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.add("hidden");
 
   if (section === "content") {
-    document.getElementById("contentSection").classList.remove("hidden");
+    document.getElementById("contentSection")?.classList.remove("hidden");
     setActiveTab("content");
   }
 
   if (section === "quiz") {
-    document.getElementById("quizSection").classList.remove("hidden");
-    loadModuleQuiz();
+    document.getElementById("quizSection")?.classList.remove("hidden");
     setActiveTab("quiz");
+    loadModuleQuiz();
   }
 
   if (section === "certificate") {
-    document.getElementById("certificateSection").classList.remove("hidden");
+    document.getElementById("certificateSection")?.classList.remove("hidden");
     setActiveTab("certificate");
     populateEmployeeCertificate();
   }
@@ -93,26 +89,17 @@ function showSection(section) {
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.module !== "employee") return;
 
-  /* 🔐 PAYWALL */
   if (localStorage.getItem("paid_employee") !== "true") {
     alert("Employee Training requires purchase.");
     window.location.href = "dashboard.html";
     return;
   }
 
-  /* 🏁 COMPLETED → CERTIFICATE ONLY */
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToEmployeeCertificate();
     return;
   }
 
-  /* 🧠 PASSED QUIZ → CERTIFICATE TAB */
-  if (localStorage.getItem(EMPLOYEE_PASSED_KEY) === "true") {
-    showSection("certificate");
-    return;
-  }
-
-  /* 📘 DEFAULT */
   showSection("content");
 });
 
@@ -124,10 +111,10 @@ function handleEmployeeQuizResult(score, total) {
   const attempts = getAttempts() + 1;
   setAttempts(attempts);
 
-  /* ✅ PASS */
+  /* ✅ PASSED */
   if (percent >= EMPLOYEE_PASS_PERCENTAGE) {
     localStorage.setItem(EMPLOYEE_PASSED_KEY, "true");
-    setAttempts(0);
+    localStorage.removeItem(EMPLOYEE_ATTEMPTS_KEY);
     localStorage.removeItem(EMPLOYEE_COOLDOWN_KEY);
 
     document.getElementById("quizSection").innerHTML = `
@@ -140,7 +127,7 @@ function handleEmployeeQuizResult(score, total) {
     return;
   }
 
-  /* ❌ MAX ATTEMPTS */
+  /* ❌ LOCKOUT */
   if (attempts >= EMPLOYEE_MAX_ATTEMPTS) {
     localStorage.setItem(
       EMPLOYEE_COOLDOWN_KEY,
@@ -174,31 +161,47 @@ function finishEmployeeTraining() {
 }
 
 /* =========================
-   CERTIFICATE HARD LOCK
+   CERTIFICATE HARD LOCK + UI
 ========================= */
 function lockToEmployeeCertificate() {
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
   document.getElementById("certificateSection")?.classList.remove("hidden");
 
-  document
-    .querySelectorAll(".module-nav button")
-    .forEach(btn => {
-      btn.disabled = true;
-      btn.classList.remove("active");
-    });
+  document.querySelectorAll(".module-nav button").forEach(btn => {
+    btn.disabled = true;
+    btn.classList.remove("active");
+  });
 
-  setActiveTab("certificate");
+  markCompletedTabs();
+
+  const certBtn = document.getElementById("btnCertificate");
+  if (certBtn) {
+    certBtn.disabled = false;
+    certBtn.classList.add("active");
+  }
+
   populateEmployeeCertificate();
 }
 
 /* =========================
-   CERTIFICATE DATA
+   CERTIFICATE + QR
 ========================= */
 function populateEmployeeCertificate() {
+  const code = "AMS-EMP-" + Date.now();
+
   document.getElementById("certName").textContent = "Employee Name";
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
-  document.getElementById("certVerify").textContent =
-    "AMS-EMP-" + Date.now();
+  document.getElementById("certVerify").textContent = code;
+
+  const qrBox = document.getElementById("certQR");
+  if (qrBox && typeof QRCode !== "undefined") {
+    qrBox.innerHTML = "";
+    new QRCode(qrBox, {
+      text: code,
+      width: 128,
+      height: 128
+    });
+  }
 }
