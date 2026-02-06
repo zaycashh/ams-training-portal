@@ -1,6 +1,6 @@
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
-   (CLONED FROM DER — SAME RULES)
+   (MATCHES DER LOGIC EXACTLY)
 ========================================================= */
 
 const EMPLOYEE_MAX_ATTEMPTS = 3;
@@ -44,9 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // ✅ Already completed → certificate only
+  // ✅ Already completed → certificate ONLY
   if (localStorage.getItem("employeeTrainingCompleted") === "true") {
-    showSection("certificate");
+    lockToEmployeeCertificate();
     return;
   }
 
@@ -85,7 +85,7 @@ function handleEmployeeQuizResult(score, total) {
     return;
   }
 
-  // ❌ FAILED
+  // ❌ FAILED — LOCKOUT
   if (attempts >= EMPLOYEE_MAX_ATTEMPTS) {
     const cooldownUntil =
       Date.now() + EMPLOYEE_COOLDOWN_MINUTES * 60 * 1000;
@@ -98,7 +98,7 @@ function handleEmployeeQuizResult(score, total) {
     return;
   }
 
-  // ❌ FAILED — retry allowed
+  // ❌ FAILED — RETRY ALLOWED
   document.getElementById("quizSection").innerHTML = `
     <h2>Quiz Failed</h2>
     <p>You scored ${percentage}%</p>
@@ -113,10 +113,20 @@ function handleEmployeeQuizResult(score, total) {
 }
 
 /* =========================
-   FINISH TRAINING
+   FINISH TRAINING (HARD LOCK)
 ========================= */
 
 function finishEmployeeTraining() {
   localStorage.setItem("employeeTrainingCompleted", "true");
-  showSection("certificate");
+  lockToEmployeeCertificate();
+}
+
+/* =========================
+   CERTIFICATE LOCK
+========================= */
+
+function lockToEmployeeCertificate() {
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.remove("hidden");
 }
