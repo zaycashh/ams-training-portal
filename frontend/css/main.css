@@ -226,3 +226,22 @@ body {
 .hidden {
   display: none;
 }
+/* =========================
+   MODULE NAV STATES
+========================= */
+
+.module-nav button.active {
+  background-color: #2563eb; /* blue */
+  color: #fff;
+  font-weight: 600;
+}
+
+.module-nav button.completed {
+  background-color: #16a34a; /* green */
+  color: #fff;
+}
+
+.module-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
