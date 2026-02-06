@@ -148,3 +148,15 @@ function lockToEmployeeCertificate() {
     .getElementById("certificateSection")
     ?.classList.remove("hidden");
 }
+/* =========================
+   EMPLOYEE CERTIFICATE
+========================= */
+
+function populateEmployeeCertificate() {
+  // You can later swap this for real user data
+  document.getElementById("certName").textContent = "Employee Name";
+  document.getElementById("certDate").textContent =
+    new Date().toLocaleDateString();
+  document.getElementById("certVerify").textContent =
+    "AMS-EMP-" + Date.now();
+}
