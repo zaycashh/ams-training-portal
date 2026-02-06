@@ -15,15 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  /* =========================
-     🔒 HARD LOCK AFTER COMPLETION
-  ========================= */
-  if (localStorage.getItem("derTrainingCompleted") === "true") {
-    document.getElementById("contentSection")?.classList.add("hidden");
-    document.getElementById("quizSection")?.classList.add("hidden");
-    document.getElementById("certificateSection")?.classList.remove("hidden");
-    populateDerCertificate();
-    return;
+     /* =========================
+    🔒 HARD LOCK AFTER COMPLETION
+   ========================= */
+   if (localStorage.getItem("derTrainingCompleted") === "true") {
+     lockToDerCertificate();
+     populateDerCertificate();
+     return;
   }
 });
 
