@@ -94,25 +94,38 @@ function handleDerQuizResult(score, total) {
   const attempts = incrementDerAttempts();
   const percentage = Math.round((score / total) * 100);
 
+  // ✅ PASSED
   if (percentage >= DER_PASS_PERCENTAGE) {
-    localStorage.setItem("derTrainingCompleted", "true");
-    populateDerCertificate();
+    // do NOT mark completed yet
+    document.getElementById("quizSection").innerHTML = `
+      <h2>Training Completed</h2>
+      <p>You scored ${percentage}%</p>
+
+      <button class="btn-primary" onclick="finishDerTraining()">
+        Finish Training
+      </button>
+    `;
     return;
   }
 
+  // ❌ FAILED — LOCKOUT
   if (attempts >= DER_MAX_ATTEMPTS) {
     startDerCooldown();
     showDerCooldownMessage();
     return;
   }
 
+  // ❌ FAILED — RETRY
   document.getElementById("quizSection").innerHTML = `
     <h2>Failed</h2>
     <p>You scored ${percentage}%</p>
     <p>${DER_MAX_ATTEMPTS - attempts} attempt(s) remaining</p>
+
+    <button class="btn-primary" onclick="showSection('quiz')">
+      Retry Quiz
+    </button>
   `;
 }
-
 /* =========================
    DER CERTIFICATE
 ========================= */
