@@ -1,26 +1,4 @@
 /* =========================
-   EMPLOYEE TRAINING LOGIC
-========================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  const module = document.body.dataset.module;
-  if (module !== "employee") return;
-
-  // 🔐 Paywall check
-  if (localStorage.getItem("paid_employee") !== "true") {
-    alert("Employee Training requires purchase.");
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  // ✅ Already completed
-  if (localStorage.getItem("employeeTrainingCompleted") === "true") {
-    alert("Employee training already completed.");
-    showSection("content");
-  }
-});
-
-/* =========================
    EMPLOYEE QUIZ RESULT
 ========================= */
 
@@ -46,3 +24,10 @@ function finishEmployeeTraining() {
   localStorage.setItem("employeeTrainingCompleted", "true");
   window.location.href = "dashboard.html";
 }
+<!-- SCRIPTS -->
+<script src="../js/access-guard.js"></script>
+<script src="../js/lang-loader.js"></script>
+<script src="../js/progress.js"></script>
+
+<script src="../js/core.js"></script>
+<script src="../js/employee.js"></script>
