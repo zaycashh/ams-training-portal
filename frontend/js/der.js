@@ -1,120 +1,132 @@
-/* =========================
-   DER CERTIFICATE HARD LOCK
-========================= */
-
-function lockToDerCertificate() {
-  // 🔒 Hide content + quiz
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.add("hidden");
-
-  // 🔒 Disable tab buttons if present
-  document
-    .querySelectorAll(".module-nav button")
-    .forEach(btn => (btn.disabled = true));
-
-  // ✅ Show certificate ONLY
-  document
-    .getElementById("certificateSection")
-    ?.classList.remove("hidden");
-}
 /* =========================================================
-   DER MODULE LOGIC
+   DER TRAINING LOGIC
+   COMPLIANCE-GRADE (MIRRORS EMPLOYEE EXACTLY)
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-  const module = document.body.dataset.module;
-  if (module !== "der") return;
+const DER_MAX_ATTEMPTS = 3;
+const DER_PASS_PERCENTAGE = 80;
+const DER_COOLDOWN_MINUTES = 15;
 
-  // 🔐 DER PAYWALL
+const DER_CONTENT_DONE_KEY = "derContentCompleted";
+const DER_PASSED_KEY = "derQuizPassed";
+const DER_COMPLETED_KEY = "derTrainingCompleted";
+const DER_ATTEMPTS_KEY = "derQuizAttempts";
+const DER_COOLDOWN_KEY = "derQuizCooldownUntil";
+const DER_CERT_CODE_KEY = "derCertificateCode";
+
+/* =========================
+   TAB STATES (IDENTICAL)
+========================= */
+function setActiveTab(tab) {
+  document.querySelectorAll(".module-nav button").forEach(btn => {
+    btn.classList.remove("active", "completed");
+  });
+
+  if (tab === "content") {
+    document.getElementById("btnContent")?.classList.add("active");
+  }
+
+  if (tab === "quiz") {
+    document.getElementById("btnContent")?.classList.add("completed");
+    document.getElementById("btnQuiz")?.classList.add("active");
+  }
+
+  if (tab === "certificate") {
+    document.getElementById("btnContent")?.classList.add("completed");
+    document.getElementById("btnQuiz")?.classList.add("completed");
+    document.getElementById("btnCertificate")?.classList.add("active");
+  }
+}
+
+/* =========================
+   SECTION NAVIGATION (HARD GUARDED)
+========================= */
+function showSection(section) {
+
+  // 🔒 HARD LOCK AFTER COMPLETION
+  if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
+    lockToDerCertificate();
+    return;
+  }
+
+  // 🚫 QUIZ BLOCKED UNTIL CONTENT DONE
+  if (section === "quiz") {
+    if (localStorage.getItem(DER_CONTENT_DONE_KEY) !== "true") return;
+  }
+
+  // 🚫 CERT BLOCKED UNTIL QUIZ PASSED
+  if (section === "certificate") {
+    if (localStorage.getItem(DER_PASSED_KEY) !== "true") return;
+  }
+
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.add("hidden");
+
+  if (section === "content") {
+    document.getElementById("contentSection")?.classList.remove("hidden");
+    setActiveTab("content");
+  }
+
+  if (section === "quiz") {
+    document.getElementById("quizSection")?.classList.remove("hidden");
+    setActiveTab("quiz");
+    loadModuleQuiz();
+  }
+
+  if (section === "certificate") {
+    document.getElementById("certificateSection")?.classList.remove("hidden");
+    setActiveTab("certificate");
+    populateDerCertificate();
+  }
+}
+
+/* =========================
+   PAGE LOAD
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.body.dataset.module !== "der") return;
+
   if (localStorage.getItem("paid_der") !== "true") {
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
     return;
   }
 
-  /* =========================
-     🔒 HARD LOCK AFTER COMPLETION
-  ========================= */
-  if (localStorage.getItem("derTrainingCompleted") === "true") {
+  if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
     lockToDerCertificate();
-    populateDerCertificate();
     return;
   }
+
+  showSection("content");
 });
 
 /* =========================
-   DER QUIZ CONFIG
+   CONTENT COMPLETION
 ========================= */
-
-const DER_PASS_PERCENTAGE = 80;
-const DER_MAX_ATTEMPTS = 3;
-const DER_COOLDOWN_MINUTES = 15;
-
-const DER_ATTEMPT_KEY = "ams_der_quiz_attempts";
-const DER_COOLDOWN_KEY = "ams_der_cooldown_until";
-
-/* =========================
-   DER ATTEMPTS + COOLDOWN
-========================= */
-
-function getDerAttempts() {
-  return parseInt(localStorage.getItem(DER_ATTEMPT_KEY) || "0", 10);
-}
-
-function incrementDerAttempts() {
-  const attempts = getDerAttempts() + 1;
-  localStorage.setItem(DER_ATTEMPT_KEY, attempts);
-  return attempts;
-}
-
-function getDerCooldownUntil() {
-  return parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
-}
-
-function startDerCooldown() {
-  localStorage.setItem(
-    DER_COOLDOWN_KEY,
-    Date.now() + DER_COOLDOWN_MINUTES * 60000
-  );
-}
-
-function isDerInCooldown() {
-  return Date.now() < getDerCooldownUntil();
-}
-
-function resetDerCooldownIfExpired() {
-  if (!isDerInCooldown() && getDerAttempts() >= DER_MAX_ATTEMPTS) {
-    localStorage.removeItem(DER_ATTEMPT_KEY);
-    localStorage.removeItem(DER_COOLDOWN_KEY);
-  }
-}
-
-function showDerCooldownMessage() {
-  const minutesLeft = Math.ceil(
-    (getDerCooldownUntil() - Date.now()) / 60000
-  );
-
-  document.getElementById("quizSection").innerHTML = `
-    <h2>Quiz Locked</h2>
-    <p>You have reached the maximum number of attempts.</p>
-    <p>Please wait <strong>${minutesLeft}</strong> minute(s) before retrying.</p>
-  `;
+function completeDerContent() {
+  localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
+  showSection("quiz");
 }
 
 /* =========================
-   DER QUIZ RESULT HANDLER
+   QUIZ RESULT HANDLER
 ========================= */
-
 function handleDerQuizResult(score, total) {
-  const attempts = incrementDerAttempts();
-  const percentage = Math.round((score / total) * 100);
+  const percent = Math.round((score / total) * 100);
+  const attempts =
+    parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10) + 1;
 
-  // ✅ PASSED
-  if (percentage >= DER_PASS_PERCENTAGE) {
+  localStorage.setItem(DER_ATTEMPTS_KEY, attempts);
+
+  if (percent >= DER_PASS_PERCENTAGE) {
+    localStorage.setItem(DER_PASSED_KEY, "true");
+    localStorage.removeItem(DER_ATTEMPTS_KEY);
+    localStorage.removeItem(DER_COOLDOWN_KEY);
+
     document.getElementById("quizSection").innerHTML = `
       <h2>Training Completed</h2>
-      <p>You scored ${percentage}%</p>
-
+      <p>You scored ${percent}%</p>
       <button class="btn-primary" onclick="finishDerTraining()">
         Finish Training
       </button>
@@ -122,19 +134,23 @@ function handleDerQuizResult(score, total) {
     return;
   }
 
-  // ❌ FAILED — LOCKOUT
   if (attempts >= DER_MAX_ATTEMPTS) {
-    startDerCooldown();
-    showDerCooldownMessage();
+    localStorage.setItem(
+      DER_COOLDOWN_KEY,
+      Date.now() + DER_COOLDOWN_MINUTES * 60000
+    );
+
+    document.getElementById("quizSection").innerHTML = `
+      <h2>Too Many Attempts</h2>
+      <p>Please wait ${DER_COOLDOWN_MINUTES} minutes.</p>
+    `;
     return;
   }
 
-  // ❌ FAILED — RETRY
   document.getElementById("quizSection").innerHTML = `
-    <h2>Failed</h2>
-    <p>You scored ${percentage}%</p>
-    <p>${DER_MAX_ATTEMPTS - attempts} attempt(s) remaining</p>
-
+    <h2>Quiz Failed</h2>
+    <p>You scored ${percent}%</p>
+    <p>Attempts remaining: ${DER_MAX_ATTEMPTS - attempts}</p>
     <button class="btn-primary" onclick="showSection('quiz')">
       Retry Quiz
     </button>
@@ -142,67 +158,49 @@ function handleDerQuizResult(score, total) {
 }
 
 /* =========================
-   FINISH DER TRAINING (HARD LOCK)
+   FINALIZE TRAINING
 ========================= */
-
 function finishDerTraining() {
-  localStorage.setItem("derTrainingCompleted", "true");
-
+  localStorage.setItem(DER_COMPLETED_KEY, "true");
   lockToDerCertificate();
-  populateDerCertificate();
 }
 
 /* =========================
-   DER CERTIFICATE
+   CERTIFICATE LOCK + QR
 ========================= */
+function lockToDerCertificate() {
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.remove("hidden");
 
-const DER_CERT_VERIFY_KEY = "ams_der_certificate_verification";
+  document.querySelectorAll(".module-nav button").forEach(btn => {
+    btn.disabled = true;
+  });
 
-function generateDerVerificationId() {
-  return (
-    "AMS-DER-" +
-    Math.random().toString(36).substring(2, 6).toUpperCase() +
-    "-" +
-    Date.now().toString().slice(-6)
-  );
-}
-
-function getOrCreateDerVerification() {
-  let record = JSON.parse(
-    localStorage.getItem(DER_CERT_VERIFY_KEY) || "null"
-  );
-
-  if (!record) {
-    record = {
-      id: generateDerVerificationId(),
-      issuedAt: new Date().toISOString()
-    };
-    localStorage.setItem(DER_CERT_VERIFY_KEY, JSON.stringify(record));
-  }
-
-  return record;
+  setActiveTab("certificate");
+  populateDerCertificate();
 }
 
 function populateDerCertificate() {
-  const verify = getOrCreateDerVerification();
+  let code = localStorage.getItem(DER_CERT_CODE_KEY);
 
-  document.getElementById("certName").textContent = "Employee Name";
+  if (!code) {
+    code = "AMS-DER-" + Date.now();
+    localStorage.setItem(DER_CERT_CODE_KEY, code);
+  }
+
+  document.getElementById("certName").textContent = "DER Name";
   document.getElementById("certDate").textContent =
-    new Date(verify.issuedAt).toLocaleDateString();
-  document.getElementById("certVerify").textContent = verify.id;
+    new Date().toLocaleDateString();
+  document.getElementById("certVerify").textContent = code;
 
-  renderDerCertificateQR(verify.id);
-  showSection("certificate");
-}
-
-function renderDerCertificateQR(id) {
-  const el = document.getElementById("certQR");
-  if (!el) return;
-
-  el.innerHTML = "";
-  new QRCode(el, {
-    text: `${location.origin}/verify.html?id=${id}`,
-    width: 128,
-    height: 128
-  });
+  const qrBox = document.getElementById("certQR");
+  if (qrBox && typeof QRCode !== "undefined") {
+    qrBox.innerHTML = "";
+    new QRCode(qrBox, {
+      text: code,
+      width: 128,
+      height: 128
+    });
+  }
 }
