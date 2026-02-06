@@ -1,12 +1,11 @@
 /* =========================================================
    AMS TRAINING PORTAL — CORE LOGIC (SHARED)
-   ❌ NO DER / EMPLOYEE / SUPERVISOR SPECIFIC CODE
+   ⚠️ NO MODULE-SPECIFIC CODE HERE
 ========================================================= */
 
 /* =========================
-   GLOBAL STATE
+   GLOBAL QUIZ STATE
 ========================= */
-
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
@@ -14,16 +13,15 @@ let score = 0;
 /* =========================
    DOM READY
 ========================= */
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Default entry point
-  showSection("content");
+  if (typeof showSection === "function") {
+    showSection("content");
+  }
 });
 
 /* =========================
    SECTION NAVIGATION
 ========================= */
-
 function showSection(section) {
   const content = document.getElementById("contentSection");
   const quiz = document.getElementById("quizSection");
@@ -33,9 +31,7 @@ function showSection(section) {
   quiz?.classList.add("hidden");
   cert?.classList.add("hidden");
 
-  if (section === "content") {
-    content?.classList.remove("hidden");
-  }
+  if (section === "content") content?.classList.remove("hidden");
 
   if (section === "quiz") {
     quiz?.classList.remove("hidden");
@@ -48,11 +44,10 @@ function showSection(section) {
 }
 
 /* =========================
-   MODULE QUIZ LOADER (SHARED)
+   LOAD MODULE QUIZ
 ========================= */
-
 async function loadModuleQuiz() {
-  const module = document.body.getAttribute("data-module");
+  const module = document.body.dataset.module;
   if (!module) return;
 
   try {
@@ -63,15 +58,14 @@ async function loadModuleQuiz() {
     loadQuiz(data);
   } catch (err) {
     console.error("Quiz load failed:", err);
-    const quiz = document.getElementById("quizSection");
-    if (quiz) quiz.innerHTML = "<p>Quiz unavailable.</p>";
+    document.getElementById("quizSection").innerHTML =
+      "<p>Quiz unavailable.</p>";
   }
 }
 
 /* =========================
-   QUIZ ENGINE (GENERIC)
+   QUIZ ENGINE
 ========================= */
-
 function loadQuiz(data) {
   quizData = data.quiz || [];
   currentQuestion = 0;
@@ -104,12 +98,7 @@ function renderQuestion() {
 }
 
 function submitAnswer(selectedIndex) {
-  const correct = quizData[currentQuestion].answer;
-
-  if (selectedIndex === correct) {
-    score++;
-  }
-
+  if (selectedIndex === quizData[currentQuestion].answer) score++;
   currentQuestion++;
 
   if (currentQuestion < quizData.length) {
@@ -120,29 +109,32 @@ function submitAnswer(selectedIndex) {
 }
 
 /* =========================
-   QUIZ RESULT (DELEGATES)
+   QUIZ RESULT DELEGATION
 ========================= */
-
 function showQuizResult() {
-  const module = document.body.getAttribute("data-module");
+  const module = document.body.dataset.module;
 
   if (module === "der" && typeof handleDerQuizResult === "function") {
     handleDerQuizResult(score, quizData.length);
     return;
   }
 
-  if (module === "employee" && typeof handleEmployeeQuizResult === "function") {
+  if (
+    module === "employee" &&
+    typeof handleEmployeeQuizResult === "function"
+  ) {
     handleEmployeeQuizResult(score, quizData.length);
     return;
   }
 
-  if (module === "supervisor" && typeof handleSupervisorQuizResult === "function") {
+  if (
+    module === "supervisor" &&
+    typeof handleSupervisorQuizResult === "function"
+  ) {
     handleSupervisorQuizResult(score, quizData.length);
     return;
   }
-}
 
-  // Fallback (should not happen)
   document.getElementById("quizSection").innerHTML = `
     <h2>Quiz Complete</h2>
     <p>You scored ${Math.round(
@@ -154,7 +146,6 @@ function showQuizResult() {
 /* =========================
    DASHBOARD NAV
 ========================= */
-
 function goDashboard() {
   window.location.href = "../pages/dashboard.html";
 }
