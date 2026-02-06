@@ -54,6 +54,7 @@ function startFMCSA() {
    FAA MODULE ACCESS CONTROL
 ========================= */
 function startFAA(course) {
+  // 🔒 Individual access check (DER + Supervisor still require purchase)
   if (!hasAccess(course)) {
     alert(
       `${course.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
@@ -61,6 +62,12 @@ function startFAA(course) {
     return;
   }
 
+  // 🪑 Company seats ONLY apply to Employee training
+  if (course === "employee") {
+    if (!consumeCompanySeatIfNeeded(course)) return;
+  }
+
+  // 🚀 Route to training
   if (course === "der") {
     window.location.href = "der-training.html";
   }
