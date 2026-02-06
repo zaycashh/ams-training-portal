@@ -55,22 +55,26 @@
     </section>
 
     <!-- CERTIFICATE -->
+    
     <section id="certificateSection" class="module-section hidden">
-      <h2>Training Certificate</h2>
+  <h2>Training Certificate</h2>
 
-      <p>
-        This certifies that
-        <strong id="certName">Employee Name</strong>
-        has successfully completed Employee Training.
-      </p>
+  <p>
+    This certifies that
+    <strong id="certName">Employee Name</strong>
+    has successfully completed Employee Training.
+  </p>
 
-      <p>Date Issued: <span id="certDate"></span></p>
-      <p>Verification Code: <span id="certVerify"></span></p>
+  <p>Date Issued: <span id="certDate"></span></p>
+  <p>Verification Code: <span id="certVerify"></span></p>
 
-      <button class="btn-primary" onclick="goDashboard()">
-        Return to Dashboard
-      </button>
-    </section>
+  <!-- ✅ QR CODE RENDERS HERE -->
+  <div id="certQR" style="margin-top:16px;"></div>
+
+  <button class="btn-primary" onclick="goDashboard()">
+    Return to Dashboard
+  </button>
+</section>
 
   </main>
 
