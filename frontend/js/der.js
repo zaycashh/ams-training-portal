@@ -100,12 +100,9 @@ function handleDerQuizResult(score, total) {
       <h2>Training Completed</h2>
       <p>You scored ${percentage}%</p>
 
-      <button class="btn-primary" onclick="finishDerTraining()">
-        Finish Training
-      </button>
-    `;
-    return;
-  }
+      <button class="btn-primary" onclick="showSection('quiz')">
+  Continue to Quiz
+</button>
 
   // ❌ FAILED — LOCKOUT
   if (attempts >= DER_MAX_ATTEMPTS) {
