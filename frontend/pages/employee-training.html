@@ -14,7 +14,7 @@
 
     <!-- HEADER -->
     <header class="module-header">
-      <h1 data-lang="title"></h1>
+      <h1 data-lang="title">Employee Training Module</h1>
 
       <div class="module-controls">
         <select id="languageToggle">
@@ -30,15 +30,15 @@
 
     <!-- NAV -->
     <nav class="module-nav">
-      <button data-tab="content" onclick="showSection('content')">Content</button>
-      <button data-tab="quiz" onclick="showSection('quiz')">Quiz</button>
-      <button data-tab="certificate" onclick="showSection('certificate')">Certificate</button>
+      <button id="btnContent" onclick="showSection('content')">Content</button>
+      <button id="btnQuiz" onclick="showSection('quiz')">Quiz</button>
+      <button id="btnCertificate" onclick="showSection('certificate')">Certificate</button>
     </nav>
 
     <!-- CONTENT -->
     <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle"></h2>
-      <p data-lang="contentIntro"></p>
+      <h2>Employee Training Content</h2>
+      <p>This training provides drug and alcohol awareness for employees.</p>
 
       <button class="btn-primary" onclick="showSection('quiz')">
         Continue to Quiz
@@ -47,27 +47,37 @@
 
     <!-- QUIZ -->
     <section id="quizSection" class="module-section hidden">
-      <h2 data-lang="quizTitle"></h2>
-      <p data-lang="quizIntro"></p>
+      <h2>Employee Quiz</h2>
+      <p>Complete the quiz to finish the training.</p>
+
+      <!-- REQUIRED QUIZ MOUNT -->
+      <div id="quizContainer"></div>
     </section>
 
-    <!-- CERTIFICATE / COMPLETION -->
+    <!-- CERTIFICATE -->
     <section id="certificateSection" class="module-section hidden">
-  <h2>Training Certificate</h2>
-  <p>This certifies that the employee has successfully completed training.</p>
+      <h2>Training Certificate</h2>
 
-  <button class="btn-primary" onclick="goDashboard()">
-    Return to Dashboard
-  </button>
-</section>
+      <p>
+        This certifies that
+        <strong id="certName">Employee Name</strong>
+        has successfully completed Employee Training.
+      </p>
+
+      <p>Date Issued: <span id="certDate"></span></p>
+      <p>Verification Code: <span id="certVerify"></span></p>
+
+      <button class="btn-primary" onclick="goDashboard()">
+        Return to Dashboard
+      </button>
+    </section>
 
   </main>
 
-  <!-- SCRIPTS (NO INLINE JS) -->
+  <!-- SCRIPTS -->
   <script src="../js/access-guard.js"></script>
   <script src="../js/lang-loader.js"></script>
   <script src="../js/progress.js"></script>
-
   <script src="../js/core.js"></script>
   <script src="../js/employee.js"></script>
 
