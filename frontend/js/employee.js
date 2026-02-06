@@ -43,7 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "dashboard.html";
     return;
   }
-
+   
+/* =========================
+   🔒 HARD LOCK AFTER COMPLETION
+========================= */
+if (localStorage.getItem("employeeTrainingCompleted") === "true") {
+  lockToEmployeeCertificate();
+  return;
+}
+   
   // ✅ Already completed → certificate ONLY
   if (localStorage.getItem("employeeTrainingCompleted") === "true") {
     lockToEmployeeCertificate();
