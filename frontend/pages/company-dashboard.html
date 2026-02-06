@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Company Admin Dashboard | AMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
 
+<body data-role="company-admin">
+
+<main class="module-container">
+
+  <!-- HEADER -->
+  <header class="module-header">
+    <h1>Company Admin Dashboard</h1>
+
+    <div class="module-controls">
+      <button class="btn-secondary" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- COMPANY OVERVIEW -->
+  <section class="module-section">
+    <h2>Company Overview</h2>
+
+    <p><strong>Company:</strong> <span id="companyName"></span></p>
+    <p><strong>Admin Email:</strong> <span id="companyAdmin"></span></p>
+    <p><strong>Modules:</strong> <span id="companyModules"></span></p>
+  </section>
+
+  <!-- SEATS -->
+  <section class="module-section">
+    <h2>Seat Usage</h2>
+
+    <p>
+      Seats Used:
+      <strong><span id="seatsUsed"></span></strong>
+      /
+      <strong><span id="seatsTotal"></span></strong>
+    </p>
+
+    <p>
+      Seats Available:
+      <strong><span id="seatsAvailable"></span></strong>
+    </p>
+
+    <button id="buySeatsBtn" class="btn-primary">
+      Buy More Seats
+    </button>
+  </section>
+
+  <!-- EMPLOYEES -->
+  <section class="module-section">
+    <h2>Employees</h2>
+
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable">
+        <tr>
+          <td colspan="4" style="opacity:.6;">No employees yet</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<script src="../js/company-dashboard.js"></script>
+</body>
+</html>
