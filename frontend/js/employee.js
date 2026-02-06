@@ -93,6 +93,7 @@ function handleEmployeeQuizResult(score, total) {
   // ✅ PASSED
   if (percentage >= EMPLOYEE_PASS_PERCENTAGE) {
     localStorage.setItem("employeeQuizPassed", "true");
+     setActiveTab("certificate");
     setEmployeeAttempts(0);
     localStorage.removeItem("employeeQuizCooldownUntil");
 
