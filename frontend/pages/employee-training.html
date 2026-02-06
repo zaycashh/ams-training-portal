@@ -1,71 +1,122 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Employee Training | AMS Training Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+/* =========================================================
+   EMPLOYEE TRAINING LOGIC
+   (CLONED FROM DER — SAME RULES)
+========================================================= */
 
-  <link rel="stylesheet" href="../css/main.css" />
-</head>
+const EMPLOYEE_MAX_ATTEMPTS = 3;
+const EMPLOYEE_PASS_PERCENTAGE = 80;
+const EMPLOYEE_COOLDOWN_MINUTES = 15;
 
-<body data-module="employee">
+/* =========================
+   STATE HELPERS
+========================= */
 
-  <main class="module-container">
+function getEmployeeAttempts() {
+  return parseInt(localStorage.getItem("employeeQuizAttempts") || "0", 10);
+}
 
-    <!-- HEADER -->
-    <header class="module-header">
-      <h1 data-lang="title"></h1>
+function setEmployeeAttempts(val) {
+  localStorage.setItem("employeeQuizAttempts", val);
+}
 
-      <div class="module-controls">
-        <select id="languageToggle">
-          <option value="en">English</option>
-          <option value="es">Español</option>
-        </select>
+function getEmployeeCooldown() {
+  return parseInt(
+    localStorage.getItem("employeeQuizCooldownUntil") || "0",
+    10
+  );
+}
 
-        <button class="btn-secondary" onclick="goDashboard()">
-          Back to Dashboard
-        </button>
-      </div>
-    </header>
+function setEmployeeCooldown(ts) {
+  localStorage.setItem("employeeQuizCooldownUntil", ts);
+}
 
-    <!-- NAV -->
-    <nav class="module-nav">
-      <button id="tabContent" onclick="showSection('content')" data-lang="navContent"></button>
-      <button id="tabQuiz" onclick="showSection('quiz')" data-lang="navQuiz"></button>
-      <button id="tabCertificate" onclick="showSection('certificate')" data-lang="navCertificate"></button>
-    </nav>
+/* =========================
+   PAGE LOAD GUARD
+========================= */
 
-    <!-- CONTENT -->
-    <section id="contentSection" class="module-section">
-      <h2 data-lang="contentTitle"></h2>
-      <p data-lang="contentIntro"></p>
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.body.dataset.module !== "employee") return;
 
-      <button class="btn-primary" onclick="showSection('quiz')">
-        Continue to Quiz
-      </button>
-    </section>
+  // 🔐 Paywall
+  if (localStorage.getItem("paid_employee") !== "true") {
+    alert("Employee Training requires purchase.");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
-    <!-- QUIZ -->
-    <section id="quizSection" class="module-section hidden">
-      <h2 data-lang="quizTitle"></h2>
-      <p data-lang="quizIntro"></p>
-    </section>
+  // ✅ Already completed → certificate only
+  if (localStorage.getItem("employeeTrainingCompleted") === "true") {
+    showSection("certificate");
+    return;
+  }
 
-    <!-- CERTIFICATE / COMPLETION -->
-    <section id="certificateSection" class="module-section hidden">
+  // ⏳ Cooldown enforcement
+  const cooldownUntil = getEmployeeCooldown();
+  if (cooldownUntil && Date.now() < cooldownUntil) {
+    const mins = Math.ceil((cooldownUntil - Date.now()) / 60000);
+    alert(`Too many failed attempts. Try again in ${mins} minutes.`);
+    showSection("content");
+  }
+});
+
+/* =========================
+   QUIZ RESULT HANDLER
+========================= */
+
+function handleEmployeeQuizResult(score, total) {
+  const percentage = Math.round((score / total) * 100);
+  const attempts = getEmployeeAttempts() + 1;
+  setEmployeeAttempts(attempts);
+
+  // ✅ PASSED
+  if (percentage >= EMPLOYEE_PASS_PERCENTAGE) {
+    localStorage.setItem("employeeQuizPassed", "true");
+    setEmployeeAttempts(0);
+    localStorage.removeItem("employeeQuizCooldownUntil");
+
+    document.getElementById("quizSection").innerHTML = `
       <h2>Training Completed</h2>
-      <p>This training has been successfully completed.</p>
-    </section>
+      <p>You scored ${percentage}%</p>
 
-  </main>
+      <button class="btn-primary" onclick="finishEmployeeTraining()">
+        Finish Training
+      </button>
+    `;
+    return;
+  }
 
-  <!-- SCRIPTS (NO INLINE JS) -->
-  <script src="../js/access-guard.js"></script>
-  <script src="../js/lang-loader.js"></script>
-  <script src="../js/progress.js"></script>
+  // ❌ FAILED
+  if (attempts >= EMPLOYEE_MAX_ATTEMPTS) {
+    const cooldownUntil =
+      Date.now() + EMPLOYEE_COOLDOWN_MINUTES * 60 * 1000;
+    setEmployeeCooldown(cooldownUntil);
 
-  <script src="../js/core.js"></script>
-  <script src="../js/employee.js"></script>
+    document.getElementById("quizSection").innerHTML = `
+      <h2>Too Many Attempts</h2>
+      <p>You must wait ${EMPLOYEE_COOLDOWN_MINUTES} minutes before retrying.</p>
+    `;
+    return;
+  }
 
-</body>
-</html>
+  // ❌ FAILED — retry allowed
+  document.getElementById("quizSection").innerHTML = `
+    <h2>Quiz Failed</h2>
+    <p>You scored ${percentage}%</p>
+    <p>Attempts remaining: ${
+      EMPLOYEE_MAX_ATTEMPTS - attempts
+    }</p>
+
+    <button class="btn-primary" onclick="showSection('quiz')">
+      Retry Quiz
+    </button>
+  `;
+}
+
+/* =========================
+   FINISH TRAINING
+========================= */
+
+function finishEmployeeTraining() {
+  localStorage.setItem("employeeTrainingCompleted", "true");
+  showSection("certificate");
+}
