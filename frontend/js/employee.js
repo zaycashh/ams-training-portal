@@ -8,6 +8,24 @@ const EMPLOYEE_PASS_PERCENTAGE = 80;
 const EMPLOYEE_COOLDOWN_MINUTES = 15;
 
 /* =========================
+   TAB ACTIVE STATE
+========================= */
+function setActiveTab(tab) {
+  document
+    .querySelectorAll(".module-nav button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  const map = {
+    content: "btnContent",
+    quiz: "btnQuiz",
+    certificate: "btnCertificate"
+  };
+
+  const el = document.getElementById(map[tab]);
+  if (el) el.classList.add("active");
+}
+
+/* =========================
    STATE HELPERS
 ========================= */
 
