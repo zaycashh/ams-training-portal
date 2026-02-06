@@ -1,23 +1,7 @@
-/* =========================
-   TAB ACTIVE STATE HANDLER
-========================= */
-
-function setActiveTab(tabName) {
-  document.querySelectorAll(".module-nav button").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  const activeBtn = document.querySelector(
-    `.module-nav button[data-tab="${tabName}"]`
-  );
-
-  if (activeBtn) {
-    activeBtn.classList.add("active");
-  }
-}
 /* =========================================================
-   AMS TRAINING PORTAL — CORE LOGIC (SHARED)
-   ⚠️ NO MODULE-SPECIFIC CODE HERE
+   AMS TRAINING PORTAL — CORE LOGIC (ENGINE ONLY)
+   🚫 NO UI NAVIGATION
+   🚫 NO MODULE RULES
 ========================================================= */
 
 /* =========================
@@ -26,39 +10,6 @@ function setActiveTab(tabName) {
 let quizData = [];
 let currentQuestion = 0;
 let score = 0;
-
-/* =========================
-   DOM READY
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  if (typeof showSection === "function") {
-    showSection("content");
-  }
-});
-
-/* =========================
-   SECTION NAVIGATION
-========================= */
-  function showSection(section) {
-    document.getElementById("contentSection")?.classList.add("hidden");
-    document.getElementById("quizSection")?.classList.add("hidden");
-    document.getElementById("certificateSection")?.classList.add("hidden");
-
-    if (section === "content") {
-      document.getElementById("contentSection")?.classList.remove("hidden");
-    }
-
-    if (section === "quiz") {
-      document.getElementById("quizSection")?.classList.remove("hidden");
-    }
-
-    if (section === "certificate") {
-      document.getElementById("certificateSection")?.classList.remove("hidden");
-    }
-
-    // ✅ THIS IS THE MISSING PIECE
-    setActiveTab(section);
-}
 
 /* =========================
    LOAD MODULE QUIZ
@@ -75,8 +26,10 @@ async function loadModuleQuiz() {
     loadQuiz(data);
   } catch (err) {
     console.error("Quiz load failed:", err);
-    document.getElementById("quizSection").innerHTML =
-      "<p>Quiz unavailable.</p>";
+    const quizSection = document.getElementById("quizSection");
+    if (quizSection) {
+      quizSection.innerHTML = "<p>Quiz unavailable.</p>";
+    }
   }
 }
 
@@ -115,7 +68,10 @@ function renderQuestion() {
 }
 
 function submitAnswer(selectedIndex) {
-  if (selectedIndex === quizData[currentQuestion].answer) score++;
+  if (selectedIndex === quizData[currentQuestion].answer) {
+    score++;
+  }
+
   currentQuestion++;
 
   if (currentQuestion < quizData.length) {
@@ -136,18 +92,12 @@ function showQuizResult() {
     return;
   }
 
-  if (
-    module === "employee" &&
-    typeof handleEmployeeQuizResult === "function"
-  ) {
+  if (module === "employee" && typeof handleEmployeeQuizResult === "function") {
     handleEmployeeQuizResult(score, quizData.length);
     return;
   }
 
-  if (
-    module === "supervisor" &&
-    typeof handleSupervisorQuizResult === "function"
-  ) {
+  if (module === "supervisor" && typeof handleSupervisorQuizResult === "function") {
     handleSupervisorQuizResult(score, quizData.length);
     return;
   }
