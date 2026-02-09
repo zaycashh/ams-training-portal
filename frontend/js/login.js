@@ -1,37 +1,15 @@
 /* =========================================================
-   ENSURE COMPANY ADMIN EXISTS (AUTO-SEED)
-========================================================= */
-(function ensureCompanyAdmin() {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-  if (!company || !company.adminEmail) return;
-
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
-  const exists = users.some(
-    u => u.email === company.adminEmail && u.role === "company_admin"
-  );
-
-  if (!exists) {
-    users.push({
-      email: company.adminEmail,
-      role: "company_admin",
-      companyId: company.id,
-      createdAt: new Date().toISOString()
-    });
-
-    localStorage.setItem("ams_users", JSON.stringify(users));
-    console.log("✅ Company admin auto-seeded");
-  }
-})();
-
-/* =========================================================
-   LOGIN FLOW — SAFE MULTI-ROLE (STEP 4 FINAL)
+   LOGIN FLOW — FINAL, SAFE, BULLETPROOF
 ========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim().toLowerCase();
+  const email = document
+    .getElementById("email")
+    .value.trim()
+    .toLowerCase();
+
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
@@ -46,44 +24,63 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const users = JSON.parse(
+    localStorage.getItem("ams_users") || "[]"
+  );
 
-  const companyUser = users.find(u => u.email === email);
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
 
   /* =========================================================
-     COMPANY USERS (ADMIN / EMPLOYEE)
+     COMPANY ADMIN (SOURCE OF TRUTH = companyProfile)
   ========================================================= */
-  if (companyUser) {
-    // 👷 Employee acceptance
-    if (companyUser.role === "employee" && !companyUser.acceptedAt) {
-      companyUser.acceptedAt = new Date().toISOString();
+  if (company && email === company.adminEmail) {
+    localStorage.setItem(
+      "amsUser",
+      JSON.stringify({
+        email,
+        role: "company_admin",
+        companyId: company.id
+      })
+    );
 
-      const updated = users.map(u =>
-        u.email === companyUser.email ? companyUser : u
+    window.location.replace("company-dashboard.html");
+    return;
+  }
+
+  /* =========================================================
+     COMPANY EMPLOYEE (INVITE-ONLY)
+  ========================================================= */
+  const employee = users.find(
+    u => u.email === email && u.role === "employee"
+  );
+
+  if (employee) {
+    // Mark first login
+    if (!employee.acceptedAt) {
+      employee.acceptedAt = new Date().toISOString();
+      localStorage.setItem(
+        "ams_users",
+        JSON.stringify(users)
       );
-      localStorage.setItem("ams_users", JSON.stringify(updated));
     }
 
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        email: companyUser.email,
-        role: companyUser.role,
-        companyId: companyUser.companyId || null
+        email,
+        role: "employee",
+        companyId: employee.companyId
       })
     );
-
-    if (companyUser.role === "company_admin") {
-      window.location.replace("company-dashboard.html");
-      return;
-    }
 
     window.location.replace("dashboard.html");
     return;
   }
 
   /* =========================================================
-     INDIVIDUAL CLIENTS (B2C)
+     INDIVIDUAL CLIENT (B2C)
   ========================================================= */
   localStorage.setItem(
     "amsUser",
