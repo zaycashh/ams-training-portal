@@ -1,4 +1,30 @@
 /* =========================================================
+   ENSURE COMPANY ADMIN EXISTS (AUTO-SEED)
+========================================================= */
+(function ensureCompanyAdmin() {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+  if (!company || !company.adminEmail) return;
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  const exists = users.some(
+    u => u.email === company.adminEmail && u.role === "company_admin"
+  );
+
+  if (!exists) {
+    users.push({
+      email: company.adminEmail,
+      role: "company_admin",
+      companyId: company.id,
+      createdAt: new Date().toISOString()
+    });
+
+    localStorage.setItem("ams_users", JSON.stringify(users));
+    console.log("✅ Company admin auto-seeded");
+  }
+})();
+
+/* =========================================================
    LOGIN FLOW — SAFE MULTI-ROLE (STEP 4 FINAL)
 ========================================================= */
 
