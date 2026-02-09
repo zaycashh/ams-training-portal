@@ -65,7 +65,7 @@ function loadEmployees(companyId) {
   if (!employees.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" style="opacity:.6;">No employees yet</td>
+        <td colspan="5" style="opacity:.6;">No employees yet</td>
       </tr>
     `;
     return;
@@ -77,8 +77,21 @@ function loadEmployees(companyId) {
     tr.innerHTML = `
       <td>${emp.name || "—"}</td>
       <td>${emp.email}</td>
-      <td>${emp.role}</td>
-      <td>${emp.completed ? "Completed" : "In Progress"}</td>
+      <td>Employee</td>
+      <td>
+        ${
+          emp.completed
+            ? "Completed"
+            : emp.acceptedAt
+              ? "In Progress"
+              : "Invited"
+        }
+      </td>
+      <td>
+        <button class="btn-secondary" onclick="removeEmployee('${emp.email}')">
+          Remove
+        </button>
+      </td>
     `;
 
     tbody.appendChild(tr);
