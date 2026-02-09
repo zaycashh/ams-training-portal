@@ -1,6 +1,6 @@
-// =========================================================
-// LOGIN FLOW — COMPANY SEATS + INDIVIDUAL ACCESS
-// =========================================================
+/* =========================================================
+   LOGIN FLOW — SAFE MULTI-ROLE (STEP 4 FINAL)
+========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -15,98 +15,58 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
   // 🔐 DEV PASSWORD (TEMP)
   const DEV_PASSWORD = "AMS!Dev2026";
-
   if (password !== DEV_PASSWORD) {
     alert("Invalid email or password");
     return;
   }
 
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  const companyUser = users.find(u => u.email === email);
+
   /* =========================================================
-     ROLE + COMPANY DETECTION
+     COMPANY USERS (ADMIN / EMPLOYEE)
   ========================================================= */
+  if (companyUser) {
+    // 👷 Employee acceptance
+    if (companyUser.role === "employee" && !companyUser.acceptedAt) {
+      companyUser.acceptedAt = new Date().toISOString();
 
-  const emailDomain = email.split("@")[1];
+      const updated = users.map(u =>
+        u.email === companyUser.email ? companyUser : u
+      );
+      localStorage.setItem("ams_users", JSON.stringify(updated));
+    }
 
-  const companyProfile = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
-
-  let role = "individual";
-  let companyId = null;
-  let employeeId = null;
-
-  // 🏢 Company Admin
-  if (
-    companyProfile &&
-    email === companyProfile.adminEmail
-  ) {
-    role = "company_admin";
-    companyId = companyProfile.id;
-  }
-
-  // 👷 Company Employee (seat-based)
-  else if (
-    companyProfile &&
-    email.endsWith("@" + companyProfile.adminEmail.split("@")[1])
-  ) {
-    role = "employee";
-    companyId = companyProfile.id;
-    employeeId = "EMP-" + Date.now();
-
-    // 🪑 Consume seat ONLY on first login
-    const usedEmployees =
-      JSON.parse(localStorage.getItem("companyEmployees") || "[]");
-
-    const alreadyExists = usedEmployees.find(
-      e => e.email === email
+    localStorage.setItem(
+      "amsUser",
+      JSON.stringify({
+        email: companyUser.email,
+        role: companyUser.role,
+        companyId: companyUser.companyId || null
+      })
     );
 
-    if (!alreadyExists) {
-      if (companyProfile.seatsUsed >= companyProfile.seatsTotal) {
-        alert("No employee seats available for this company.");
-        return;
-      }
-
-      companyProfile.seatsUsed += 1;
-      localStorage.setItem(
-        "companyProfile",
-        JSON.stringify(companyProfile)
-      );
-
-      usedEmployees.push({
-        email,
-        employeeId,
-        completed: false
-      });
-
-      localStorage.setItem(
-        "companyEmployees",
-        JSON.stringify(usedEmployees)
-      );
+    if (companyUser.role === "company_admin") {
+      window.location.replace("company-dashboard.html");
+      return;
     }
-  }
 
-  /* =========================================================
-     SESSION STORE
-  ========================================================= */
-
-  const user = {
-    email,
-    role,
-    companyId,
-    employeeId
-  };
-
-  localStorage.setItem("amsUser", JSON.stringify(user));
-
-  /* =========================================================
-     ROUTING
-  ========================================================= */
-
-  if (role === "company_admin") {
-    window.location.replace("company-dashboard.html");
+    window.location.replace("dashboard.html");
     return;
   }
+
+  /* =========================================================
+     INDIVIDUAL CLIENTS (B2C)
+  ========================================================= */
+  localStorage.setItem(
+    "amsUser",
+    JSON.stringify({
+      email,
+      role: "individual",
+      companyId: null
+    })
+  );
 
   window.location.replace("dashboard.html");
 });
