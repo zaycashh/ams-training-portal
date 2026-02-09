@@ -1,28 +1,72 @@
 /* =========================================================
-   AMS TRAINING ACCESS GUARD (FIXED)
+   LOGIN FLOW — SAFE MULTI-ROLE (STEP 4 FINAL)
 ========================================================= */
-(function () {
-  const DEV_OVERRIDE = localStorage.getItem("ams_dev_override") === "true";
 
-  const user = localStorage.getItem("amsUser");
-  const module = document.body.getAttribute("data-module");
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-  // Must be logged in
-  if (!user && !DEV_OVERRIDE) {
-    window.location.replace("login.html");
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    alert("Please enter email and password");
     return;
   }
 
-  // If no module defined, nothing to guard
-  if (!module) return;
+  // 🔐 DEV PASSWORD (TEMP)
+  const DEV_PASSWORD = "AMS!Dev2026";
+  if (password !== DEV_PASSWORD) {
+    alert("Invalid email or password");
+    return;
+  }
 
-  // 🔑 PAYMENT CHECK (NOT QUIZ PASS)
-  const paidKey = `paid_${module}`;
-  const isPaid = localStorage.getItem(paidKey) === "true";
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-  if (!isPaid && !DEV_OVERRIDE) {
-    console.warn(`🔒 ${module} not purchased`);
+  const companyUser = users.find(u => u.email === email);
+
+  /* =========================================================
+     COMPANY USERS (ADMIN / EMPLOYEE)
+  ========================================================= */
+  if (companyUser) {
+    // 👷 Employee acceptance
+    if (companyUser.role === "employee" && !companyUser.acceptedAt) {
+      companyUser.acceptedAt = new Date().toISOString();
+
+      const updated = users.map(u =>
+        u.email === companyUser.email ? companyUser : u
+      );
+      localStorage.setItem("ams_users", JSON.stringify(updated));
+    }
+
+    localStorage.setItem(
+      "amsUser",
+      JSON.stringify({
+        email: companyUser.email,
+        role: companyUser.role,
+        companyId: companyUser.companyId || null
+      })
+    );
+
+    if (companyUser.role === "company_admin") {
+      window.location.replace("company-dashboard.html");
+      return;
+    }
+
     window.location.replace("dashboard.html");
     return;
   }
-})();
+
+  /* =========================================================
+     INDIVIDUAL CLIENTS (B2C)
+  ========================================================= */
+  localStorage.setItem(
+    "amsUser",
+    JSON.stringify({
+      email,
+      role: "individual",
+      companyId: null
+    })
+  );
+
+  window.location.replace("dashboard.html");
+});
