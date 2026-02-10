@@ -75,15 +75,14 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   JSON.stringify({
     id: "emp-001",
     email,
-    role: "employee",          // ✅ MUST be employee
+    role: "employee",        // ✅ MUST be employee
     companyId: employee.companyId,
     employeeSeatLocked: false
   })
 );
-    window.location.replace("dashboard.html");
-    return;
-  }
 
+window.location.replace("dashboard.html");
+     return;
   /* =========================================================
      INDIVIDUAL CLIENT (B2C)
   ========================================================= */
