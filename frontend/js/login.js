@@ -1,11 +1,14 @@
 /* =========================================================
-   LOGIN FLOW — FINAL (COMPANY ADMIN FIXED)
+   LOGIN FLOW — FINAL (ADMIN / EMPLOYEE / INDIVIDUAL)
 ========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim().toLowerCase();
+  const email = document.getElementById("email").value
+    .trim()
+    .toLowerCase();
+
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
@@ -13,12 +16,15 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // 🔐 DEV PASSWORD
+  // 🔐 TEMP DEV PASSWORD
   const DEV_PASSWORD = "AMS!Dev2026";
   if (password !== DEV_PASSWORD) {
     alert("Invalid email or password");
     return;
   }
+
+  // Clear previous session
+  localStorage.removeItem("amsUser");
 
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
@@ -29,9 +35,13 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   );
 
   /* =========================================================
-     1️⃣ COMPANY ADMIN (SOURCE OF TRUTH)
+     COMPANY ADMIN (SOURCE = companyProfile)
   ========================================================= */
-  if (company && email === company.adminEmail) {
+  if (
+    company &&
+    company.adminEmail &&
+    email === company.adminEmail.toLowerCase()
+  ) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
@@ -46,10 +56,12 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     2️⃣ COMPANY EMPLOYEE
+     COMPANY EMPLOYEE (SEAT USER)
   ========================================================= */
   const employee = users.find(
-    u => u.email === email && u.role === "employee"
+    u =>
+      u.email.toLowerCase() === email &&
+      u.role === "employee"
   );
 
   if (employee) {
@@ -72,7 +84,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     3️⃣ INDIVIDUAL CLIENT
+     INDIVIDUAL CLIENT (B2C)
   ========================================================= */
   localStorage.setItem(
     "amsUser",
