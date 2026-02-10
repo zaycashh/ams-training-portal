@@ -86,6 +86,46 @@ function getEmployeeSeatStatus() {
   };
 }
 /* =========================
+   EMPLOYEE BUTTON STATE (UI ONLY)
+========================= */
+function updateEmployeeButtonState() {
+  const btn = document.getElementById("employeeBtn");
+  if (!btn) return;
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // Paid employee → enabled
+  if (localStorage.getItem("paid_employee") === "true") {
+    btn.disabled = false;
+    btn.textContent = "Start Training";
+    return;
+  }
+
+  // Seat already assigned → enabled
+  if (user?.employeeSeatLocked === true) {
+    btn.disabled = false;
+    btn.textContent = "Continue Training";
+    return;
+  }
+
+  // Seats available → enabled
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  const seatData = company?.seats?.employee;
+
+  if (seatData && seatData.total - seatData.used > 0) {
+    btn.disabled = false;
+    btn.textContent = "Use Company Seat";
+    return;
+  }
+
+  // No access
+  btn.disabled = true;
+  btn.textContent = "No Seats Available";
+}
+/* =========================
    FMCSA START
 ========================= */
 function startFMCSA() {
