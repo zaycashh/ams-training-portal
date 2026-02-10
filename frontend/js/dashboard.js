@@ -91,6 +91,9 @@ function getEmployeeSeatStatus() {
 function updateEmployeeButtonState() {
   const btn = document.getElementById("employeeBtn");
   if (!btn) return;
+   
+   // ✅ Clear any old tooltip
+  btn.title = "";
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
@@ -116,10 +119,15 @@ function updateEmployeeButtonState() {
   const seatData = company?.seats?.employee;
 
   if (seatData && seatData.total - seatData.used > 0) {
-    btn.disabled = false;
-    btn.textContent = "Use Company Seat";
-    return;
-  }
+  btn.disabled = false;
+  btn.textContent = "Use Company Seat";
+
+  // 🛈 Tooltip explaining seat usage
+  btn.title =
+    "Uses 1 company seat. This seat will be permanently assigned to you once training starts.";
+
+  return;
+}
 
   // No access
   btn.disabled = true;
