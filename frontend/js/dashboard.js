@@ -177,3 +177,20 @@ function startFAA(course) {
     window.location.href = "employee-training.html";
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  // Render seat badge
+  const status = getEmployeeSeatStatus();
+  if (status) {
+    const el = document.getElementById("employeeSeatStatus");
+    if (el) {
+      el.innerHTML = `
+        <span class="seat-badge ${status.type}">
+          ${status.label}
+        </span>
+      `;
+    }
+  }
+
+  // ✅ STEP 2: update Employee button state
+  updateEmployeeButtonState();
+});
