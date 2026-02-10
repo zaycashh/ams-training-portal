@@ -73,9 +73,9 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
   "amsUser",
   JSON.stringify({
-    id: employee.id || "emp-" + Date.now(),
-    email: email,
-    role: "employee",
+    id: "emp-001",
+    email,
+    role: "employee",          // ✅ MUST be employee
     companyId: employee.companyId,
     employeeSeatLocked: false
   })
