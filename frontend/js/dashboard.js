@@ -186,7 +186,6 @@ function startFAA(course) {
   }
 }
 document.addEventListener("DOMContentLoaded", () => {
-  // Render seat badge
   const status = getEmployeeSeatStatus();
   if (status) {
     const el = document.getElementById("employeeSeatStatus");
@@ -199,6 +198,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ✅ STEP 2: update Employee button state
   updateEmployeeButtonState();
 });
