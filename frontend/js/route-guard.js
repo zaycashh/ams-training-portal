@@ -1,5 +1,6 @@
 /* =========================================================
-   AMS TRAINING PORTAL – GLOBAL ROUTE GUARD (STEP 1)
+   AMS TRAINING PORTAL – GLOBAL ROUTE GUARD
+   (Roles + Company Seats + Individual Purchases)
 ========================================================= */
 
 (function () {
@@ -8,37 +9,50 @@
 
   // 🔐 1. Must be logged in
   if (!user) {
-    window.location.href = "../pages/login.html";
+    window.location.replace("../pages/login.html");
     return;
   }
 
-  // 🔐 2. Must be on a valid module page
+  // 🔐 2. If not on a module page, nothing to guard
   if (!module) return;
 
-   /* =========================================================
-   STEP 2 – ROLE → MODULE ROUTING ENFORCEMENT
-========================================================= */
+  /* =========================================================
+     STEP 2 – ROLE → MODULE ENFORCEMENT
+  ========================================================= */
 
-const role = user.role; // expected: 'der' | 'employee' | 'supervisor'
+  const role = user.role; // der | employee | supervisor | individual
 
-// Which roles can access which modules
-const roleAccess = {
-  der: ["der"],
-  employee: ["employee"],
-  supervisor: ["supervisor"]
-};
+  const roleAccess = {
+    der: ["der"],
+    employee: ["employee"],
+    supervisor: ["supervisor"],
+    individual: ["der", "employee", "supervisor"] // B2C users
+  };
 
-// If module exists but role is not allowed → block
-if (
-  module &&
-  roleAccess[role] &&
-  !roleAccess[role].includes(module)
-) {
-  sessionStorage.setItem("ams_notice", "You don’t have access to that training module.");
-window.location.replace("../pages/dashboard.html");
-return;
+  if (
+    roleAccess[role] &&
+    !roleAccess[role].includes(module)
+  ) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You don’t have access to that training module."
+    );
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
 
-  // 🔐 3. Paywall enforcement
+  /* =========================================================
+     STEP 3 – COMPANY SEATS + INDIVIDUAL PAYWALL
+  ========================================================= */
+
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  const companyModules = Array.isArray(company?.modules)
+    ? company.modules.map(m => m.toLowerCase())
+    : [];
+
   const paymentFlags = {
     der: "paid_der",
     employee: "paid_employee",
@@ -47,12 +61,23 @@ return;
 
   const payKey = paymentFlags[module];
 
-  if (payKey && localStorage.getItem(payKey) !== "true") {
-  sessionStorage.setItem("ams_notice", "This training module is locked.");
-window.location.replace("../pages/dashboard.html");
-return;
+  const hasCompanySeat = companyModules.includes(module);
+  const hasIndividualPurchase =
+    payKey && localStorage.getItem(payKey) === "true";
 
-  // 🔒 4. Completion hard-lock redirect (handled per module)
+  if (!hasCompanySeat && !hasIndividualPurchase) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "This training module is locked."
+    );
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
+
+  /* =========================================================
+     STEP 4 – COMPLETION HARD LOCK (UI HANDLED IN MODULE)
+  ========================================================= */
+
   const completionFlags = {
     der: "derCompleted",
     employee: "employeeCompleted",
@@ -63,10 +88,11 @@ return;
 
   if (
     completedKey &&
-    localStorage.getItem(completedKey) === "true" &&
-    !window.location.href.includes("certificate")
+    localStorage.getItem(completedKey) === "true"
   ) {
-    // Allow page load, module logic will lock UI
-    console.log("✅ Module completed – certificate-only access enforced");
+    console.log(
+      "✅ Module completed — certificate-only access enforced"
+    );
+    // Module JS will handle UI lock
   }
 })();
