@@ -137,6 +137,15 @@ if (
   user?.paid_employee !== "true" &&
   user?.employeeSeatLocked !== true
 ) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+const hasIndividualPurchase =
+  localStorage.getItem("paid_employee") === "true";
+
+const hasCompanySeat =
+  user?.employeeSeatLocked === true;
+
+if (!hasIndividualPurchase && !hasCompanySeat) {
   alert("Employee Training requires purchase or an available company seat.");
   window.location.href = "dashboard.html";
   return;
