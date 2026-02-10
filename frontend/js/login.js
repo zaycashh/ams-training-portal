@@ -54,77 +54,95 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     window.location.replace("company-dashboard.html");
     return;
   }
-
-  /* =========================================================
-   LOGIN HANDLER (FINAL – ROLE SAFE)
+   /* =========================================================
+   LOGIN HANDLER (FINAL – ROLE SAFE & SEAT SAFE)
 ========================================================= */
 
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+// Example mock data (keep or replace later with API)
+const COMPANY_EMPLOYEES = [
+  {
+    email: "employee1@abc.com",
+    password: "AMS!Dev2026",
+    companyId: "abc-company"
+  }
+];
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+const COMPANY_OWNERS = [
+  {
+    email: "owner@abc.com",
+    password: "AMS!Dev2026",
+    companyId: "abc-company"
+  }
+];
 
-  /* =========================================================
-     COMPANY EMPLOYEE LOGIN
-     (Consumes company seats)
-  ========================================================= */
-  const employee = COMPANY_EMPLOYEES.find(
-    u => u.email === email && u.password === password
-  );
+document
+  .getElementById("loginForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  if (employee) {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    /* =========================================================
+       COMPANY EMPLOYEE LOGIN
+       (Consumes company seats)
+    ========================================================= */
+    const employee = COMPANY_EMPLOYEES.find(
+      u => u.email === email && u.password === password
+    );
+
+    if (employee) {
+      localStorage.setItem(
+        "amsUser",
+        JSON.stringify({
+          id: "emp-" + Date.now(),
+          email,
+          role: "employee",              // ✅ MUST be employee
+          companyId: employee.companyId, // ✅ REQUIRED
+          employeeSeatLocked: false
+        })
+      );
+
+      window.location.replace("dashboard.html");
+      return; // 🔥 CRITICAL — prevents overwrite
+    }
+
+    /* =========================================================
+       COMPANY OWNER LOGIN
+       (Manages seats, does NOT consume)
+    ========================================================= */
+    const owner = COMPANY_OWNERS.find(
+      u => u.email === email && u.password === password
+    );
+
+    if (owner) {
+      localStorage.setItem(
+        "amsUser",
+        JSON.stringify({
+          id: "owner-" + Date.now(),
+          email,
+          role: "owner",
+          companyId: owner.companyId
+        })
+      );
+
+      window.location.replace("dashboard.html");
+      return;
+    }
+
+    /* =========================================================
+       INDIVIDUAL CLIENT (B2C)
+       (No company, no seats)
+    ========================================================= */
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "emp-" + Date.now(),
+        id: "ind-" + Date.now(),
         email,
-        role: "employee",                 // ✅ MUST be employee
-        companyId: employee.companyId,    // ✅ MUST exist
-        employeeSeatLocked: false
+        role: "individual",
+        companyId: null
       })
     );
 
     window.location.replace("dashboard.html");
-    return; // 🔥 CRITICAL — stops individual overwrite
-  }
-
-  /* =========================================================
-     COMPANY OWNER LOGIN
-     (Manages seats, does NOT consume)
-  ========================================================= */
-  const owner = COMPANY_OWNERS.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (owner) {
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify({
-        id: "owner-" + Date.now(),
-        email,
-        role: "owner",
-        companyId: owner.companyId
-      })
-    );
-
-    window.location.replace("dashboard.html");
-    return;
-  }
-
-  /* =========================================================
-     INDIVIDUAL CLIENT (B2C)
-     (No company, no seats)
-  ========================================================= */
-  localStorage.setItem(
-    "amsUser",
-    JSON.stringify({
-      id: "ind-" + Date.now(),
-      email,
-      role: "individual",
-      companyId: null
-    })
-  );
-
-  window.location.replace("dashboard.html");
-});
+  });
