@@ -15,6 +15,30 @@
   // 🔐 2. Must be on a valid module page
   if (!module) return;
 
+   /* =========================================================
+   STEP 2 – ROLE → MODULE ROUTING ENFORCEMENT
+========================================================= */
+
+const role = user.role; // expected: 'der' | 'employee' | 'supervisor'
+
+// Which roles can access which modules
+const roleAccess = {
+  der: ["der"],
+  employee: ["employee"],
+  supervisor: ["supervisor"]
+};
+
+// If module exists but role is not allowed → block
+if (
+  module &&
+  roleAccess[role] &&
+  !roleAccess[role].includes(module)
+) {
+  alert("You do not have access to this training module.");
+  window.location.href = "../pages/dashboard.html";
+  return;
+}
+
   // 🔐 3. Paywall enforcement
   const paymentFlags = {
     der: "paid_der",
