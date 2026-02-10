@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="../css/main.css" />
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -28,11 +29,12 @@
     <h1>Welcome to AMS Training Portal</h1>
     <button class="btn-secondary" onclick="logout()">Log Out</button>
   </header>
-  
+
   <!-- EMPLOYEE FIRST-LOGIN WELCOME -->
-  <div id="employeeWelcome"
-       style="display:none; padding:12px; margin-bottom:12px;
-              border:1px solid #d7e3ff; background:#f5f9ff; border-radius:6px;">
+  <div
+    id="employeeWelcome"
+    style="display:none; padding:12px; margin-bottom:12px;
+           border:1px solid #d7e3ff; background:#f5f9ff; border-radius:6px;">
     <strong>Welcome!</strong>
     You’ve been invited by your company to complete required training.
   </div>
@@ -49,38 +51,29 @@
   <!-- MODULES -->
   <section class="modules-grid">
 
-    <!-- DER Training -->
-    <div class="module-card locked">
+    <!-- DER -->
+    <div class="module-card locked" id="derCard">
       <h2>DER Training</h2>
       <p>Designated Employer Representative Training</p>
-      <button
-        id="derBtn"
-        class="btn-primary"
-        onclick="startFAA('der')">
+      <button id="derBtn" class="btn-primary" disabled>
         Locked — Purchase Required
       </button>
     </div>
 
-    <!-- Supervisor Training -->
-    <div class="module-card locked">
+    <!-- SUPERVISOR -->
+    <div class="module-card locked" id="supervisorCard">
       <h2>Supervisor Training</h2>
       <p>Drug & Alcohol Supervisor Training</p>
-      <button
-        id="supervisorBtn"
-        class="btn-primary"
-        onclick="startFAA('supervisor')">
+      <button id="supervisorBtn" class="btn-primary" disabled>
         Locked — Purchase Required
       </button>
     </div>
 
-    <!-- Employee Training -->
-    <div class="module-card locked">
+    <!-- EMPLOYEE -->
+    <div class="module-card locked" id="employeeCard">
       <h2>Employee Training</h2>
       <p>Drug & Alcohol Awareness Training</p>
-      <button
-        id="employeeBtn"
-        class="btn-primary"
-        onclick="startFAA('employee')">
+      <button id="employeeBtn" class="btn-primary" disabled>
         Locked — Purchase Required
       </button>
     </div>
@@ -112,7 +105,7 @@
 <script src="../js/dashboard.js"></script>
 
 <!-- ======================================================
-     COMPANY SEATS → TRAINING DASHBOARD UNLOCK
+     COMPANY SEATS + INDIVIDUAL PURCHASE UNLOCK (UI ONLY)
 ====================================================== -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -120,47 +113,73 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem("companyProfile") || "null"
   );
 
-  const companyModules = company?.modules || [];
+  const companyModules = Array.isArray(company?.modules)
+    ? company.modules.map(m => m.toLowerCase())
+    : [];
 
   unlockModule({
-    companyHas: companyModules.includes("Employee"),
+    module: "employee",
+    companyModules,
     paidKey: "paid_employee",
+    cardId: "employeeCard",
     buttonId: "employeeBtn",
     startUrl: "employee-training.html"
   });
 
   unlockModule({
-    companyHas: companyModules.includes("Supervisor"),
+    module: "supervisor",
+    companyModules,
     paidKey: "paid_supervisor",
+    cardId: "supervisorCard",
     buttonId: "supervisorBtn",
     startUrl: "supervisor-training.html"
   });
 
   unlockModule({
-    companyHas: companyModules.includes("DER"),
+    module: "der",
+    companyModules,
     paidKey: "paid_der",
+    cardId: "derCard",
     buttonId: "derBtn",
     startUrl: "der-training.html"
   });
 });
 
-function unlockModule({ companyHas, paidKey, buttonId, startUrl }) {
+function unlockModule({
+  module,
+  companyModules,
+  paidKey,
+  cardId,
+  buttonId,
+  startUrl
+}) {
+  const card = document.getElementById(cardId);
   const btn = document.getElementById(buttonId);
-  if (!btn) return;
+  if (!card || !btn) return;
 
-  const unlocked =
-    companyHas || localStorage.getItem(paidKey) === "true";
+  const hasCompanySeat = companyModules.includes(module);
+  const hasIndividualPurchase =
+    localStorage.getItem(paidKey) === "true";
 
-  if (unlocked) {
-    btn.textContent = "Start Training";
+  if (hasCompanySeat || hasIndividualPurchase) {
+    card.classList.remove("locked");
     btn.disabled = false;
+
+    btn.textContent = hasCompanySeat
+      ? "Start Training (Included via Company)"
+      : "Start Training (Purchased)";
+
     btn.onclick = () => {
       window.location.href = `../pages/${startUrl}`;
     };
   }
 }
 </script>
-  <script>
+
+<!-- ======================================================
+     SOFT NOTICE FROM ROUTE GUARD
+====================================================== -->
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const msg = sessionStorage.getItem("ams_notice");
   if (!msg) return;
@@ -180,5 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
   sessionStorage.removeItem("ams_notice");
 });
 </script>
+
 </body>
 </html>
