@@ -145,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+<script>
 function unlockModule({
   module,
   companyModules,
@@ -157,15 +158,24 @@ function unlockModule({
   const btn = document.getElementById(buttonId);
   if (!card || !btn) return;
 
-  const hasCompanySeat = companyModules.includes(module);
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const role = user?.role;
+
+  // ✅ Only EMPLOYEES can use company seats
+  const seatEligibleRoles = ["employee"];
+  const canUseCompanySeat =
+    seatEligibleRoles.includes(role) &&
+    companyModules.includes(module);
+
+  // 💳 Individual purchase
   const hasIndividualPurchase =
     localStorage.getItem(paidKey) === "true";
 
-  if (hasCompanySeat || hasIndividualPurchase) {
+  if (canUseCompanySeat || hasIndividualPurchase) {
     card.classList.remove("locked");
     btn.disabled = false;
 
-    btn.textContent = hasCompanySeat
+    btn.textContent = canUseCompanySeat
       ? "Start Training (Included via Company)"
       : "Start Training (Purchased)";
 
