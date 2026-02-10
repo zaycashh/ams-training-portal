@@ -1,15 +1,11 @@
 /* =========================================================
-   LOGIN FLOW — FINAL, ROLE-SAFE (ADMIN / EMPLOYEE / INDIVIDUAL)
+   LOGIN FLOW — FINAL (COMPANY ADMIN FIXED)
 ========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const email = document
-    .getElementById("email")
-    .value.trim()
-    .toLowerCase();
-
+  const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
@@ -17,25 +13,25 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // 🔐 DEV PASSWORD (TEMP)
+  // 🔐 DEV PASSWORD
   const DEV_PASSWORD = "AMS!Dev2026";
   if (password !== DEV_PASSWORD) {
     alert("Invalid email or password");
     return;
   }
 
-  const users = JSON.parse(
-    localStorage.getItem("ams_users") || "[]"
-  );
-
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
+  const users = JSON.parse(
+    localStorage.getItem("ams_users") || "[]"
+  );
+
   /* =========================================================
-     COMPANY ADMIN (SOURCE = companyProfile ONLY)
+     1️⃣ COMPANY ADMIN (SOURCE OF TRUTH)
   ========================================================= */
-  if (company && email === company.adminEmail.toLowerCase()) {
+  if (company && email === company.adminEmail) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
@@ -50,7 +46,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     COMPANY EMPLOYEE (SEAT-BASED)
+     2️⃣ COMPANY EMPLOYEE
   ========================================================= */
   const employee = users.find(
     u => u.email === email && u.role === "employee"
@@ -76,7 +72,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     INDIVIDUAL CLIENT (B2C)
+     3️⃣ INDIVIDUAL CLIENT
   ========================================================= */
   localStorage.setItem(
     "amsUser",
