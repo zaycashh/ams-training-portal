@@ -33,7 +33,58 @@ function hasAccess(course) {
   const paidKey = COURSE_KEYS[course];
   return localStorage.getItem(paidKey) === "true";
 }
+/* =========================
+   EMPLOYEE SEAT STATUS UI
+   (DISPLAY ONLY)
+========================= */
+function getEmployeeSeatStatus() {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user || user.role !== "employee") return null;
 
+  // Individually paid employee
+  if (localStorage.getItem("paid_employee") === "true") {
+    return {
+      type: "paid",
+      label: "✔ Individually Purchased"
+    };
+  }
+
+  // Seat already locked to this user
+  if (user.employeeSeatLocked === true) {
+    return {
+      type: "assigned",
+      label: "🎟️ Seat Assigned"
+    };
+  }
+
+  // Show remaining seats (if any)
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  const seatData = company?.seats?.employee;
+
+  if (!seatData) {
+    return {
+      type: "locked",
+      label: "🔒 Not Available"
+    };
+  }
+
+  const remaining = seatData.total - seatData.used;
+
+  if (remaining > 0) {
+    return {
+      type: "available",
+      label: `${remaining} Seat${remaining > 1 ? "s" : ""} Remaining`
+    };
+  }
+
+  return {
+    type: "full",
+    label: "❌ No Seats Available"
+  };
+}
 /* =========================
    FMCSA START
 ========================= */
@@ -80,3 +131,16 @@ function startFAA(course) {
     window.location.href = "employee-training.html";
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const status = getEmployeeSeatStatus();
+  if (!status) return;
+
+  const el = document.getElementById("employeeSeatStatus");
+  if (!el) return;
+
+  el.innerHTML = `
+    <span class="seat-badge ${status.type}">
+      ${status.label}
+    </span>
+  `;
+});
