@@ -1,19 +1,24 @@
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD
-   (Roles + Company Seats + Individual Purchases)
+   (Roles + Individual Purchases + Employee Seats)
+   SECURITY LAYER ONLY – NO UI, NO SEAT CONSUMPTION
 ========================================================= */
 
 (function () {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body.dataset.module; // der | employee | supervisor
 
-  // 🔐 1. Must be logged in
+  /* =========================================================
+     STEP 1 – AUTHENTICATION
+  ========================================================= */
+
+  // 🔐 Must be logged in
   if (!user) {
     window.location.replace("../pages/login.html");
     return;
   }
 
-  // 🔐 2. If not on a module page, nothing to guard
+  // 🔐 Not on a module page → nothing to guard
   if (!module) return;
 
   /* =========================================================
@@ -26,7 +31,7 @@
     der: ["der"],
     employee: ["employee"],
     supervisor: ["supervisor"],
-    individual: ["der", "employee", "supervisor"] // B2C users
+    individual: ["der", "employee", "supervisor"] // B2C buyers
   };
 
   if (
@@ -42,16 +47,9 @@
   }
 
   /* =========================================================
-     STEP 3 – COMPANY SEATS + INDIVIDUAL PAYWALL
+     STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT
+     (Company modules ≠ seat ownership)
   ========================================================= */
-
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
-
-  const companyModules = Array.isArray(company?.modules)
-    ? company.modules.map(m => m.toLowerCase())
-    : [];
 
   const paymentFlags = {
     der: "paid_der",
@@ -61,11 +59,17 @@
 
   const payKey = paymentFlags[module];
 
-  const hasCompanySeat = companyModules.includes(module);
   const hasIndividualPurchase =
     payKey && localStorage.getItem(payKey) === "true";
 
-  if (!hasCompanySeat && !hasIndividualPurchase) {
+  // ✅ Employee seat must be LOCKED to user
+  const hasEmployeeSeat =
+    module === "employee" &&
+    user.role === "employee" &&
+    user.employeeSeatLocked === true;
+
+  // 🔒 Final access decision
+  if (!hasIndividualPurchase && !hasEmployeeSeat) {
     sessionStorage.setItem(
       "ams_notice",
       "This training module is locked."
@@ -79,9 +83,9 @@
   ========================================================= */
 
   const completionFlags = {
-    der: "derCompleted",
-    employee: "employeeCompleted",
-    supervisor: "supervisorCompleted"
+    der: "derTrainingCompleted",
+    employee: "employeeTrainingCompleted",
+    supervisor: "supervisorTrainingCompleted"
   };
 
   const completedKey = completionFlags[module];
@@ -93,6 +97,6 @@
     console.log(
       "✅ Module completed — certificate-only access enforced"
     );
-    // Module JS will handle UI lock
+    // Module JS handles certificate-only UI
   }
 })();
