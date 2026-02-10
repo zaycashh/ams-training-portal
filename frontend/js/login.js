@@ -1,7 +1,30 @@
 /* =========================================================
-   LOGIN FLOW — FINAL (ADMIN / EMPLOYEE / INDIVIDUAL)
+   LOGIN FLOW — FINAL (ADMIN / EMPLOYEE / OWNER / INDIVIDUAL)
 ========================================================= */
 
+// 🔐 TEMP DEV PASSWORD (remove when backend is live)
+const DEV_PASSWORD = "AMS!Dev2026";
+
+// 🔹 Mock company users (replace later with API)
+const COMPANY_EMPLOYEES = [
+  {
+    email: "employee1@abc.com",
+    password: DEV_PASSWORD,
+    companyId: "abc-company"
+  }
+];
+
+const COMPANY_OWNERS = [
+  {
+    email: "owner@abc.com",
+    password: DEV_PASSWORD,
+    companyId: "abc-company"
+  }
+];
+
+// =========================================================
+// LOGIN SUBMIT HANDLER (SINGLE SOURCE OF TRUTH)
+// =========================================================
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -16,8 +39,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // 🔐 TEMP DEV PASSWORD
-  const DEV_PASSWORD = "AMS!Dev2026";
   if (password !== DEV_PASSWORD) {
     alert("Invalid email or password");
     return;
@@ -26,16 +47,14 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   // Clear previous session
   localStorage.removeItem("amsUser");
 
+  // Load company profile if exists
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
-  const users = JSON.parse(
-    localStorage.getItem("ams_users") || "[]"
-  );
-
   /* =========================================================
-     COMPANY ADMIN (SOURCE = companyProfile)
+     COMPANY ADMIN LOGIN
+     (from companyProfile)
   ========================================================= */
   if (
     company &&
@@ -45,6 +64,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
+        id: "admin-" + Date.now(),
         email,
         role: "company_admin",
         companyId: company.id
@@ -54,95 +74,67 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     window.location.replace("company-dashboard.html");
     return;
   }
-   /* =========================================================
-   LOGIN HANDLER (FINAL – ROLE SAFE & SEAT SAFE)
-========================================================= */
 
-// Example mock data (keep or replace later with API)
-const COMPANY_EMPLOYEES = [
-  {
-    email: "employee1@abc.com",
-    password: "AMS!Dev2026",
-    companyId: "abc-company"
-  }
-];
+  /* =========================================================
+     COMPANY EMPLOYEE LOGIN
+     (Consumes seat)
+  ========================================================= */
+  const employee = COMPANY_EMPLOYEES.find(
+    u => u.email === email && u.password === password
+  );
 
-const COMPANY_OWNERS = [
-  {
-    email: "owner@abc.com",
-    password: "AMS!Dev2026",
-    companyId: "abc-company"
-  }
-];
-
-document
-  .getElementById("loginForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    /* =========================================================
-       COMPANY EMPLOYEE LOGIN
-       (Consumes company seats)
-    ========================================================= */
-    const employee = COMPANY_EMPLOYEES.find(
-      u => u.email === email && u.password === password
-    );
-
-    if (employee) {
-      localStorage.setItem(
-        "amsUser",
-        JSON.stringify({
-          id: "emp-" + Date.now(),
-          email,
-          role: "employee",              // ✅ MUST be employee
-          companyId: employee.companyId, // ✅ REQUIRED
-          employeeSeatLocked: false
-        })
-      );
-
-      window.location.replace("dashboard.html");
-      return; // 🔥 CRITICAL — prevents overwrite
-    }
-
-    /* =========================================================
-       COMPANY OWNER LOGIN
-       (Manages seats, does NOT consume)
-    ========================================================= */
-    const owner = COMPANY_OWNERS.find(
-      u => u.email === email && u.password === password
-    );
-
-    if (owner) {
-      localStorage.setItem(
-        "amsUser",
-        JSON.stringify({
-          id: "owner-" + Date.now(),
-          email,
-          role: "owner",
-          companyId: owner.companyId
-        })
-      );
-
-      window.location.replace("dashboard.html");
-      return;
-    }
-
-    /* =========================================================
-       INDIVIDUAL CLIENT (B2C)
-       (No company, no seats)
-    ========================================================= */
+  if (employee) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "ind-" + Date.now(),
+        id: "emp-" + Date.now(),
         email,
-        role: "individual",
-        companyId: null
+        role: "employee",
+        companyId: employee.companyId,
+        employeeSeatLocked: false
       })
     );
 
     window.location.replace("dashboard.html");
-  });
+    return;
+  }
+
+  /* =========================================================
+     COMPANY OWNER LOGIN
+     (Manages seats, does NOT consume)
+  ========================================================= */
+  const owner = COMPANY_OWNERS.find(
+    u => u.email === email && u.password === password
+  );
+
+  if (owner) {
+    localStorage.setItem(
+      "amsUser",
+      JSON.stringify({
+        id: "owner-" + Date.now(),
+        email,
+        role: "owner",
+        companyId: owner.companyId
+      })
+    );
+
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  /* =========================================================
+     INDIVIDUAL CLIENT (B2C)
+     (No company, no seats)
+  ========================================================= */
+  localStorage.setItem(
+    "amsUser",
+    JSON.stringify({
+      id: "ind-" + Date.now(),
+      email,
+      role: "individual",
+      companyId: null
+    })
+  );
+
+  window.location.replace("dashboard.html");
+});
