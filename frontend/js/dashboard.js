@@ -113,11 +113,6 @@ function startFAA(course) {
     return;
   }
 
-  // 🪑 Company seats ONLY apply to Employee training
-  if (course === "employee") {
-    if (!consumeCompanySeatIfNeeded(course)) return;
-  }
-
   // 🚀 Route to training
   if (course === "der") {
     window.location.href = "der-training.html";
