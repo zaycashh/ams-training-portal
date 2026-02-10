@@ -88,19 +88,22 @@
 
   </main>
 
-  <!-- SCRIPTS (ORDER IS CRITICAL) -->
-  <script src="../js/access-guard.js"></script>
-  <script src="../js/lang-loader.js"></script>
-  <script src="../js/progress.js"></script>
+<!-- GLOBAL ROUTE GUARD (MUST BE FIRST) -->
+<script src="../js/route-guard.js"></script>
 
-  <!-- CORE QUIZ ENGINE -->
-  <script src="../js/core.js"></script>
+<!-- ACCESS / UI GUARDS -->
+<script src="../js/access-guard.js"></script>
+<script src="../js/lang-loader.js"></script>
+<script src="../js/progress.js"></script>
 
-  <!-- QR LIBRARY -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<!-- CORE ENGINE -->
+<script src="../js/core.js"></script>
 
-  <!-- DER MODULE (MUST BE LAST) -->
-  <script src="../js/der.js"></script>
+<!-- QR LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+<!-- MODULE LOGIC (MUST BE LAST) -->
+<script src="../js/der.js"></script>
 
 </body>
 </html>
