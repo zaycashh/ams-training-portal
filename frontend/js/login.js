@@ -71,14 +71,15 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     }
 
     localStorage.setItem(
-      "amsUser",
-      JSON.stringify({
-        email,
-        role: "employee",
-        companyId: employee.companyId
-      })
-    );
-
+  "amsUser",
+  JSON.stringify({
+    id: employee.id || "emp-" + Date.now(),
+    email: email,
+    role: "employee",
+    companyId: employee.companyId,
+    employeeSeatLocked: false
+  })
+);
     window.location.replace("dashboard.html");
     return;
   }
