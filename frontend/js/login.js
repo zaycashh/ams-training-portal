@@ -56,39 +56,70 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     COMPANY EMPLOYEE (SEAT USER)
+   LOGIN HANDLER (FINAL – ROLE SAFE)
+========================================================= */
+
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  /* =========================================================
+     COMPANY EMPLOYEE LOGIN
+     (Consumes company seats)
   ========================================================= */
-  const employee = users.find(
-    u =>
-      u.email.toLowerCase() === email &&
-      u.role === "employee"
+  const employee = COMPANY_EMPLOYEES.find(
+    u => u.email === email && u.password === password
   );
 
   if (employee) {
-    if (!employee.acceptedAt) {
-      employee.acceptedAt = new Date().toISOString();
-      localStorage.setItem("ams_users", JSON.stringify(users));
-    }
-
     localStorage.setItem(
-  "amsUser",
-  JSON.stringify({
-    id: "emp-001",
-    email,
-    role: "employee",        // ✅ MUST be employee
-    companyId: employee.companyId,
-    employeeSeatLocked: false
-  })
-);
+      "amsUser",
+      JSON.stringify({
+        id: "emp-" + Date.now(),
+        email,
+        role: "employee",                 // ✅ MUST be employee
+        companyId: employee.companyId,    // ✅ MUST exist
+        employeeSeatLocked: false
+      })
+    );
 
-window.location.replace("dashboard.html");
-     return;
+    window.location.replace("dashboard.html");
+    return; // 🔥 CRITICAL — stops individual overwrite
+  }
+
+  /* =========================================================
+     COMPANY OWNER LOGIN
+     (Manages seats, does NOT consume)
+  ========================================================= */
+  const owner = COMPANY_OWNERS.find(
+    u => u.email === email && u.password === password
+  );
+
+  if (owner) {
+    localStorage.setItem(
+      "amsUser",
+      JSON.stringify({
+        id: "owner-" + Date.now(),
+        email,
+        role: "owner",
+        companyId: owner.companyId
+      })
+    );
+
+    window.location.replace("dashboard.html");
+    return;
+  }
+
   /* =========================================================
      INDIVIDUAL CLIENT (B2C)
+     (No company, no seats)
   ========================================================= */
   localStorage.setItem(
     "amsUser",
     JSON.stringify({
+      id: "ind-" + Date.now(),
       email,
       role: "individual",
       companyId: null
