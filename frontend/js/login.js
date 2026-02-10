@@ -1,5 +1,5 @@
 /* =========================================================
-   LOGIN FLOW — FINAL, SAFE, BULLETPROOF
+   LOGIN FLOW — FINAL, ROLE-SAFE (ADMIN / EMPLOYEE / INDIVIDUAL)
 ========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
@@ -33,9 +33,9 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   );
 
   /* =========================================================
-     COMPANY ADMIN (SOURCE OF TRUTH = companyProfile)
+     COMPANY ADMIN (SOURCE = companyProfile ONLY)
   ========================================================= */
-  if (company && email === company.adminEmail) {
+  if (company && email === company.adminEmail.toLowerCase()) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
@@ -50,20 +50,16 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     COMPANY EMPLOYEE (INVITE-ONLY)
+     COMPANY EMPLOYEE (SEAT-BASED)
   ========================================================= */
   const employee = users.find(
     u => u.email === email && u.role === "employee"
   );
 
   if (employee) {
-    // Mark first login
     if (!employee.acceptedAt) {
       employee.acceptedAt = new Date().toISOString();
-      localStorage.setItem(
-        "ams_users",
-        JSON.stringify(users)
-      );
+      localStorage.setItem("ams_users", JSON.stringify(users));
     }
 
     localStorage.setItem(
