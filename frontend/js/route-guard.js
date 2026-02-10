@@ -34,8 +34,7 @@ if (
   roleAccess[role] &&
   !roleAccess[role].includes(module)
 ) {
-  alert("You do not have access to this training module.");
-  window.location.href = "../pages/dashboard.html";
+  window.location.replace("../pages/dashboard.html");
   return;
 }
 
@@ -49,10 +48,9 @@ if (
   const payKey = paymentFlags[module];
 
   if (payKey && localStorage.getItem(payKey) !== "true") {
-    alert("This training module requires purchase.");
-    window.location.href = "../pages/dashboard.html";
-    return;
-  }
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
   // 🔒 4. Completion hard-lock redirect (handled per module)
   const completionFlags = {
