@@ -101,19 +101,30 @@ function startFMCSA() {
   window.location.href = "fmcsa.html";
 }
 
-/* =========================
-   FAA MODULE ACCESS CONTROL
-========================= */
 function startFAA(course) {
-  // 🔒 Individual access check (DER + Supervisor still require purchase)
-  if (!hasAccess(course)) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // 🔒 DER & Supervisor = individual purchase ONLY
+  if (course !== "employee" && !hasAccess(course)) {
     alert(
       `${course.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
     );
     return;
   }
 
-  // 🚀 Route to training
+  // 🪑 Employee = paid OR seat-locked
+  if (
+    course === "employee" &&
+    !hasAccess("employee") &&
+    user?.employeeSeatLocked !== true
+  ) {
+    alert(
+      "Employee Training is locked.\n\nPurchase required or no company seats available."
+    );
+    return;
+  }
+
+  // 🚀 Route only (NO seat logic here)
   if (course === "der") {
     window.location.href = "der-training.html";
   }
@@ -126,16 +137,3 @@ function startFAA(course) {
     window.location.href = "employee-training.html";
   }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const status = getEmployeeSeatStatus();
-  if (!status) return;
-
-  const el = document.getElementById("employeeSeatStatus");
-  if (!el) return;
-
-  el.innerHTML = `
-    <span class="seat-badge ${status.type}">
-      ${status.label}
-    </span>
-  `;
-});
