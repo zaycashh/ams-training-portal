@@ -160,5 +160,26 @@ function unlockModule({ companyHas, paidKey, buttonId, startUrl }) {
   }
 }
 </script>
+  
+  <script>
+(function () {
+  const msg = sessionStorage.getItem("ams_notice");
+  if (!msg) return;
+
+  const banner = document.createElement("div");
+  banner.textContent = msg;
+  banner.style.cssText = `
+    background:#fff3cd;
+    color:#664d03;
+    padding:10px 14px;
+    margin:12px;
+    border-radius:6px;
+    font-size:14px;
+  `;
+
+  document.body.prepend(banner);
+  sessionStorage.removeItem("ams_notice");
+})();
+</script>
 </body>
 </html>
