@@ -77,7 +77,6 @@
   <button
   id="employeeBtn"
   class="btn-primary"
-  onclick="startFAA('employee')"
   disabled
 >
   Locked – Purchase Required
@@ -185,14 +184,9 @@ function unlockModule({
     btn.textContent = canUseCompanySeat
       ? "Start Training (Included via Company)"
       : "Start Training (Purchased)";
-
-    btn.onclick = () => {
-      window.location.href = `../pages/${startUrl}`;
-    };
   }
 }
-</script>
-
+    
 <!-- ======================================================
      SOFT NOTICE FROM ROUTE GUARD
 ====================================================== -->
