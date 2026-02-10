@@ -145,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-<script>
 function unlockModule({
   module,
   companyModules,
@@ -161,7 +160,7 @@ function unlockModule({
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const role = user?.role;
 
-  // ✅ Only EMPLOYEES can use company seats
+  // ✅ ONLY employees can use company seats
   const seatEligibleRoles = ["employee"];
   const canUseCompanySeat =
     seatEligibleRoles.includes(role) &&
@@ -208,6 +207,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(banner);
   sessionStorage.removeItem("ams_notice");
 });
+</script>
+
+</body>
+</html>
 </script>
 
 </body>
