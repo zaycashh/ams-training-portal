@@ -34,9 +34,9 @@ if (
   roleAccess[role] &&
   !roleAccess[role].includes(module)
 ) {
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
+  sessionStorage.setItem("ams_notice", "You don’t have access to that training module.");
+window.location.replace("../pages/dashboard.html");
+return;
 
   // 🔐 3. Paywall enforcement
   const paymentFlags = {
@@ -48,9 +48,9 @@ if (
   const payKey = paymentFlags[module];
 
   if (payKey && localStorage.getItem(payKey) !== "true") {
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
+  sessionStorage.setItem("ams_notice", "This training module is locked.");
+window.location.replace("../pages/dashboard.html");
+return;
 
   // 🔒 4. Completion hard-lock redirect (handled per module)
   const completionFlags = {
