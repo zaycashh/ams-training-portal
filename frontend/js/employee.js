@@ -42,19 +42,15 @@ function setActiveTab(tab) {
    SECTION NAVIGATION (HARD GUARDED)
 ========================= */
 function showSection(section) {
-
-  // 🔒 Hard lock after completion
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
     return;
   }
 
-  // 🚫 Quiz blocked until content completed
   if (section === "quiz") {
     if (localStorage.getItem(EMPLOYEE_CONTENT_DONE_KEY) !== "true") return;
   }
 
-  // 🚫 Certificate blocked until quiz passed
   if (section === "certificate") {
     if (localStorage.getItem(EMPLOYEE_PASSED_KEY) !== "true") return;
   }
@@ -80,26 +76,24 @@ function showSection(section) {
     populateEmployeeCertificate();
   }
 }
+
 /* =========================================================
    EMPLOYEE SEAT CONSUMPTION (ONE-TIME, COMPANY ONLY)
 ========================================================= */
-
 function consumeEmployeeSeatIfNeeded() {
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (!user || user.role !== "employee") return;
 
-  // Already paid or seat already locked
-  if (user.paid_employee === "true" || user.employeeSeatLocked === true) {
+  // Already paid individually OR seat already locked
+  if (
+    localStorage.getItem("paid_employee") === "true" ||
+    user.employeeSeatLocked === true
+  ) {
     return;
   }
 
   const company = JSON.parse(localStorage.getItem("companyProfile"));
-
-  if (
-    !company ||
-    !company.seats ||
-    !company.seats.employee
-  ) {
+  if (!company?.seats?.employee) {
     alert("Company seat data missing.");
     window.location.href = "dashboard.html";
     return;
@@ -123,33 +117,29 @@ function consumeEmployeeSeatIfNeeded() {
 
   console.log("✅ Employee seat consumed + locked");
 }
+
 /* =========================
    PAGE LOAD
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.module !== "employee") return;
-     
-  consumeEmployeeSeatIfNeeded();
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
 
-if (
-  user?.paid_employee !== "true" &&
-  user?.employeeSeatLocked !== true
-) {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  // 🪑 Seat logic ONLY for company employees
+  if (user?.role === "employee") {
+    consumeEmployeeSeatIfNeeded();
+  }
 
-const hasIndividualPurchase =
-  localStorage.getItem("paid_employee") === "true";
-
-const hasCompanySeat =
-  user?.employeeSeatLocked === true;
-
-if (!hasIndividualPurchase && !hasCompanySeat) {
-  alert("Employee Training requires purchase or an available company seat.");
-  window.location.href = "dashboard.html";
-  return;
-}
+  // ✅ Allow: individual purchase OR company seat
+  if (
+    localStorage.getItem("paid_employee") !== "true" &&
+    user?.employeeSeatLocked !== true
+  ) {
+    alert("Employee Training requires purchase or an available company seat.");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
@@ -163,7 +153,7 @@ if (!hasIndividualPurchase && !hasCompanySeat) {
    CONTENT COMPLETION
 ========================= */
 function completeEmployeeContent() {
-  localStorage.setItem("employeeContentCompleted", "true");
+  localStorage.setItem(EMPLOYEE_CONTENT_DONE_KEY, "true");
   showSection("quiz");
 }
 
@@ -240,7 +230,6 @@ function lockToCertificate() {
 }
 
 function populateEmployeeCertificate() {
-  // 🔒 Generate certificate code ONCE
   let code = localStorage.getItem(EMPLOYEE_CERT_CODE_KEY);
 
   if (!code) {
@@ -254,21 +243,16 @@ function populateEmployeeCertificate() {
   document.getElementById("certVerify").textContent = code;
 
   const qrBox = document.getElementById("certQR");
-
   if (qrBox && typeof QRCode !== "undefined") {
     qrBox.innerHTML = "";
-    new QRCode(qrBox, {
-      text: code,
-      width: 128,
-      height: 128
-    });
-  } else {
-    console.warn("QR container or QRCode library missing");
+    new QRCode(qrBox, { text: code, width: 128, height: 128 });
   }
 }
+
+/* =========================
+   CONTENT → QUIZ BUTTON
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("continueToQuizBtn");
-  if (btn) {
-    btn.addEventListener("click", completeEmployeeContent);
-  }
+  if (btn) btn.addEventListener("click", completeEmployeeContent);
 });
