@@ -80,18 +80,67 @@ function showSection(section) {
     populateEmployeeCertificate();
   }
 }
+/* =========================================================
+   EMPLOYEE SEAT CONSUMPTION (ONE-TIME, COMPANY ONLY)
+========================================================= */
 
+function consumeEmployeeSeatIfNeeded() {
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  if (!user || user.role !== "employee") return;
+
+  // Already paid or seat already locked
+  if (user.paid_employee === "true" || user.employeeSeatLocked === true) {
+    return;
+  }
+
+  const company = JSON.parse(localStorage.getItem("companyProfile"));
+
+  if (
+    !company ||
+    !company.seats ||
+    !company.seats.employee
+  ) {
+    alert("Company seat data missing.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  const seatData = company.seats.employee;
+  const available = seatData.total - seatData.used;
+
+  if (available <= 0) {
+    alert("No employee training seats available.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // ✅ Consume ONE seat
+  seatData.used += 1;
+  user.employeeSeatLocked = true;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  localStorage.setItem("amsUser", JSON.stringify(user));
+
+  console.log("✅ Employee seat consumed + locked");
+}
 /* =========================
    PAGE LOAD
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.module !== "employee") return;
+     
+  consumeEmployeeSeatIfNeeded();
 
-  if (localStorage.getItem("paid_employee") !== "true") {
-    alert("Employee Training requires purchase.");
-    window.location.href = "dashboard.html";
-    return;
-  }
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+
+if (
+  user?.paid_employee !== "true" &&
+  user?.employeeSeatLocked !== true
+) {
+  alert("Employee Training requires purchase or an available company seat.");
+  window.location.href = "dashboard.html";
+  return;
+}
 
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
