@@ -1,10 +1,14 @@
 /* =========================================================
-   AMS TRAINING ACCESS GUARD (FIXED)
+   AMS TRAINING ACCESS GUARD (SEAT-AWARE VERSION)
 ========================================================= */
 (function () {
-  const DEV_OVERRIDE = localStorage.getItem("ams_dev_override") === "true";
+  const DEV_OVERRIDE =
+    localStorage.getItem("ams_dev_override") === "true";
 
-  const user = localStorage.getItem("amsUser");
+  const user = JSON.parse(
+    localStorage.getItem("amsUser") || "null"
+  );
+
   const module = document.body.getAttribute("data-module");
 
   // Must be logged in
@@ -16,12 +20,22 @@
   // If no module defined, nothing to guard
   if (!module) return;
 
-  // 🔑 PAYMENT CHECK (NOT QUIZ PASS)
   const paidKey = `paid_${module}`;
   const isPaid = localStorage.getItem(paidKey) === "true";
 
-  if (!isPaid && !DEV_OVERRIDE) {
-    console.warn(`🔒 ${module} not purchased`);
+  // 🔥 COMPANY SEAT SUPPORT (EMPLOYEE ONLY)
+  let seatAssigned = false;
+
+  if (module === "employee") {
+    const company = JSON.parse(
+      localStorage.getItem("companyProfile") || "null"
+    );
+
+    seatAssigned = company?.usedSeats?.[user?.id] === true;
+  }
+
+  if (!isPaid && !seatAssigned && !DEV_OVERRIDE) {
+    console.warn(`🔒 ${module} requires purchase or seat`);
     window.location.replace("dashboard.html");
     return;
   }
