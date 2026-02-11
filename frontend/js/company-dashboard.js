@@ -56,6 +56,10 @@ function loadEmployees(companyId) {
     localStorage.getItem("ams_users") || "[]"
   );
 
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "{}"
+  );
+
   const tbody = document.getElementById("employeeTable");
   tbody.innerHTML = "";
 
@@ -75,20 +79,33 @@ function loadEmployees(companyId) {
   employees.forEach(emp => {
     const tr = document.createElement("tr");
 
+    const seatAssigned =
+      company.usedSeats &&
+      company.usedSeats["emp-" + emp.email];
+
     tr.innerHTML = `
       <td>${emp.name || "—"}</td>
       <td>${emp.email}</td>
       <td>Employee</td>
       <td>
         ${
-          emp.completed
-            ? "Completed"
-            : emp.acceptedAt
-              ? "In Progress"
-              : "Invited"
+          seatAssigned
+            ? "Seat Assigned"
+            : emp.completed
+              ? "Completed"
+              : emp.acceptedAt
+                ? "In Progress"
+                : "Invited"
         }
       </td>
       <td>
+        ${
+          seatAssigned
+            ? `<button class="btn-secondary" onclick="revokeSeat('emp-${emp.email}')">
+                Revoke Seat
+               </button>`
+            : ""
+        }
         <button class="btn-secondary" onclick="removeEmployee('${emp.email}')">
           Remove
         </button>
@@ -97,6 +114,29 @@ function loadEmployees(companyId) {
 
     tbody.appendChild(tr);
   });
+}
+
+function revokeSeat(userId) {
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "{}"
+  );
+
+  if (!company.usedSeats || !company.usedSeats[userId]) {
+    alert("Seat not found.");
+    return;
+  }
+
+  delete company.usedSeats[userId];
+  company.seats.employee += 1;
+
+  localStorage.setItem(
+    "companyProfile",
+    JSON.stringify(company)
+  );
+
+  alert("Seat revoked successfully.");
+
+  location.reload();
 }
 
 /* =========================================================
