@@ -44,7 +44,8 @@ function loadCompanyDashboard(user) {
 
   // Employees + seats
   loadEmployees(company.id);
-  updateSeatCounts(company.id, company.seatsTotal || 0);
+  
+   updateSeatCounts(company);
 }
 
 /* =========================================================
