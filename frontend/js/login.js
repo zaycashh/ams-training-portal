@@ -64,7 +64,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "admin-" + Date.now(),
+        id: "admin-" + email,
         email,
         role: "company_admin",
         companyId: company.id
@@ -87,7 +87,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "emp-" + Date.now(),
+        id: "emp-" + email,
         email,
         role: "employee",
         companyId: employee.companyId,
@@ -111,7 +111,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "owner-" + Date.now(),
+        id: "owner-" + email,
         email,
         role: "owner",
         companyId: owner.companyId
@@ -129,7 +129,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   localStorage.setItem(
     "amsUser",
     JSON.stringify({
-      id: "ind-" + Date.now(),
+      id: "ind-" + email,
       email,
       role: "individual",
       companyId: null
