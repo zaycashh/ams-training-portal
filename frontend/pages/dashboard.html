@@ -113,210 +113,122 @@
 <!-- ======================================================
      COMPANY SEATS + INDIVIDUAL PURCHASE UNLOCK (UI ONLY)
 ====================================================== -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
-
-  const companyModules = Array.isArray(company?.modules)
-    ? company.modules.map(m => m.toLowerCase())
-    : [];
-
-  unlockModule({
-    module: "employee",
-    companyModules,
-    paidKey: "paid_employee",
-    cardId: "employeeCard",
-    buttonId: "employeeBtn",
-    startUrl: "employee-training.html"
-  });
-
-  unlockModule({
-    module: "supervisor",
-    companyModules,
-    paidKey: "paid_supervisor",
-    cardId: "supervisorCard",
-    buttonId: "supervisorBtn",
-    startUrl: "supervisor-training.html"
-  });
-
-  unlockModule({
-    module: "der",
-    companyModules,
-    paidKey: "paid_der",
-    cardId: "derCard",
-    buttonId: "derBtn",
-    startUrl: "der-training.html"
-  });
-});
-
-function unlockModule({
-  module,
-  companyModules,
-  paidKey,
-  cardId,
-  buttonId,
-  startUrl
-}) {
-  const card = document.getElementById(cardId);
-  const btn = document.getElementById(buttonId);
-  if (!card || !btn) return;
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const role = user?.role;
-
-  const canUseCompanySeat =
-    role === "employee" &&
-    companyModules.includes(module);
-
-  const hasIndividualPurchase =
-    localStorage.getItem(paidKey) === "true";
-
-  const seatAlreadyUsed =
-  module === "employee" &&
-  localStorage.getItem("employeeSeatUsed") === "true";
-
-if (
-  hasIndividualPurchase ||
-  (canUseCompanySeat && !seatAlreadyUsed)
-) {
-  card.classList.remove("locked");
-  btn.disabled = false;
-
-  if (canUseCompanySeat && !hasIndividualPurchase) {
-    btn.textContent = "Use Company Seat";
-    btn.onclick = () => consumeEmployeeSeatAndStart(startUrl);
-  } else {
-    btn.textContent = "Start Training (Purchased)";
-    btn.onclick = () => {
-      window.location.href = startUrl;
-    };
-  }
-}
-</script>
-
 <!-- ======================================================
-     SOFT NOTICE FROM ROUTE GUARD
+     DASHBOARD LOGIC — SINGLE SAFE SCRIPT
 ====================================================== -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const msg = sessionStorage.getItem("ams_notice");
-  if (!msg) return;
 
-  const banner = document.createElement("div");
-  banner.textContent = msg;
-
-  banner.style.background = "#fff3cd";
-  banner.style.color = "#664d03";
-  banner.style.padding = "10px 14px";
-  banner.style.margin = "12px";
-  banner.style.borderRadius = "6px";
-  banner.style.fontSize = "14px";
-
-  document.body.prepend(banner);
-  sessionStorage.removeItem("ams_notice");
-});
-</script>
-  
-<!-- ======================================================
-     COMPANY SEATS + INDIVIDUAL PURCHASE UNLOCK (UI ONLY)
-====================================================== -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+  /* -------------------------------
+     UNLOCK MODULES
+  -------------------------------- */
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
   const companyModules = Array.isArray(company?.modules)
-    ? company.modules.map(m => m.toLowerCase())
+    ? company.modules.map(function (m) { return m.toLowerCase(); })
     : [];
 
-  unlockModule({
-    module: "employee",
-    companyModules,
-    paidKey: "paid_employee",
-    cardId: "employeeCard",
-    buttonId: "employeeBtn",
-    startUrl: "employee-training.html"
-  });
+  unlockModule("employee", "paid_employee", "employeeCard", "employeeBtn", "employee-training.html");
+  unlockModule("supervisor", "paid_supervisor", "supervisorCard", "supervisorBtn", "supervisor-training.html");
+  unlockModule("der", "paid_der", "derCard", "derBtn", "der-training.html");
 
-  unlockModule({
-    module: "supervisor",
-    companyModules,
-    paidKey: "paid_supervisor",
-    cardId: "supervisorCard",
-    buttonId: "supervisorBtn",
-    startUrl: "supervisor-training.html"
-  });
+  /* -------------------------------
+     SOFT NOTICE
+  -------------------------------- */
+  const msg = sessionStorage.getItem("ams_notice");
+  if (msg) {
+    const banner = document.createElement("div");
+    banner.textContent = msg;
 
-  unlockModule({
-    module: "der",
-    companyModules,
-    paidKey: "paid_der",
-    cardId: "derCard",
-    buttonId: "derBtn",
-    startUrl: "der-training.html"
-  });
-});
+    banner.style.background = "#fff3cd";
+    banner.style.color = "#664d03";
+    banner.style.padding = "10px 14px";
+    banner.style.margin = "12px";
+    banner.style.borderRadius = "6px";
+    banner.style.fontSize = "14px";
 
-function unlockModule({
-  module,
-  companyModules,
-  paidKey,
-  cardId,
-  buttonId,
-  startUrl
-}) {
-  const card = document.getElementById(cardId);
-  const btn = document.getElementById(buttonId);
-  if (!card || !btn) return;
+    document.body.prepend(banner);
+    sessionStorage.removeItem("ams_notice");
+  }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const role = user?.role;
+  /* -------------------------------
+     FUNCTIONS
+  -------------------------------- */
+  function unlockModule(module, paidKey, cardId, buttonId, startUrl) {
+    const card = document.getElementById(cardId);
+    const btn = document.getElementById(buttonId);
+    if (!card || !btn) return;
 
-  const canUseCompanySeat =
-    role === "employee" &&
-    companyModules.includes(module);
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+    const role = user?.role;
 
-  const hasIndividualPurchase =
-    localStorage.getItem(paidKey) === "true";
+    const canUseCompanySeat =
+      role === "employee" && companyModules.includes(module);
 
-  const seatAlreadyUsed =
-    module === "employee" &&
-    localStorage.getItem("employeeSeatUsed") === "true";
+    const hasIndividualPurchase =
+      localStorage.getItem(paidKey) === "true";
 
-  // 🔹 Seat count UI (employee only)
-  if (module === "employee") {
-    const seatStatus = document.getElementById("employeeSeatStatus");
+    const seatAlreadyUsed =
+      module === "employee" &&
+      localStorage.getItem("employeeSeatUsed") === "true";
+
+    if (module === "employee") {
+      const seatStatus = document.getElementById("employeeSeatStatus");
+      if (seatStatus && company?.seats?.employee >= 0) {
+        seatStatus.textContent =
+          company.seats.employee + " Seats Remaining";
+      }
+    }
+
+    if (hasIndividualPurchase || (canUseCompanySeat && !seatAlreadyUsed)) {
+      card.classList.remove("locked");
+      btn.disabled = false;
+
+      if (canUseCompanySeat && !hasIndividualPurchase) {
+        btn.textContent = "Use Company Seat";
+        btn.onclick = function () {
+          consumeEmployeeSeatAndStart(startUrl);
+        };
+      } else {
+        btn.textContent = "Start Training (Purchased)";
+        btn.onclick = function () {
+          window.location.href = startUrl;
+        };
+      }
+    }
+  }
+
+  function consumeEmployeeSeatAndStart(startUrl) {
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+    if (!user || user.role !== "employee") return;
+
     const company = JSON.parse(
       localStorage.getItem("companyProfile") || "null"
     );
 
-    if (seatStatus && company?.seats?.employee >= 0) {
-      seatStatus.textContent = `${company.seats.employee} Seats Remaining`;
+    if (!company?.seats || company.seats.employee <= 0) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "All company seats have been used. Please purchase this training."
+      );
+      window.location.href = "dashboard.html";
+      return;
     }
+
+    company.seats.employee -= 1;
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+    localStorage.setItem("employeeSeatUsed", "true");
+
+    window.location.href = startUrl;
   }
 
-  if (
-    hasIndividualPurchase ||
-    (canUseCompanySeat && !seatAlreadyUsed)
-  ) {
-    card.classList.remove("locked");
-    btn.disabled = false;
-
-    if (canUseCompanySeat && !hasIndividualPurchase) {
-      btn.textContent = "Use Company Seat";
-      btn.onclick = () => consumeEmployeeSeatAndStart(startUrl);
-    } else {
-      btn.textContent = "Start Training (Purchased)";
-      btn.onclick = () => {
-        window.location.href = startUrl;
-      };
-    }
-  }
-}
+});
 </script>
+
+</body>
+</html>
   
 </body>
 </html>
