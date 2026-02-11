@@ -122,14 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   // 🔒 Lock if seat revoked
-  if (user?.role === "employee") {
-    if (!company?.usedSeats || !company.usedSeats[user.id]) {
-      alert("Your company seat has been revoked. Please contact your administrator.");
-      window.location.replace("dashboard.html");
-      return;
-    }
-  }
-
+  if (!company?.usedSeats || !company.usedSeats[user.id]) {
+  console.log("🚨 SEAT REVOKE TRIGGERED");
+  alert("Your company seat has been revoked. Please contact your administrator.");
+  setTimeout(() => {
+    window.location.replace("dashboard.html");
+  }, 200);
+  return;
+}
   // Consume seat if needed
   if (user?.role === "employee") {
     consumeEmployeeSeatIfNeeded();
