@@ -1,6 +1,7 @@
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
-   COMPLIANCE-GRADE FLOW (LOCKED + VERIFIED)
+   UI + SEAT CONSUMPTION ONLY
+   (Security handled by route-guard.js)
 ========================================================= */
 
 const EMPLOYEE_MAX_ATTEMPTS = 3;
@@ -39,9 +40,10 @@ function setActiveTab(tab) {
 }
 
 /* =========================
-   SECTION NAVIGATION (HARD GUARDED)
+   SECTION NAVIGATION
 ========================= */
 function showSection(section) {
+
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
     return;
@@ -78,13 +80,12 @@ function showSection(section) {
 }
 
 /* =========================================================
-   EMPLOYEE SEAT CONSUMPTION (ONE-TIME, COMPANY ONLY)
+   SEAT CONSUMPTION (NO REDIRECTS)
 ========================================================= */
 function consumeEmployeeSeatIfNeeded() {
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (!user || user.role !== "employee") return;
 
-  // Already paid individually OR seat already locked
   if (
     localStorage.getItem("paid_employee") === "true" ||
     user.employeeSeatLocked === true
@@ -93,22 +94,14 @@ function consumeEmployeeSeatIfNeeded() {
   }
 
   const company = JSON.parse(localStorage.getItem("companyProfile"));
-  if (!company?.seats?.employee) {
-    alert("Company seat data missing.");
-    window.location.href = "dashboard.html";
-    return;
-  }
+  if (!company?.seats?.employee) return;
 
   const seatData = company.seats.employee;
   const available = seatData.total - seatData.used;
 
-  if (available <= 0) {
-    alert("No employee training seats available.");
-    window.location.href = "dashboard.html";
-    return;
-  }
+  if (available <= 0) return;
 
-  // ✅ Consume ONE seat
+  // Consume ONE seat
   seatData.used += 1;
   user.employeeSeatLocked = true;
 
@@ -122,23 +115,13 @@ function consumeEmployeeSeatIfNeeded() {
    PAGE LOAD
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+
   if (document.body.dataset.module !== "employee") return;
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
 
-  // 🪑 Seat logic ONLY for company employees
   if (user?.role === "employee") {
     consumeEmployeeSeatIfNeeded();
-  }
-
-  // ✅ Allow: individual purchase OR company seat
-  if (
-    localStorage.getItem("paid_employee") !== "true" &&
-    user?.employeeSeatLocked !== true
-  ) {
-    alert("Employee Training requires purchase or an available company seat.");
-    window.location.href = "dashboard.html";
-    return;
   }
 
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
