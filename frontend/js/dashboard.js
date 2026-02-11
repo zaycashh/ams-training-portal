@@ -107,6 +107,34 @@ function updateEmployeeButtonState() {
 }
 
 /* =========================
+   EMPLOYEE BUTTON CLICK
+========================= */
+function handleEmployeeClick() {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+
+  // Individually purchased
+  if (localStorage.getItem("paid_employee") === "true") {
+    startFAA("employee");
+    return;
+  }
+
+  // Seat already assigned
+  if (company?.usedSeats?.[user?.id]) {
+    startFAA("employee");
+    return;
+  }
+
+  // Seats available → consume one
+  if (company?.seats?.employee > 0) {
+    consumeEmployeeSeatAndStart("employee-training.html");
+    return;
+  }
+
+  alert("No seats available or purchase required.");
+}
+
+/* =========================
    START FAA COURSES
 ========================= */
 function startFAA(course) {
