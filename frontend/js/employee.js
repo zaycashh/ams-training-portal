@@ -118,8 +118,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "employee") return;
 
-  const user = JSON.parse(localStorage.getItem("amsUser"));
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
+  // 🔒 Lock if seat revoked
+  if (user?.role === "employee") {
+    if (!company?.usedSeats || !company.usedSeats[user.id]) {
+      alert("Your company seat has been revoked. Please contact your administrator.");
+      window.location.replace("dashboard.html");
+      return;
+    }
+  }
+
+  // Consume seat if needed
   if (user?.role === "employee") {
     consumeEmployeeSeatIfNeeded();
   }
