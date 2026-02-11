@@ -9,50 +9,6 @@
 
 <body data-module="employee">
 
-<script>
-<script>
-/* ======================================================
-   EMPLOYEE ROUTE GUARD (CLEAN FIXED VERSION)
-====================================================== */
-(function () {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  // 🔐 Must be logged in
-  if (!user) {
-    window.location.replace("login.html");
-    return;
-  }
-
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
-
-  const seatAssigned = company?.usedSeats?.[user?.id];
-  const hasPurchase =
-    localStorage.getItem("paid_employee") === "true";
-
-  // 🔒 Allow if employee OR seat assigned
-  if (user.role !== "employee" && !seatAssigned) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "This training is only available to employees."
-    );
-    window.location.replace("dashboard.html");
-    return;
-  }
-
-  // 💳 Must have purchase OR seat
-  if (!hasPurchase && !seatAssigned) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You must use a company seat or purchase this training."
-    );
-    window.location.replace("dashboard.html");
-    return;
-  }
-})();
-</script>
-
 <main class="module-container">
 
   <!-- HEADER -->
@@ -118,8 +74,8 @@
 
 </main>
 
+<!-- 🔐 GLOBAL SECURITY LAYER ONLY -->
 <script src="../js/route-guard.js"></script>
-<script src="../js/access-guard.js"></script>
 
 <!-- LANGUAGE -->
 <script src="../js/lang-loader.js"></script>
