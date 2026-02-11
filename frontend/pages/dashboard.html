@@ -207,6 +207,47 @@ document.addEventListener("DOMContentLoaded", () => {
   sessionStorage.removeItem("ams_notice");
 });
 </script>
+  
+<script>
+/* ======================================================
+   EMPLOYEE SEAT CONSUMPTION + START
+====================================================== */
+function consumeEmployeeSeatAndStart(startUrl) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
+  if (!user || user.role !== "employee") {
+    sessionStorage.setItem(
+      "ams_notice",
+      "This training is only available to employees."
+    );
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  if (!company?.seats || company.seats.employee <= 0) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "All company seats have been used. Please purchase this training."
+    );
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // ✅ DECREMENT SEAT
+  company.seats.employee -= 1;
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  // ✅ PREVENT DOUBLE USE
+  localStorage.setItem("employeeSeatUsed", "true");
+
+  // ✅ GO TO TRAINING
+  window.location.href = startUrl;
+}
+</script>
+  
 </body>
 </html>
