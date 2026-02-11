@@ -200,20 +200,19 @@ if (
      SOFT NOTICE FROM ROUTE GUARD
 ====================================================== -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const msg = sessionStorage.getItem("ams_notice");
   if (!msg) return;
 
   const banner = document.createElement("div");
   banner.textContent = msg;
-  banner.style.cssText = `
-    background:#fff3cd;
-    color:#664d03;
-    padding:10px 14px;
-    margin:12px;
-    border-radius:6px;
-    font-size:14px;
-  `;
+
+  banner.style.background = "#fff3cd";
+  banner.style.color = "#664d03";
+  banner.style.padding = "10px 14px";
+  banner.style.margin = "12px";
+  banner.style.borderRadius = "6px";
+  banner.style.fontSize = "14px";
 
   document.body.prepend(banner);
   sessionStorage.removeItem("ams_notice");
