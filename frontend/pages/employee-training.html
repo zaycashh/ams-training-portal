@@ -10,8 +10,9 @@
 <body data-module="employee">
 
 <script>
+<script>
 /* ======================================================
-   EMPLOYEE ROUTE GUARD (FIXED — SEAT SYSTEM SYNCED)
+   EMPLOYEE ROUTE GUARD (CLEAN FIXED VERSION)
 ====================================================== */
 (function () {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -22,31 +23,25 @@
     return;
   }
 
-  // 🔒 Allow if employee OR has assigned company seat
-const company = JSON.parse(
-  localStorage.getItem("companyProfile") || "null"
-);
-
-const seatAssigned = company?.usedSeats?.[user?.id];
-
-if (user.role !== "employee" && !seatAssigned) {
-  sessionStorage.setItem(
-    "ams_notice",
-    "This training is only available to employees."
-  );
-  window.location.replace("dashboard.html");
-  return;
-}
-  // 💳 Must have purchase OR assigned company seat
-  const hasPurchase =
-    localStorage.getItem("paid_employee") === "true";
-
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
   const seatAssigned = company?.usedSeats?.[user?.id];
+  const hasPurchase =
+    localStorage.getItem("paid_employee") === "true";
 
+  // 🔒 Allow if employee OR seat assigned
+  if (user.role !== "employee" && !seatAssigned) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "This training is only available to employees."
+    );
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  // 💳 Must have purchase OR seat
   if (!hasPurchase && !seatAssigned) {
     sessionStorage.setItem(
       "ams_notice",
