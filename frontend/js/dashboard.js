@@ -43,6 +43,17 @@ function getEmployeeSeatStatus() {
     localStorage.getItem("companyProfile") || "null"
   );
 
+  if (!company?.seats?.employee) {
+    return {
+      type: "locked",
+      label: "🔒 No Seats Available"
+    };
+  }
+
+  const total = company.seats.employee.total || 0;
+  const used = company.seats.employee.used || 0;
+  const remaining = total - used;
+
   // Seat already locked to this user
   if (company?.usedSeats && company.usedSeats[user.id]) {
     return {
@@ -50,8 +61,6 @@ function getEmployeeSeatStatus() {
       label: "🎟 Seat Assigned"
     };
   }
-
-  const remaining = company?.seats?.employee ?? 0;
 
   if (remaining > 0) {
     return {
@@ -65,7 +74,6 @@ function getEmployeeSeatStatus() {
     label: "🔒 No Seats Available"
   };
 }
-
 /* =========================
    EMPLOYEE BUTTON STATE
 ========================= */
