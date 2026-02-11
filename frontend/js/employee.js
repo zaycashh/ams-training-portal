@@ -1,3 +1,8 @@
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("seatRevoked") === "true") {
+  alert("Your company seat has been revoked. Please contact your administrator.");
+}
 /* =========================================================
    EMPLOYEE TRAINING LOGIC
    UI + SEAT CONSUMPTION ONLY
