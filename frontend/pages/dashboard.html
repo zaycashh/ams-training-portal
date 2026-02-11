@@ -70,21 +70,20 @@
     </div>
 
     <!-- EMPLOYEE -->
-<div class="module-card locked" id="employeeCard">
-  <h2>Employee Training</h2>
-  <p>Drug & Alcohol Awareness Training</p>
+    <div class="module-card locked" id="employeeCard">
+      <h2>Employee Training</h2>
+      <p>Drug & Alcohol Awareness Training</p>
 
-  <button
-  id="employeeBtn"
-  class="btn-primary"
-  disabled
->
-  Locked – Purchase Required
-</button>
+      <button
+        id="employeeBtn"
+        class="btn-primary"
+        disabled
+      >
+        Locked — Purchase Required
+      </button>
 
-  <!-- Seat status -->
-  <div id="employeeSeatStatus" class="seat-status"></div>
-</div>
+      <div id="employeeSeatStatus" class="seat-status"></div>
+    </div>
   </section>
 
   <!-- FMCSA -->
@@ -167,13 +166,10 @@ function unlockModule({
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const role = user?.role;
 
-  // ✅ ONLY employees can use company seats
-  const seatEligibleRoles = ["employee"];
   const canUseCompanySeat =
-    seatEligibleRoles.includes(role) &&
+    role === "employee" &&
     companyModules.includes(module);
 
-  // 💳 Individual purchase
   const hasIndividualPurchase =
     localStorage.getItem(paidKey) === "true";
 
@@ -186,7 +182,8 @@ function unlockModule({
       : "Start Training (Purchased)";
   }
 }
-  
+</script>
+
 <!-- ======================================================
      SOFT NOTICE FROM ROUTE GUARD
 ====================================================== -->
