@@ -49,27 +49,31 @@ function getEmployeeSeatStatus() {
     };
   }
 
-  // Seat already locked to this user
-  if (user.employeeSeatLocked === true) {
-    return {
-      type: "assigned",
-      label: "🎟️ Seat Assigned"
-    };
-  }
+  // Seat locked via companyProfile.usedSeats
+const company = JSON.parse(
+  localStorage.getItem("companyProfile") || "null"
+);
+
+if (company?.usedSeats && company.usedSeats[user.id]) {
+  return {
+    type: "assigned",
+    label: "🎟 Seat Assigned"
+  };
+}
 
   // Show remaining seats (if any)
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
-  const seatData = company?.seats?.employee;
+  const seatData = company?.seats?.employee ?? 0;
 
-  if (!seatData) {
-    return {
-      type: "locked",
-      label: "🔒 Not Available"
-    };
-  }
+if (seatData <= 0) {
+  return {
+    type: "locked",
+    label: "🔒 No Seats Available"
+  };
+}
 
   const remaining = seatData.total - seatData.used;
 
@@ -104,23 +108,19 @@ function updateEmployeeButtonState() {
     return;
   }
 
-  // Seat already assigned → enabled
-  if (user?.employeeSeatLocked === true) {
-    btn.disabled = false;
-    btn.textContent = "Continue Training";
-    return;
-  }
-
   // Seats available → enabled
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
-  const seatData = company?.seats?.employee;
+const seatData = company?.seats?.employee ?? 0;
 
-  if (seatData && seatData.total - seatData.used > 0) {
-  btn.disabled = false;
-  btn.textContent = "Use Company Seat";
+if (seatData <= 0) {
+  return {
+    type: "locked",
+    label: "🔒 No Seats Available"
+  };
+}
 
   // 🛈 Tooltip explaining seat usage
   btn.title =
@@ -160,12 +160,6 @@ function startFAA(course) {
     return;
   }
 
-  // 🪑 Employee = paid OR seat-locked
-  if (
-    course === "employee" &&
-    !hasAccess("employee") &&
-    user?.employeeSeatLocked !== true
-  ) {
     alert(
       "Employee Training is locked.\n\nPurchase required or no company seats available."
     );
@@ -185,6 +179,41 @@ function startFAA(course) {
     window.location.href = "employee-training.html";
   }
 }
+/* =========================
+   CONSUME EMPLOYEE SEAT (REAL LOCK)
+========================= */
+function consumeEmployeeSeatAndStart(startUrl) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+
+  if (!user || !company) {
+    alert("Access error.");
+    return;
+  }
+
+  if (!company.usedSeats) {
+    company.usedSeats = {};
+  }
+
+  // If already assigned → just continue
+  if (company.usedSeats[user.id]) {
+    window.location.href = startUrl;
+    return;
+  }
+
+  if (!company.seats || company.seats.employee <= 0) {
+    alert("No seats remaining.");
+    return;
+  }
+
+  // 🔐 Deduct + lock to user ID
+  company.seats.employee -= 1;
+  company.usedSeats[user.id] = true;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  window.location.href = startUrl;
+}
 document.addEventListener("DOMContentLoaded", () => {
   const status = getEmployeeSeatStatus();
   if (status) {
@@ -199,4 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateEmployeeButtonState();
-});
+   // Seat already assigned via company.usedSeats
+const company = JSON.parse(
+  localStorage.getItem("companyProfile") || "null"
+);
