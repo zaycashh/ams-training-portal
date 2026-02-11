@@ -9,6 +9,46 @@
 </head>
 
 <body data-module="employee">
+  <script>
+/* ======================================================
+   STEP 3 — EMPLOYEE ROUTE GUARD
+====================================================== */
+(function () {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // 🔐 Must be logged in
+  if (!user) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  // 🔒 Must be employee role
+  if (user.role !== "employee") {
+    sessionStorage.setItem(
+      "ams_notice",
+      "This training is only available to employees."
+    );
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  // 💳 Must have purchase OR used company seat
+  const hasPurchase =
+    localStorage.getItem("paid_employee") === "true";
+
+  const usedSeat =
+    localStorage.getItem("employeeSeatUsed") === "true";
+
+  if (!hasPurchase && !usedSeat) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must use a company seat or purchase this training."
+    );
+    window.location.replace("dashboard.html");
+    return;
+  }
+})();
+</script>
 
   <main class="module-container">
 
