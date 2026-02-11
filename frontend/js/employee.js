@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("🚨 SEAT REVOKE TRIGGERED");
   alert("Your company seat has been revoked. Please contact your administrator.");
   setTimeout(() => {
-    window.location.replace("dashboard.html");
+    window.location.replace("dashboard.html?seatRevoked=true");
   }, 200);
   return;
 }
