@@ -101,21 +101,24 @@ function loadEmployees(companyId) {
 /* =========================================================
    SEAT COUNTS
 ========================================================= */
-function updateSeatCounts(companyId, seatsTotal) {
-  const users = JSON.parse(
-    localStorage.getItem("ams_users") || "[]"
-  );
+function updateSeatCounts(company) {
+  if (!company) return;
 
-  const seatsUsed = users.filter(
-    u => u.companyId === companyId && u.role === "employee"
-  ).length;
+  const seatsTotalEl = document.getElementById("seatsTotal");
+  const seatsUsedEl = document.getElementById("seatsUsed");
+  const seatsAvailableEl = document.getElementById("seatsAvailable");
 
-  document.getElementById("seatsTotal").textContent = seatsTotal;
-  document.getElementById("seatsUsed").textContent = seatsUsed;
-  document.getElementById("seatsAvailable").textContent =
-    Math.max(seatsTotal - seatsUsed, 0);
+  const available = company.seats?.employee ?? 0;
+  const used = company.usedSeats
+    ? Object.keys(company.usedSeats).length
+    : 0;
+
+  const total = available + used;
+
+  seatsTotalEl.textContent = total;
+  seatsUsedEl.textContent = used;
+  seatsAvailableEl.textContent = available;
 }
-
 /* =========================================================
    LOGOUT
 ========================================================= */
