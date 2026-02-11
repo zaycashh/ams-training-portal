@@ -173,13 +173,25 @@ function unlockModule({
   const hasIndividualPurchase =
     localStorage.getItem(paidKey) === "true";
 
-  if (canUseCompanySeat || hasIndividualPurchase) {
-    card.classList.remove("locked");
-    btn.disabled = false;
+  const seatAlreadyUsed =
+  module === "employee" &&
+  localStorage.getItem("employeeSeatUsed") === "true";
 
-    btn.textContent = canUseCompanySeat
-      ? "Start Training (Included via Company)"
-      : "Start Training (Purchased)";
+if (
+  hasIndividualPurchase ||
+  (canUseCompanySeat && !seatAlreadyUsed)
+) {
+  card.classList.remove("locked");
+  btn.disabled = false;
+
+  if (canUseCompanySeat && !hasIndividualPurchase) {
+    btn.textContent = "Use Company Seat";
+    btn.onclick = () => consumeEmployeeSeatAndStart(startUrl);
+  } else {
+    btn.textContent = "Start Training (Purchased)";
+    btn.onclick = () => {
+      window.location.href = startUrl;
+    };
   }
 }
 </script>
