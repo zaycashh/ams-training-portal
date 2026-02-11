@@ -143,22 +143,21 @@ function revokeSeat(userId) {
    SEAT COUNTS
 ========================================================= */
 function updateSeatCounts(company) {
-  if (!company) return;
 
-  const seatsTotalEl = document.getElementById("seatsTotal");
-  const seatsUsedEl = document.getElementById("seatsUsed");
-  const seatsAvailableEl = document.getElementById("seatsAvailable");
+  if (!company?.seats?.employee) {
+    document.getElementById("seatsTotal").textContent = 0;
+    document.getElementById("seatsUsed").textContent = 0;
+    document.getElementById("seatsAvailable").textContent = 0;
+    return;
+  }
 
-  const available = company.seats?.employee ?? 0;
-  const used = company.usedSeats
-    ? Object.keys(company.usedSeats).length
-    : 0;
+  const total = company.seats.employee.total || 0;
+  const used = company.seats.employee.used || 0;
+  const available = Math.max(total - used, 0);
 
-  const total = available + used;
-
-  seatsTotalEl.textContent = total;
-  seatsUsedEl.textContent = used;
-  seatsAvailableEl.textContent = available;
+  document.getElementById("seatsTotal").textContent = total;
+  document.getElementById("seatsUsed").textContent = used;
+  document.getElementById("seatsAvailable").textContent = available;
 }
 /* =========================================================
    LOGOUT
