@@ -46,37 +46,42 @@
     return;
   }
 
-  /* =========================================================
-     STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT
-     (Company modules ≠ seat ownership)
-  ========================================================= */
+ /* =========================================================
+   STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT (UPDATED)
+========================================================= */
 
-  const paymentFlags = {
-    der: "paid_der",
-    employee: "paid_employee",
-    supervisor: "paid_supervisor"
-  };
+const paymentFlags = {
+  der: "paid_der",
+  employee: "paid_employee",
+  supervisor: "paid_supervisor"
+};
 
-  const payKey = paymentFlags[module];
+const payKey = paymentFlags[module];
 
-  const hasIndividualPurchase =
-    payKey && localStorage.getItem(payKey) === "true";
+const hasIndividualPurchase =
+  payKey && localStorage.getItem(payKey) === "true";
 
-  // ✅ Employee seat must be LOCKED to user
-  const hasEmployeeSeat =
-    module === "employee" &&
-    user.role === "employee" &&
-    user.employeeSeatLocked === true;
+// 🔥 NEW COMPANY SEAT SYSTEM
+let hasEmployeeSeat = false;
 
-  // 🔒 Final access decision
-  if (!hasIndividualPurchase && !hasEmployeeSeat) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "This training module is locked."
-    );
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
+if (module === "employee") {
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  hasEmployeeSeat =
+    company?.usedSeats?.[user?.id] === true;
+}
+
+// 🔒 Final access decision
+if (!hasIndividualPurchase && !hasEmployeeSeat) {
+  sessionStorage.setItem(
+    "ams_notice",
+    "This training module is locked."
+  );
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
   /* =========================================================
      STEP 4 – COMPLETION HARD LOCK (UI HANDLED IN MODULE)
