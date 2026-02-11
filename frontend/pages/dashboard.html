@@ -249,7 +249,7 @@ function consumeEmployeeSeatAndStart(startUrl) {
     return;
   }
 
-  // ✅ DECREMENT SEAT
+  // ✅ DECREMENT SEAT (ONLY ON CLICK)
   company.seats.employee -= 1;
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
@@ -260,6 +260,3 @@ function consumeEmployeeSeatAndStart(startUrl) {
   window.location.href = startUrl;
 }
 </script>
-  
-</body>
-</html>
