@@ -171,19 +171,6 @@ function revokeSeat(userId) {
   loadCompanyDashboard(JSON.parse(localStorage.getItem("amsUser")));
 }
 
-/* =========================================================
-   SEAT COUNTS
-========================================================= */
-function updateSeatCounts(company) {
-
-  const total = company?.seats?.employee || 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
-  const available = Math.max(total - used, 0);
-
-  document.getElementById("seatsTotal").textContent = total;
-  document.getElementById("seatsUsed").textContent = used;
-  document.getElementById("seatsAvailable").textContent = available;
-}
 function renderSeatAssignments(company) {
 
   const list = document.getElementById("seatUserList");
