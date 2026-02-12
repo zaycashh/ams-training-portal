@@ -13,12 +13,10 @@
 <!-- 🔐 HARD LOGIN GUARD -->
 <script>
 (function () {
-  setTimeout(() => {
-    const user = localStorage.getItem("amsUser");
-    if (!user) {
-      window.location.replace("login.html");
-    }
-  }, 50);
+  const user = localStorage.getItem("amsUser");
+  if (!user) {
+    window.location.replace("login.html");
+  }
 })();
 </script>
 
