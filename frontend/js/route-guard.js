@@ -76,14 +76,17 @@ if (module === "employee") {
 
 // 🔒 Final access decision
 if (!hasIndividualPurchase && !hasEmployeeSeat) {
-  sessionStorage.setItem(
-    "ams_notice",
-    "This training module is locked."
-  );
+
+  if (module === "employee") {
+    if (!sessionStorage.getItem("seatRevokedAlert")) {
+      alert("Your company seat has been revoked. Please contact your administrator.");
+      sessionStorage.setItem("seatRevokedAlert", "true");
+    }
+  }
+
   window.location.replace("../pages/dashboard.html");
   return;
 }
-
   /* =========================================================
      STEP 4 – COMPLETION HARD LOCK (UI HANDLED IN MODULE)
   ========================================================= */
