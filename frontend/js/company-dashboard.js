@@ -1,12 +1,10 @@
 /* =========================================================
-   COMPANY ADMIN DASHBOARD — PHASE 2 (REPLACEMENT)
+   COMPANY ADMIN DASHBOARD — STABLE VERSION
 ========================================================= */
 
-// 🔐 AUTH GUARD (STANDARDIZED)
+// 🔐 AUTH GUARD
 document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(
-    localStorage.getItem("amsUser") || "null"
-  );
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   if (!user || (user.role !== "company_admin" && user.role !== "owner")) {
     alert("Unauthorized access");
@@ -17,14 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCompanyDashboard(user);
 });
 
+
 /* =========================================================
    LOAD DASHBOARD
 ========================================================= */
 
 function loadCompanyDashboard(user) {
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "{}"
-  );
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   if (!company.id) {
     alert("Company profile missing");
@@ -43,16 +40,15 @@ function loadCompanyDashboard(user) {
       ? company.modules.join(", ")
       : "—";
 
-  // Load employees
   loadEmployees(company.id);
 
-  // Seat counts + assignments
   updateSeatCounts(company);
   renderSeatAssignments(company);
 }
 
+
 /* =========================================================
-   SEAT STATS (DERIVED SYSTEM)
+   DERIVED SEAT SYSTEM
 ========================================================= */
 
 function getSeatStats(company) {
@@ -79,17 +75,14 @@ function updateSeatCounts(company) {
   document.getElementById("seatRemaining").textContent = stats.remaining;
 }
 
+
 /* =========================================================
    LOAD EMPLOYEES
 ========================================================= */
-function loadEmployees(companyId) {
-  const users = JSON.parse(
-    localStorage.getItem("ams_users") || "[]"
-  );
 
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "{}"
-  );
+function loadEmployees(companyId) {
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const tbody = document.getElementById("employeeTable");
   tbody.innerHTML = "";
@@ -110,9 +103,8 @@ function loadEmployees(companyId) {
   employees.forEach(emp => {
     const tr = document.createElement("tr");
 
-    const seatAssigned =
-      company.usedSeats &&
-      company.usedSeats["emp-" + emp.email];
+    const key = "emp-" + emp.email;
+    const seatAssigned = company.usedSeats && company.usedSeats[key];
 
     tr.innerHTML = `
       <td>${emp.name || "—"}</td>
@@ -132,7 +124,7 @@ function loadEmployees(companyId) {
       <td>
         ${
           seatAssigned
-            ? `<button class="btn-secondary" onclick="revokeSeat('emp-${emp.email}')">
+            ? `<button class="btn-secondary" onclick="revokeSeat('${key}')">
                 Revoke Seat
                </button>`
             : ""
@@ -147,46 +139,51 @@ function loadEmployees(companyId) {
   });
 }
 
-function revokeSeat(userId) {
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "{}"
-  );
 
-  if (!company.usedSeats || !company.usedSeats[userId]) {
+/* =========================================================
+   REVOKE SEAT
+========================================================= */
+
+function revokeSeat(userKey) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats || !company.usedSeats[userKey]) {
     alert("Seat not found.");
     return;
   }
 
   if (!confirm("Revoke this seat?")) return;
 
-  delete company.usedSeats[userId];
+  delete company.usedSeats[userKey];
 
-  localStorage.setItem(
-    "companyProfile",
-    JSON.stringify(company)
-  );
+  localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Seat revoked successfully.");
 
-  loadCompanyDashboard(JSON.parse(localStorage.getItem("amsUser")));
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  loadCompanyDashboard(user);
 }
 
-function renderSeatAssignments(company) {
 
+/* =========================================================
+   RENDER ACTIVE SEAT ASSIGNMENTS
+========================================================= */
+
+function renderSeatAssignments(company) {
   const list = document.getElementById("seatUserList");
   if (!list) return;
 
   list.innerHTML = "";
 
   const usedSeats = company.usedSeats || {};
+  const keys = Object.keys(usedSeats);
 
-  if (!Object.keys(usedSeats).length) {
+  if (!keys.length) {
     list.innerHTML = "<li style='opacity:.6;'>No active seat assignments</li>";
     return;
   }
 
-  Object.keys(usedSeats).forEach(key => {
-
+  keys.forEach(key => {
     const email = key.replace("emp-", "");
 
     const li = document.createElement("li");
@@ -203,9 +200,12 @@ function renderSeatAssignments(company) {
     list.appendChild(li);
   });
 }
+
+
 /* =========================================================
    LOGOUT
 ========================================================= */
+
 function logout() {
   localStorage.removeItem("amsUser");
   window.location.href = "../index.html";
