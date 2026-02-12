@@ -201,7 +201,36 @@ function renderSeatAssignments(company) {
   });
 }
 
+/* =========================================================
+   BUY 5 MORE SEATS (STACKING)
+========================================================= */
 
+document.addEventListener("DOMContentLoaded", () => {
+  const buyBtn = document.getElementById("buySeatsBtn");
+  if (!buyBtn) return;
+
+  buyBtn.addEventListener("click", () => {
+    const company = JSON.parse(
+      localStorage.getItem("companyProfile") || "{}"
+    );
+
+    if (!company.totalSeats) company.totalSeats = {};
+    if (!company.totalSeats.employee) company.totalSeats.employee = 0;
+
+    // Add 5 seats per purchase
+    company.totalSeats.employee += 5;
+
+    localStorage.setItem(
+      "companyProfile",
+      JSON.stringify(company)
+    );
+
+    alert("5 seats added successfully.");
+
+    const user = JSON.parse(localStorage.getItem("amsUser"));
+    loadCompanyDashboard(user);
+  });
+});
 /* =========================================================
    LOGOUT
 ========================================================= */
