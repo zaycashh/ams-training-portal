@@ -31,12 +31,8 @@ function getEmployeeSeatStatus() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   if (!user || user.role !== "employee") return null;
 
-  // Individually purchased
   if (localStorage.getItem("paid_employee") === "true") {
-    return {
-      type: "paid",
-      label: "✔ Individually Purchased"
-    };
+    return { type: "paid", label: "✔ Individually Purchased" };
   }
 
   const company = JSON.parse(
@@ -44,18 +40,12 @@ function getEmployeeSeatStatus() {
   );
 
   if (!company) {
-    return {
-      type: "locked",
-      label: "🔒 No Seats Available"
-    };
+    return { type: "locked", label: "🔒 No Seats Available" };
   }
 
-  // Seat already assigned to this user
-  if (company.usedSeats && company.usedSeats[user.id]) {
-    return {
-      type: "assigned",
-      label: "🎟 Seat Assigned"
-    };
+  // 🔥 EMAIL-BASED CHECK
+  if (company.usedSeats?.[user.email]) {
+    return { type: "assigned", label: "🎟 Seat Assigned" };
   }
 
   const remaining = company.seats?.employee ?? 0;
@@ -67,11 +57,9 @@ function getEmployeeSeatStatus() {
     };
   }
 
-  return {
-    type: "locked",
-    label: "🔒 No Seats Available"
-  };
+  return { type: "locked", label: "🔒 No Seats Available" };
 }
+
 /* =========================
    EMPLOYEE BUTTON STATE
 ========================= */
@@ -79,20 +67,17 @@ function updateEmployeeButtonState() {
   const btn = document.getElementById("employeeBtn");
   if (!btn) return;
 
-  btn.title = "";
-
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  // Individually paid
   if (localStorage.getItem("paid_employee") === "true") {
     btn.disabled = false;
     btn.textContent = "Start Training";
     return;
   }
 
-  // Seat already assigned
-  if (company?.usedSeats && company.usedSeats[user?.id]) {
+  // 🔥 EMAIL-BASED CHECK
+  if (company?.usedSeats?.[user?.email]) {
     btn.disabled = false;
     btn.textContent = "Continue Training";
     return;
@@ -119,19 +104,17 @@ function handleEmployeeClick() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  // Individually purchased
   if (localStorage.getItem("paid_employee") === "true") {
     startFAA("employee");
     return;
   }
 
-  // Seat already assigned
-  if (company?.usedSeats?.[user?.id]) {
+  // 🔥 EMAIL-BASED CHECK
+  if (company?.usedSeats?.[user?.email]) {
     startFAA("employee");
     return;
   }
 
-  // Seats available → consume one
   if (company?.seats?.employee > 0) {
     consumeEmployeeSeatAndStart("employee-training.html");
     return;
@@ -147,7 +130,6 @@ function startFAA(course) {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  // DER & Supervisor = purchase required
   if (course !== "employee" && !hasAccess(course)) {
     alert(
       `${course.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`
@@ -155,11 +137,10 @@ function startFAA(course) {
     return;
   }
 
-  // Employee logic
   if (
     course === "employee" &&
     !hasAccess("employee") &&
-    !company?.usedSeats?.[user?.id]
+    !company?.usedSeats?.[user?.email]
   ) {
     alert(
       "Employee Training is locked.\n\nPurchase required or no company seats available."
@@ -167,17 +148,7 @@ function startFAA(course) {
     return;
   }
 
-  if (course === "der") {
-    window.location.href = "der-training.html";
-  }
-
-  if (course === "supervisor") {
-    window.location.href = "supervisor-training.html";
-  }
-
-  if (course === "employee") {
-    window.location.href = "employee-training.html";
-  }
+  window.location.href = `${course}-training.html`;
 }
 
 /* =========================
@@ -196,8 +167,8 @@ function consumeEmployeeSeatAndStart(startUrl) {
     company.usedSeats = {};
   }
 
-  // Already assigned
-  if (company.usedSeats[user.id]) {
+  // 🔥 EMAIL-BASED CHECK
+  if (company.usedSeats[user.email]) {
     window.location.href = startUrl;
     return;
   }
@@ -207,9 +178,8 @@ function consumeEmployeeSeatAndStart(startUrl) {
     return;
   }
 
-  // Deduct + lock seat
   company.seats.employee -= 1;
-  company.usedSeats[user.id] = true;
+  company.usedSeats[user.email] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
