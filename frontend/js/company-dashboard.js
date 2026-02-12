@@ -154,7 +154,38 @@ function updateSeatCounts(company) {
   document.getElementById("seatsUsed").textContent = used;
   document.getElementById("seatsAvailable").textContent = available;
 }
+function renderSeatAssignments(company) {
 
+  const list = document.getElementById("seatUserList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const usedSeats = company.usedSeats || {};
+
+  if (!Object.keys(usedSeats).length) {
+    list.innerHTML = "<li style='opacity:.6;'>No active seat assignments</li>";
+    return;
+  }
+
+  Object.keys(usedSeats).forEach(key => {
+
+    const email = key.replace("emp-", "");
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      ${email}
+      <button class="btn-secondary"
+              style="margin-left:10px;"
+              onclick="revokeSeat('${key}')">
+        Revoke
+      </button>
+    `;
+
+    list.appendChild(li);
+  });
+}
 /* =========================================================
    LOGOUT
 ========================================================= */
