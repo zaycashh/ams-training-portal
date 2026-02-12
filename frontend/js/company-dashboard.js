@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /* =========================================================
    LOAD DASHBOARD
 ========================================================= */
+
 function loadCompanyDashboard(user) {
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "{}"
@@ -42,11 +43,40 @@ function loadCompanyDashboard(user) {
       ? company.modules.join(", ")
       : "—";
 
-  // Employees + seats
-loadEmployees(company.id);
+  // Load employees
+  loadEmployees(company.id);
 
-updateSeatCounts(company);
-renderSeatAssignments(company);
+  // Seat counts + assignments
+  updateSeatCounts(company);
+  renderSeatAssignments(company);
+}
+
+/* =========================================================
+   SEAT STATS (DERIVED SYSTEM)
+========================================================= */
+
+function getSeatStats(company) {
+  const totalPurchased = company.totalSeats?.employee || 0;
+
+  const usedSeats = company.usedSeats
+    ? Object.keys(company.usedSeats).length
+    : 0;
+
+  const remaining = totalPurchased - usedSeats;
+
+  return {
+    totalPurchased,
+    usedSeats,
+    remaining: remaining < 0 ? 0 : remaining
+  };
+}
+
+function updateSeatCounts(company) {
+  const stats = getSeatStats(company);
+
+  document.getElementById("seatTotal").textContent = stats.totalPurchased;
+  document.getElementById("seatUsed").textContent = stats.usedSeats;
+  document.getElementById("seatRemaining").textContent = stats.remaining;
 }
 
 /* =========================================================
