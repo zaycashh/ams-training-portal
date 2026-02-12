@@ -2,10 +2,8 @@
    LOGIN FLOW — FINAL (ADMIN / EMPLOYEE / OWNER / INDIVIDUAL)
 ========================================================= */
 
-// 🔐 TEMP DEV PASSWORD (remove when backend is live)
 const DEV_PASSWORD = "AMS!Dev2026";
 
-// 🔹 Mock company users (replace later with API)
 const COMPANY_EMPLOYEES = [
   {
     email: "employee1@abc.com",
@@ -22,9 +20,6 @@ const COMPANY_OWNERS = [
   }
 ];
 
-// =========================================================
-// LOGIN SUBMIT HANDLER (SINGLE SOURCE OF TRUTH)
-// =========================================================
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -44,17 +39,14 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // Clear previous session
   localStorage.removeItem("amsUser");
 
-  // Load company profile if exists
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
 
   /* =========================================================
      COMPANY ADMIN LOGIN
-     (from companyProfile)
   ========================================================= */
   if (
     company &&
@@ -64,7 +56,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
-        id: "admin-" + email,
+        id: "owner-" + email,
         email,
         role: "owner",
         companyId: company.id
@@ -77,7 +69,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
   /* =========================================================
      COMPANY EMPLOYEE LOGIN
-     (Consumes seat)
   ========================================================= */
   const employee = COMPANY_EMPLOYEES.find(
     u => u.email === email && u.password === password
@@ -90,7 +81,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         id: "emp-" + email,
         email,
         role: "employee",
-        companyId: employee.companyId,
+        companyId: employee.companyId
       })
     );
 
@@ -99,8 +90,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   }
 
   /* =========================================================
-     COMPANY OWNER LOGIN
-     (Manages seats, does NOT consume)
+     COMPANY OWNER LOGIN (Mock)
   ========================================================= */
   const owner = COMPANY_OWNERS.find(
     u => u.email === email && u.password === password
@@ -123,7 +113,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
   /* =========================================================
      INDIVIDUAL CLIENT (B2C)
-     (No company, no seats)
   ========================================================= */
   localStorage.setItem(
     "amsUser",
