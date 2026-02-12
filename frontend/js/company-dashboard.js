@@ -43,9 +43,10 @@ function loadCompanyDashboard(user) {
       : "—";
 
   // Employees + seats
-  loadEmployees(company.id);
-  
-   updateSeatCounts(company);
+loadEmployees(company.id);
+
+updateSeatCounts(company);
+renderSeatAssignments(company);
 }
 
 /* =========================================================
@@ -126,8 +127,9 @@ function revokeSeat(userId) {
     return;
   }
 
+  if (!confirm("Revoke this seat?")) return;
+
   delete company.usedSeats[userId];
-  company.seats.employee += 1;
 
   localStorage.setItem(
     "companyProfile",
@@ -136,7 +138,7 @@ function revokeSeat(userId) {
 
   alert("Seat revoked successfully.");
 
-  location.reload();
+  loadCompanyDashboard(JSON.parse(localStorage.getItem("amsUser")));
 }
 
 /* =========================================================
@@ -144,21 +146,15 @@ function revokeSeat(userId) {
 ========================================================= */
 function updateSeatCounts(company) {
 
-  if (!company?.seats?.employee) {
-    document.getElementById("seatsTotal").textContent = 0;
-    document.getElementById("seatsUsed").textContent = 0;
-    document.getElementById("seatsAvailable").textContent = 0;
-    return;
-  }
-
-  const total = company.seats.employee.total || 0;
-  const used = company.seats.employee.used || 0;
+  const total = company?.seats?.employee || 0;
+  const used = Object.keys(company?.usedSeats || {}).length;
   const available = Math.max(total - used, 0);
 
   document.getElementById("seatsTotal").textContent = total;
   document.getElementById("seatsUsed").textContent = used;
   document.getElementById("seatsAvailable").textContent = available;
 }
+
 /* =========================================================
    LOGOUT
 ========================================================= */
