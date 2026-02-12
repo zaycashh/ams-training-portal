@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <title>Company Admin Dashboard | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
+
+  <!-- ✅ ROOT-RELATIVE PATHS (GitHub Pages Safe) -->
+  <link rel="stylesheet" href="/ams-training-portal/css/main.css" />
 </head>
 
 <body data-role="company-admin">
@@ -30,76 +32,76 @@
   </section>
 
   <!-- SEAT MANAGEMENT -->
-<section class="module-section">
-  <h2>Employee Seat Management</h2>
+  <section class="module-section">
+    <h2>Employee Seat Management</h2>
 
-  <p>
-    Seats Used:
-    <strong><span id="seatsUsed"></span></strong>
-    /
-    <strong><span id="seatsTotal"></span></strong>
-  </p>
+    <p>
+      Seats Used:
+      <strong><span id="seatsUsed"></span></strong>
+      /
+      <strong><span id="seatsTotal"></span></strong>
+    </p>
 
-  <p>
-    Seats Available:
-    <strong><span id="seatsAvailable"></span></strong>
-  </p>
+    <p>
+      Seats Available:
+      <strong><span id="seatsAvailable"></span></strong>
+    </p>
 
-  <button id="buySeatsBtn" class="btn-primary">
-    Buy 5 More Seats
-  </button>
+    <button id="buySeatsBtn" class="btn-primary">
+      Buy 5 More Seats
+    </button>
 
-  <hr style="margin:20px 0; opacity:.2;" />
+    <hr style="margin:20px 0; opacity:.2;" />
 
-  <h3>Active Seat Assignments</h3>
-
-  <ul id="seatUserList" style="margin-top:10px;"></ul>
-</section>
+    <h3>Active Seat Assignments</h3>
+    <ul id="seatUserList" style="margin-top:10px;"></ul>
+  </section>
 
   <!-- EMPLOYEES -->
-<section class="module-section">
-  <h2>Employees</h2>
+  <section class="module-section">
+    <h2>Employees</h2>
 
-  <table style="width:100%;border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="employeeTable">
-      <tr>
-        <td colspan="5" style="opacity:.6;">No employees yet</td>
-      </tr>
-    </tbody>
-  </table>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable">
+        <tr>
+          <td colspan="5" style="opacity:.6;">No employees yet</td>
+        </tr>
+      </tbody>
+    </table>
 
-  <!-- INVITE EMPLOYEE -->
-  <div style="margin-top:16px; max-width:420px;">
-    <h3 style="margin-bottom:6px;">Invite Employee</h3>
+    <!-- INVITE EMPLOYEE -->
+    <div style="margin-top:16px; max-width:420px;">
+      <h3 style="margin-bottom:6px;">Invite Employee</h3>
 
-    <div style="display:flex; gap:8px;">
-      <input
-        type="email"
-        id="inviteEmail"
-        placeholder="Employee email"
-        style="flex:1;"
-      />
-      <button class="btn-primary" onclick="inviteEmployee()">
-        Invite
-      </button>
+      <div style="display:flex; gap:8px;">
+        <input
+          type="email"
+          id="inviteEmail"
+          placeholder="Employee email"
+          style="flex:1;"
+        />
+        <button class="btn-primary" onclick="inviteEmployee()">
+          Invite
+        </button>
+      </div>
+
+      <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
     </div>
-
-    <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
-  </div>
-</section>
+  </section>
 
 </main>
 
-<script src="../js/company-dashboard.js"></script>
-  
+<!-- ✅ ROOT-RELATIVE SCRIPT -->
+<script src="/ams-training-portal/js/company-dashboard.js"></script>
+
 </body>
 </html>
