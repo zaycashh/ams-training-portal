@@ -91,7 +91,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         email,
         role: "employee",
         companyId: employee.companyId,
-        employeeSeatLocked: false
       })
     );
 
