@@ -1,10 +1,5 @@
-const params = new URLSearchParams(window.location.search);
-
-if (params.get("seatRevoked") === "true") {
-  alert("Your company seat has been revoked. Please contact your administrator.");
-}
 /* =========================================================
-   EMPLOYEE TRAINING LOGIC
+   EMPLOYEE TRAINING MODULE
    UI + SEAT CONSUMPTION ONLY
    (Security handled by route-guard.js)
 ========================================================= */
@@ -20,9 +15,80 @@ const EMPLOYEE_ATTEMPTS_KEY = "employeeQuizAttempts";
 const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 
-/* =========================
+/* =========================================================
+   PAGE LOAD
+========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (document.body.dataset.module !== "employee") return;
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+
+  if (!user || user.role !== "employee") return;
+
+  /* =========================================================
+     SEAT REVOKE CHECK (CLEAN + NO SPAM)
+  ========================================================= */
+  const hasSeat =
+    company?.usedSeats &&
+    company.usedSeats[user.email] === true;
+
+  if (!hasSeat) {
+    if (!sessionStorage.getItem("seatRevokedAlert")) {
+      alert("Your company seat has been revoked. Please contact your administrator.");
+      sessionStorage.setItem("seatRevokedAlert", "true");
+    }
+
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
+
+  /* =========================================================
+     CONSUME SEAT IF NOT ALREADY ASSIGNED
+  ========================================================= */
+  consumeEmployeeSeatIfNeeded();
+
+  /* =========================================================
+     HARD LOCK IF COMPLETED
+  ========================================================= */
+  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
+    lockToCertificate();
+    return;
+  }
+
+  showSection("content");
+});
+
+/* =========================================================
+   SEAT CONSUMPTION (CURRENT MODEL)
+========================================================= */
+function consumeEmployeeSeatIfNeeded() {
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  const company = JSON.parse(localStorage.getItem("companyProfile"));
+
+  if (!user || user.role !== "employee") return;
+  if (!company?.seats?.employee) return;
+
+  // Already assigned
+  if (company.usedSeats?.[user.email] === true) return;
+
+  if (company.seats.employee <= 0) return;
+
+  // Consume seat
+  company.seats.employee -= 1;
+
+  if (!company.usedSeats) company.usedSeats = {};
+  company.usedSeats[user.email] = true;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  console.log("✅ Employee seat consumed");
+}
+
+/* =========================================================
    TAB STATES
-========================= */
+========================================================= */
 function setActiveTab(tab) {
   document.querySelectorAll(".module-nav button").forEach(btn => {
     btn.classList.remove("active", "completed");
@@ -44,9 +110,9 @@ function setActiveTab(tab) {
   }
 }
 
-/* =========================
+/* =========================================================
    SECTION NAVIGATION
-========================= */
+========================================================= */
 function showSection(section) {
 
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
@@ -85,80 +151,16 @@ function showSection(section) {
 }
 
 /* =========================================================
-   SEAT CONSUMPTION (NO REDIRECTS)
-========================================================= */
-function consumeEmployeeSeatIfNeeded() {
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (!user || user.role !== "employee") return;
-
-  if (
-    localStorage.getItem("paid_employee") === "true" ||
-    user.employeeSeatLocked === true
-  ) {
-    return;
-  }
-
-  const company = JSON.parse(localStorage.getItem("companyProfile"));
-  if (!company?.seats?.employee) return;
-
-  const seatData = company.seats.employee;
-  const available = seatData.total - seatData.used;
-
-  if (available <= 0) return;
-
-  // Consume ONE seat
-  seatData.used += 1;
-  user.employeeSeatLocked = true;
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-  localStorage.setItem("amsUser", JSON.stringify(user));
-
-  console.log("✅ Employee seat consumed + locked");
-}
-
-/* =========================
-   PAGE LOAD
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
-
-  if (document.body.dataset.module !== "employee") return;
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-
-  // 🔒 Lock if seat revoked
-  if (!company?.usedSeats || !company.usedSeats[user.id]) {
-  console.log("🚨 SEAT REVOKE TRIGGERED");
-  alert("Your company seat has been revoked. Please contact your administrator.");
-  setTimeout(() => {
-    window.location.replace("dashboard.html?seatRevoked=true");
-  }, 200);
-  return;
-}
-  // Consume seat if needed
-  if (user?.role === "employee") {
-    consumeEmployeeSeatIfNeeded();
-  }
-
-  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
-    lockToCertificate();
-    return;
-  }
-
-  showSection("content");
-});
-
-/* =========================
    CONTENT COMPLETION
-========================= */
+========================================================= */
 function completeEmployeeContent() {
   localStorage.setItem(EMPLOYEE_CONTENT_DONE_KEY, "true");
   showSection("quiz");
 }
 
-/* =========================
+/* =========================================================
    QUIZ RESULT HANDLER
-========================= */
+========================================================= */
 function handleEmployeeQuizResult(score, total) {
   const percent = Math.round((score / total) * 100);
   const attempts =
@@ -204,17 +206,17 @@ function handleEmployeeQuizResult(score, total) {
   `;
 }
 
-/* =========================
+/* =========================================================
    FINALIZE TRAINING
-========================= */
+========================================================= */
 function finishEmployeeTraining() {
   localStorage.setItem(EMPLOYEE_COMPLETED_KEY, "true");
   lockToCertificate();
 }
 
-/* =========================
+/* =========================================================
    CERTIFICATE LOCK + QR
-========================= */
+========================================================= */
 function lockToCertificate() {
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
@@ -248,9 +250,9 @@ function populateEmployeeCertificate() {
   }
 }
 
-/* =========================
+/* =========================================================
    CONTENT → QUIZ BUTTON
-========================= */
+========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("continueToQuizBtn");
   if (btn) btn.addEventListener("click", completeEmployeeContent);
