@@ -61,7 +61,7 @@ const payKey = paymentFlags[module];
 const hasIndividualPurchase =
   payKey && localStorage.getItem(payKey) === "true";
 
-// 🔥 UPDATED COMPANY SEAT SYSTEM (EMAIL-BASED + ACTIVE CHECK)
+// 🔥 COMPANY SEAT SYSTEM (USED SEATS MODEL)
 let hasEmployeeSeat = false;
 
 if (module === "employee") {
@@ -69,12 +69,8 @@ if (module === "employee") {
     localStorage.getItem("companyProfile") || "null"
   );
 
-  if (company?.assignedSeats && user?.email) {
-    hasEmployeeSeat = company.assignedSeats.some(
-      seat =>
-        seat.email === user.email &&
-        seat.active === true
-    );
+  if (company?.usedSeats && user?.email) {
+    hasEmployeeSeat = company.usedSeats[user.email] === true;
   }
 }
 
