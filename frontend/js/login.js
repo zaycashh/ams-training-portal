@@ -66,7 +66,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       JSON.stringify({
         id: "admin-" + email,
         email,
-        role: "company_admin",
+        role: "owner",
         companyId: company.id
       })
     );
