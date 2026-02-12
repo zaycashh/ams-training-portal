@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem("amsUser") || "null"
   );
 
-  if (!user || user.role !== "company_admin") {
+  if (!user || (user.role !== "company_admin" && user.role !== "owner")) {
     alert("Unauthorized access");
     window.location.href = "../index.html";
     return;
