@@ -55,7 +55,12 @@ function getSeatStats(company) {
   const totalPurchased = company.totalSeats?.employee || 0;
 
   const usedSeats = company.usedSeats
-    ? Object.keys(company.usedSeats).length
+    ? Object.keys(company.usedSeats).filter(key => {
+        const email = key.replace("emp-", "");
+        const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+        const user = users.find(u => u.email === email);
+        return user && user.role === "employee";
+      }).length
     : 0;
 
   const remaining = totalPurchased - usedSeats;
