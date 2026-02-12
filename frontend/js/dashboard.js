@@ -190,6 +190,15 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // 🔹 Employee Welcome Banner
+  if (user?.role === "employee") {
+    const welcome = document.getElementById("employeeWelcome");
+    if (welcome) welcome.style.display = "block";
+  }
+
   const status = getEmployeeSeatStatus();
 
   if (status) {
