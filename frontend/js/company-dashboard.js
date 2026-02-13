@@ -94,7 +94,7 @@ function loadEmployees(companyId) {
   employees.forEach(emp => {
     const tr = document.createElement("tr");
 
-    const key = "emp-" + emp.email;
+    const key = emp.email;
     const seatAssigned = company.usedSeats && company.usedSeats[key];
 
     tr.innerHTML = `
@@ -147,6 +147,9 @@ function revokeSeat(userKey) {
 
   delete company.usedSeats[userKey];
 
+if (company.seats?.employee?.used > 0) {
+  company.seats.employee.used -= 1;
+}
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Seat revoked successfully.");
@@ -168,11 +171,7 @@ function renderSeatAssignments(company) {
   const usedSeats = company.usedSeats || {};
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-  const employeeKeys = Object.keys(usedSeats).filter(key => {
-    const email = key.replace("emp-", "");
-    const user = users.find(u => u.email === email);
-    return user && user.role === "employee";
-  });
+  const employeeKeys = Object.keys(usedSeats);
 
   if (!employeeKeys.length) {
     list.innerHTML =
@@ -181,7 +180,7 @@ function renderSeatAssignments(company) {
   }
 
   employeeKeys.forEach(key => {
-    const email = key.replace("emp-", "");
+    const email = key;
 
     const li = document.createElement("li");
 
