@@ -108,13 +108,20 @@ function handleEmployeeClick() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
+  // 🔒 Only employees can ever use company seats
+  if (!user || user.role !== "employee") {
+    alert("Only employees can use company seats.");
+    return;
+  }
+
+  // Individually purchased
   if (localStorage.getItem("paid_employee") === "true") {
     startFAA("employee");
     return;
   }
 
-  // 🔥 EMAIL-BASED CHECK
-  if (company?.usedSeats?.[user?.email]) {
+  // Already assigned seat
+  if (company?.usedSeats?.[user.email]) {
     startFAA("employee");
     return;
   }
