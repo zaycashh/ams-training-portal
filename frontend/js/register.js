@@ -53,6 +53,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     localStorage.setItem("amsUser", JSON.stringify(user));
+    
+    // 🔥 CREATE COMPANY PROFILE ON OWNER REGISTER
+const companyProfile = {
+  id: user.companyId || "company-" + Date.now(),
+  name: companyName,
+  adminEmail: email,
+  modules: ["employee"],
+
+  // Seat system
+  totalSeats: { employee: 0 },
+  usedSeats: {},
+  employees: {}
+};
+
+localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
     alert("Account created successfully. Please log in.");
 
