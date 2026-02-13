@@ -245,41 +245,66 @@ document.addEventListener("DOMContentLoaded", () => {
    INVITE EMPLOYEE
 ========================================================= */
 function inviteEmployee() {
-  const input = document.querySelector("#inviteEmail");
+  const input = document.getElementById("inviteEmail");
+  const msg = document.getElementById("inviteMsg");
+
   if (!input) return;
 
   const email = input.value.trim().toLowerCase();
+
   if (!email) {
-    alert("Enter an employee email.");
+    msg.textContent = "Enter an employee email.";
+    msg.style.color = "red";
+    return;
+  }
+
+  // Basic email validation
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    msg.textContent = "Enter a valid email address.";
+    msg.style.color = "red";
     return;
   }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  // Prevent inviting owner
+  if (email === company.adminEmail) {
+    msg.textContent = "Owner cannot be invited as employee.";
+    msg.style.color = "red";
+    return;
+  }
+
+  // Prevent duplicate registered user
+  if (users.find(u => u.email === email)) {
+    msg.textContent = "User already registered.";
+    msg.style.color = "red";
+    return;
+  }
 
   if (!company.employees) company.employees = {};
 
   if (company.employees[email]) {
-    alert("Employee already invited.");
+    msg.textContent = "Employee already invited.";
+    msg.style.color = "red";
     return;
   }
 
   company.employees[email] = {
     role: "employee",
-    invited: true
+    invited: true,
+    invitedAt: Date.now()
   };
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   input.value = "";
-
-  alert("Employee invited successfully.");
-
-  location.reload();
+  msg.textContent = "Employee invited successfully.";
+  msg.style.color = "green";
 }
 /* =========================================================
    LOGOUT
 ========================================================= */
-
 function logout() {
   localStorage.removeItem("amsUser");
   window.location.href = "../index.html";
