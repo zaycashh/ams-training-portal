@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register Company | AMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<main class="auth-container">
+  <div class="auth-card">
+    <h2>Create Company Account</h2>
+
+    <form id="companyRegisterForm">
+      <label>Company Name</label>
+      <input type="text" id="companyName" required />
+
+      <label>Admin Email</label>
+      <input type="email" id="adminEmail" required />
+
+      <label>Password</label>
+      <input type="password" id="password" required />
+
+      <button type="submit" class="btn-primary">
+        Create Company
+      </button>
+    </form>
+
+    <p style="margin-top:20px;">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+</main>
+
+<script>
+/* =========================================================
+   COMPANY REGISTRATION
+========================================================= */
+
+document.getElementById("companyRegisterForm")
+  .addEventListener("submit", function (e) {
+
+  e.preventDefault();
+
+  const companyName = document
+    .getElementById("companyName").value.trim();
+
+  const adminEmail = document
+    .getElementById("adminEmail").value.trim().toLowerCase();
+
+  const password = document
+    .getElementById("password").value;
+
+  if (!companyName || !adminEmail || !password) {
+    alert("Please complete all fields.");
+    return;
+  }
+
+  // Generate unique company ID
+  const companyId =
+    "comp-" + Date.now();
+
+  /* =========================================================
+     ENTERPRISE-GRADE COMPANY STRUCTURE
+  ========================================================= */
+
+  const companyProfile = {
+    id: companyId,
+    name: companyName,
+    adminEmail,
+    createdAt: Date.now(),
+
+    // scalable seat system
+    seats: {
+      employee: {
+        total: 5,
+        used: 0
+      }
+    },
+
+    usedSeats: {},
+
+    modules: [],
+
+    employees: {}
+  };
+
+  localStorage.setItem(
+    "companyProfile",
+    JSON.stringify(companyProfile)
+  );
+
+  /* =========================================================
+     CREATE OWNER USER
+  ========================================================= */
+
+  const ownerUser = {
+    id: "owner-" + adminEmail,
+    email: adminEmail,
+    role: "owner",
+    companyId: companyId
+  };
+
+  localStorage.setItem(
+    "amsUser",
+    JSON.stringify(ownerUser)
+  );
+
+  alert("Company created successfully.");
+
+  window.location.replace("company-dashboard.html");
+});
+</script>
+
+</body>
+</html>
