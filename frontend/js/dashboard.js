@@ -175,18 +175,28 @@ function consumeEmployeeSeatAndStart(startUrl) {
     company.usedSeats = {};
   }
 
-  // 🔥 EMAIL-BASED CHECK
+  // Already assigned
   if (company.usedSeats[user.email]) {
     window.location.href = startUrl;
     return;
   }
 
-  if (!company.seats || company.seats.employee <= 0) {
+  if (!company.seats?.employee) {
+    alert("No seat structure found.");
+    return;
+  }
+
+  const total = company.seats.employee.total ?? 0;
+  const used = company.seats.employee.used ?? 0;
+  const remaining = total - used;
+
+  if (remaining <= 0) {
     alert("No seats remaining.");
     return;
   }
 
-  company.seats.employee -= 1;
+  // ✅ Proper seat consumption
+  company.seats.employee.used += 1;
   company.usedSeats[user.email] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
