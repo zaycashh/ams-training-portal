@@ -13,24 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !company ||
-      !phone ||
-      !email ||
-      !password ||
-      !confirmPassword
-    ) {
+    if (!firstName || !lastName || !company || !phone || !email || !password || !confirmPassword) {
       alert("Please fill out all required fields.");
       return;
     }
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
     if (!passwordRegex.test(password)) {
-      alert(
-        "Password must be at least 8 characters long and include one uppercase letter and one number."
-      );
+      alert("Password must be at least 8 characters long and include one uppercase letter and one number.");
       return;
     }
 
@@ -39,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    /* =========================
-       CREATE USER
-    ========================= */
+    const existingCompany = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
     const user = {
       id: email,
@@ -50,32 +38,28 @@ document.addEventListener("DOMContentLoaded", () => {
       company,
       phone,
       email,
-      role: "owner",
-      companyId: "company-" + Date.now(),
+      role: existingCompany ? "employee" : "owner",
       createdAt: new Date().toISOString()
     };
 
     localStorage.setItem("amsUser", JSON.stringify(user));
 
-    /* =========================
-       CREATE COMPANY PROFILE
-    ========================= */
+    // 🔥 ONLY CREATE COMPANY IF IT DOESN'T EXIST
+    if (!existingCompany) {
+      const companyProfile = {
+        id: "company-" + Date.now(),
+        name: company,
+        adminEmail: email,
+        modules: ["employee"],
+        totalSeats: { employee: 0 },
+        usedSeats: {},
+        employees: {}
+      };
 
-    const companyProfile = {
-      id: user.companyId,
-      name: company, // ✅ FIXED (was companyName)
-      adminEmail: email,
-      modules: ["employee"],
+      localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+    }
 
-      totalSeats: { employee: 0 },
-      usedSeats: {},
-      employees: {}
-    };
-
-    localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
-
-    alert("Account created successfully.");
-
-    window.location.href = "dashboard.html";
+    alert("Account created successfully. Please log in.");
+    window.location.href = "login.html";
   });
 });
