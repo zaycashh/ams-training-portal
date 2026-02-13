@@ -242,6 +242,41 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 /* =========================================================
+   INVITE EMPLOYEE
+========================================================= */
+function inviteEmployee() {
+  const input = document.querySelector("#inviteEmail");
+  if (!input) return;
+
+  const email = input.value.trim().toLowerCase();
+  if (!email) {
+    alert("Enter an employee email.");
+    return;
+  }
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.employees) company.employees = {};
+
+  if (company.employees[email]) {
+    alert("Employee already invited.");
+    return;
+  }
+
+  company.employees[email] = {
+    role: "employee",
+    invited: true
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  input.value = "";
+
+  alert("Employee invited successfully.");
+
+  location.reload();
+}
+/* =========================================================
    LOGOUT
 ========================================================= */
 
