@@ -32,19 +32,34 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================================================= */
    const key = "emp-" + user.email;
 
-   const hasSeat =
-     company?.usedSeats &&
-     company.usedSeats[key] === true;
+const total = company?.totalSeats?.employee || 0;
+const used = company?.usedSeats
+  ? Object.keys(company.usedSeats).length
+  : 0;
 
-  if (!hasSeat) {
-    if (!sessionStorage.getItem("seatRevokedAlert")) {
-      alert("Your company seat has been revoked. Please contact your administrator.");
-      sessionStorage.setItem("seatRevokedAlert", "true");
-    }
+const remaining = total - used;
 
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
+// If no seats exist at all
+if (total === 0) {
+  alert("No company seats available. Please contact your administrator.");
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
+
+// If already assigned → allow
+if (company?.usedSeats?.[key] === true) {
+  // continue
+} 
+// If seats available → allow consumption
+else if (remaining > 0) {
+  // continue (seat will be consumed below)
+} 
+// Otherwise → blocked
+else {
+  alert("All company seats are currently in use.");
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
   /* =========================================================
      CONSUME SEAT IF NOT ALREADY ASSIGNED
