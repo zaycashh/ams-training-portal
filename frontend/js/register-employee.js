@@ -22,7 +22,30 @@ document.getElementById("employeeRegisterForm")
       return;
     }
 
-    // Create employee user
+    // 🔹 Add to global users
+    const users = JSON.parse(
+      localStorage.getItem("ams_users") || "[]"
+    );
+
+    users.push({
+      id: "emp-" + email,
+      email,
+      role: "employee",
+      companyId: company.id,
+      createdAt: Date.now()
+    });
+
+    localStorage.setItem("ams_users", JSON.stringify(users));
+
+    // 🔹 Remove invite after successful registration
+    delete company.invites[email];
+
+    localStorage.setItem(
+      "companyProfile",
+      JSON.stringify(company)
+    );
+
+    // 🔹 Log them in
     localStorage.setItem(
       "amsUser",
       JSON.stringify({
