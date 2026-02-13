@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================================================= */
    const key = "emp-" + user.email;
 
-const hasSeat =
-  company?.usedSeats &&
-  company.usedSeats[key] === true;
+   const hasSeat =
+     company?.usedSeats &&
+     company.usedSeats[key] === true;
 
   if (!hasSeat) {
     if (!sessionStorage.getItem("seatRevokedAlert")) {
