@@ -30,9 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =========================================================
      SEAT REVOKE CHECK (CLEAN + NO SPAM)
   ========================================================= */
-  const hasSeat =
-    company?.usedSeats &&
-    company.usedSeats[user.email] === true;
+   const key = "emp-" + user.email;
+
+const hasSeat =
+  company?.usedSeats &&
+  company.usedSeats[key] === true;
 
   if (!hasSeat) {
     if (!sessionStorage.getItem("seatRevokedAlert")) {
