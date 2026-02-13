@@ -27,6 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!user || user.role !== "employee") return;
   if (!company) return;
+   
+   // 🔒 HARD REVOCATION ENFORCEMENT
+if (!company.usedSeats?.[user.email]) {
+  alert("Your company seat has been revoked. Please contact your administrator.");
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
   const total = company?.seats?.employee?.total ?? 0;
   const used = company?.seats?.employee?.used ?? 0;
