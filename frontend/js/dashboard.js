@@ -48,7 +48,9 @@ function getEmployeeSeatStatus() {
     return { type: "assigned", label: "🎟 Seat Assigned" };
   }
 
-  const remaining = company.seats?.employee ?? 0;
+  const total = company?.seats?.employee?.total ?? 0;
+  const used = company?.seats?.employee?.used ?? 0;
+  const remaining = total - used;
 
   if (remaining > 0) {
     return {
@@ -83,8 +85,10 @@ function updateEmployeeButtonState() {
     return;
   }
 
-  const remaining = company?.seats?.employee ?? 0;
-
+  const total = company?.seats?.employee?.total ?? 0;
+  const used = company?.seats?.employee?.used ?? 0;
+  const remaining = total - used;
+   
   if (remaining > 0) {
     btn.disabled = false;
     btn.textContent = "Use Company Seat";
@@ -115,10 +119,25 @@ function handleEmployeeClick() {
     return;
   }
 
-  if (company?.seats?.employee > 0) {
-    consumeEmployeeSeatAndStart("employee-training.html");
-    return;
-  }
+  const total = company?.seats?.employee?.total ?? 0;
+  const used = company?.seats?.employee?.used ?? 0;
+  const remaining = total - used;
+
+if (!company.seats?.employee) {
+  alert("No seat structure found.");
+  return;
+}
+
+   const total = company.seats.employee.total ?? 0;
+   const used = company.seats.employee.used ?? 0;
+   const remaining = total - used;
+
+if (remaining <= 0) {
+  alert("No seats remaining.");
+  return;
+}
+
+company.seats.employee.used += 1;
 
   alert("No seats available or purchase required.");
 }
