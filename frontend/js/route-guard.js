@@ -28,23 +28,22 @@
   const role = user.role; // der | employee | supervisor | individual
 
   const roleAccess = {
-    der: ["der"],
-    employee: ["employee"],
-    supervisor: ["supervisor"],
-    individual: ["der", "employee", "supervisor"] // B2C buyers
-  };
+  der: ["der"],
+  employee: ["employee"],
+  supervisor: ["supervisor"],
+  individual: ["der", "employee", "supervisor"],
+  owner: [] // 🚫 owner cannot access training modules directly
+};
 
   if (
-    roleAccess[role] &&
-    !roleAccess[role].includes(module)
-  ) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You don’t have access to that training module."
-    );
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
+   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
+  sessionStorage.setItem(
+    "ams_notice",
+    "You don’t have access to that training module."
+  );
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
  /* =========================================================
    STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT (UPDATED)
