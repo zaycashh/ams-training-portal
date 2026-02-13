@@ -69,23 +69,17 @@ if (module === "employee") {
     localStorage.getItem("companyProfile") || "null"
   );
 
-  if (company?.usedSeats && user?.email) {
-    hasEmployeeSeat = company.usedSeats[user.email] === true;
+  if (company && user?.email) {
+
+    const assigned = company.usedSeats?.[user.email] === true;
+
+    const total = company?.seats?.employee?.total ?? 0;
+    const used = company?.seats?.employee?.used ?? 0;
+
+    const seatStructureValid = used <= total;
+
+    hasEmployeeSeat = assigned && seatStructureValid;
   }
-}
-
-// 🔒 Final access decision
-if (!hasIndividualPurchase && !hasEmployeeSeat) {
-
-  if (module === "employee") {
-    if (!sessionStorage.getItem("seatRevokedAlert")) {
-      alert("Your company seat has been revoked. Please contact your administrator.");
-      sessionStorage.setItem("seatRevokedAlert", "true");
-    }
-  }
-
-  window.location.replace("../pages/dashboard.html");
-  return;
 }
   /* =========================================================
      STEP 4 – COMPLETION HARD LOCK (UI HANDLED IN MODULE)
