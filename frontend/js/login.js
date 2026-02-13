@@ -1,8 +1,12 @@
 /* =========================================================
-   LOGIN FLOW — FINAL (ADMIN / EMPLOYEE / OWNER / INDIVIDUAL)
+   LOGIN FLOW — ENTERPRISE ROLE BASED (OWNER / ADMIN / EMPLOYEE / INDIVIDUAL)
 ========================================================= */
 
 const DEV_PASSWORD = "AMS!Dev2026";
+
+/* =========================================================
+   MOCK COMPANY USERS (DEV ONLY)
+========================================================= */
 
 const COMPANY_EMPLOYEES = [
   {
@@ -19,6 +23,10 @@ const COMPANY_OWNERS = [
     companyId: "abc-company"
   }
 ];
+
+/* =========================================================
+   LOGIN SUBMIT
+========================================================= */
 
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -39,6 +47,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
+  // Clear previous session
   localStorage.removeItem("amsUser");
 
   const company = JSON.parse(
@@ -46,83 +55,102 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   );
 
   /* =========================================================
-     COMPANY ADMIN LOGIN
+     COMPANY OWNER / ADMIN LOGIN
   ========================================================= */
+
+  // If matches companyProfile admin email
   if (
     company &&
     company.adminEmail &&
     email === company.adminEmail.toLowerCase()
   ) {
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify({
-        id: "owner-" + email,
-        email,
-        role: "owner",
-        companyId: company.id
-      })
-    );
+    const user = {
+      id: "owner-" + email,
+      email,
+      role: "owner",
+      companyId: company.id
+    };
 
-    window.location.replace("company-dashboard.html");
+    localStorage.setItem("amsUser", JSON.stringify(user));
+    redirectByRole(user);
+    return;
+  }
+
+  // Fallback mock owner list
+  const owner = COMPANY_OWNERS.find(
+    u => u.email === email && u.password === password
+  );
+
+  if (owner) {
+    const user = {
+      id: "owner-" + email,
+      email,
+      role: "owner",
+      companyId: owner.companyId
+    };
+
+    localStorage.setItem("amsUser", JSON.stringify(user));
+    redirectByRole(user);
     return;
   }
 
   /* =========================================================
      COMPANY EMPLOYEE LOGIN
   ========================================================= */
+
   const employee = COMPANY_EMPLOYEES.find(
     u => u.email === email && u.password === password
   );
 
   if (employee) {
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify({
-        id: "emp-" + email,
-        email,
-        role: "employee",
-        companyId: employee.companyId
-      })
-    );
+    const user = {
+      id: "emp-" + email,
+      email,
+      role: "employee",
+      companyId: employee.companyId
+    };
 
-    window.location.replace("dashboard.html");
-    return;
-  }
-
-  /* =========================================================
-     COMPANY OWNER LOGIN (Mock)
-  ========================================================= */
-  const owner = COMPANY_OWNERS.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (owner) {
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify({
-        id: "owner-" + email,
-        email,
-        role: "owner",
-        companyId: owner.companyId
-      })
-    );
-
-    window.location.replace("dashboard.html");
+    localStorage.setItem("amsUser", JSON.stringify(user));
+    redirectByRole(user);
     return;
   }
 
   /* =========================================================
      INDIVIDUAL CLIENT (B2C)
   ========================================================= */
-  localStorage.setItem(
-    "amsUser",
-    JSON.stringify({
-      id: "ind-" + email,
-      email,
-      role: "individual",
-      companyId: null
-    })
-  );
 
-  window.location.replace("dashboard.html");
+  const user = {
+    id: "ind-" + email,
+    email,
+    role: "individual",
+    companyId: null
+  };
+
+  localStorage.setItem("amsUser", JSON.stringify(user));
+  redirectByRole(user);
 });
+
+
+/* =========================================================
+   ENTERPRISE ROLE REDIRECT
+========================================================= */
+
+function redirectByRole(user) {
+
+  switch (user.role) {
+
+    case "owner":
+    case "company_admin":
+      window.location.replace("company-dashboard.html");
+      break;
+
+    case "employee":
+      window.location.replace("dashboard.html");
+      break;
+
+    case "individual":
+    default:
+      window.location.replace("dashboard.html");
+      break;
+  }
+}
