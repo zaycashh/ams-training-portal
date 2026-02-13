@@ -22,21 +22,20 @@
   if (!module) return;
 
   /* =========================================================
-     STEP 2 – ROLE → MODULE ENFORCEMENT
-  ========================================================= */
+   STEP 2 – ROLE → MODULE ENFORCEMENT
+========================================================= */
 
-  const role = user.role; // der | employee | supervisor | individual
+const role = user.role; // der | employee | supervisor | individual | owner
 
-  const roleAccess = {
+const roleAccess = {
   der: ["der"],
   employee: ["employee"],
   supervisor: ["supervisor"],
   individual: ["der", "employee", "supervisor"],
-  owner: [] // 🚫 owner cannot access training modules directly
+  owner: [] // ❌ owner cannot access modules directly
 };
 
-  if (
-   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
+if (!roleAccess[role] || !roleAccess[role].includes(module)) {
   sessionStorage.setItem(
     "ams_notice",
     "You don’t have access to that training module."
@@ -44,7 +43,7 @@
   window.location.replace("../pages/dashboard.html");
   return;
 }
-
+   
  /* =========================================================
    STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT (UPDATED)
 ========================================================= */
