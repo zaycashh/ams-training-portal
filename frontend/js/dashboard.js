@@ -137,7 +137,6 @@ function handleEmployeeClick() {
 
   alert("No seats available or purchase required.");
 }
-
 /* =========================
    START FAA COURSES
 ========================= */
