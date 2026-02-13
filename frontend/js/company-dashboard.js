@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCompanyDashboard(user);
 });
 
-
 /* =========================================================
    LOAD DASHBOARD
 ========================================================= */
@@ -174,7 +173,6 @@ function revokeSeat(userKey) {
 /* =========================================================
    RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
-
 function renderSeatAssignments(company) {
   const list = document.getElementById("seatUserList");
   if (!list) return;
@@ -182,14 +180,21 @@ function renderSeatAssignments(company) {
   list.innerHTML = "";
 
   const usedSeats = company.usedSeats || {};
-  const keys = Object.keys(usedSeats);
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-  if (!keys.length) {
-    list.innerHTML = "<li style='opacity:.6;'>No active seat assignments</li>";
+  const employeeKeys = Object.keys(usedSeats).filter(key => {
+    const email = key.replace("emp-", "");
+    const user = users.find(u => u.email === email);
+    return user && user.role === "employee";
+  });
+
+  if (!employeeKeys.length) {
+    list.innerHTML =
+      "<li style='opacity:.6;'>No active seat assignments</li>";
     return;
   }
 
-  keys.forEach(key => {
+  employeeKeys.forEach(key => {
     const email = key.replace("emp-", "");
 
     const li = document.createElement("li");
