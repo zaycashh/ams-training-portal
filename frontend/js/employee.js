@@ -28,50 +28,39 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!user || user.role !== "employee") return;
   if (!company) return;
 
-  const key = "emp-" + user.email;
+  const total = company?.seats?.employee?.total ?? 0;
+const used = company?.seats?.employee?.used ?? 0;
+const remaining = total - used;
 
-  const total = company.totalSeats?.employee || 0;
-  const used = company.usedSeats
-    ? Object.keys(company.usedSeats).length
-    : 0;
+// 🚫 No seats purchased
+if (total === 0) {
+  alert("No company seats available. Please contact your administrator.");
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
-  const remaining = total - used;
+// ✅ Already assigned (EMAIL BASED — correct model)
+if (company.usedSeats?.[user.email]) {
+  console.log("Seat already assigned.");
+}
 
-  // 🚫 No seats purchased at all
-  if (total === 0) {
-    alert("No company seats available. Please contact your administrator.");
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
+// ✅ Assign seat if available
+else if (remaining > 0) {
+  if (!company.usedSeats) company.usedSeats = {};
+  company.usedSeats[user.email] = true;
 
-  // ✅ Already assigned
-  if (company.usedSeats?.[key] === true) {
-    console.log("Seat already assigned.");
-  }
+  company.seats.employee.used += 1;
 
-  // ✅ Assign seat if available
-  else if (remaining > 0) {
-    if (!company.usedSeats) company.usedSeats = {};
-    company.usedSeats[key] = true;
-    localStorage.setItem("companyProfile", JSON.stringify(company));
-    console.log("✅ Employee seat assigned.");
-  }
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  console.log("✅ Employee seat assigned.");
+}
 
-  // 🚫 All seats used
-  else {
-    alert("All company seats are currently in use.");
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
-
-  // 🔒 Hard lock if already completed
-  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
-    lockToCertificate();
-    return;
-  }
-
-  showSection("content");
-});
+// 🚫 No seats remaining
+else {
+  alert("All company seats are currently in use.");
+  window.location.replace("../pages/dashboard.html");
+  return;
+}
 
 /* =========================================================
    TAB STATE HANDLING
