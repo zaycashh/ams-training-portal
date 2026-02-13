@@ -48,29 +48,17 @@ function loadCompanyDashboard(user) {
 /* =========================================================
    DERIVED SEAT SYSTEM
 ========================================================= */
-
 function getSeatStats(company) {
-  const totalPurchased = company.totalSeats?.employee || 0;
-   
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
-const usedSeats = company.usedSeats
-  ? Object.keys(company.usedSeats).filter(key => {
-      const email = key.replace("emp-", "");
-      const user = users.find(u => u.email === email);
-      return user && user.role === "employee";
-    }).length
-  : 0;
-
-  const remaining = totalPurchased - usedSeats;
+  const total = company?.seats?.employee?.total ?? 0;
+  const used = company?.seats?.employee?.used ?? 0;
+  const remaining = total - used;
 
   return {
-    totalPurchased,
-    usedSeats,
+    totalPurchased: total,
+    usedSeats: used,
     remaining: remaining < 0 ? 0 : remaining
   };
 }
-
 function updateSeatCounts(company) {
   const stats = getSeatStats(company);
 
@@ -78,7 +66,6 @@ function updateSeatCounts(company) {
   document.getElementById("seatUsed").textContent = stats.usedSeats;
   document.getElementById("seatRemaining").textContent = stats.remaining;
 }
-
 
 /* =========================================================
    LOAD EMPLOYEES
@@ -214,7 +201,6 @@ function renderSeatAssignments(company) {
 /* =========================================================
    BUY 5 MORE SEATS (STACKING)
 ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
   const buyBtn = document.getElementById("buySeatsBtn");
   if (!buyBtn) return;
@@ -224,16 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.getItem("companyProfile") || "{}"
     );
 
-    if (!company.totalSeats) company.totalSeats = {};
-    if (!company.totalSeats.employee) company.totalSeats.employee = 0;
+    if (!company.seats) company.seats = {};
+    if (!company.seats.employee) {
+      company.seats.employee = { total: 0, used: 0 };
+    }
 
     // Add 5 seats per purchase
-    company.totalSeats.employee += 5;
+    company.seats.employee.total += 5;
 
-    localStorage.setItem(
-      "companyProfile",
-      JSON.stringify(company)
-    );
+    localStorage.setItem("companyProfile", JSON.stringify(company));
 
     alert("5 seats added successfully.");
 
