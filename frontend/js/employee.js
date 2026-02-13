@@ -1,7 +1,7 @@
 /* =========================================================
    EMPLOYEE TRAINING MODULE
-   UI + SEAT CONSUMPTION ONLY
-   (Security handled by route-guard.js)
+   UI + SEAT SYSTEM (DERIVED MODEL)
+   Security handled by route-guard.js
 ========================================================= */
 
 const EMPLOYEE_MAX_ATTEMPTS = 3;
@@ -16,7 +16,7 @@ const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 
 /* =========================================================
-   PAGE LOAD
+   PAGE LOAD + SEAT VALIDATION
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -26,49 +26,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (!user || user.role !== "employee") return;
+  if (!company) return;
 
-  /* =========================================================
-     SEAT REVOKE CHECK (CLEAN + NO SPAM)
-  ========================================================= */
-   const key = "emp-" + user.email;
+  const key = "emp-" + user.email;
 
-const total = company?.totalSeats?.employee || 0;
-const used = company?.usedSeats
-  ? Object.keys(company.usedSeats).length
-  : 0;
+  const total = company.totalSeats?.employee || 0;
+  const used = company.usedSeats
+    ? Object.keys(company.usedSeats).length
+    : 0;
 
-const remaining = total - used;
+  const remaining = total - used;
 
-// If no seats exist at all
-if (total === 0) {
-  alert("No company seats available. Please contact your administrator.");
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
+  // 🚫 No seats purchased at all
+  if (total === 0) {
+    alert("No company seats available. Please contact your administrator.");
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
 
-// If already assigned → allow
-if (company?.usedSeats?.[key] === true) {
-  // continue
-} 
-// If seats available → allow consumption
-else if (remaining > 0) {
-  // continue (seat will be consumed below)
-} 
-// Otherwise → blocked
-else {
-  alert("All company seats are currently in use.");
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
+  // ✅ Already assigned
+  if (company.usedSeats?.[key] === true) {
+    console.log("Seat already assigned.");
+  }
 
-  /* =========================================================
-     CONSUME SEAT IF NOT ALREADY ASSIGNED
-  ========================================================= */
-  consumeEmployeeSeatIfNeeded();
+  // ✅ Assign seat if available
+  else if (remaining > 0) {
+    if (!company.usedSeats) company.usedSeats = {};
+    company.usedSeats[key] = true;
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+    console.log("✅ Employee seat assigned.");
+  }
 
-  /* =========================================================
-     HARD LOCK IF COMPLETED
-  ========================================================= */
+  // 🚫 All seats used
+  else {
+    alert("All company seats are currently in use.");
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
+
+  // 🔒 Hard lock if already completed
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
     return;
@@ -78,45 +74,7 @@ else {
 });
 
 /* =========================================================
-   SEAT CONSUMPTION (CURRENT MODEL)
-========================================================= */
-function consumeEmployeeSeatIfNeeded() {
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  const company = JSON.parse(localStorage.getItem("companyProfile"));
-
-  if (!user || user.role !== "employee") return;
-  if (!company) return;
-
-  const key = "emp-" + user.email;
-
-  // Already assigned
-  if (company.usedSeats?.[key] === true) return;
-
-  // Calculate remaining seats (derived)
-  const total = company.totalSeats?.employee || 0;
-  const used = company.usedSeats
-    ? Object.keys(company.usedSeats).length
-    : 0;
-
-  const remaining = total - used;
-
-  if (remaining <= 0) {
-    alert("No seats available. Please contact your administrator.");
-    window.location.replace("../pages/dashboard.html");
-    return;
-  }
-
-  // Assign seat (DO NOT decrement totalSeats)
-  if (!company.usedSeats) company.usedSeats = {};
-  company.usedSeats[key] = true;
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  console.log("✅ Employee seat assigned (derived model)");
-}
-
-/* =========================================================
-   TAB STATES
+   TAB STATE HANDLING
 ========================================================= */
 function setActiveTab(tab) {
   document.querySelectorAll(".module-nav button").forEach(btn => {
