@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    // Required fields
     if (
       !firstName ||
       !lastName ||
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Password rules (keep your strong rule ✅)
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
     if (!passwordRegex.test(password)) {
       alert(
@@ -36,42 +34,48 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Password match
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
-    // Save user (MVP local auth)
+    /* =========================
+       CREATE USER
+    ========================= */
+
     const user = {
+      id: email,
       firstName,
       lastName,
       company,
       phone,
       email,
+      role: "owner",
+      companyId: "company-" + Date.now(),
       createdAt: new Date().toISOString()
     };
 
     localStorage.setItem("amsUser", JSON.stringify(user));
-    
-    // 🔥 CREATE COMPANY PROFILE ON OWNER REGISTER
-const companyProfile = {
-  id: user.companyId || "company-" + Date.now(),
-  name: companyName,
-  adminEmail: email,
-  modules: ["employee"],
 
-  // Seat system
-  totalSeats: { employee: 0 },
-  usedSeats: {},
-  employees: {}
-};
+    /* =========================
+       CREATE COMPANY PROFILE
+    ========================= */
 
-localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+    const companyProfile = {
+      id: user.companyId,
+      name: company, // ✅ FIXED (was companyName)
+      adminEmail: email,
+      modules: ["employee"],
 
-    alert("Account created successfully. Please log in.");
+      totalSeats: { employee: 0 },
+      usedSeats: {},
+      employees: {}
+    };
 
-    // ✅ OPTION A: Go back to login
-    window.location.href = "login.html";
+    localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+
+    alert("Account created successfully.");
+
+    window.location.href = "dashboard.html";
   });
 });
