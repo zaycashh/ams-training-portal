@@ -68,22 +68,34 @@ function consumeEmployeeSeatIfNeeded() {
   const company = JSON.parse(localStorage.getItem("companyProfile"));
 
   if (!user || user.role !== "employee") return;
-  if (!company?.seats?.employee) return;
+  if (!company) return;
+
+  const key = "emp-" + user.email;
 
   // Already assigned
-  if (company.usedSeats?.[user.email] === true) return;
+  if (company.usedSeats?.[key] === true) return;
 
-  if (company.seats.employee <= 0) return;
+  // Calculate remaining seats (derived)
+  const total = company.totalSeats?.employee || 0;
+  const used = company.usedSeats
+    ? Object.keys(company.usedSeats).length
+    : 0;
 
-  // Consume seat
-  company.seats.employee -= 1;
+  const remaining = total - used;
 
+  if (remaining <= 0) {
+    alert("No seats available. Please contact your administrator.");
+    window.location.replace("../pages/dashboard.html");
+    return;
+  }
+
+  // Assign seat (DO NOT decrement totalSeats)
   if (!company.usedSeats) company.usedSeats = {};
-  company.usedSeats[user.email] = true;
+  company.usedSeats[key] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  console.log("✅ Employee seat consumed");
+  console.log("✅ Employee seat assigned (derived model)");
 }
 
 /* =========================================================
