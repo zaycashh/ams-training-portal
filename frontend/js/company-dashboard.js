@@ -1,9 +1,10 @@
 /* =========================================================
    COMPANY ADMIN DASHBOARD — STABLE VERSION
 ========================================================= */
-// 🔐 AUTH GUARD
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  loadCompanyDashboard(user);
+});
    
 /* =========================================================
    LOAD DASHBOARD
