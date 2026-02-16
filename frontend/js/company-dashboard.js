@@ -4,16 +4,7 @@
 // 🔐 AUTH GUARD
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user || (user.role !== "company_admin" && user.role !== "owner")) {
-    alert("Unauthorized access");
-    window.location.href = "../pages/login.html";
-    return;
-  }
-
-  loadCompanyDashboard(user);
-});
-
+   
 /* =========================================================
    LOAD DASHBOARD
 ========================================================= */
