@@ -269,6 +269,7 @@ function inviteEmployee() {
 /* =========================================================
    LOGOUT
 ========================================================= */
+
 function logout() {
   localStorage.removeItem("amsUser");
 
