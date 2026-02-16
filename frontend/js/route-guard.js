@@ -147,4 +147,7 @@
     }
   }
 
+   // Reveal page after guard passes
+   document.body.style.visibility = "visible";
+   
 })();
