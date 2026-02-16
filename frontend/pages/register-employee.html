@@ -8,6 +8,20 @@
 </head>
 <body>
 
+  <script>
+(function () {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) return;
+
+  if (user.role === "company_admin" || user.role === "owner") {
+    window.location.href = "/ams-training-portal/frontend/pages/company-dashboard.html";
+  } else {
+    window.location.href = "/ams-training-portal/frontend/pages/dashboard.html";
+  }
+})();
+</script>
+
 <div class="auth-container">
   <h2>Employee Registration</h2>
   <p>You must be invited by your company.</p>
