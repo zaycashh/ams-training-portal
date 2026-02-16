@@ -245,7 +245,3 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
-/* Prevent flash before route guard finishes */
-body {
-  visibility: hidden;
-}
