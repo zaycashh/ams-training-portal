@@ -68,13 +68,13 @@
   };
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You don’t have access to that training module."
-    );
-    window.location.replace(ROUTES.dashboard);
-    return;
-  }
+  sessionStorage.setItem(
+    "ams_notice",
+    "You don’t have access to that training module."
+  );
+  redirectToRoleDashboard(user);
+  return;
+}
 
   /* =========================================================
      STEP 4 – PAYMENT / SEAT ACCESS ENFORCEMENT
