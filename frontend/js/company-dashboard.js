@@ -271,5 +271,7 @@ function inviteEmployee() {
 ========================================================= */
 function logout() {
   localStorage.removeItem("amsUser");
-  window.location.href = "../index.html";
+
+  // Always send back to login page safely
+  window.location.href = "/ams-training-portal/frontend/pages/login.html";
 }
