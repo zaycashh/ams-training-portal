@@ -1,86 +1,119 @@
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD
-   (Roles + Individual Purchases + Employee Seats)
-   SECURITY LAYER ONLY – NO UI, NO SEAT CONSUMPTION
+   (Authentication + Role Access + Seat Logic)
+   SAFE MERGED VERSION
 ========================================================= */
 
 (function () {
+
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body.dataset.module; // der | employee | supervisor
+  const path = window.location.pathname;
+
+  const BASE = "/ams-training-portal/frontend/pages/";
+
+  const ROUTES = {
+    login: BASE + "login.html",
+    register: BASE + "register.html",
+    registerSelect: BASE + "register-select.html",
+    dashboard: BASE + "dashboard.html",
+    companyDashboard: BASE + "company-dashboard.html"
+  };
 
   /* =========================================================
-     STEP 1 – AUTHENTICATION
+     STEP 1 – GLOBAL AUTH CHECK
   ========================================================= */
 
-  // 🔐 Must be logged in
+  // 🔐 Not logged in
   if (!user) {
-    window.location.replace("../pages/login.html");
+    // Allow login & register pages
+    if (
+      path.includes("login.html") ||
+      path.includes("register.html") ||
+      path.includes("register-select.html")
+    ) return;
+
+    window.location.replace(ROUTES.login);
     return;
   }
 
-  // 🔐 Not on a module page → nothing to guard
+  // 🔐 Logged in users cannot access auth pages
+  if (
+    path.includes("login.html") ||
+    path.includes("register.html") ||
+    path.includes("register-select.html")
+  ) {
+    redirectToRoleDashboard(user);
+    return;
+  }
+
+  /* =========================================================
+     STEP 2 – NOT A MODULE PAGE
+  ========================================================= */
+
   if (!module) return;
 
   /* =========================================================
-   STEP 2 – ROLE → MODULE ENFORCEMENT
-========================================================= */
+     STEP 3 – ROLE → MODULE ENFORCEMENT
+  ========================================================= */
 
-const role = user.role; // der | employee | supervisor | individual | owner
+  const role = user.role; // der | employee | supervisor | individual | owner
 
-const roleAccess = {
-  der: ["der"],
-  employee: ["employee"],
-  supervisor: ["supervisor"],
-  individual: ["der", "employee", "supervisor"],
-  owner: [] // ❌ owner cannot access modules directly
-};
+  const roleAccess = {
+    der: ["der"],
+    employee: ["employee"],
+    supervisor: ["supervisor"],
+    individual: ["der", "employee", "supervisor"],
+    owner: [] // owner cannot access modules directly
+  };
 
-if (!roleAccess[role] || !roleAccess[role].includes(module)) {
-  sessionStorage.setItem(
-    "ams_notice",
-    "You don’t have access to that training module."
-  );
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
-   
- /* =========================================================
-   STEP 3 – PAYMENT / SEAT ACCESS ENFORCEMENT (UPDATED)
-========================================================= */
-
-const paymentFlags = {
-  der: "paid_der",
-  employee: "paid_employee",
-  supervisor: "paid_supervisor"
-};
-
-const payKey = paymentFlags[module];
-
-const hasIndividualPurchase =
-  payKey && localStorage.getItem(payKey) === "true";
-
-// 🔥 COMPANY SEAT SYSTEM (USED SEATS MODEL)
-let hasEmployeeSeat = false;
-
-if (module === "employee") {
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
-
-  if (company && user?.email) {
-
-    const assigned = company.usedSeats?.[user.email] === true;
-
-    const total = company?.seats?.employee?.total ?? 0;
-    const used = company?.seats?.employee?.used ?? 0;
-
-    const seatStructureValid = used <= total;
-
-    hasEmployeeSeat = assigned && seatStructureValid;
+  if (!roleAccess[role] || !roleAccess[role].includes(module)) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You don’t have access to that training module."
+    );
+    window.location.replace(ROUTES.dashboard);
+    return;
   }
-}
+
   /* =========================================================
-     STEP 4 – COMPLETION HARD LOCK (UI HANDLED IN MODULE)
+     STEP 4 – PAYMENT / SEAT ACCESS ENFORCEMENT
+  ========================================================= */
+
+  const paymentFlags = {
+    der: "paid_der",
+    employee: "paid_employee",
+    supervisor: "paid_supervisor"
+  };
+
+  const payKey = paymentFlags[module];
+
+  const hasIndividualPurchase =
+    payKey && localStorage.getItem(payKey) === "true";
+
+  // 🔥 COMPANY SEAT SYSTEM (USED SEATS MODEL)
+  let hasEmployeeSeat = false;
+
+  if (module === "employee") {
+    const company = JSON.parse(
+      localStorage.getItem("companyProfile") || "null"
+    );
+
+    if (company && user?.email) {
+
+      const assigned = company.usedSeats?.[user.email] === true;
+
+      const total = company?.seats?.employee?.total ?? 0;
+      const used = company?.seats?.employee?.used ?? 0;
+
+      const seatStructureValid = used <= total;
+
+      hasEmployeeSeat = assigned && seatStructureValid;
+    }
+  }
+
+  /* =========================================================
+     STEP 5 – COMPLETION HARD LOCK
   ========================================================= */
 
   const completionFlags = {
@@ -95,9 +128,23 @@ if (module === "employee") {
     completedKey &&
     localStorage.getItem(completedKey) === "true"
   ) {
-    console.log(
-      "✅ Module completed — certificate-only access enforced"
-    );
+    console.log("✅ Module completed — certificate-only access enforced");
     // Module JS handles certificate-only UI
   }
+
+  /* =========================================================
+     HELPER – ROLE DASHBOARD REDIRECT
+  ========================================================= */
+
+  function redirectToRoleDashboard(user) {
+    switch (user.role) {
+      case "company_admin":
+      case "owner":
+        window.location.replace(ROUTES.companyDashboard);
+        break;
+      default:
+        window.location.replace(ROUTES.dashboard);
+    }
+  }
+
 })();
