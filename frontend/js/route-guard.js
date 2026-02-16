@@ -111,6 +111,33 @@
       hasEmployeeSeat = assigned && seatStructureValid;
     }
   }
+   /* =========================================================
+   PAYMENT ENFORCEMENT
+========================================================= */
+
+// If individual role → must have purchase
+if (user.role === "individual") {
+  if (!hasIndividualPurchase) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must purchase this training before accessing it."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
+}
+
+// If employee role → must have individual purchase OR valid seat
+if (module === "employee" && user.role === "employee") {
+  if (!hasIndividualPurchase && !hasEmployeeSeat) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You do not have access to this employee training."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
+}
 
   /* =========================================================
      STEP 5 – COMPLETION HARD LOCK
