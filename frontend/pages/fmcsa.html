@@ -7,28 +7,8 @@
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 
-<body>
-
-<!-- 🔒 AUTH + PAYMENT GUARD (RUNS FIRST) -->
-<script>
-  (function () {
-    const user = localStorage.getItem("amsUser");
-
-    // Must be logged in
-    if (!user) {
-      window.location.replace("login.html");
-      return;
-    }
-
-    // Must have purchased FMCSA
-    const paid = localStorage.getItem("paid_fmcsa");
-    if (paid !== "true") {
-      alert("FMCSA training is locked. Please select this module from the dashboard.");
-      window.location.replace("dashboard.html");
-      return;
-    }
-  })();
-</script>
+<!-- ✅ IMPORTANT: data-module enables global route-guard -->
+<body data-module="fmcsa">
 
 <main class="module-container">
 
@@ -68,15 +48,15 @@
 
 <script>
 /* =========================
-   FMCSA ACCESS CONTROL
+   FMCSA ACCESS + PROGRESSION
 ========================= */
 
 const DAY_MS = 86400000;
 const LIMIT_DAYS = 30;
 
-function hasPaid() {
-  return localStorage.getItem("paid_fmcsa") === "true";
-}
+/* -------------------------
+   PURCHASE + DATE CHECK
+------------------------- */
 
 function expired() {
   const start = localStorage.getItem("fmcsa_start_date");
@@ -94,13 +74,23 @@ function resetFMCSA() {
   ].forEach(k => localStorage.removeItem(k));
 }
 
+/* -------------------------
+   INIT MODULE STATE
+------------------------- */
+
 function initFMCSA() {
 
-  if (!hasPaid()) {
-    window.location.replace("dashboard.html");
-    return;
+  // Route-guard already handles:
+  // - login check
+  // - role check
+  // - payment check (paid_fmcsa)
+
+  // Start 30-day timer if not already started
+  if (!localStorage.getItem("fmcsa_start_date")) {
+    localStorage.setItem("fmcsa_start_date", Date.now());
   }
 
+  // Expiration enforcement
   if (expired()) {
     alert("Your 30-day training window has expired. Please repurchase to restart.");
     resetFMCSA();
@@ -126,12 +116,20 @@ function initFMCSA() {
   }
 }
 
+/* -------------------------
+   MODULE STARTERS
+------------------------- */
+
 function startMod1() {
   window.location.href = "fmcsa/reasonable-suspicion.html";
 }
 
 document.addEventListener("DOMContentLoaded", initFMCSA);
+
 </script>
+
+<!-- ✅ GLOBAL ROUTE GUARD (MUST BE LAST) -->
+<script src="/ams-training-portal/frontend/js/route-guard.js"></script>
 
 </body>
 </html>
