@@ -238,3 +238,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateEmployeeButtonState();
 });
+/* =========================
+   PURCHASE COURSE
+========================= */
+function purchaseCourse(course) {
+
+  const key = COURSE_KEYS[course];
+
+  if (!key) {
+    alert("Invalid course.");
+    return;
+  }
+
+  localStorage.setItem(key, "true");
+
+  // Special handling for FMCSA 30-day timer
+  if (course === "fmcsa") {
+    localStorage.setItem("fmcsa_start_date", Date.now());
+  }
+
+  alert(`${course.toUpperCase()} Training unlocked successfully!`);
+
+  location.reload();
+}
