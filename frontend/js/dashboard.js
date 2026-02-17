@@ -237,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateEmployeeButtonState();
+  updateFMCSATimer();
 });
 /* =========================
    PURCHASE COURSE
@@ -279,4 +280,40 @@ function handleFMCSA() {
   }
 
   startFAA("fmcsa");
+}
+/* =========================
+   FMCSA COUNTDOWN DISPLAY
+========================= */
+function updateFMCSATimer() {
+
+  const timerEl = document.getElementById("fmcsaTimer");
+  if (!timerEl) return;
+
+  if (!hasAccess("fmcsa")) {
+    timerEl.innerHTML = "";
+    return;
+  }
+
+  const start = localStorage.getItem("fmcsa_start_date");
+  if (!start) return;
+
+  const DAY_MS = 86400000;
+  const LIMIT_DAYS = 30;
+
+  const elapsed = Date.now() - Number(start);
+  const daysUsed = Math.floor(elapsed / DAY_MS);
+  const daysLeft = LIMIT_DAYS - daysUsed;
+
+  if (daysLeft <= 0) {
+    timerEl.innerHTML =
+      `<span style="color:red;font-weight:600;">
+        ⚠ Training window expired
+      </span>`;
+    return;
+  }
+
+  timerEl.innerHTML =
+    `<span style="color:#b8860b;font-weight:600;">
+      ⏳ ${daysLeft} day${daysLeft !== 1 ? "s" : ""} remaining
+    </span>`;
 }
