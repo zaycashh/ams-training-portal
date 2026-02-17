@@ -279,7 +279,8 @@ function handleFMCSA() {
     return;
   }
 
-  startFAA("fmcsa");
+  // ✅ DIRECT ENTRY POINT
+  window.location.href = "fmcsa-module-a.html";
 }
 /* =========================
    FMCSA COUNTDOWN DISPLAY
