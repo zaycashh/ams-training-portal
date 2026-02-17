@@ -58,18 +58,57 @@
 </main>
 
 <script>
+
+/* ==========================
+   AUTH + PAYMENT GUARD
+========================== */
+(function () {
+
+  const user = localStorage.getItem("amsUser");
+
+  if (!user) {
+    window.location.replace("../login.html");
+    return;
+  }
+
+  const paid = localStorage.getItem("paid_fmcsa");
+  if (paid !== "true") {
+    alert("FMCSA training is locked. Please purchase from dashboard.");
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+  const startDate = localStorage.getItem("fmcsa_start_date");
+
+  if (!startDate) {
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+  const DAY_MS = 86400000;
+  const LIMIT_DAYS = 30;
+
+  if ((Date.now() - Number(startDate)) > LIMIT_DAYS * DAY_MS) {
+    alert("Your 30-day training window has expired.");
+    localStorage.removeItem("paid_fmcsa");
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+})();
+
 /* ===========================
    NAVIGATION
 =========================== */
 function goBack() {
-  window.location.href = "fmcsa.html";
+  window.location.href = "../fmcsa-training.html";
 }
 
 /* ===========================
    CONTENT COMPLETION
 =========================== */
 function markContentComplete() {
-  localStorage.setItem("fmcsa_module_a_content", "completed");
+  localStorage.setItem("fmcsa_mod1_content_done", "true");
 
   document.getElementById("quizUnlockSection").classList.remove("hidden");
   alert("Content completed. Quiz unlocked.");
@@ -79,9 +118,9 @@ function markContentComplete() {
    START QUIZ (NEXT STEP)
 =========================== */
 function startQuiz() {
-  // quiz page will be added next
   alert("Quiz engine coming next step.");
 }
+
 </script>
 
 </body>
