@@ -101,7 +101,7 @@
    NAVIGATION
 =========================== */
 function goBack() {
-  window.location.href = "../fmcsa-training.html";
+  window.location.href = "../dashboard.html";
 }
 
 /* ===========================
@@ -118,7 +118,21 @@ function markContentComplete() {
    START QUIZ (NEXT STEP)
 =========================== */
 function startQuiz() {
-  alert("Quiz engine coming next step.");
+
+  const passed = confirm(
+    "Simulate passing the quiz?\n\n(Real quiz engine coming next.)"
+  );
+
+  if (!passed) return;
+
+  // ✅ Mark Module A Complete
+  localStorage.setItem("fmcsaModuleACompleted", "true");
+
+  // Optional: mark quiz passed if you want tracking
+  localStorage.setItem("fmcsa_mod1_quiz_passed", "true");
+
+  // ✅ Redirect to Drug & Alcohol Module
+  window.location.href = "fmcsa-drug-alcohol.html";
 }
 
 </script>
