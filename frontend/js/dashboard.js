@@ -261,3 +261,22 @@ function purchaseCourse(course) {
 
   location.reload();
 }
+/* =========================
+   HANDLE FMCSA CLICK
+========================= */
+function handleFMCSA() {
+
+  if (!hasAccess("fmcsa")) {
+
+    const confirmPurchase = confirm(
+      "FMCSA Supervisor Training is required for supervisors.\n\nWould you like to purchase and unlock now?"
+    );
+
+    if (!confirmPurchase) return;
+
+    purchaseCourse("fmcsa");
+    return;
+  }
+
+  startFAA("fmcsa");
+}
