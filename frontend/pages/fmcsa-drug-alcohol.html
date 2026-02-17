@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FMCSA Drug & Alcohol Training | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
 
+<body data-module="fmcsa-drug-alcohol">
+
+<main class="module-container">
+
+  <header class="module-header">
+    <h1>FMCSA Drug & Alcohol Training</h1>
+    <button class="btn-secondary" onclick="logout()">Log Out</button>
+  </header>
+
+  <!-- ========================
+       DRUG SECTION
+  ========================= -->
+  <section id="drugContentSection">
+    <h2>Drug Training Content</h2>
+    <p>Drug training material goes here.</p>
+    <button id="completeDrugContentBtn">Mark Drug Content Complete</button>
+  </section>
+
+  <section id="drugQuizSection" class="hidden">
+    <h2>Drug Quiz</h2>
+    <p>Drug quiz placeholder.</p>
+    <button id="passDrugQuizBtn">Pass Drug Quiz</button>
+  </section>
+
+  <!-- ========================
+       ALCOHOL SECTION
+  ========================= -->
+  <section id="alcoholContentSection" class="hidden">
+    <h2>Alcohol Training Content</h2>
+    <p>Alcohol training material goes here.</p>
+    <button id="completeAlcoholContentBtn">Mark Alcohol Content Complete</button>
+  </section>
+
+  <section id="alcoholQuizSection" class="hidden">
+    <h2>Alcohol Quiz</h2>
+    <p>Alcohol quiz placeholder.</p>
+    <button id="passAlcoholQuizBtn">Pass Alcohol Quiz</button>
+  </section>
+
+  <!-- ========================
+       FINAL CERTIFICATE
+  ========================= -->
+  <section id="drugAlcoholCertificateSection" class="hidden">
+    <h2>Drug & Alcohol Certificate</h2>
+    <p>Certificate will generate here once both quizzes are passed.</p>
+  </section>
+
+</main>
+
+<script src="../js/route-guard.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/fmcsa-drug-alcohol.js"></script>
+
+</body>
+</html>
