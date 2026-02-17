@@ -144,6 +144,14 @@ function redirectByRole(user) {
       window.location.replace("company-dashboard.html");
       break;
 
+    case "der":
+      window.location.replace("der-training.html");
+      break;
+
+    case "supervisor":
+      window.location.replace("supervisor-training.html");
+      break;
+
     case "employee":
       window.location.replace("dashboard.html");
       break;
