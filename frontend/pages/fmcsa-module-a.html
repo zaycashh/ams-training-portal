@@ -5,6 +5,7 @@
   <title>FMCSA – Reasonable Suspicion Training</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -47,7 +48,7 @@
       </div>
     </div>
 
-    <button class="btn-primary" onclick="markContentComplete()">
+    <button id="completeBtn" class="btn-primary" onclick="markContentComplete()">
       I Have Completed the Training Content
     </button>
   </section>
@@ -131,6 +132,9 @@ let totalPages = 0;
 
 const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
+const completeBtn = document.getElementById("completeBtn");
+
+completeBtn.disabled = true;
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
   pdfDoc = pdf;
@@ -141,6 +145,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 
 function renderPage(num) {
   pdfDoc.getPage(num).then(page => {
+
     const viewport = page.getViewport({ scale: 1.0 });
 
     canvas.height = viewport.height;
@@ -155,6 +160,13 @@ function renderPage(num) {
 
     const percent = (num / totalPages) * 100;
     document.getElementById("progressBar").style.width = percent + "%";
+
+    // Enable complete button only on last page
+    if (num === totalPages) {
+      completeBtn.disabled = false;
+    } else {
+      completeBtn.disabled = true;
+    }
   });
 }
 
@@ -175,16 +187,10 @@ document.getElementById("nextPageBtn").addEventListener("click", () => {
 =========================== */
 function markContentComplete() {
 
-  // 🚫 Block if not on last page
-  if (pageNum < totalPages) {
-    alert("You must review all training slides before continuing.");
-    return;
-  }
+  if (pageNum < totalPages) return;
 
-  // ✅ Mark complete
   localStorage.setItem("fmcsa_mod1_content_done", "true");
 
-  // ✅ Unlock quiz silently
   document.getElementById("quizUnlockSection")
     .classList.remove("hidden");
 }
@@ -229,15 +235,12 @@ function startQuiz() {
     localStorage.setItem(QUIZ_PASSED_KEY, "true");
     localStorage.setItem("fmcsaModuleACompleted", "true");
 
-    alert("Quiz passed! Module A completed.");
     window.location.href = "dashboard.html";
 
   } else {
 
     attempts++;
     localStorage.setItem(QUIZ_ATTEMPTS_KEY, attempts);
-
-    alert(`You scored ${percentage}%. Attempt ${attempts} of ${MAX_ATTEMPTS}.`);
 
     if (attempts >= MAX_ATTEMPTS) {
       const cooldownTime = now + COOLDOWN_MINUTES * 60000;
@@ -250,7 +253,6 @@ function startQuiz() {
 
 </body>
 </html>
-
 </script>
 
 </body>
