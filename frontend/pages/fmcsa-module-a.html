@@ -175,6 +175,11 @@ document.getElementById("nextPageBtn").addEventListener("click", () => {
 =========================== */
 function markContentComplete() {
 
+  if (pageNum < totalPages) {
+    alert("You must review all training slides before continuing.");
+    return;
+  }
+
   localStorage.setItem("fmcsa_mod1_content_done", "true");
 
   document.getElementById("quizUnlockSection")
