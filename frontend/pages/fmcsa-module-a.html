@@ -1,276 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>FMCSA – Reasonable Suspicion Training</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
-  <link rel="icon" href="data:,">
+<meta charset="UTF-8" />
+<title>FMCSA – Reasonable Suspicion Training</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="../css/main.css" />
+<style>
+.quiz-container { max-width: 800px; margin: auto; }
+.question { margin-bottom: 25px; }
+.answers label { display: block; margin-bottom: 8px; cursor: pointer; }
+.quiz-nav { display:flex; justify-content:space-between; margin-top:20px; }
+.hidden { display:none; }
+.progress-text { font-weight:600; margin-bottom:15px; }
+.result-box { padding:15px; margin-top:15px; border-radius:6px; }
+.pass { background:#e6f4ea; color:#1e7e34; }
+.fail { background:#fdecea; color:#c82333; }
+</style>
 </head>
 <body>
 
 <main class="module-container">
 
-  <!-- HEADER -->
-  <header class="module-header">
-    <h1>Supervisor Reasonable Suspicion Awareness Training</h1>
-    <button class="btn-secondary" onclick="goBack()">Back to Dashboard</button>
-  </header>
+<header class="module-header">
+<h1>Supervisor Reasonable Suspicion Awareness Training</h1>
+<button class="btn-secondary" onclick="window.location.href='../dashboard.html'">
+Back to Dashboard
+</button>
+</header>
 
-  <!-- INFO -->
-  <section class="module-section">
-    <p>
-      This training must be completed within <strong>30 days</strong> of purchase.
-      You must review all content before taking the quiz.
-    </p>
-  </section>
+<section class="module-section">
+<p>
+This training must be completed within <strong>30 days</strong> of purchase.
+You must review all content before taking the quiz.
+</p>
+</section>
 
-  <!-- CONTENT SECTION -->
-  <section class="module-section" id="contentSection">
-    <h2>Training Content</h2>
+<section class="module-section" id="contentSection">
+<h2>Training Content</h2>
 
-    <div class="pdf-viewer">
-      <canvas id="pdfCanvas"></canvas>
+<div class="pdf-viewer">
+<canvas id="pdfCanvas"></canvas>
 
-      <div class="pdf-controls">
-        <button id="prevPageBtn" class="btn-secondary">← Previous</button>
+<div class="pdf-controls">
+<button id="prevPageBtn" class="btn-secondary">← Previous</button>
+<span>Page <span id="currentPage">1</span> of <span id="totalPages">--</span></span>
+<button id="nextPageBtn" class="btn-secondary">Next →</button>
+</div>
 
-        <span>
-          Page <span id="currentPage">1</span> of
-          <span id="totalPages">--</span>
-        </span>
+<div class="progress-wrapper">
+<div id="progressBar"></div>
+</div>
+</div>
 
-        <button id="nextPageBtn" class="btn-secondary">Next →</button>
-      </div>
+<button id="completeBtn" class="btn-primary">
+I Have Completed the Training Content
+</button>
 
-      <div class="progress-wrapper">
-        <div id="progressBar"></div>
-      </div>
-    </div>
+</section>
 
-    <button id="completeBtn" class="btn-primary" onclick="markContentComplete()">
-      I Have Completed the Training Content
-    </button>
-  </section>
+<section class="module-section hidden" id="quizSection">
+<h2>Module A Quiz</h2>
 
-  <!-- QUIZ LOCKED -->
-  <section class="module-section hidden" id="quizUnlockSection">
-    <h2>Quiz Unlocked</h2>
-    <p>You may now begin the quiz. A score of <strong>80%</strong> is required to pass.</p>
+<div class="quiz-container">
+<div class="progress-text" id="pageIndicator"></div>
+<div id="quizQuestions"></div>
 
-    <button class="btn-primary" onclick="startQuiz()">
-      Start Quiz
-    </button>
-  </section>
+<div class="quiz-nav">
+<button id="prevQuizBtn" class="btn-secondary">Previous</button>
+<button id="nextQuizBtn" class="btn-primary">Next</button>
+</div>
+
+<div id="quizResult"></div>
+</div>
+</section>
 
 </main>
 
-<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 /* ==========================
-   AUTH + PAYMENT GUARD
+AUTH + PAYMENT GUARD
 ========================== */
 (function () {
-
-  const user = localStorage.getItem("amsUser");
-  if (!user) {
-    window.location.replace("../login.html");
-    return;
-  }
-
-  if (localStorage.getItem("paid_fmcsa") !== "true") {
-    alert("FMCSA training is locked. Please purchase from dashboard.");
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
-  const startDate = localStorage.getItem("fmcsa_start_date");
-  if (!startDate) {
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
-  const DAY_MS = 86400000;
-  const LIMIT_DAYS = 30;
-
-  if ((Date.now() - Number(startDate)) > LIMIT_DAYS * DAY_MS) {
-    alert("Your 30-day training window has expired.");
-    localStorage.removeItem("paid_fmcsa");
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
-  if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
-    document.getElementById("quizUnlockSection")
-      .classList.remove("hidden");
-  }
-
+const user = localStorage.getItem("amsUser");
+if (!user) window.location.replace("../login.html");
+if (localStorage.getItem("paid_fmcsa") !== "true")
+window.location.replace("../dashboard.html");
 })();
 
-/* ===========================
-   NAVIGATION
-=========================== */
-function goBack() {
-  window.location.href = "dashboard.html";
-}
-
-/* ===========================
-   PDF SLIDE VIEWER ENGINE
-=========================== */
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
+/* ==========================
+PDF VIEWER
+========================== */
 const url = "../assets/fmcsa/1-Sup-Reas-Susp-Training.pdf";
+let pdfDoc=null,pageNum=1,totalPages=0;
+const canvas=document.getElementById("pdfCanvas");
+const ctx=canvas.getContext("2d");
+const completeBtn=document.getElementById("completeBtn");
+completeBtn.disabled=true;
 
-let pdfDoc = null;
-let pageNum = 1;
-let totalPages = 0;
-
-const canvas = document.getElementById("pdfCanvas");
-const ctx = canvas.getContext("2d", { willReadFrequently: true });
-const completeBtn = document.getElementById("completeBtn");
-
-completeBtn.disabled = true;
-
-pdfjsLib.getDocument(url).promise.then(pdf => {
-  pdfDoc = pdf;
-  totalPages = pdf.numPages;
-  document.getElementById("totalPages").textContent = totalPages;
-  renderPage(pageNum);
+pdfjsLib.getDocument(url).promise.then(pdf=>{
+pdfDoc=pdf;
+totalPages=pdf.numPages;
+document.getElementById("totalPages").textContent=totalPages;
+renderPage(pageNum);
 });
 
-function renderPage(num) {
-  pdfDoc.getPage(num).then(page => {
-
-    const viewport = page.getViewport({ scale: 1.0 });
-
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    page.render({
-      canvasContext: ctx,
-      viewport: viewport
-    });
-
-    document.getElementById("currentPage").textContent = num;
-
-    const percent = (num / totalPages) * 100;
-    document.getElementById("progressBar").style.width = percent + "%";
-
-    // Enable complete button only on last page
-    if (num === totalPages) {
-      completeBtn.disabled = false;
-    } else {
-      completeBtn.disabled = true;
-    }
-  });
+function renderPage(num){
+pdfDoc.getPage(num).then(page=>{
+const viewport=page.getViewport({scale:1});
+canvas.height=viewport.height;
+canvas.width=viewport.width;
+page.render({canvasContext:ctx,viewport});
+document.getElementById("currentPage").textContent=num;
+document.getElementById("progressBar").style.width=(num/totalPages*100)+"%";
+completeBtn.disabled=(num!==totalPages);
+});
 }
 
-document.getElementById("prevPageBtn").addEventListener("click", () => {
-  if (pageNum <= 1) return;
-  pageNum--;
-  renderPage(pageNum);
+document.getElementById("prevPageBtn").onclick=()=>{if(pageNum>1){pageNum--;renderPage(pageNum);}};
+document.getElementById("nextPageBtn").onclick=()=>{if(pageNum<totalPages){pageNum++;renderPage(pageNum);}};
+
+completeBtn.onclick=()=>{
+localStorage.setItem("fmcsa_mod1_content_done","true");
+document.getElementById("contentSection").classList.add("hidden");
+document.getElementById("quizSection").classList.remove("hidden");
+initQuiz();
+};
+
+/* ==========================
+QUIZ ENGINE
+========================== */
+
+const PASS_SCORE=7;
+const MAX_ATTEMPTS=3;
+const COOLDOWN_MINUTES=15;
+const ATTEMPT_KEY="fmcsa_mod1_attempts";
+const COOLDOWN_KEY="fmcsa_mod1_cooldown";
+
+const questions=[
+
+{q:"Question 1 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:3},
+
+{q:"Question 2 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:1},
+
+{q:"Question 3 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:2},
+
+{q:"Question 4 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:0},
+
+{q:"Question 5 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:1},
+
+{q:"Question 6 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:3},
+
+{q:"Question 7 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:2},
+
+{q:"Question 8 text from PDF",
+a:["A option","B option","C option","D option"],
+correct:0}
+
+];
+
+let currentPage=0;
+let userAnswers=new Array(questions.length).fill(null);
+
+function initQuiz(){
+updateQuizPage();
+}
+
+function updateQuizPage(){
+const start=currentPage*2;
+const end=start+2;
+const container=document.getElementById("quizQuestions");
+container.innerHTML="";
+document.getElementById("pageIndicator").textContent=
+`Page ${currentPage+1} of 4`;
+
+for(let i=start;i<end;i++){
+const q=questions[i];
+const div=document.createElement("div");
+div.className="question";
+div.innerHTML=`<strong>${i+1}. ${q.q}</strong>`;
+const ansDiv=document.createElement("div");
+ansDiv.className="answers";
+
+q.a.forEach((opt,index)=>{
+ansDiv.innerHTML+=`
+<label>
+<input type="radio" name="q${i}" value="${index}"
+${userAnswers[i]===index?"checked":""}>
+${opt}
+</label>`;
 });
 
-document.getElementById("nextPageBtn").addEventListener("click", () => {
-  if (pageNum >= totalPages) return;
-  pageNum++;
-  renderPage(pageNum);
+div.appendChild(ansDiv);
+container.appendChild(div);
+}
+}
+
+document.getElementById("nextQuizBtn").onclick=()=>{
+saveAnswers();
+if(currentPage<3){currentPage++;updateQuizPage();}
+else{gradeQuiz();}
+};
+
+document.getElementById("prevQuizBtn").onclick=()=>{
+saveAnswers();
+if(currentPage>0){currentPage--;updateQuizPage();}
+};
+
+function saveAnswers(){
+const inputs=document.querySelectorAll("#quizQuestions input");
+inputs.forEach(input=>{
+if(input.checked){
+const qIndex=parseInt(input.name.replace("q",""));
+userAnswers[qIndex]=parseInt(input.value);
+}
+});
+}
+
+function gradeQuiz(){
+
+const cooldownUntil=localStorage.getItem(COOLDOWN_KEY);
+if(cooldownUntil && Date.now()<cooldownUntil){
+alert("Cooldown active. Try again later.");
+return;
+}
+
+let score=0;
+questions.forEach((q,i)=>{
+if(userAnswers[i]===q.correct) score++;
 });
 
-/* ===========================
-   CONTENT COMPLETION
-=========================== */
-function markContentComplete() {
+let attempts=parseInt(localStorage.getItem(ATTEMPT_KEY))||0;
 
-  if (pageNum < totalPages) return;
+if(score>=PASS_SCORE){
+localStorage.setItem("fmcsaModuleACompleted","true");
+localStorage.removeItem(ATTEMPT_KEY);
+document.getElementById("quizResult").innerHTML=
+`<div class="result-box pass">
+You passed! Score: ${score}/8
+</div>`;
+setTimeout(()=>window.location.href="../dashboard.html",2000);
+}
+else{
+attempts++;
+localStorage.setItem(ATTEMPT_KEY,attempts);
+const remaining=MAX_ATTEMPTS-attempts;
 
-  localStorage.setItem("fmcsa_mod1_content_done", "true");
-
-  document.getElementById("quizUnlockSection")
-    .classList.remove("hidden");
+if(remaining<=0){
+localStorage.setItem(COOLDOWN_KEY,Date.now()+COOLDOWN_MINUTES*60000);
+localStorage.setItem(ATTEMPT_KEY,0);
 }
 
-/* ===========================
-   QUIZ ENGINE
-=========================== */
-
-const PASS_PERCENTAGE = 80;
-const MAX_ATTEMPTS = 3;
-const COOLDOWN_MINUTES = 15;
-
-const QUIZ_ATTEMPTS_KEY = "fmcsa_mod1_attempts";
-const QUIZ_COOLDOWN_KEY = "fmcsa_mod1_cooldown_until";
-const QUIZ_PASSED_KEY = "fmcsa_mod1_quiz_passed";
-
-function startQuiz() {
-
-  const now = Date.now();
-  const cooldownUntil = Number(localStorage.getItem(QUIZ_COOLDOWN_KEY));
-
-  if (cooldownUntil && now < cooldownUntil) {
-    const minutesLeft = Math.ceil((cooldownUntil - now) / 60000);
-    alert(`You must wait ${minutesLeft} minute(s) before retrying.`);
-    return;
-  }
-
-  let attempts = Number(localStorage.getItem(QUIZ_ATTEMPTS_KEY)) || 0;
-
-  const score = prompt("Enter simulated quiz score (0–100):");
-  if (score === null) return;
-
-  const percentage = Number(score);
-
-  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-    alert("Invalid score entered.");
-    return;
-  }
-
-  // ✅ PASS
-  if (percentage >= PASS_PERCENTAGE) {
-
-    localStorage.setItem(QUIZ_PASSED_KEY, "true");
-    localStorage.setItem("fmcsaModuleACompleted", "true");
-
-    alert(`You passed with ${percentage}%.`);
-
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  // ❌ FAIL
-  attempts++;
-  localStorage.setItem(QUIZ_ATTEMPTS_KEY, attempts);
-
-  const attemptsRemaining = MAX_ATTEMPTS - attempts;
-
-  if (attemptsRemaining > 0) {
-    alert(
-      `You scored ${percentage}%.\n\n` +
-      `Attempt ${attempts} of ${MAX_ATTEMPTS}.\n` +
-      `${attemptsRemaining} attempt(s) remaining.`
-    );
-  } else {
-    const cooldownTime = now + COOLDOWN_MINUTES * 60000;
-    localStorage.setItem(QUIZ_COOLDOWN_KEY, cooldownTime);
-    localStorage.setItem(QUIZ_ATTEMPTS_KEY, 0);
-
-    alert(
-      `You scored ${percentage}%.\n\n` +
-      `Maximum attempts reached.\n` +
-      `You must wait ${COOLDOWN_MINUTES} minutes before retrying.`
-    );
-  }
+document.getElementById("quizResult").innerHTML=
+`<div class="result-box fail">
+You scored ${score}/8.<br>
+Attempts remaining: ${remaining>0?remaining:0}
+</div>`;
 }
-
-</script>
-
-</body>
-</html>
+}
 </script>
 
 </body>
