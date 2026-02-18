@@ -175,17 +175,18 @@ document.getElementById("nextPageBtn").addEventListener("click", () => {
 =========================== */
 function markContentComplete() {
 
+  // 🚫 Block if not on last page
   if (pageNum < totalPages) {
     alert("You must review all training slides before continuing.");
     return;
   }
 
+  // ✅ Mark complete
   localStorage.setItem("fmcsa_mod1_content_done", "true");
 
+  // ✅ Unlock quiz silently
   document.getElementById("quizUnlockSection")
     .classList.remove("hidden");
-
-  alert("Content marked complete. You may now begin the quiz.");
 }
 
 /* ===========================
