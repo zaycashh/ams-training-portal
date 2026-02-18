@@ -90,7 +90,21 @@ if (!user) window.location.replace("../login.html");
 if (localStorage.getItem("paid_fmcsa") !== "true")
 window.location.replace("../dashboard.html");
 })();
+  
+// ✅ Restore saved progress automatically
+document.addEventListener("DOMContentLoaded", function() {
 
+  const contentDone = localStorage.getItem("fmcsa_mod1_content_done");
+
+  if (contentDone === "true") {
+
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
+
+    initQuiz();
+  }
+
+});
 /* ==========================
 PDF VIEWER
 ========================== */
