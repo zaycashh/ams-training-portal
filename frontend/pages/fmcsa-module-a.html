@@ -33,7 +33,7 @@
     <div class="content-block">
 
       <iframe 
-        src="../assets/fmcsa-module-a.pdf" 
+        frontend/assets/fmcsa/1-Sup-Reas-Susp-Training.pdf 
         width="100%" 
         height="600px"
         style="border:1px solid #ccc;">
@@ -96,6 +96,11 @@
     window.location.replace("../dashboard.html");
     return;
   }
+  // Restore quiz unlock if content already completed
+if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
+  document.getElementById("quizUnlockSection")
+    .classList.remove("hidden");
+}
 
 })();
 
@@ -110,10 +115,13 @@ function goBack() {
    CONTENT COMPLETION
 =========================== */
 function markContentComplete() {
+
   localStorage.setItem("fmcsa_mod1_content_done", "true");
 
-  document.getElementById("quizUnlockSection").classList.remove("hidden");
-  alert("Content completed. Quiz unlocked.");
+  document.getElementById("quizUnlockSection")
+    .classList.remove("hidden");
+
+  alert("Content marked complete. You may now begin the quiz.");
 }
  /* ===========================
    QUIZ SETTINGS
