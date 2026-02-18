@@ -66,6 +66,13 @@
     individual: ["der", "employee", "supervisor"],
     owner: [] // owner cannot access modules directly
   };
+   // 🔥 Allow FMCSA modules if purchased
+if (
+  (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
+  localStorage.getItem("paid_fmcsa") === "true"
+) {
+  return;
+}
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
   sessionStorage.setItem(
