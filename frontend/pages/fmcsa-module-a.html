@@ -220,12 +220,12 @@ div.innerHTML=`<strong>${i+1}. ${q.q}</strong>`;
 const ansDiv=document.createElement("div");
 ansDiv.className="answers";
 
-q.a.forEach((opt,index)=>{
+Object.entries(q.a).forEach(([letter,text])=>{
 ansDiv.innerHTML+=`
 <label>
-<input type="radio" name="q${i}" value="${index}"
-${userAnswers[i]===index?"checked":""}>
-${opt}
+<input type="radio" name="q${i}" value="${letter}"
+${userAnswers[i]===letter?"checked":""}>
+${letter}) ${text}
 </label>`;
 });
 
@@ -250,7 +250,7 @@ const inputs=document.querySelectorAll("#quizQuestions input");
 inputs.forEach(input=>{
 if(input.checked){
 const qIndex=parseInt(input.name.replace("q",""));
-userAnswers[qIndex]=parseInt(input.value);
+userAnswers[qIndex]=input.value; // SAVE LETTER
 }
 });
 }
@@ -277,7 +277,7 @@ document.getElementById("quizResult").innerHTML=
 `<div class="result-box pass">
 You passed! Score: ${score}/8
 </div>`;
-setTimeout(()=>window.location.href="../dashboard.html",2000);
+setTimeout(()=>window.location.href="dashboard.html",2000);
 }
 else{
 attempts++;
