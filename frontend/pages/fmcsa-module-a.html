@@ -220,32 +220,50 @@ function startQuiz() {
 
   let attempts = Number(localStorage.getItem(QUIZ_ATTEMPTS_KEY)) || 0;
 
-  if (attempts >= MAX_ATTEMPTS) {
-    alert("Maximum attempts reached. Please wait 15 minutes.");
-    return;
-  }
-
   const score = prompt("Enter simulated quiz score (0–100):");
   if (score === null) return;
 
   const percentage = Number(score);
 
+  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+    alert("Invalid score entered.");
+    return;
+  }
+
+  // ✅ PASS
   if (percentage >= PASS_PERCENTAGE) {
 
     localStorage.setItem(QUIZ_PASSED_KEY, "true");
     localStorage.setItem("fmcsaModuleACompleted", "true");
 
+    alert(`You passed with ${percentage}%.`);
+
     window.location.href = "dashboard.html";
+    return;
+  }
 
+  // ❌ FAIL
+  attempts++;
+  localStorage.setItem(QUIZ_ATTEMPTS_KEY, attempts);
+
+  const attemptsRemaining = MAX_ATTEMPTS - attempts;
+
+  if (attemptsRemaining > 0) {
+    alert(
+      `You scored ${percentage}%.\n\n` +
+      `Attempt ${attempts} of ${MAX_ATTEMPTS}.\n` +
+      `${attemptsRemaining} attempt(s) remaining.`
+    );
   } else {
+    const cooldownTime = now + COOLDOWN_MINUTES * 60000;
+    localStorage.setItem(QUIZ_COOLDOWN_KEY, cooldownTime);
+    localStorage.setItem(QUIZ_ATTEMPTS_KEY, 0);
 
-    attempts++;
-    localStorage.setItem(QUIZ_ATTEMPTS_KEY, attempts);
-
-    if (attempts >= MAX_ATTEMPTS) {
-      const cooldownTime = now + COOLDOWN_MINUTES * 60000;
-      localStorage.setItem(QUIZ_COOLDOWN_KEY, cooldownTime);
-    }
+    alert(
+      `You scored ${percentage}%.\n\n` +
+      `Maximum attempts reached.\n` +
+      `You must wait ${COOLDOWN_MINUTES} minutes before retrying.`
+    );
   }
 }
 
