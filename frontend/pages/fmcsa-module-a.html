@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>FMCSA – Reasonable Suspicion Training</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
@@ -14,8 +13,7 @@
   <!-- HEADER -->
   <header class="module-header">
     <h1>Supervisor Reasonable Suspicion Awareness Training</h1>
-
-    <button class="btn-secondary" onclick="goBack()">Back to FMCSA</button>
+    <button class="btn-secondary" onclick="goBack()">Back to Dashboard</button>
   </header>
 
   <!-- INFO -->
@@ -30,28 +28,24 @@
   <section class="module-section" id="contentSection">
     <h2>Training Content</h2>
 
-    <div class="content-block">
-
     <div class="pdf-viewer">
 
-  <canvas id="pdfCanvas"></canvas>
+      <canvas id="pdfCanvas"></canvas>
 
-  <div class="pdf-controls">
-    <button id="prevPageBtn" class="btn-secondary">← Previous</button>
+      <div class="pdf-controls">
+        <button id="prevPageBtn" class="btn-secondary">← Previous</button>
 
-    <span id="pageIndicator">
-      Page <span id="currentPage">1</span> of
-      <span id="totalPages">--</span>
-    </span>
+        <span>
+          Page <span id="currentPage">1</span> of
+          <span id="totalPages">--</span>
+        </span>
 
-    <button id="nextPageBtn" class="btn-secondary">Next →</button>
-  </div>
+        <button id="nextPageBtn" class="btn-secondary">Next →</button>
+      </div>
 
-  <div class="progress-wrapper">
-    <div id="progressBar"></div>
-  </div>
-
-</div>
+      <div class="progress-wrapper">
+        <div id="progressBar"></div>
+      </div>
 
     </div>
 
@@ -63,7 +57,6 @@
   <!-- QUIZ LOCKED -->
   <section class="module-section hidden" id="quizUnlockSection">
     <h2>Quiz Unlocked</h2>
-
     <p>You may now begin the quiz. A score of <strong>80%</strong> is required to pass.</p>
 
     <button class="btn-primary" onclick="startQuiz()">
@@ -73,6 +66,9 @@
 
 </main>
 
+<!-- ✅ PDF.js Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <script>
 
 /* ==========================
@@ -81,21 +77,18 @@
 (function () {
 
   const user = localStorage.getItem("amsUser");
-
   if (!user) {
     window.location.replace("../login.html");
     return;
   }
 
-  const paid = localStorage.getItem("paid_fmcsa");
-  if (paid !== "true") {
+  if (localStorage.getItem("paid_fmcsa") !== "true") {
     alert("FMCSA training is locked. Please purchase from dashboard.");
     window.location.replace("../dashboard.html");
     return;
   }
 
   const startDate = localStorage.getItem("fmcsa_start_date");
-
   if (!startDate) {
     window.location.replace("../dashboard.html");
     return;
@@ -110,11 +103,12 @@
     window.location.replace("../dashboard.html");
     return;
   }
-  // Restore quiz unlock if content already completed
-if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
-  document.getElementById("quizUnlockSection")
-    .classList.remove("hidden");
-}
+
+  // Restore quiz unlock
+  if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
+    document.getElementById("quizUnlockSection")
+      .classList.remove("hidden");
+  }
 
 })();
 
@@ -124,6 +118,56 @@ if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
 function goBack() {
   window.location.href = "../dashboard.html";
 }
+
+/* ===========================
+   PDF SLIDE VIEWER ENGINE
+=========================== */
+
+const url = "../assets/fmcsa/1-Sup-Reas-Susp-Training.pdf";
+
+let pdfDoc = null;
+let pageNum = 1;
+let totalPages = 0;
+
+const canvas = document.getElementById("pdfCanvas");
+const ctx = canvas.getContext("2d");
+
+pdfjsLib.getDocument(url).promise.then(pdf => {
+  pdfDoc = pdf;
+  totalPages = pdf.numPages;
+  document.getElementById("totalPages").textContent = totalPages;
+  renderPage(pageNum);
+});
+
+function renderPage(num) {
+  pdfDoc.getPage(num).then(page => {
+    const viewport = page.getViewport({ scale: 1.4 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    });
+
+    document.getElementById("currentPage").textContent = num;
+
+    const percent = (num / totalPages) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+  });
+}
+
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+  if (pageNum <= 1) return;
+  pageNum--;
+  renderPage(pageNum);
+});
+
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+  if (pageNum >= totalPages) return;
+  pageNum++;
+  renderPage(pageNum);
+});
 
 /* ===========================
    CONTENT COMPLETION
@@ -137,9 +181,11 @@ function markContentComplete() {
 
   alert("Content marked complete. You may now begin the quiz.");
 }
- /* ===========================
+
+/* ===========================
    QUIZ SETTINGS
 =========================== */
+
 const PASS_PERCENTAGE = 80;
 const MAX_ATTEMPTS = 3;
 const COOLDOWN_MINUTES = 15;
@@ -147,11 +193,10 @@ const COOLDOWN_MINUTES = 15;
 const QUIZ_ATTEMPTS_KEY = "fmcsa_mod1_attempts";
 const QUIZ_COOLDOWN_KEY = "fmcsa_mod1_cooldown_until";
 const QUIZ_PASSED_KEY = "fmcsa_mod1_quiz_passed";
-  function startQuiz() {
+
+function startQuiz() {
 
   const now = Date.now();
-
-  // 🔒 Check cooldown
   const cooldownUntil = Number(localStorage.getItem(QUIZ_COOLDOWN_KEY));
 
   if (cooldownUntil && now < cooldownUntil) {
@@ -163,24 +208,14 @@ const QUIZ_PASSED_KEY = "fmcsa_mod1_quiz_passed";
   let attempts = Number(localStorage.getItem(QUIZ_ATTEMPTS_KEY)) || 0;
 
   if (attempts >= MAX_ATTEMPTS) {
-    const cooldownTime = now + COOLDOWN_MINUTES * 60000;
-    localStorage.setItem(QUIZ_COOLDOWN_KEY, cooldownTime);
-    localStorage.setItem(QUIZ_ATTEMPTS_KEY, 0);
-    alert("Maximum attempts reached. 15-minute cooldown activated.");
+    alert("Maximum attempts reached. Please wait 15 minutes.");
     return;
   }
 
-  // 🔥 Simulate score (temporary until we build real questions)
   const score = prompt("Enter simulated quiz score (0–100):");
-
   if (score === null) return;
 
   const percentage = Number(score);
-
-  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-    alert("Invalid score entered.");
-    return;
-  }
 
   if (percentage >= PASS_PERCENTAGE) {
 
@@ -188,7 +223,6 @@ const QUIZ_PASSED_KEY = "fmcsa_mod1_quiz_passed";
     localStorage.setItem("fmcsaModuleACompleted", "true");
 
     alert("Quiz passed! Module A completed.");
-
     window.location.href = "dashboard.html";
 
   } else {
@@ -201,12 +235,10 @@ const QUIZ_PASSED_KEY = "fmcsa_mod1_quiz_passed";
     if (attempts >= MAX_ATTEMPTS) {
       const cooldownTime = now + COOLDOWN_MINUTES * 60000;
       localStorage.setItem(QUIZ_COOLDOWN_KEY, cooldownTime);
-      localStorage.setItem(QUIZ_ATTEMPTS_KEY, 0);
-      alert("Maximum attempts reached. 15-minute cooldown activated.");
     }
   }
 }
-  
+
 </script>
 
 </body>
