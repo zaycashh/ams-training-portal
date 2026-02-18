@@ -279,8 +279,14 @@ function handleFMCSA() {
     return;
   }
 
-  // ✅ DIRECT ENTRY POINT
-  window.location.href = "fmcsa-module-a.html";
+  // 🔥 If Module A not completed → go to A
+  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
+    window.location.href = "fmcsa-module-a.html";
+    return;
+  }
+
+  // 🔥 If A completed → go to Drug & Alcohol
+  window.location.href = "fmcsa-drug-alcohol.html";
 }
 /* =========================
    FMCSA COUNTDOWN DISPLAY
