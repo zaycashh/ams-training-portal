@@ -245,3 +245,36 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.pdf-viewer {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+#pdfCanvas {
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.pdf-controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-wrapper {
+  height: 8px;
+  background: #eee;
+  margin-top: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #2c7be5;
+  transition: width 0.3s ease;
+}
