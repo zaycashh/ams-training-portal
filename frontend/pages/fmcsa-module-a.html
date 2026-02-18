@@ -29,7 +29,6 @@
     <h2>Training Content</h2>
 
     <div class="pdf-viewer">
-
       <canvas id="pdfCanvas"></canvas>
 
       <div class="pdf-controls">
@@ -46,7 +45,6 @@
       <div class="progress-wrapper">
         <div id="progressBar"></div>
       </div>
-
     </div>
 
     <button class="btn-primary" onclick="markContentComplete()">
@@ -66,7 +64,7 @@
 
 </main>
 
-<!-- ✅ PDF.js Library -->
+<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
@@ -104,7 +102,6 @@
     return;
   }
 
-  // Restore quiz unlock
   if (localStorage.getItem("fmcsa_mod1_content_done") === "true") {
     document.getElementById("quizUnlockSection")
       .classList.remove("hidden");
@@ -123,6 +120,9 @@ function goBack() {
    PDF SLIDE VIEWER ENGINE
 =========================== */
 
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
 const url = "../assets/fmcsa/1-Sup-Reas-Susp-Training.pdf";
 
 let pdfDoc = null;
@@ -130,7 +130,7 @@ let pageNum = 1;
 let totalPages = 0;
 
 const canvas = document.getElementById("pdfCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
   pdfDoc = pdf;
@@ -142,6 +142,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 function renderPage(num) {
   pdfDoc.getPage(num).then(page => {
     const viewport = page.getViewport({ scale: 1.4 });
+
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
@@ -183,7 +184,7 @@ function markContentComplete() {
 }
 
 /* ===========================
-   QUIZ SETTINGS
+   QUIZ ENGINE
 =========================== */
 
 const PASS_PERCENTAGE = 80;
@@ -238,6 +239,11 @@ function startQuiz() {
     }
   }
 }
+
+</script>
+
+</body>
+</html>
 
 </script>
 
