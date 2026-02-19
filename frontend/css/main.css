@@ -289,3 +289,15 @@ body {
   flex: 0 0 auto !important;   /* stop flex stretching */
   width: 140px !important;     /* fixed width */
 }
+.pdf-viewer {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.pdf-viewer canvas {
+  display: block;
+  margin: 0 auto;
+}
