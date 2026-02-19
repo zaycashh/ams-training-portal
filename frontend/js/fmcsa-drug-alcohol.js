@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
 /* =========================================================
    RESTORE PROGRESS
 ========================================================= */
-
 function restoreProgress() {
 
   if (localStorage.getItem(DRUG_CONTENT_KEY) === "true") {
