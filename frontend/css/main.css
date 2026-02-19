@@ -280,7 +280,7 @@ body {
 }
 .quiz-nav button {
   width: auto !important;
-  min-width: 120px;
+  min-width: 50px;
 }
 
 .quiz-nav {
