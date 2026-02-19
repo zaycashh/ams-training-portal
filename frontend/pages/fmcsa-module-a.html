@@ -292,6 +292,13 @@ function saveAnswers(){
     userAnswers
   }));
 }
+  
+/* 🔁 AUTO-SAVE WHEN USER CLICKS AN ANSWER */
+document.addEventListener("change", function(e){
+  if(e.target.matches("#quizQuestions input[type='radio']")){
+    saveAnswers();
+  }
+});;
 
 function gradeQuiz(){
 
