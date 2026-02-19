@@ -228,3 +228,77 @@ function gradeDrugQuiz() {
       </div>`;
   }
 }
+/* =========================================================
+   DRUG PDF VIEWER
+========================================================= */
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const drugPdfUrl = "../assets/fmcsa/2-Drug-Training.pdf";
+
+let drugPdfDoc = null;
+let drugPageNum = 1;
+let drugTotalPages = 0;
+
+const drugCanvas = document.getElementById("drugPdfCanvas");
+const drugCtx = drugCanvas?.getContext("2d");
+
+const drugCompleteBtn = document.getElementById("completeDrugContentBtn");
+
+if (drugCompleteBtn) drugCompleteBtn.disabled = true;
+
+pdfjsLib.getDocument(drugPdfUrl).promise.then(pdf => {
+  drugPdfDoc = pdf;
+  drugTotalPages = pdf.numPages;
+
+  document.getElementById("drugTotalPages").textContent = drugTotalPages;
+
+  renderDrugPage(drugPageNum);
+});
+
+function renderDrugPage(num) {
+
+  drugPdfDoc.getPage(num).then(page => {
+
+    const viewport = page.getViewport({ scale: 1 });
+
+    drugCanvas.height = viewport.height;
+    drugCanvas.width = viewport.width;
+
+    page.render({
+      canvasContext: drugCtx,
+      viewport: viewport
+    });
+
+    document.getElementById("drugCurrentPage").textContent = num;
+
+    const progressPercent = (num / drugTotalPages) * 100;
+    document.getElementById("drugProgressBar").style.width =
+      progressPercent + "%";
+
+    // Enable completion only on last page
+    if (drugCompleteBtn) {
+      drugCompleteBtn.disabled = (num !== drugTotalPages);
+    }
+
+  });
+}
+
+/* =========================
+   PAGE NAVIGATION
+========================= */
+
+document.getElementById("drugPrevPageBtn")?.addEventListener("click", () => {
+  if (drugPageNum > 1) {
+    drugPageNum--;
+    renderDrugPage(drugPageNum);
+  }
+});
+
+document.getElementById("drugNextPageBtn")?.addEventListener("click", () => {
+  if (drugPageNum < drugTotalPages) {
+    drugPageNum++;
+    renderDrugPage(drugPageNum);
+  }
+});
