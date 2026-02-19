@@ -88,3 +88,143 @@ function wireButtons() {
   });
 
 }
+/* =========================================================
+   DRUG QUIZ ENGINE
+========================================================= */
+
+const drugQuestions = [
+  {
+    q: "Which drug category is tested under FMCSA regulations?",
+    a: { A: "Marijuana", B: "Cocaine", C: "Amphetamines", D: "All of the above" },
+    correct: "D"
+  },
+  {
+    q: "When is a drug test required?",
+    a: { A: "Pre-employment", B: "Random", C: "Post-accident", D: "All of the above" },
+    correct: "D"
+  },
+  {
+    q: "Who determines reasonable suspicion?",
+    a: { A: "Supervisor", B: "Co-worker", C: "Driver", D: "Dispatcher" },
+    correct: "A"
+  },
+  {
+    q: "Positive drug results may lead to:",
+    a: { A: "Return-to-duty process", B: "Immediate termination always", C: "Promotion", D: "None" },
+    correct: "A"
+  }
+];
+
+let drugPage = 0;
+let drugAnswers = new Array(drugQuestions.length).fill(null);
+
+function initDrugQuiz() {
+  renderDrugQuiz();
+}
+
+function renderDrugQuiz() {
+  const container = document.getElementById("drugQuizQuestions");
+  container.innerHTML = "";
+
+  const q = drugQuestions[drugPage];
+
+  const div = document.createElement("div");
+  div.innerHTML = `<strong>${drugPage + 1}. ${q.q}</strong>`;
+
+  Object.entries(q.a).forEach(([letter, text]) => {
+    div.innerHTML += `
+      <label>
+        <input type="radio" name="drugQ" value="${letter}"
+        ${drugAnswers[drugPage] === letter ? "checked" : ""}>
+        ${letter}) ${text}
+      </label>
+    `;
+  });
+
+  container.appendChild(div);
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+document.getElementById("drugNextBtn")?.addEventListener("click", () => {
+  saveDrugAnswer();
+
+  if (drugPage < drugQuestions.length - 1) {
+    drugPage++;
+    renderDrugQuiz();
+  } else {
+    gradeDrugQuiz();
+  }
+});
+
+document.getElementById("drugPrevBtn")?.addEventListener("click", () => {
+  saveDrugAnswer();
+  if (drugPage > 0) {
+    drugPage--;
+    renderDrugQuiz();
+  }
+});
+
+/* =========================
+   SAVE ANSWER
+========================= */
+
+function saveDrugAnswer() {
+  const selected = document.querySelector("input[name='drugQ']:checked");
+  if (selected) {
+    drugAnswers[drugPage] = selected.value;
+  }
+}
+
+/* =========================
+   GRADE
+========================= */
+
+function gradeDrugQuiz() {
+
+  const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
+  if (cooldownUntil && Date.now() < cooldownUntil) {
+    alert("Drug quiz cooldown active. Try again later.");
+    return;
+  }
+
+  let score = 0;
+  drugQuestions.forEach((q, i) => {
+    if (drugAnswers[i] === q.correct) score++;
+  });
+
+  let attempts = parseInt(localStorage.getItem(DRUG_ATTEMPT_KEY)) || 0;
+
+  if (score >= DRUG_PASS_SCORE) {
+
+    localStorage.setItem(DRUG_QUIZ_KEY, "true");
+
+    document.getElementById("drugQuizResult").innerHTML =
+      `<div class="result-box pass">
+        Drug Quiz Passed (${score}/4)
+      </div>`;
+
+    document.getElementById("alcoholContentSection")
+      ?.classList.remove("hidden");
+
+  } else {
+
+    attempts++;
+    localStorage.setItem(DRUG_ATTEMPT_KEY, attempts);
+
+    if (attempts >= DRUG_MAX_ATTEMPTS) {
+      localStorage.setItem(
+        DRUG_COOLDOWN_KEY,
+        Date.now() + DRUG_COOLDOWN_MINUTES * 60000
+      );
+      localStorage.setItem(DRUG_ATTEMPT_KEY, 0);
+    }
+
+    document.getElementById("drugQuizResult").innerHTML =
+      `<div class="result-box fail">
+        Drug Quiz Failed (${score}/4)
+      </div>`;
+  }
+}
