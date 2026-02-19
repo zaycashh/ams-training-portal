@@ -328,7 +328,77 @@ function renderDrugPage(num) {
 
   });
 }
+/* =========================================================
+   ALCOHOL PDF VIEWER
+========================================================= */
 
+const alcoholPdfUrl = "../assets/fmcsa/3-Alcohol-Training.pdf";
+
+let alcoholPdfDoc = null;
+let alcoholPageNum = 1;
+let alcoholTotalPages = 0;
+
+const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
+const alcoholCtx = alcoholCanvas?.getContext("2d");
+
+const alcoholCompleteBtn = document.getElementById("completeAlcoholContentBtn");
+
+if (alcoholCompleteBtn) alcoholCompleteBtn.disabled = true;
+
+pdfjsLib.getDocument(alcoholPdfUrl).promise.then(pdf => {
+  alcoholPdfDoc = pdf;
+  alcoholTotalPages = pdf.numPages;
+
+  document.getElementById("alcoholTotalPages").textContent = alcoholTotalPages;
+
+  renderAlcoholPage(alcoholPageNum);
+});
+
+function renderAlcoholPage(num) {
+
+  alcoholPdfDoc.getPage(num).then(page => {
+
+    const viewport = page.getViewport({ scale: 1.3 });
+
+    alcoholCanvas.height = viewport.height;
+    alcoholCanvas.width = viewport.width;
+
+    page.render({
+      canvasContext: alcoholCtx,
+      viewport: viewport
+    });
+
+    document.getElementById("alcoholCurrentPage").textContent = num;
+
+    const progressPercent = (num / alcoholTotalPages) * 100;
+    document.getElementById("alcoholProgressBar").style.width =
+      progressPercent + "%";
+
+    // 🔒 Enable completion only on last page
+    if (alcoholCompleteBtn) {
+      alcoholCompleteBtn.disabled = (num !== alcoholTotalPages);
+    }
+
+  });
+}
+
+/* =========================
+   ALCOHOL PAGE NAVIGATION
+========================= */
+
+document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
+  if (alcoholPageNum > 1) {
+    alcoholPageNum--;
+    renderAlcoholPage(alcoholPageNum);
+  }
+});
+
+document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
+  if (alcoholPageNum < alcoholTotalPages) {
+    alcoholPageNum++;
+    renderAlcoholPage(alcoholPageNum);
+  }
+});
 /* =========================
    PAGE NAVIGATION
 ========================= */
