@@ -69,28 +69,58 @@
     <div id="drugQuizResult"></div>
   </div>
 </section>
-  <!-- ========================
-       ALCOHOL SECTION
-  ========================= -->
-  <section id="alcoholContentSection" class="hidden">
-    <h2>Alcohol Training Content</h2>
-    <p>Alcohol training material goes here.</p>
-    <button id="completeAlcoholContentBtn">Mark Alcohol Content Complete</button>
-  </section>
+<!-- ========================
+     ALCOHOL CONTENT
+========================= -->
+<section id="alcoholContentSection" class="module-section hidden">
+  <h2>Alcohol Training Content</h2>
 
-  <section id="alcoholQuizSection" class="hidden">
-    <h2>Alcohol Quiz</h2>
-    <p>Alcohol quiz placeholder.</p>
-    <button id="passAlcoholQuizBtn">Pass Alcohol Quiz</button>
-  </section>
+  <div class="pdf-viewer">
+    <canvas id="alcoholPdfCanvas"></canvas>
 
-  <!-- ========================
-       FINAL CERTIFICATE
-  ========================= -->
-  <section id="drugAlcoholCertificateSection" class="hidden">
-    <h2>Drug & Alcohol Certificate</h2>
-    <p>Certificate will generate here once both quizzes are passed.</p>
-  </section>
+    <div class="pdf-controls">
+      <button id="alcoholPrevPageBtn" class="btn-secondary">← Previous</button>
+
+      <span>
+        Page <span id="alcoholCurrentPage">1</span>
+        of <span id="alcoholTotalPages">--</span>
+      </span>
+
+      <button id="alcoholNextPageBtn" class="btn-secondary">Next →</button>
+    </div>
+
+    <div class="progress-wrapper">
+      <div id="alcoholProgressBar"></div>
+    </div>
+  </div>
+
+  <button
+    id="completeAlcoholContentBtn"
+    class="btn-primary"
+    style="margin-top:20px;"
+    disabled
+  >
+    I Have Completed Alcohol Training Content
+  </button>
+</section>
+
+<!-- ========================
+     ALCOHOL QUIZ
+========================= -->
+<section id="alcoholQuizSection" class="module-section hidden">
+  <h2>Alcohol Quiz</h2>
+
+  <div class="quiz-container">
+    <div id="alcoholQuizQuestions"></div>
+
+    <div class="quiz-nav">
+      <button id="alcoholPrevBtn" class="btn-secondary">Previous</button>
+      <button id="alcoholNextBtn" class="btn-primary">Next</button>
+    </div>
+
+    <div id="alcoholQuizResult"></div>
+  </div>
+</section>
 
 </main>
   
