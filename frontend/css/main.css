@@ -278,3 +278,13 @@ body {
   background: #2c7be5;
   transition: width 0.3s ease;
 }
+.quiz-nav button {
+  width: auto !important;
+  min-width: 120px;
+}
+
+.quiz-nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
