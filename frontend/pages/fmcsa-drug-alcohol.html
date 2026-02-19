@@ -19,11 +19,38 @@
   <!-- ========================
        DRUG SECTION
   ========================= -->
-  <section id="drugContentSection">
-    <h2>Drug Training Content</h2>
-    <p>Drug training material goes here.</p>
-    <button id="completeDrugContentBtn">Mark Drug Content Complete</button>
-  </section>
+<section id="drugContentSection">
+
+  <h2>Drug Training Content</h2>
+
+  <div class="pdf-viewer">
+    <canvas id="drugPdfCanvas"></canvas>
+
+    <div class="pdf-controls">
+      <button id="drugPrevPageBtn" class="btn-secondary">← Previous</button>
+
+      <span>
+        Page <span id="drugCurrentPage">1</span>
+        of <span id="drugTotalPages">--</span>
+      </span>
+
+      <button id="drugNextPageBtn" class="btn-secondary">Next →</button>
+    </div>
+
+    <div class="progress-wrapper">
+      <div id="drugProgressBar"></div>
+    </div>
+  </div>
+
+  <button
+    id="completeDrugContentBtn"
+    class="btn-primary"
+    disabled
+  >
+    I Have Completed Drug Training Content
+  </button>
+
+</section>
 
 <section id="drugQuizSection" class="hidden">
   <h2>Drug Quiz</h2>
