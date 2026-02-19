@@ -289,15 +289,44 @@ body {
   flex: 0 0 auto !important;   /* stop flex stretching */
   width: 140px !important;     /* fixed width */
 }
+/* ===============================
+   PDF VIEWER (Module A Style)
+================================ */
 .pdf-viewer {
-  max-width: 900px;
-  margin: 0 auto;
-  background: #f8f9fa;
+  max-width: 850px;          /* 🔥 matches Module A width */
+  margin: 0 auto 20px auto;  /* center + spacing below */
+  background: #ffffff;
   padding: 20px;
   border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .pdf-viewer canvas {
   display: block;
   margin: 0 auto;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+}
+
+.pdf-controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-wrapper {
+  height: 8px;
+  background: #eee;
+  margin-top: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#drugProgressBar {
+  height: 100%;
+  width: 0%;
+  background: #2563eb;
+  transition: width 0.3s ease;
 }
