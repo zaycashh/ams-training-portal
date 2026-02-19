@@ -118,6 +118,13 @@ let drugPage = 0;
 let drugAnswers = new Array(drugQuestions.length).fill(null);
 
 function initDrugQuiz() {
+
+  const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
+
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+    disableDrugQuiz();
+  }
+
   renderDrugQuiz();
 }
 
@@ -183,13 +190,27 @@ function saveDrugAnswer() {
 
 function gradeDrugQuiz() {
 
+  const resultBox = document.getElementById("drugQuizResult");
+
   const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
-  if (cooldownUntil && Date.now() < cooldownUntil) {
-    alert("Drug quiz cooldown active. Try again later.");
+
+  // 🔒 ACTIVE COOLDOWN CHECK
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+    const minutesLeft = Math.ceil((Number(cooldownUntil) - Date.now()) / 60000);
+
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ⏳ Cooldown active.<br>
+        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
+      </div>
+    `;
+
+    disableDrugQuiz();
     return;
   }
 
   let score = 0;
+
   drugQuestions.forEach((q, i) => {
     if (drugAnswers[i] === q.correct) score++;
   });
@@ -199,11 +220,14 @@ function gradeDrugQuiz() {
   if (score >= DRUG_PASS_SCORE) {
 
     localStorage.setItem(DRUG_QUIZ_KEY, "true");
+    localStorage.removeItem(DRUG_ATTEMPT_KEY);
+    localStorage.removeItem(DRUG_COOLDOWN_KEY);
 
-    document.getElementById("drugQuizResult").innerHTML =
-      `<div class="result-box pass">
-        Drug Quiz Passed (${score}/4)
-      </div>`;
+    resultBox.innerHTML = `
+      <div class="result-box pass">
+        ✅ Drug Quiz Passed (${score}/4)
+      </div>
+    `;
 
     document.getElementById("alcoholContentSection")
       ?.classList.remove("hidden");
@@ -213,19 +237,40 @@ function gradeDrugQuiz() {
     attempts++;
     localStorage.setItem(DRUG_ATTEMPT_KEY, attempts);
 
-    if (attempts >= DRUG_MAX_ATTEMPTS) {
-      localStorage.setItem(
-        DRUG_COOLDOWN_KEY,
-        Date.now() + DRUG_COOLDOWN_MINUTES * 60000
-      );
+    const remaining = DRUG_MAX_ATTEMPTS - attempts;
+
+    if (remaining <= 0) {
+
+      const cooldownTime = Date.now() + DRUG_COOLDOWN_MINUTES * 60000;
+      localStorage.setItem(DRUG_COOLDOWN_KEY, cooldownTime);
       localStorage.setItem(DRUG_ATTEMPT_KEY, 0);
+
+      resultBox.innerHTML = `
+        <div class="result-box fail">
+          ❌ Drug Quiz Failed (${score}/4)<br>
+          ⏳ Cooldown activated for ${DRUG_COOLDOWN_MINUTES} minutes.
+        </div>
+      `;
+
+      disableDrugQuiz();
+      return;
     }
 
-    document.getElementById("drugQuizResult").innerHTML =
-      `<div class="result-box fail">
-        Drug Quiz Failed (${score}/4)
-      </div>`;
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ❌ Drug Quiz Failed (${score}/4)<br>
+        Attempts remaining: ${remaining}
+      </div>
+    `;
   }
+}
+function disableDrugQuiz() {
+  document.querySelectorAll("#drugQuizSection input").forEach(el => {
+    el.disabled = true;
+  });
+
+  document.getElementById("drugNextBtn")?.setAttribute("disabled", true);
+  document.getElementById("drugPrevBtn")?.setAttribute("disabled", true);
 }
 /* =========================================================
    DRUG PDF VIEWER
