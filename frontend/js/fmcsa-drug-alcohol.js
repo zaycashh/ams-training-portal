@@ -7,7 +7,6 @@ const DRUG_CONTENT_KEY = "fmcsaDrugContentCompleted";
 const DRUG_QUIZ_KEY = "fmcsaDrugQuizPassed";
 const ALCOHOL_CONTENT_KEY = "fmcsaAlcoholContentCompleted";
 const ALCOHOL_QUIZ_KEY = "fmcsaAlcoholQuizPassed";
-const FMCSA_MOD1_PROGRESS_KEY = "fmcsaModuleAQuizProgress";
 
 document.addEventListener("DOMContentLoaded", () => {
 
