@@ -238,6 +238,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateEmployeeButtonState();
   updateFMCSATimer();
+   
+/* =========================
+   FMCSA BUTTON LABEL UPDATE
+   ========================= */
+
+const fmcsaBtn = document.getElementById("fmcsaBtn");
+
+if (fmcsaBtn && hasAccess("fmcsa")) {
+
+  if (localStorage.getItem("fmcsaModuleACompleted") === "true") {
+    fmcsaBtn.textContent = "Continue FMCSA Drug & Alcohol (Module B)";
+  } else {
+    fmcsaBtn.textContent = "Start FMCSA Reasonable Suspicion (Module A)";
+  }
+
+}
 });
 /* =========================
    PURCHASE COURSE
