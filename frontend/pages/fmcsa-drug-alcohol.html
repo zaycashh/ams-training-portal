@@ -25,11 +25,20 @@
     <button id="completeDrugContentBtn">Mark Drug Content Complete</button>
   </section>
 
-  <section id="drugQuizSection" class="hidden">
-    <h2>Drug Quiz</h2>
-    <p>Drug quiz placeholder.</p>
-    <button id="passDrugQuizBtn">Pass Drug Quiz</button>
-  </section>
+<section id="drugQuizSection" class="hidden">
+  <h2>Drug Quiz</h2>
+
+  <div class="quiz-container">
+    <div id="drugQuizQuestions"></div>
+
+    <div class="quiz-nav">
+      <button id="drugPrevBtn" class="btn-secondary">Previous</button>
+      <button id="drugNextBtn" class="btn-primary">Next</button>
+    </div>
+
+    <div id="drugQuizResult"></div>
+  </div>
+</section>
 
   <!-- ========================
        ALCOHOL SECTION
