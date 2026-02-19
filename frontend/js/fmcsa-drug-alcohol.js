@@ -1,7 +1,7 @@
 /* =========================================================
    FMCSA DRUG & ALCOHOL MODULE ENGINE
 ========================================================= */
-
+const MODULE_B_COMPLETED_KEY = "fmcsaModuleBCompleted";
 const MODULE_A_COMPLETED_KEY = "fmcsaModuleACompleted";
 const DRUG_CONTENT_KEY = "fmcsaDrugContentCompleted";
 const DRUG_QUIZ_KEY = "fmcsaDrugQuizPassed";
