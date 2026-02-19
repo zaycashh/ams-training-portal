@@ -278,13 +278,14 @@ body {
   background: #2c7be5;
   transition: width 0.3s ease;
 }
-.quiz-nav button {
-  width: auto !important;
-  min-width: 50px;
-}
-
 .quiz-nav {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-nav .btn-primary,
+.quiz-nav .btn-secondary {
+  width: 150px !important;
+  display: inline-block !important;
 }
