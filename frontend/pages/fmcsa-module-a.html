@@ -153,6 +153,7 @@ const MAX_ATTEMPTS = 3;
 const COOLDOWN_MINUTES = 15;
 const ATTEMPT_KEY = "fmcsa_mod1_attempts";
 const COOLDOWN_KEY = "fmcsa_mod1_cooldown";
+const PROGRESS_KEY = "fmcsa_mod1_quiz_progress";  
 
 const questions = [
 
@@ -215,7 +216,16 @@ let currentPage = 0;
 let userAnswers = new Array(questions.length).fill(null);
   
 function initQuiz(){
-updateQuizPage();
+
+  // 🔁 Restore saved progress
+  const saved = localStorage.getItem(PROGRESS_KEY);
+  if(saved){
+    const data = JSON.parse(saved);
+    currentPage = data.currentPage ?? 0;
+    userAnswers = data.userAnswers ?? userAnswers;
+  }
+
+  updateQuizPage();
 }
 
 function updateQuizPage(){
@@ -249,24 +259,38 @@ container.appendChild(div);
 }
 
 document.getElementById("nextQuizBtn").onclick=()=>{
-saveAnswers();
-if(currentPage<3){currentPage++;updateQuizPage();}
-else{gradeQuiz();}
-};
+  saveAnswers();
 
+  if(currentPage < 3){
+    currentPage++;
+    updateQuizPage();
+  }
+  else{
+    gradeQuiz();
+  }
+};
 document.getElementById("prevQuizBtn").onclick=()=>{
-saveAnswers();
-if(currentPage>0){currentPage--;updateQuizPage();}
+  saveAnswers();
+  if(currentPage > 0){
+    currentPage--;
+    updateQuizPage();
+  }
 };
-
+  
 function saveAnswers(){
-const inputs=document.querySelectorAll("#quizQuestions input");
-inputs.forEach(input=>{
-if(input.checked){
-const qIndex=parseInt(input.name.replace("q",""));
-userAnswers[qIndex]=input.value; // SAVE LETTER
-}
-});
+  const inputs=document.querySelectorAll("#quizQuestions input");
+  inputs.forEach(input=>{
+    if(input.checked){
+      const qIndex=parseInt(input.name.replace("q",""));
+      userAnswers[qIndex]=input.value;
+    }
+  });
+
+  // 🔐 SAVE QUIZ STATE
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify({
+    currentPage,
+    userAnswers
+  }));
 }
 
 function gradeQuiz(){
@@ -287,6 +311,7 @@ let attempts=parseInt(localStorage.getItem(ATTEMPT_KEY))||0;
 if(score>=PASS_SCORE){
 localStorage.setItem("fmcsaModuleACompleted","true");
 localStorage.removeItem(ATTEMPT_KEY);
+localStorage.removeItem(PROGRESS_KEY);
 document.getElementById("quizResult").innerHTML=
 `<div class="result-box pass">
 You passed! Score: ${score}/8
