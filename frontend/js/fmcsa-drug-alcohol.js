@@ -261,7 +261,7 @@ function renderDrugPage(num) {
 
   drugPdfDoc.getPage(num).then(page => {
 
-    const viewport = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: 1.3 });
 
     drugCanvas.height = viewport.height;
     drugCanvas.width = viewport.width;
