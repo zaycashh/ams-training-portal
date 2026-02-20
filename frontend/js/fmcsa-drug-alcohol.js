@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
      ALCOHOL PDF ENGINE
   ========================================================= */
 
-  const ALCOHOL_PDF_URL = "../assets/fmcsa/2-Alcohol-Training.pdf";
+  const ALCOHOL_PDF_URL = "../assets/fmcsa/3-Alcohol-Training.pdf";
 
   let alcoholPdfDoc = null;
   let alcoholCurrentPage = 1;
