@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
      DRUG PDF ENGINE
   ========================================================= */
 
-  const DRUG_PDF_URL = "../assets/fmcsa-drug.pdf";
+  const DRUG_PDF_URL = "../assets/fmcsa/2-Drug-Training.pdf";
 
   let drugPdfDoc = null;
   let drugCurrentPage = 1;
