@@ -175,7 +175,9 @@ function wireButtons() {
    DRUG QUIZ ENGINE
 ========================================================= */
 
-const PASS_SCORE_DRUG = 3;
+function calculateDrugPassScore() {
+  return Math.ceil(drugQuestions.length * 0.8);
+}
 
 /* =========================
    DRUG QUESTIONS
@@ -207,6 +209,52 @@ const drugQuestions = [
     a: { A: "TCH", B: "THE", C: "THC", D: "None of the above" },
     correct: "C"
   }
+ {
+  q: "Methamphetamine can be taken",
+  a: {
+    A: "Orally",
+    B: "Snorted",
+    C: "Injected",
+    D: "All of the above"
+  },
+  correct: "D"
+},
+{
+  q: "The term “opiate” refers to a number of different substances synthesizedfrom the poppy plant. Which of the following NOT one of the substances?",
+  a: {
+    A: "Codeine",
+    B: "Morphine",
+    C: "Dioxelene-B",
+    D: "Hydrocodone"
+  },
+  correct: "C"
+},
+{
+  q: "PCP is a very unpredictable drug that often produces:",
+  a: {
+    A: "Violent behavior",
+    B: "Bad trips",
+    C: "Self mutilation",
+    D: "All of these"
+  },
+  correct: "D"
+},
+{
+  q: "Speech patterns can be affected by substance abuse. True or False?",
+  a: {
+    A: "True",
+    B: "False",
+  },
+  correct: "A"
+},
+{
+  q: "Extreme hyperactivity, Nausea, and Secretive or suspicious behavior areall physical warning signs of addiction. True or False?",
+  a: {
+    A: "True",
+    B: "False",
+  },
+  correct: "B"
+}
 ];
 
 let drugPage = 0;
@@ -293,7 +341,7 @@ function gradeDrugQuiz() {
 
   let attempts = parseInt(localStorage.getItem(DRUG_ATTEMPT_KEY)) || 0;
 
-  if (score >= PASS_SCORE_DRUG) {
+  if (score >= calculateDrugPassScore())
 
     localStorage.setItem(DRUG_QUIZ_KEY, "true");
     localStorage.removeItem(DRUG_ATTEMPT_KEY);
