@@ -22,9 +22,9 @@ const DRUG_COOLDOWN_MINUTES = 15;
 const DRUG_ATTEMPT_KEY = "fmcsaDrugAttempts";
 const DRUG_COOLDOWN_KEY = "fmcsaDrugCooldown";
 
-/* =========================================================
+/* =========================
    ALCOHOL QUIZ CONFIG
-========================================================= */
+========================= */
 
 const ALCOHOL_PASS_SCORE = 5;
 const ALCOHOL_MAX_ATTEMPTS = 3;
@@ -32,8 +32,9 @@ const ALCOHOL_COOLDOWN_MINUTES = 15;
 
 const ALCOHOL_ATTEMPT_KEY = "fmcsaAlcoholAttempts";
 const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
+
 /* =========================================================
-   ALCOHOL QUIZ QUESTIONS
+   ALCOHOL QUESTIONS (DRUG STYLE STRUCTURE)
 ========================================================= */
 
 const alcoholQuestions = [
@@ -99,69 +100,12 @@ const alcoholQuestions = [
   }
 ];
 
-let alcoholCurrentQuestion = 0;
-let alcoholScore = 0;
-/* =========================================================
-   ALCOHOL QUIZ ENGINE (MATCHES DRUG STRUCTURE)
-========================================================= */
-
-let alcoholPage = 0;
-let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
-
-function initAlcoholQuiz() {
-
-  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
-
-  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-    disableAlcoholQuiz();
-  }
-
-  renderAlcoholQuiz();
-}
-
-function renderAlcoholQuiz() {
-
-  const container = document.getElementById("alcoholQuizQuestions");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  const q = alcoholQuestions[alcoholPage];
-
-  const card = document.createElement("div");
-  card.className = "quiz-card";
-
-  card.innerHTML = `
-    <div class="quiz-question">
-      <span class="quiz-number">
-        Question ${alcoholPage + 1} of ${alcoholQuestions.length}
-      </span>
-      <h3>${q.q}</h3>
-    </div>
-    <div class="quiz-answers">
-      ${Object.entries(q.a)
-        .map(
-          ([letter, text]) => `
-            <label class="quiz-option">
-              <input type="radio" name="alcoholQ" value="${letter}"
-                ${alcoholAnswers[alcoholPage] === letter ? "checked" : ""}>
-              <span>${letter}) ${text}</span>
-            </label>
-          `
-        )
-        .join("")}
-    </div>
-  `;
-
-  container.appendChild(card);
-}
 /* =========================================================
    INIT
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // 🔒 Require Module A first
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
     alert("Complete Module A (Reasonable Suspicion) first.");
     window.location.replace("dashboard.html");
@@ -171,44 +115,45 @@ document.addEventListener("DOMContentLoaded", () => {
   restoreProgress();
   wireButtons();
 
-  // If drug content already completed → initialize quiz
   if (localStorage.getItem(DRUG_CONTENT_KEY) === "true") {
     initDrugQuiz();
   }
 
+  if (
+    localStorage.getItem(ALCOHOL_CONTENT_KEY) === "true" &&
+    localStorage.getItem(ALCOHOL_QUIZ_KEY) !== "true"
+  ) {
+    initAlcoholQuiz();
+  }
+
 });
+
 /* =========================================================
    RESTORE PROGRESS
 ========================================================= */
+
 function restoreProgress() {
 
   const drugPassed = localStorage.getItem(DRUG_QUIZ_KEY) === "true";
   const alcoholPassed = localStorage.getItem(ALCOHOL_QUIZ_KEY) === "true";
 
   if (!drugPassed) {
-    // Show Drug only
     document.getElementById("drugContentSection")?.classList.remove("hidden");
     return;
   }
 
   if (drugPassed && !alcoholPassed) {
-    // Hide Drug completely
     document.getElementById("drugContentSection")?.classList.add("hidden");
     document.getElementById("drugQuizSection")?.classList.add("hidden");
-
-    // Show Alcohol only
     document.getElementById("alcoholContentSection")?.classList.remove("hidden");
     return;
   }
 
   if (drugPassed && alcoholPassed) {
-    // Hide both modules
     document.getElementById("drugContentSection")?.classList.add("hidden");
     document.getElementById("drugQuizSection")?.classList.add("hidden");
     document.getElementById("alcoholContentSection")?.classList.add("hidden");
     document.getElementById("alcoholQuizSection")?.classList.add("hidden");
-
-    // Show Certificate
     document.getElementById("drugAlcoholCertificateSection")
       ?.classList.remove("hidden");
   }
@@ -220,20 +165,24 @@ function restoreProgress() {
 
 function wireButtons() {
 
-  // Drug content complete
   document.getElementById("completeDrugContentBtn")?.addEventListener("click", () => {
     localStorage.setItem(DRUG_CONTENT_KEY, "true");
     document.getElementById("drugQuizSection")?.classList.remove("hidden");
     initDrugQuiz();
   });
 
-  // Alcohol content complete
   document.getElementById("completeAlcoholContentBtn")?.addEventListener("click", () => {
     localStorage.setItem(ALCOHOL_CONTENT_KEY, "true");
     document.getElementById("alcoholQuizSection")?.classList.remove("hidden");
+    initAlcoholQuiz();
   });
 
 }
+
+/* =========================================================
+   DRUG ENGINE (UNCHANGED)
+========================================================= */
+// KEEP YOUR EXISTING DRUG ENGINE EXACTLY AS YOU HAD IT
 /* =========================================================
    DRUG QUIZ ENGINE
 ========================================================= */
