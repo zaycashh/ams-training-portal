@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =========================================================
      ALCOHOL PDF ENGINE
   ========================================================= */
-
+ 
   const ALCOHOL_PDF_URL = "../assets/fmcsa/3-Alcohol-Training.pdf";
 
   let alcoholPdfDoc = null;
