@@ -90,26 +90,91 @@ function wireButtons() {
 /* =========================================================
    DRUG QUIZ ENGINE
 ========================================================= */
-
 const drugQuestions = [
   {
-    q: "Which drug category is tested under FMCSA regulations?",
-    a: { A: "Marijuana", B: "Cocaine", C: "Amphetamines", D: "All of the above" },
+    q: "Which of the following is true concerning a substance abuser?",
+    a: {
+      A: "The abuser lacks moral principles to stop their dependency",
+      B: "The abuser lacks the will power to stop their dependency",
+      C: "The abuser’s dependency is a complex disorder and quitting takes more than good intentions or a strong will.",
+      D: "The drugs have changed the abuser's brain so they cannot stop their dependency"
+    },
+    correct: "C"
+  },
+  {
+    q: "What percentage of substance abusers are employed?",
+    a: {
+      A: "10%",
+      B: "25%",
+      C: "50%",
+      D: "75%"
+    },
     correct: "D"
   },
   {
-    q: "When is a drug test required?",
-    a: { A: "Pre-employment", B: "Random", C: "Post-accident", D: "All of the above" },
+    q: "Crack is a form of what drug that has been processed to make a rock crystal?",
+    a: {
+      A: "Amphetamine capsules",
+      B: "Cocaine",
+      C: "Marijuana",
+      D: "Opium"
+    },
+    correct: "B"
+  },
+  {
+    q: "When smoking marijuana, which ingredient passes from the lungs into the bloodstream?",
+    a: {
+      A: "TCH",
+      B: "THE",
+      C: "THC",
+      D: "None of the above"
+    },
+    correct: "C"
+  },
+  {
+    q: "Methamphetamine can be taken?",
+    a: {
+      A: "Orally",
+      B: "Snorted",
+      C: "Injected",
+      D: "All of the above"
+    },
     correct: "D"
   },
   {
-    q: "Who determines reasonable suspicion?",
-    a: { A: "Supervisor", B: "Co-worker", C: "Driver", D: "Dispatcher" },
+    q: "The term “opiate” refers to substances synthesized from the poppy plant. Which of the following is NOT one of them?",
+    a: {
+      A: "Codeine",
+      B: "Morphine",
+      C: "Dioxelene-B",
+      D: "Hydrocodone"
+    },
+    correct: "C"
+  },
+  {
+    q: "PCP is a very unpredictable drug that often produces:",
+    a: {
+      A: "Violent behavior",
+      B: "Bad trips",
+      C: "Self mutilation",
+      D: "All of these"
+    },
+    correct: "D"
+  },
+  {
+    q: "Speech patterns can be affected by substance abuse. True or False?",
+    a: {
+      A: "True",
+      B: "False"
+    },
     correct: "A"
   },
   {
-    q: "Positive drug results may lead to:",
-    a: { A: "Return-to-duty process", B: "Immediate termination always", C: "Promotion", D: "None" },
+    q: "Extreme hyperactivity, nausea, and secretive or suspicious behavior are physical warning signs of addiction. True or False?",
+    a: {
+      A: "True",
+      B: "False"
+    },
     correct: "A"
   }
 ];
