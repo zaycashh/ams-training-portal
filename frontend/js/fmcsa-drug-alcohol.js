@@ -149,32 +149,105 @@ function nextAlcoholQuestion() {
   }
 }
 /* =========================================================
-   ALCOHOL QUIZ FINISH
+   ALCOHOL QUIZ FINISH (WITH ATTEMPTS + COOLDOWN)
 ========================================================= */
 function finishAlcoholQuiz() {
+
+  const resultBox = document.getElementById("alcoholResult");
+  if (!resultBox) return;
+
+  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
+
+  // 🔒 ACTIVE COOLDOWN CHECK
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+
+    const minutesLeft = Math.ceil(
+      (Number(cooldownUntil) - Date.now()) / 60000
+    );
+
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ⏳ Cooldown active.<br>
+        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
+      </div>
+    `;
+
+    disableAlcoholQuiz();
+    return;
+  }
+
   const percentage = Math.round(
     (alcoholScore / ALCOHOL_QUESTIONS.length) * 100
   );
 
-  const resultBox = document.getElementById("alcoholResult");
+  let attempts =
+    parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
 
-  if (!resultBox) return;
-
+  // ✅ PASS
   if (percentage >= 80) {
+
+    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
+    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
+    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+
     resultBox.innerHTML = `
       <div class="result-box pass">
-        ✅ You passed the Alcohol section with ${percentage}%.
+        ✅ Alcohol Quiz Passed (${percentage}%)
       </div>
     `;
-  } else {
+
+    // 🔒 Hide Alcohol completely
+    document.getElementById("alcoholContentSection")?.classList.add("hidden");
+    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
+
+    // 🔓 If Drug also passed → unlock certificate
+    if (localStorage.getItem(DRUG_QUIZ_KEY) === "true") {
+      localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+
+      document.getElementById("drugAlcoholCertificateSection")
+        ?.classList.remove("hidden");
+    }
+
+    return;
+  }
+
+  // ❌ FAIL
+  attempts++;
+  localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
+
+  const remaining = ALCOHOL_MAX_ATTEMPTS - attempts;
+
+  if (remaining <= 0) {
+
+    const cooldownTime =
+      Date.now() + ALCOHOL_COOLDOWN_MINUTES * 60000;
+
+    localStorage.setItem(ALCOHOL_COOLDOWN_KEY, cooldownTime);
+    localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
+
     resultBox.innerHTML = `
       <div class="result-box fail">
-        ❌ You scored ${percentage}%. Minimum passing score is 80%.
+        ❌ Alcohol Quiz Failed (${percentage}%)<br>
+        ⏳ Cooldown activated for ${ALCOHOL_COOLDOWN_MINUTES} minutes.
       </div>
     `;
+
+    disableAlcoholQuiz();
+    return;
   }
+
+  resultBox.innerHTML = `
+    <div class="result-box fail">
+      ❌ Alcohol Quiz Failed (${percentage}%)<br>
+      Attempts remaining: ${remaining}
+    </div>
+  `;
 }
 
+function disableAlcoholQuiz() {
+  document.querySelectorAll("#alcoholQuizSection input")
+    .forEach(el => el.disabled = true);
+}
 /* =========================================================
    INIT
 ========================================================= */
