@@ -23,6 +23,159 @@ const DRUG_ATTEMPT_KEY = "fmcsaDrugAttempts";
 const DRUG_COOLDOWN_KEY = "fmcsaDrugCooldown";
 
 /* =========================================================
+   ALCOHOL QUIZ CONFIG
+========================================================= */
+
+const ALCOHOL_PASS_SCORE = 5;
+const ALCOHOL_MAX_ATTEMPTS = 3;
+const ALCOHOL_COOLDOWN_MINUTES = 15;
+
+const ALCOHOL_ATTEMPT_KEY = "fmcsaAlcoholAttempts";
+const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
+/* =========================================================
+   ALCOHOL QUIZ QUESTIONS
+========================================================= */
+
+const ALCOHOL_QUESTIONS = [
+  {
+    question: "What is the DOT alcohol concentration limit for safety-sensitive employees?",
+    options: [
+      "0.08",
+      "0.04",
+      "0.02",
+      "0.10"
+    ],
+    answer: 1
+  },
+  {
+    question: "An employee with an alcohol concentration of 0.02–0.039 must:",
+    options: [
+      "Continue working",
+      "Be removed from safety-sensitive duties for at least 24 hours",
+      "Be terminated immediately",
+      "Take a drug test"
+    ],
+    answer: 1
+  },
+  {
+    question: "Alcohol testing is required for which of the following?",
+    options: [
+      "Pre-employment",
+      "Random",
+      "Post-accident",
+      "All of the above except pre-employment"
+    ],
+    answer: 3
+  },
+  {
+    question: "Reasonable suspicion alcohol testing must be conducted:",
+    options: [
+      "Within 8 hours of observation",
+      "Within 24 hours",
+      "Within 48 hours",
+      "Immediately or within 2 hours if possible"
+    ],
+    answer: 3
+  },
+  {
+    question: "If alcohol testing is not conducted within 8 hours after a reasonable suspicion determination:",
+    options: [
+      "Testing must continue until 24 hours",
+      "The employer must document why",
+      "The test is no longer required",
+      "The employee is automatically terminated"
+    ],
+    answer: 1
+  }
+];
+
+let alcoholCurrentQuestion = 0;
+let alcoholScore = 0;
+/* =========================================================
+   ALCOHOL QUIZ LOADER
+========================================================= */
+function loadAlcoholQuestion() {
+  const questionObj = ALCOHOL_QUESTIONS[alcoholCurrentQuestion];
+
+  const questionEl = document.getElementById("alcoholQuestion");
+  const answersEl = document.getElementById("alcoholAnswers");
+  const progressEl = document.getElementById("alcoholProgress");
+
+  if (!questionEl || !answersEl) return;
+
+  questionEl.textContent = questionObj.question;
+  answersEl.innerHTML = "";
+
+  questionObj.options.forEach((option, index) => {
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="radio" name="alcoholAnswer" value="${index}">
+      ${option}
+    `;
+    answersEl.appendChild(label);
+  });
+
+  progressEl.textContent = 
+    `Question ${alcoholCurrentQuestion + 1} of ${ALCOHOL_QUESTIONS.length}`;
+}
+/* =========================================================
+   ALCOHOL QUIZ NEXT BUTTON
+========================================================= */
+function nextAlcoholQuestion() {
+  const selected = document.querySelector(
+    'input[name="alcoholAnswer"]:checked'
+  );
+
+  if (!selected) {
+    alert("Please select an answer.");
+    return;
+  }
+
+  const answerIndex = parseInt(selected.value);
+
+  if (
+    answerIndex ===
+    ALCOHOL_QUESTIONS[alcoholCurrentQuestion].answer
+  ) {
+    alcoholScore++;
+  }
+
+  alcoholCurrentQuestion++;
+
+  if (alcoholCurrentQuestion < ALCOHOL_QUESTIONS.length) {
+    loadAlcoholQuestion();
+  } else {
+    finishAlcoholQuiz();
+  }
+}
+/* =========================================================
+   ALCOHOL QUIZ FINISH
+========================================================= */
+function finishAlcoholQuiz() {
+  const percentage = Math.round(
+    (alcoholScore / ALCOHOL_QUESTIONS.length) * 100
+  );
+
+  const resultBox = document.getElementById("alcoholResult");
+
+  if (!resultBox) return;
+
+  if (percentage >= 80) {
+    resultBox.innerHTML = `
+      <div class="result-box pass">
+        ✅ You passed the Alcohol section with ${percentage}%.
+      </div>
+    `;
+  } else {
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ❌ You scored ${percentage}%. Minimum passing score is 80%.
+      </div>
+    `;
+  }
+}
+
+/* =========================================================
    INIT
 ========================================================= */
 
@@ -50,20 +203,35 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================================================= */
 function restoreProgress() {
 
-  if (localStorage.getItem(DRUG_CONTENT_KEY) === "true") {
-    document.getElementById("drugQuizSection")?.classList.remove("hidden");
+  const drugPassed = localStorage.getItem(DRUG_QUIZ_KEY) === "true";
+  const alcoholPassed = localStorage.getItem(ALCOHOL_QUIZ_KEY) === "true";
+
+  if (!drugPassed) {
+    // Show Drug only
+    document.getElementById("drugContentSection")?.classList.remove("hidden");
+    return;
   }
 
-  if (localStorage.getItem(DRUG_QUIZ_KEY) === "true") {
+  if (drugPassed && !alcoholPassed) {
+    // Hide Drug completely
+    document.getElementById("drugContentSection")?.classList.add("hidden");
+    document.getElementById("drugQuizSection")?.classList.add("hidden");
+
+    // Show Alcohol only
     document.getElementById("alcoholContentSection")?.classList.remove("hidden");
+    return;
   }
 
-  if (localStorage.getItem(ALCOHOL_CONTENT_KEY) === "true") {
-    document.getElementById("alcoholQuizSection")?.classList.remove("hidden");
-  }
+  if (drugPassed && alcoholPassed) {
+    // Hide both modules
+    document.getElementById("drugContentSection")?.classList.add("hidden");
+    document.getElementById("drugQuizSection")?.classList.add("hidden");
+    document.getElementById("alcoholContentSection")?.classList.add("hidden");
+    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
 
-  if (localStorage.getItem(ALCOHOL_QUIZ_KEY) === "true") {
-    document.getElementById("drugAlcoholCertificateSection")?.classList.remove("hidden");
+    // Show Certificate
+    document.getElementById("drugAlcoholCertificateSection")
+      ?.classList.remove("hidden");
   }
 }
 
