@@ -199,22 +199,31 @@ function renderDrugQuiz() {
 
   const q = drugQuestions[drugPage];
 
-  const div = document.createElement("div");
-  div.innerHTML = `<strong>${drugPage + 1}. ${q.q}</strong>`;
+  const card = document.createElement("div");
+  card.className = "quiz-card";
 
-  Object.entries(q.a).forEach(([letter, text]) => {
-    div.innerHTML += `
-      <label>
-        <input type="radio" name="drugQ" value="${letter}"
-        ${drugAnswers[drugPage] === letter ? "checked" : ""}>
-        ${letter}) ${text}
-      </label>
-    `;
-  });
+  card.innerHTML = `
+    <div class="quiz-question">
+      <span class="quiz-number">Question ${drugPage + 1} of ${drugQuestions.length}</span>
+      <h3>${q.q}</h3>
+    </div>
+    <div class="quiz-answers">
+      ${Object.entries(q.a)
+        .map(
+          ([letter, text]) => `
+            <label class="quiz-option">
+              <input type="radio" name="drugQ" value="${letter}"
+                ${drugAnswers[drugPage] === letter ? "checked" : ""}>
+              <span>${letter}) ${text}</span>
+            </label>
+          `
+        )
+        .join("")}
+    </div>
+  `;
 
-  container.appendChild(div);
+  container.appendChild(card);
 }
-
 /* =========================
    NAVIGATION
 ========================= */
