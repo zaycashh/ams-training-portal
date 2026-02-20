@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔒 Block re-entry if already completed
   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    window.location.replace("dashboard.html");
     return;
   }
 
@@ -211,8 +210,8 @@ function restoreProgress() {
   }
 
   if (drugPassed && alcoholPassed) {
-    window.location.replace("dashboard.html");
-  }
+    showModuleBCertificate();
+ }
 }
 
 /* =========================================================
