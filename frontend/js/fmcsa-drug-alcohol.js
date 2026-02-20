@@ -219,15 +219,24 @@ function gradeDrugQuiz() {
 
   if (score >= DRUG_PASS_SCORE) {
 
-    localStorage.setItem(DRUG_QUIZ_KEY, "true");
-    localStorage.removeItem(DRUG_ATTEMPT_KEY);
-    localStorage.removeItem(DRUG_COOLDOWN_KEY);
+  localStorage.setItem(DRUG_QUIZ_KEY, "true");
+  localStorage.removeItem(DRUG_ATTEMPT_KEY);
+  localStorage.removeItem(DRUG_COOLDOWN_KEY);
 
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        ✅ Drug Quiz Passed (${score}/4)
-      </div>
-    `;
+  resultBox.innerHTML = `
+    <div class="result-box pass">
+      ✅ Drug Quiz Passed (${score}/4)
+    </div>
+  `;
+
+  // 🔒 Hide Drug completely after passing
+  document.getElementById("drugContentSection")?.classList.add("hidden");
+  document.getElementById("drugQuizSection")?.classList.add("hidden");
+
+  // 🔓 Unlock Alcohol
+  document.getElementById("alcoholContentSection")
+    ?.classList.remove("hidden");
+}
 
     document.getElementById("alcoholContentSection")
       ?.classList.remove("hidden");
