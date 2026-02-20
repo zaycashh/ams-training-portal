@@ -106,7 +106,71 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("completeDrugContentBtn").disabled = false;
     }
   }
- 
+ /* =========================================================
+   ALCOHOL PDF ENGINE (FIXED + MATCHING DRUG ENGINE)
+========================================================= */
+
+const ALCOHOL_PDF_URL = "../assets/fmcsa/2-Alcohol-Training.pdf";
+
+let alcoholPdfDoc = null;
+let alcoholCurrentPage = 1;
+let alcoholTotalPages = 0;
+
+const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
+const alcoholCtx = alcoholCanvas?.getContext("2d");
+
+pdfjsLib.getDocument(ALCOHOL_PDF_URL).promise.then(pdf => {
+  alcoholPdfDoc = pdf;
+  alcoholTotalPages = pdf.numPages;
+
+  document.getElementById("alcoholTotalPages").textContent = alcoholTotalPages;
+
+  renderAlcoholPage(alcoholCurrentPage);
+});
+
+function renderAlcoholPage(pageNum) {
+  alcoholPdfDoc.getPage(pageNum).then(page => {
+
+    const viewport = page.getViewport({ scale: 1.2 });
+
+    alcoholCanvas.height = viewport.height;
+    alcoholCanvas.width = viewport.width;
+
+    page.render({
+      canvasContext: alcoholCtx,
+      viewport: viewport
+    });
+
+    document.getElementById("alcoholCurrentPage").textContent = pageNum;
+
+    updateAlcoholProgress();
+  });
+}
+
+document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
+  if (alcoholCurrentPage < alcoholTotalPages) {
+    alcoholCurrentPage++;
+    renderAlcoholPage(alcoholCurrentPage);
+  }
+});
+
+document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
+  if (alcoholCurrentPage > 1) {
+    alcoholCurrentPage--;
+    renderAlcoholPage(alcoholCurrentPage);
+  }
+});
+
+function updateAlcoholProgress() {
+
+  const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
+
+  document.getElementById("alcoholProgressBar").style.width = percent + "%";
+
+  if (alcoholCurrentPage === alcoholTotalPages) {
+    document.getElementById("completeAlcoholContentBtn").disabled = false;
+  }
+}
   restoreProgress();
   wireButtons();
 });
