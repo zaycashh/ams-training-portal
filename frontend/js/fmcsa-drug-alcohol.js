@@ -102,161 +102,58 @@ const alcoholQuestions = [
 let alcoholCurrentQuestion = 0;
 let alcoholScore = 0;
 /* =========================================================
-   ALCOHOL QUIZ LOADER
+   ALCOHOL QUIZ ENGINE (MATCHES DRUG STRUCTURE)
 ========================================================= */
-function loadAlcoholQuestion() {
-  const questionObj = ALCOHOL_QUESTIONS[alcoholCurrentQuestion];
 
-  const questionEl = document.getElementById("alcoholQuestion");
-  const answersEl = document.getElementById("alcoholAnswers");
-  const progressEl = document.getElementById("alcoholProgress");
+let alcoholPage = 0;
+let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
 
-  if (!questionEl || !answersEl) return;
-
-  questionEl.textContent = questionObj.question;
-  answersEl.innerHTML = "";
-
-  questionObj.options.forEach((option, index) => {
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="radio" name="alcoholAnswer" value="${index}">
-      ${option}
-    `;
-    answersEl.appendChild(label);
-  });
-
-  progressEl.textContent = 
-    `Question ${alcoholCurrentQuestion + 1} of ${ALCOHOL_QUESTIONS.length}`;
-}
-/* =========================================================
-   ALCOHOL QUIZ NEXT BUTTON
-========================================================= */
-function nextAlcoholQuestion() {
-  const selected = document.querySelector(
-    'input[name="alcoholAnswer"]:checked'
-  );
-
-  if (!selected) {
-    alert("Please select an answer.");
-    return;
-  }
-
-  const answerIndex = parseInt(selected.value);
-
-  if (
-    answerIndex ===
-    ALCOHOL_QUESTIONS[alcoholCurrentQuestion].answer
-  ) {
-    alcoholScore++;
-  }
-
-  alcoholCurrentQuestion++;
-
-  if (alcoholCurrentQuestion < ALCOHOL_QUESTIONS.length) {
-    loadAlcoholQuestion();
-  } else {
-    finishAlcoholQuiz();
-  }
-}
-/* =========================================================
-   ALCOHOL QUIZ FINISH (WITH ATTEMPTS + COOLDOWN)
-========================================================= */
-function finishAlcoholQuiz() {
-
-  const resultBox = document.getElementById("alcoholResult");
-  if (!resultBox) return;
+function initAlcoholQuiz() {
 
   const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
 
-  // 🔒 ACTIVE COOLDOWN CHECK
   if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-
-    const minutesLeft = Math.ceil(
-      (Number(cooldownUntil) - Date.now()) / 60000
-    );
-
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ⏳ Cooldown active.<br>
-        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
-      </div>
-    `;
-
     disableAlcoholQuiz();
-    return;
   }
 
-  const percentage = Math.round(
-    (alcoholScore / ALCOHOL_QUESTIONS.length) * 100
-  );
-
-  let attempts =
-    parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
-
-  // ✅ PASS
-  if (percentage >= 80) {
-
-    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
-    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
-    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
-
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        ✅ Alcohol Quiz Passed (${percentage}%)
-      </div>
-    `;
-
-    // 🔒 Hide Alcohol completely
-    document.getElementById("alcoholContentSection")?.classList.add("hidden");
-    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
-
-    // 🔓 If Drug also passed → unlock certificate
-    if (localStorage.getItem(DRUG_QUIZ_KEY) === "true") {
-      localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
-
-      document.getElementById("drugAlcoholCertificateSection")
-        ?.classList.remove("hidden");
-    }
-
-    return;
-  }
-
-  // ❌ FAIL
-  attempts++;
-  localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
-
-  const remaining = ALCOHOL_MAX_ATTEMPTS - attempts;
-
-  if (remaining <= 0) {
-
-    const cooldownTime =
-      Date.now() + ALCOHOL_COOLDOWN_MINUTES * 60000;
-
-    localStorage.setItem(ALCOHOL_COOLDOWN_KEY, cooldownTime);
-    localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
-
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ❌ Alcohol Quiz Failed (${percentage}%)<br>
-        ⏳ Cooldown activated for ${ALCOHOL_COOLDOWN_MINUTES} minutes.
-      </div>
-    `;
-
-    disableAlcoholQuiz();
-    return;
-  }
-
-  resultBox.innerHTML = `
-    <div class="result-box fail">
-      ❌ Alcohol Quiz Failed (${percentage}%)<br>
-      Attempts remaining: ${remaining}
-    </div>
-  `;
+  renderAlcoholQuiz();
 }
 
-function disableAlcoholQuiz() {
-  document.querySelectorAll("#alcoholQuizSection input")
-    .forEach(el => el.disabled = true);
+function renderAlcoholQuiz() {
+
+  const container = document.getElementById("alcoholQuizQuestions");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const q = alcoholQuestions[alcoholPage];
+
+  const card = document.createElement("div");
+  card.className = "quiz-card";
+
+  card.innerHTML = `
+    <div class="quiz-question">
+      <span class="quiz-number">
+        Question ${alcoholPage + 1} of ${alcoholQuestions.length}
+      </span>
+      <h3>${q.q}</h3>
+    </div>
+    <div class="quiz-answers">
+      ${Object.entries(q.a)
+        .map(
+          ([letter, text]) => `
+            <label class="quiz-option">
+              <input type="radio" name="alcoholQ" value="${letter}"
+                ${alcoholAnswers[alcoholPage] === letter ? "checked" : ""}>
+              <span>${letter}) ${text}</span>
+            </label>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+
+  container.appendChild(card);
 }
 /* =========================================================
    INIT
@@ -494,6 +391,27 @@ document.getElementById("drugPrevBtn")?.addEventListener("click", () => {
   if (drugPage > 0) {
     drugPage--;
     renderDrugQuiz();
+  }
+});
+
+// 🔹 ALCOHOL (PASTE RIGHT HERE)
+
+document.getElementById("alcoholNextBtn")?.addEventListener("click", () => {
+  saveAlcoholAnswer();
+
+  if (alcoholPage < alcoholQuestions.length - 1) {
+    alcoholPage++;
+    renderAlcoholQuiz();
+  } else {
+    gradeAlcoholQuiz();
+  }
+});
+
+document.getElementById("alcoholPrevBtn")?.addEventListener("click", () => {
+  saveAlcoholAnswer();
+  if (alcoholPage > 0) {
+    alcoholPage--;
+    renderAlcoholQuiz();
   }
 });
 
