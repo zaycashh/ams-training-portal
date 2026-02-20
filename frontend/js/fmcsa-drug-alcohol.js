@@ -1,10 +1,10 @@
-// ✅ Fix PDF.js worker warning
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 /* =========================================================
    FMCSA DRUG & ALCOHOL MODULE (ENTERPRISE VERSION)
    Mirrors Supervisor Architecture
 ========================================================= */
+// ✅ Fix PDF.js worker warning
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 const MODULE_B_COMPLETED_KEY = "fmcsaModuleBCompleted";
 const MODULE_A_COMPLETED_KEY = "fmcsaModuleACompleted";
