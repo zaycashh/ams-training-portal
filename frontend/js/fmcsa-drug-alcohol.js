@@ -36,56 +36,66 @@ const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
    ALCOHOL QUIZ QUESTIONS
 ========================================================= */
 
-const ALCOHOL_QUESTIONS = [
+const alcoholQuestions = [
   {
-    question: "What is the DOT alcohol concentration limit for safety-sensitive employees?",
-    options: [
-      "0.08",
-      "0.04",
-      "0.02",
-      "0.10"
-    ],
-    answer: 1
+    q: "The term BAC refers to:",
+    a: {
+      A: "Baseline Alcohol Concentration",
+      B: "Breath Alcohol Concentration",
+      C: "Blood Alcohol Concentration",
+      D: "Bloodstream Alcohol Concentration"
+    },
+    correct: "C"
   },
   {
-    question: "An employee with an alcohol concentration of 0.02–0.039 must:",
-    options: [
-      "Continue working",
-      "Be removed from safety-sensitive duties for at least 24 hours",
-      "Be terminated immediately",
-      "Take a drug test"
-    ],
-    answer: 1
+    q: "Which of the following is NOT considered a standard of measure for alcohol?",
+    a: {
+      A: "12 ounces of regular beer",
+      B: "5 ounces of wine",
+      C: "2 ounces of 80 proof liquor",
+      D: "8 ounces of malt liquor"
+    },
+    correct: "B"
   },
   {
-    question: "Alcohol testing is required for which of the following?",
-    options: [
-      "Pre-employment",
-      "Random",
-      "Post-accident",
-      "All of the above except pre-employment"
-    ],
-    answer: 3
+    q: "Binge drinking refers to:",
+    a: {
+      A: "For men, 10 or more drinks in a three hour period",
+      B: "For men, 5 or more drinks during a single occasion",
+      C: "For women, more than 7 drinks per day on average",
+      D: "For women, drinking shots at a bar"
+    },
+    correct: "B"
   },
   {
-    question: "Reasonable suspicion alcohol testing must be conducted:",
-    options: [
-      "Within 8 hours of observation",
-      "Within 24 hours",
-      "Within 48 hours",
-      "Immediately or within 2 hours if possible"
-    ],
-    answer: 3
+    q: "Underage individuals begin drinking for which reason:",
+    a: {
+      A: "Peer pressure",
+      B: "Increased independence or desire for alcohol",
+      C: "Stress",
+      D: "All of the above"
+    },
+    correct: "D"
   },
   {
-    question: "If alcohol testing is not conducted within 8 hours after a reasonable suspicion determination:",
-    options: [
-      "Testing must continue until 24 hours",
-      "The employer must document why",
-      "The test is no longer required",
-      "The employee is automatically terminated"
-    ],
-    answer: 1
+    q: "Alcohol abuse is a progressive process. Which is NOT part of the process?",
+    a: {
+      A: "Being a social drinker",
+      B: "Becoming an alcoholic",
+      C: "Developing symptomatic drinking habits",
+      D: "Developing neurological problems"
+    },
+    correct: "D"
+  },
+  {
+    q: "Which is NOT considered an immediate health risk of alcohol?",
+    a: {
+      A: "Violent behavior",
+      B: "Memory problem",
+      C: "Alcohol poisoning",
+      D: "Traffic injuries"
+    },
+    correct: "B"
   }
 ];
 
