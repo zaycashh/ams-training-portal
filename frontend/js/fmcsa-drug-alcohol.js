@@ -171,9 +171,6 @@ function wireButtons() {
     initAlcoholQuiz();
   });
 }
-/* =========================================================
-   DRUG QUIZ ENGINE
-========================================================= */
 
 function calculateDrugPassScore() {
   return Math.ceil(drugQuestions.length * 0.8);
@@ -208,7 +205,7 @@ const drugQuestions = [
     q: "When smoking marijuana, which ingredient passes into bloodstream?",
     a: { A: "TCH", B: "THE", C: "THC", D: "None of the above" },
     correct: "C"
-  }
+  },
  {
   q: "Methamphetamine can be taken",
   a: {
@@ -341,25 +338,24 @@ function gradeDrugQuiz() {
 
   let attempts = parseInt(localStorage.getItem(DRUG_ATTEMPT_KEY)) || 0;
 
-  if (score >= calculateDrugPassScore())
+  if (score >= calculateDrugPassScore()) {
 
-    localStorage.setItem(DRUG_QUIZ_KEY, "true");
-    localStorage.removeItem(DRUG_ATTEMPT_KEY);
-    localStorage.removeItem(DRUG_COOLDOWN_KEY);
+  localStorage.setItem(DRUG_QUIZ_KEY, "true");
+  localStorage.removeItem(DRUG_ATTEMPT_KEY);
+  localStorage.removeItem(DRUG_COOLDOWN_KEY);
 
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        Drug Quiz Passed! Unlocking Alcohol Training...
-      </div>
-    `;
+  resultBox.innerHTML = `
+    <div class="result-box pass">
+      Drug Quiz Passed! Unlocking Alcohol Training...
+    </div>
+  `;
 
-    setTimeout(() => {
-      showSection("alcoholContentSection");
-    }, 1500);
+  setTimeout(() => {
+    showSection("alcoholContentSection");
+  }, 1500);
 
-    return;
-  }
-
+  return;
+}
   attempts++;
   localStorage.setItem(DRUG_ATTEMPT_KEY, attempts);
 
