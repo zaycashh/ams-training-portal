@@ -44,29 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
-  if (alcoholCurrentPage < alcoholTotalPages) {
-    alcoholCurrentPage++;
-    renderAlcoholPage(alcoholCurrentPage);
-  }
-});
-
-document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
-  if (alcoholCurrentPage > 1) {
-    alcoholCurrentPage--;
-    renderAlcoholPage(alcoholCurrentPage);
-  }
-});
-
-function updateAlcoholProgress() {
-  const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
-  document.getElementById("alcoholProgressBar").style.width = percent + "%";
-
-  if (alcoholCurrentPage === alcoholTotalPages) {
-    document.getElementById("completeAlcoholContentBtn").disabled = false;
-  }
-}
-
   /* =========================================================
      DRUG PDF ENGINE
   ========================================================= */
@@ -83,9 +60,7 @@ function updateAlcoholProgress() {
   pdfjsLib.getDocument(DRUG_PDF_URL).promise.then(pdf => {
     drugPdfDoc = pdf;
     drugTotalPages = pdf.numPages;
-
     document.getElementById("drugTotalPages").textContent = drugTotalPages;
-
     renderDrugPage(drugCurrentPage);
   });
 
@@ -102,7 +77,6 @@ function updateAlcoholProgress() {
       });
 
       document.getElementById("drugCurrentPage").textContent = pageNum;
-
       updateDrugProgress();
     });
   }
@@ -129,71 +103,67 @@ function updateAlcoholProgress() {
       document.getElementById("completeDrugContentBtn").disabled = false;
     }
   }
- /* =========================================================
-   ALCOHOL PDF ENGINE (FIXED + MATCHING DRUG ENGINE)
-========================================================= */
 
-const ALCOHOL_PDF_URL = "../assets/fmcsa/2-Alcohol-Training.pdf";
+  /* =========================================================
+     ALCOHOL PDF ENGINE
+  ========================================================= */
 
-let alcoholPdfDoc = null;
-let alcoholCurrentPage = 1;
-let alcoholTotalPages = 0;
+  const ALCOHOL_PDF_URL = "../assets/fmcsa/2-Alcohol-Training.pdf";
 
-const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
-const alcoholCtx = alcoholCanvas?.getContext("2d");
+  let alcoholPdfDoc = null;
+  let alcoholCurrentPage = 1;
+  let alcoholTotalPages = 0;
 
-pdfjsLib.getDocument(ALCOHOL_PDF_URL).promise.then(pdf => {
-  alcoholPdfDoc = pdf;
-  alcoholTotalPages = pdf.numPages;
+  const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
+  const alcoholCtx = alcoholCanvas?.getContext("2d");
 
-  document.getElementById("alcoholTotalPages").textContent = alcoholTotalPages;
-
-  renderAlcoholPage(alcoholCurrentPage);
-});
-
-function renderAlcoholPage(pageNum) {
-  alcoholPdfDoc.getPage(pageNum).then(page => {
-
-    const viewport = page.getViewport({ scale: 1.2 });
-
-    alcoholCanvas.height = viewport.height;
-    alcoholCanvas.width = viewport.width;
-
-    page.render({
-      canvasContext: alcoholCtx,
-      viewport: viewport
-    });
-
-    document.getElementById("alcoholCurrentPage").textContent = pageNum;
-
-    updateAlcoholProgress();
+  pdfjsLib.getDocument(ALCOHOL_PDF_URL).promise.then(pdf => {
+    alcoholPdfDoc = pdf;
+    alcoholTotalPages = pdf.numPages;
+    document.getElementById("alcoholTotalPages").textContent = alcoholTotalPages;
+    renderAlcoholPage(alcoholCurrentPage);
   });
-}
 
-document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
-  if (alcoholCurrentPage < alcoholTotalPages) {
-    alcoholCurrentPage++;
-    renderAlcoholPage(alcoholCurrentPage);
+  function renderAlcoholPage(pageNum) {
+    alcoholPdfDoc.getPage(pageNum).then(page => {
+      const viewport = page.getViewport({ scale: 1.2 });
+
+      alcoholCanvas.height = viewport.height;
+      alcoholCanvas.width = viewport.width;
+
+      page.render({
+        canvasContext: alcoholCtx,
+        viewport: viewport
+      });
+
+      document.getElementById("alcoholCurrentPage").textContent = pageNum;
+      updateAlcoholProgress();
+    });
   }
-});
 
-document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
-  if (alcoholCurrentPage > 1) {
-    alcoholCurrentPage--;
-    renderAlcoholPage(alcoholCurrentPage);
+  document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
+    if (alcoholCurrentPage < alcoholTotalPages) {
+      alcoholCurrentPage++;
+      renderAlcoholPage(alcoholCurrentPage);
+    }
+  });
+
+  document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
+    if (alcoholCurrentPage > 1) {
+      alcoholCurrentPage--;
+      renderAlcoholPage(alcoholCurrentPage);
+    }
+  });
+
+  function updateAlcoholProgress() {
+    const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
+    document.getElementById("alcoholProgressBar").style.width = percent + "%";
+
+    if (alcoholCurrentPage === alcoholTotalPages) {
+      document.getElementById("completeAlcoholContentBtn").disabled = false;
+    }
   }
-});
 
-function updateAlcoholProgress() {
-
-  const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
-
-  document.getElementById("alcoholProgressBar").style.width = percent + "%";
-
-  if (alcoholCurrentPage === alcoholTotalPages) {
-    document.getElementById("completeAlcoholContentBtn").disabled = false;
-  }
-}
   restoreProgress();
   wireButtons();
 });
