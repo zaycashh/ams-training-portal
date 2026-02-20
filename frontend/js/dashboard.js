@@ -218,12 +218,20 @@ document.addEventListener("DOMContentLoaded", () => {
 const modACompleted = localStorage.getItem("fmcsaModuleACompleted") === "true";
 const modBCompleted = localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
-if(modACompleted){
-  // Show Reasonable Suspicion certificate badge
+const badgesContainer = document.getElementById("fmcsaCompletionBadges");
+const modABadge = document.getElementById("modABadge");
+const modBBadge = document.getElementById("modBBadge");
+
+if (modACompleted || modBCompleted) {
+  badgesContainer?.classList.remove("hidden");
 }
 
-if(modBCompleted){
-  // Show Substance Abuse certificate badge
+if (modACompleted) {
+  modABadge?.classList.remove("hidden");
+}
+
+if (modBCompleted) {
+  modBBadge?.classList.remove("hidden");
 }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
