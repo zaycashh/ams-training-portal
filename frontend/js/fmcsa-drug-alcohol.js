@@ -1,5 +1,6 @@
-/* =========================================================
-   FMCSA DRUG & ALCOHOL MODULE ENGINE
+ /* =========================================================
+   FMCSA DRUG & ALCOHOL MODULE (ENTERPRISE VERSION)
+   Mirrors Supervisor Architecture
 ========================================================= */
 
 const MODULE_B_COMPLETED_KEY = "fmcsaModuleBCompleted";
@@ -12,93 +13,17 @@ const ALCOHOL_CONTENT_KEY = "fmcsaAlcoholContentCompleted";
 const ALCOHOL_QUIZ_KEY = "fmcsaAlcoholQuizPassed";
 
 /* =========================
-   DRUG QUIZ CONFIG
+   ATTEMPTS + COOLDOWN CONFIG
 ========================= */
 
-const DRUG_PASS_SCORE = 3;
-const DRUG_MAX_ATTEMPTS = 3;
-const DRUG_COOLDOWN_MINUTES = 15;
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_MINUTES = 15;
 
 const DRUG_ATTEMPT_KEY = "fmcsaDrugAttempts";
 const DRUG_COOLDOWN_KEY = "fmcsaDrugCooldown";
 
-/* =========================
-   ALCOHOL QUIZ CONFIG
-========================= */
-
-const ALCOHOL_PASS_SCORE = 5;
-const ALCOHOL_MAX_ATTEMPTS = 3;
-const ALCOHOL_COOLDOWN_MINUTES = 15;
-
 const ALCOHOL_ATTEMPT_KEY = "fmcsaAlcoholAttempts";
 const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
-
-/* =========================================================
-   ALCOHOL QUESTIONS (DRUG STYLE STRUCTURE)
-========================================================= */
-
-const alcoholQuestions = [
-  {
-    q: "The term BAC refers to:",
-    a: {
-      A: "Baseline Alcohol Concentration",
-      B: "Breath Alcohol Concentration",
-      C: "Blood Alcohol Concentration",
-      D: "Bloodstream Alcohol Concentration"
-    },
-    correct: "C"
-  },
-  {
-    q: "Which of the following is NOT considered a standard of measure for alcohol?",
-    a: {
-      A: "12 ounces of regular beer",
-      B: "5 ounces of wine",
-      C: "2 ounces of 80 proof liquor",
-      D: "8 ounces of malt liquor"
-    },
-    correct: "B"
-  },
-  {
-    q: "Binge drinking refers to:",
-    a: {
-      A: "For men, 10 or more drinks in a three hour period",
-      B: "For men, 5 or more drinks during a single occasion",
-      C: "For women, more than 7 drinks per day on average",
-      D: "For women, drinking shots at a bar"
-    },
-    correct: "B"
-  },
-  {
-    q: "Underage individuals begin drinking for which reason:",
-    a: {
-      A: "Peer pressure",
-      B: "Increased independence or desire for alcohol",
-      C: "Stress",
-      D: "All of the above"
-    },
-    correct: "D"
-  },
-  {
-    q: "Alcohol abuse is a progressive process. Which is NOT part of the process?",
-    a: {
-      A: "Being a social drinker",
-      B: "Becoming an alcoholic",
-      C: "Developing symptomatic drinking habits",
-      D: "Developing neurological problems"
-    },
-    correct: "D"
-  },
-  {
-    q: "Which is NOT considered an immediate health risk of alcohol?",
-    a: {
-      A: "Violent behavior",
-      B: "Memory problem",
-      C: "Alcohol poisoning",
-      D: "Traffic injuries"
-    },
-    correct: "B"
-  }
-];
 
 /* =========================================================
    INIT
@@ -106,27 +31,40 @@ const alcoholQuestions = [
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  // 🔐 Must complete Module A first
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
     alert("Complete Module A (Reasonable Suspicion) first.");
     window.location.replace("dashboard.html");
     return;
   }
 
+  // 🔒 Block re-entry if already completed
+  if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
+    window.location.replace("dashboard.html");
+    return;
+  }
+
   restoreProgress();
   wireButtons();
-
-  if (localStorage.getItem(DRUG_CONTENT_KEY) === "true") {
-    initDrugQuiz();
-  }
-
-  if (
-    localStorage.getItem(ALCOHOL_CONTENT_KEY) === "true" &&
-    localStorage.getItem(ALCOHOL_QUIZ_KEY) !== "true"
-  ) {
-    initAlcoholQuiz();
-  }
-
 });
+
+/* =========================================================
+   SECTION CONTROL
+========================================================= */
+
+function showSection(id) {
+
+  [
+    "drugContentSection",
+    "drugQuizSection",
+    "alcoholContentSection",
+    "alcoholQuizSection"
+  ].forEach(section => {
+    document.getElementById(section)?.classList.add("hidden");
+  });
+
+  document.getElementById(id)?.classList.remove("hidden");
+}
 
 /* =========================================================
    RESTORE PROGRESS
@@ -138,24 +76,17 @@ function restoreProgress() {
   const alcoholPassed = localStorage.getItem(ALCOHOL_QUIZ_KEY) === "true";
 
   if (!drugPassed) {
-    document.getElementById("drugContentSection")?.classList.remove("hidden");
+    showSection("drugContentSection");
     return;
   }
 
   if (drugPassed && !alcoholPassed) {
-    document.getElementById("drugContentSection")?.classList.add("hidden");
-    document.getElementById("drugQuizSection")?.classList.add("hidden");
-    document.getElementById("alcoholContentSection")?.classList.remove("hidden");
+    showSection("alcoholContentSection");
     return;
   }
 
   if (drugPassed && alcoholPassed) {
-    document.getElementById("drugContentSection")?.classList.add("hidden");
-    document.getElementById("drugQuizSection")?.classList.add("hidden");
-    document.getElementById("alcoholContentSection")?.classList.add("hidden");
-    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
-    document.getElementById("drugAlcoholCertificateSection")
-      ?.classList.remove("hidden");
+    window.location.replace("dashboard.html");
   }
 }
 
@@ -167,20 +98,26 @@ function wireButtons() {
 
   document.getElementById("completeDrugContentBtn")?.addEventListener("click", () => {
     localStorage.setItem(DRUG_CONTENT_KEY, "true");
-    document.getElementById("drugQuizSection")?.classList.remove("hidden");
+    showSection("drugQuizSection");
     initDrugQuiz();
   });
 
   document.getElementById("completeAlcoholContentBtn")?.addEventListener("click", () => {
     localStorage.setItem(ALCOHOL_CONTENT_KEY, "true");
-    document.getElementById("alcoholQuizSection")?.classList.remove("hidden");
+    showSection("alcoholQuizSection");
     initAlcoholQuiz();
   });
-
 }
 /* =========================================================
    DRUG QUIZ ENGINE
 ========================================================= */
+
+const PASS_SCORE_DRUG = 3;
+
+/* =========================
+   DRUG QUESTIONS
+========================= */
+
 const drugQuestions = [
   {
     q: "Which of the following is true concerning a substance abuser?",
@@ -194,79 +131,18 @@ const drugQuestions = [
   },
   {
     q: "What percentage of substance abusers are employed?",
-    a: {
-      A: "10%",
-      B: "25%",
-      C: "50%",
-      D: "75%"
-    },
+    a: { A: "10%", B: "25%", C: "50%", D: "75%" },
     correct: "D"
   },
   {
-    q: "Crack is a form of what drug that has been processed to make a rock crystal?",
-    a: {
-      A: "Amphetamine capsules",
-      B: "Cocaine",
-      C: "Marijuana",
-      D: "Opium"
-    },
+    q: "Crack is a form of what drug?",
+    a: { A: "Amphetamine capsules", B: "Cocaine", C: "Marijuana", D: "Opium" },
     correct: "B"
   },
   {
-    q: "When smoking marijuana, which ingredient passes from the lungs into the bloodstream?",
-    a: {
-      A: "TCH",
-      B: "THE",
-      C: "THC",
-      D: "None of the above"
-    },
+    q: "When smoking marijuana, which ingredient passes into bloodstream?",
+    a: { A: "TCH", B: "THE", C: "THC", D: "None of the above" },
     correct: "C"
-  },
-  {
-    q: "Methamphetamine can be taken?",
-    a: {
-      A: "Orally",
-      B: "Snorted",
-      C: "Injected",
-      D: "All of the above"
-    },
-    correct: "D"
-  },
-  {
-    q: "The term “opiate” refers to substances synthesized from the poppy plant. Which of the following is NOT one of them?",
-    a: {
-      A: "Codeine",
-      B: "Morphine",
-      C: "Dioxelene-B",
-      D: "Hydrocodone"
-    },
-    correct: "C"
-  },
-  {
-    q: "PCP is a very unpredictable drug that often produces:",
-    a: {
-      A: "Violent behavior",
-      B: "Bad trips",
-      C: "Self mutilation",
-      D: "All of these"
-    },
-    correct: "D"
-  },
-  {
-    q: "Speech patterns can be affected by substance abuse. True or False?",
-    a: {
-      A: "True",
-      B: "False"
-    },
-    correct: "A"
-  },
-  {
-    q: "Extreme hyperactivity, nausea, and secretive or suspicious behavior are physical warning signs of addiction. True or False?",
-    a: {
-      A: "True",
-      B: "False"
-    },
-    correct: "A"
   }
 ];
 
@@ -274,209 +150,35 @@ let drugPage = 0;
 let drugAnswers = new Array(drugQuestions.length).fill(null);
 
 function initDrugQuiz() {
-
-  const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
-
-  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-    disableDrugQuiz();
-  }
-
+  drugPage = 0;
   renderDrugQuiz();
 }
 
 function renderDrugQuiz() {
+
   const container = document.getElementById("drugQuizQuestions");
   container.innerHTML = "";
 
   const q = drugQuestions[drugPage];
 
-  const card = document.createElement("div");
-  card.className = "quiz-card";
-
-  card.innerHTML = `
-    <div class="quiz-question">
-      <span class="quiz-number">Question ${drugPage + 1} of ${drugQuestions.length}</span>
-      <h3>${q.q}</h3>
-    </div>
-    <div class="quiz-answers">
-      ${Object.entries(q.a)
-        .map(
-          ([letter, text]) => `
-            <label class="quiz-option">
-              <input type="radio" name="drugQ" value="${letter}"
-                ${drugAnswers[drugPage] === letter ? "checked" : ""}>
-              <span>${letter}) ${text}</span>
-            </label>
-          `
-        )
-        .join("")}
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-question">
+        <span>Question ${drugPage + 1} of ${drugQuestions.length}</span>
+        <h3>${q.q}</h3>
+      </div>
+      <div class="quiz-answers">
+        ${Object.entries(q.a).map(([letter, text]) => `
+          <label class="quiz-option">
+            <input type="radio" name="drugQ" value="${letter}"
+              ${drugAnswers[drugPage] === letter ? "checked" : ""}>
+            <span>${letter}) ${text}</span>
+          </label>
+        `).join("")}
+      </div>
     </div>
   `;
-
-  container.appendChild(card);
 }
-/* =========================================================
-   ALCOHOL QUIZ ENGINE
-========================================================= */
-
-let alcoholPage = 0;
-let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
-
-function initAlcoholQuiz() {
-  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
-
-  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-    disableAlcoholQuiz();
-  }
-
-  renderAlcoholQuiz();
-}
-
-function renderAlcoholQuiz() {
-
-  const container = document.getElementById("alcoholQuizQuestions");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  const q = alcoholQuestions[alcoholPage];
-
-  const card = document.createElement("div");
-  card.className = "quiz-card";
-
-  card.innerHTML = `
-    <div class="quiz-question">
-      <span class="quiz-number">
-        Question ${alcoholPage + 1} of ${alcoholQuestions.length}
-      </span>
-      <h3>${q.q}</h3>
-    </div>
-    <div class="quiz-answers">
-      ${Object.entries(q.a)
-        .map(
-          ([letter, text]) => `
-            <label class="quiz-option">
-              <input type="radio" name="alcoholQ" value="${letter}"
-                ${alcoholAnswers[alcoholPage] === letter ? "checked" : ""}>
-              <span>${letter}) ${text}</span>
-            </label>
-          `
-        )
-        .join("")}
-    </div>
-  `;
-
-  container.appendChild(card);
-}
-
-function saveAlcoholAnswer() {
-  const selected = document.querySelector("input[name='alcoholQ']:checked");
-  if (selected) {
-    alcoholAnswers[alcoholPage] = selected.value;
-  }
-}
-
-function gradeAlcoholQuiz() {
-
-  const resultBox = document.getElementById("alcoholQuizResult");
-  if (!resultBox) return;
-
-  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
-
-  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-
-    const minutesLeft = Math.ceil(
-      (Number(cooldownUntil) - Date.now()) / 60000
-    );
-
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ⏳ Cooldown active.<br>
-        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
-      </div>
-    `;
-
-    disableAlcoholQuiz();
-    return;
-  }
-
-  let score = 0;
-
-  alcoholQuestions.forEach((q, i) => {
-    if (alcoholAnswers[i] === q.correct) score++;
-  });
-
-  let attempts = parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
-
-  if (score >= ALCOHOL_PASS_SCORE) {
-
-    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
-    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
-    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
-
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        ✅ Alcohol Quiz Passed (${score}/${alcoholQuestions.length})
-      </div>
-    `;
-
-    document.getElementById("alcoholContentSection")?.classList.add("hidden");
-    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
-
-    if (localStorage.getItem(DRUG_QUIZ_KEY) === "true") {
-      localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
-      document.getElementById("drugAlcoholCertificateSection")
-        ?.classList.remove("hidden");
-    }
-
-    return;
-
-  } else {
-
-    attempts++;
-    localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
-
-    const remaining = ALCOHOL_MAX_ATTEMPTS - attempts;
-
-    if (remaining <= 0) {
-
-      const cooldownTime =
-        Date.now() + ALCOHOL_COOLDOWN_MINUTES * 60000;
-
-      localStorage.setItem(ALCOHOL_COOLDOWN_KEY, cooldownTime);
-      localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
-
-      resultBox.innerHTML = `
-        <div class="result-box fail">
-          ❌ Alcohol Quiz Failed (${score}/${alcoholQuestions.length})<br>
-          ⏳ Cooldown activated for ${ALCOHOL_COOLDOWN_MINUTES} minutes.
-        </div>
-      `;
-
-      disableAlcoholQuiz();
-      return;
-    }
-
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ❌ Alcohol Quiz Failed (${score}/${alcoholQuestions.length})<br>
-        Attempts remaining: ${remaining}
-      </div>
-    `;
-  }
-}
-
-function disableAlcoholQuiz() {
-  document.querySelectorAll("#alcoholQuizSection input")
-    .forEach(el => el.disabled = true);
-
-  document.getElementById("alcoholNextBtn")?.setAttribute("disabled", true);
-  document.getElementById("alcoholPrevBtn")?.setAttribute("disabled", true);
-}
-
-/* =========================
-   NAVIGATION
-========================= */
 
 document.getElementById("drugNextBtn")?.addEventListener("click", () => {
   saveDrugAnswer();
@@ -497,7 +199,172 @@ document.getElementById("drugPrevBtn")?.addEventListener("click", () => {
   }
 });
 
-// 🔹 ALCOHOL (PASTE RIGHT HERE)
+function saveDrugAnswer() {
+  const selected = document.querySelector("input[name='drugQ']:checked");
+  if (selected) drugAnswers[drugPage] = selected.value;
+}
+
+function gradeDrugQuiz() {
+
+  const resultBox = document.getElementById("drugQuizResult");
+
+  const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+
+    const minutesLeft = Math.ceil(
+      (Number(cooldownUntil) - Date.now()) / 60000
+    );
+
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        Cooldown active. Try again in ${minutesLeft} minute(s).
+      </div>
+    `;
+    return;
+  }
+
+  let score = 0;
+  drugQuestions.forEach((q, i) => {
+    if (drugAnswers[i] === q.correct) score++;
+  });
+
+  let attempts = parseInt(localStorage.getItem(DRUG_ATTEMPT_KEY)) || 0;
+
+  if (score >= PASS_SCORE_DRUG) {
+
+    localStorage.setItem(DRUG_QUIZ_KEY, "true");
+    localStorage.removeItem(DRUG_ATTEMPT_KEY);
+    localStorage.removeItem(DRUG_COOLDOWN_KEY);
+
+    resultBox.innerHTML = `
+      <div class="result-box pass">
+        Drug Quiz Passed! Unlocking Alcohol Training...
+      </div>
+    `;
+
+    setTimeout(() => {
+      showSection("alcoholContentSection");
+    }, 1500);
+
+    return;
+  }
+
+  attempts++;
+  localStorage.setItem(DRUG_ATTEMPT_KEY, attempts);
+
+  const remaining = MAX_ATTEMPTS - attempts;
+
+  if (remaining <= 0) {
+    localStorage.setItem(
+      DRUG_COOLDOWN_KEY,
+      Date.now() + COOLDOWN_MINUTES * 60000
+    );
+    localStorage.setItem(DRUG_ATTEMPT_KEY, 0);
+  }
+
+  resultBox.innerHTML = `
+    <div class="result-box fail">
+      You scored ${score}/${drugQuestions.length}. 
+      Attempts remaining: ${remaining > 0 ? remaining : 0}
+    </div>
+  `;
+}
+/* =========================================================
+   ALCOHOL QUIZ ENGINE
+========================================================= */
+
+const PASS_SCORE_ALCOHOL = 5;
+
+/* =========================
+   ALCOHOL QUESTIONS
+========================= */
+
+const alcoholQuestions = [
+  {
+    q: "The term BAC refers to:",
+    a: {
+      A: "Baseline Alcohol Concentration",
+      B: "Breath Alcohol Concentration",
+      C: "Blood Alcohol Concentration",
+      D: "Bloodstream Alcohol Concentration"
+    },
+    correct: "C"
+  },
+  {
+    q: "Which is NOT a standard alcohol measure?",
+    a: {
+      A: "12 oz beer",
+      B: "5 oz wine",
+      C: "2 oz 80 proof liquor",
+      D: "8 oz malt liquor"
+    },
+    correct: "B"
+  },
+  {
+    q: "Binge drinking refers to:",
+    a: {
+      A: "10 drinks in 3 hours",
+      B: "5+ drinks on one occasion",
+      C: "7 drinks daily",
+      D: "Taking shots at a bar"
+    },
+    correct: "B"
+  },
+  {
+    q: "Underage individuals begin drinking due to:",
+    a: {
+      A: "Peer pressure",
+      B: "Stress",
+      C: "Increased independence",
+      D: "All of the above"
+    },
+    correct: "D"
+  },
+  {
+    q: "Which is NOT part of alcohol abuse progression?",
+    a: {
+      A: "Social drinking",
+      B: "Becoming alcoholic",
+      C: "Symptomatic drinking",
+      D: "Neurological problems"
+    },
+    correct: "D"
+  }
+];
+
+let alcoholPage = 0;
+let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
+
+function initAlcoholQuiz() {
+  alcoholPage = 0;
+  renderAlcoholQuiz();
+}
+
+function renderAlcoholQuiz() {
+
+  const container = document.getElementById("alcoholQuizQuestions");
+  container.innerHTML = "";
+
+  const q = alcoholQuestions[alcoholPage];
+
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-question">
+        <span>Question ${alcoholPage + 1} of ${alcoholQuestions.length}</span>
+        <h3>${q.q}</h3>
+      </div>
+      <div class="quiz-answers">
+        ${Object.entries(q.a).map(([letter, text]) => `
+          <label class="quiz-option">
+            <input type="radio" name="alcoholQ" value="${letter}"
+              ${alcoholAnswers[alcoholPage] === letter ? "checked" : ""}>
+            <span>${letter}) ${text}</span>
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
 
 document.getElementById("alcoholNextBtn")?.addEventListener("click", () => {
   saveAlcoholAnswer();
@@ -518,253 +385,76 @@ document.getElementById("alcoholPrevBtn")?.addEventListener("click", () => {
   }
 });
 
-/* =========================
-   SAVE ANSWER
-========================= */
-
-function saveDrugAnswer() {
-  const selected = document.querySelector("input[name='drugQ']:checked");
-  if (selected) {
-    drugAnswers[drugPage] = selected.value;
-  }
+function saveAlcoholAnswer() {
+  const selected = document.querySelector("input[name='alcoholQ']:checked");
+  if (selected) alcoholAnswers[alcoholPage] = selected.value;
 }
 
-/* =========================
-   GRADE
-========================= */
+function gradeAlcoholQuiz() {
 
-function gradeDrugQuiz() {
+  const resultBox = document.getElementById("alcoholQuizResult");
 
-  const resultBox = document.getElementById("drugQuizResult");
-
-  const cooldownUntil = localStorage.getItem(DRUG_COOLDOWN_KEY);
-
-  // 🔒 ACTIVE COOLDOWN CHECK
+  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
   if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
-    const minutesLeft = Math.ceil((Number(cooldownUntil) - Date.now()) / 60000);
+
+    const minutesLeft = Math.ceil(
+      (Number(cooldownUntil) - Date.now()) / 60000
+    );
 
     resultBox.innerHTML = `
       <div class="result-box fail">
-        ⏳ Cooldown active.<br>
-        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
+        Cooldown active. Try again in ${minutesLeft} minute(s).
       </div>
     `;
-
-    disableDrugQuiz();
     return;
   }
 
   let score = 0;
-
-  drugQuestions.forEach((q, i) => {
-    if (drugAnswers[i] === q.correct) score++;
+  alcoholQuestions.forEach((q, i) => {
+    if (alcoholAnswers[i] === q.correct) score++;
   });
 
-  let attempts = parseInt(localStorage.getItem(DRUG_ATTEMPT_KEY)) || 0;
+  let attempts = parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
 
-  if (score >= DRUG_PASS_SCORE) {
+  if (score >= PASS_SCORE_ALCOHOL) {
 
-    localStorage.setItem(DRUG_QUIZ_KEY, "true");
-    localStorage.removeItem(DRUG_ATTEMPT_KEY);
-    localStorage.removeItem(DRUG_COOLDOWN_KEY);
+    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
+    localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+
+    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
+    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
 
     resultBox.innerHTML = `
       <div class="result-box pass">
-        ✅ Drug Quiz Passed (${score}/4)
+        You passed Drug & Alcohol Training!
+        Redirecting to dashboard...
       </div>
     `;
 
-    // 🔒 Hide Drug completely after passing
-    document.getElementById("drugContentSection")?.classList.add("hidden");
-    document.getElementById("drugQuizSection")?.classList.add("hidden");
-
-    // 🔓 Unlock Alcohol
-    document.getElementById("alcoholContentSection")
-      ?.classList.remove("hidden");
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 2000);
 
     return;
-
-  } else {
-
-    attempts++;
-    localStorage.setItem(DRUG_ATTEMPT_KEY, attempts);
-
-    const remaining = DRUG_MAX_ATTEMPTS - attempts;
-
-    if (remaining <= 0) {
-
-      const cooldownTime = Date.now() + DRUG_COOLDOWN_MINUTES * 60000;
-      localStorage.setItem(DRUG_COOLDOWN_KEY, cooldownTime);
-      localStorage.setItem(DRUG_ATTEMPT_KEY, 0);
-
-      resultBox.innerHTML = `
-        <div class="result-box fail">
-          ❌ Drug Quiz Failed (${score}/4)<br>
-          ⏳ Cooldown activated for ${DRUG_COOLDOWN_MINUTES} minutes.
-        </div>
-      `;
-
-      disableDrugQuiz();
-      return;
-    }
-
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ❌ Drug Quiz Failed (${score}/4)<br>
-        Attempts remaining: ${remaining}
-      </div>
-    `;
   }
+
+  attempts++;
+  localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
+
+  const remaining = MAX_ATTEMPTS - attempts;
+
+  if (remaining <= 0) {
+    localStorage.setItem(
+      ALCOHOL_COOLDOWN_KEY,
+      Date.now() + COOLDOWN_MINUTES * 60000
+    );
+    localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
+  }
+
+  resultBox.innerHTML = `
+    <div class="result-box fail">
+      You scored ${score}/${alcoholQuestions.length}.
+      Attempts remaining: ${remaining > 0 ? remaining : 0}
+    </div>
+  `;
 }
-function disableDrugQuiz() {
-  document.querySelectorAll("#drugQuizSection input").forEach(el => {
-    el.disabled = true;
-  });
-
-  document.getElementById("drugNextBtn")?.setAttribute("disabled", true);
-  document.getElementById("drugPrevBtn")?.setAttribute("disabled", true);
-}
-/* =========================================================
-   DRUG PDF VIEWER
-========================================================= */
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-const drugPdfUrl = "../assets/fmcsa/2-Drug-Training.pdf";
-
-let drugPdfDoc = null;
-let drugPageNum = 1;
-let drugTotalPages = 0;
-
-const drugCanvas = document.getElementById("drugPdfCanvas");
-const drugCtx = drugCanvas?.getContext("2d");
-
-const drugCompleteBtn = document.getElementById("completeDrugContentBtn");
-
-if (drugCompleteBtn) drugCompleteBtn.disabled = true;
-
-pdfjsLib.getDocument(drugPdfUrl).promise.then(pdf => {
-  drugPdfDoc = pdf;
-  drugTotalPages = pdf.numPages;
-
-  document.getElementById("drugTotalPages").textContent = drugTotalPages;
-
-  renderDrugPage(drugPageNum);
-});
-
-function renderDrugPage(num) {
-
-  drugPdfDoc.getPage(num).then(page => {
-
-    const viewport = page.getViewport({ scale: 1.3 });
-
-    drugCanvas.height = viewport.height;
-    drugCanvas.width = viewport.width;
-
-    page.render({
-      canvasContext: drugCtx,
-      viewport: viewport
-    });
-
-    document.getElementById("drugCurrentPage").textContent = num;
-
-    const progressPercent = (num / drugTotalPages) * 100;
-    document.getElementById("drugProgressBar").style.width =
-      progressPercent + "%";
-
-    // Enable completion only on last page
-    if (drugCompleteBtn) {
-      drugCompleteBtn.disabled = (num !== drugTotalPages);
-    }
-
-  });
-}
-/* =========================================================
-   ALCOHOL PDF VIEWER
-========================================================= */
-
-const alcoholPdfUrl = "../assets/fmcsa/3-Alcohol-Training.pdf";
-
-let alcoholPdfDoc = null;
-let alcoholPageNum = 1;
-let alcoholTotalPages = 0;
-
-const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
-const alcoholCtx = alcoholCanvas?.getContext("2d");
-
-const alcoholCompleteBtn = document.getElementById("completeAlcoholContentBtn");
-
-if (alcoholCompleteBtn) alcoholCompleteBtn.disabled = true;
-
-pdfjsLib.getDocument(alcoholPdfUrl).promise.then(pdf => {
-  alcoholPdfDoc = pdf;
-  alcoholTotalPages = pdf.numPages;
-
-  document.getElementById("alcoholTotalPages").textContent = alcoholTotalPages;
-
-  renderAlcoholPage(alcoholPageNum);
-});
-
-function renderAlcoholPage(num) {
-
-  alcoholPdfDoc.getPage(num).then(page => {
-
-    const viewport = page.getViewport({ scale: 1.3 });
-
-    alcoholCanvas.height = viewport.height;
-    alcoholCanvas.width = viewport.width;
-
-    page.render({
-      canvasContext: alcoholCtx,
-      viewport: viewport
-    });
-
-    document.getElementById("alcoholCurrentPage").textContent = num;
-
-    const progressPercent = (num / alcoholTotalPages) * 100;
-    document.getElementById("alcoholProgressBar").style.width =
-      progressPercent + "%";
-
-    // 🔒 Enable completion only on last page
-    if (alcoholCompleteBtn) {
-      alcoholCompleteBtn.disabled = (num !== alcoholTotalPages);
-    }
-
-  });
-}
-
-/* =========================
-   ALCOHOL PAGE NAVIGATION
-========================= */
-
-document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
-  if (alcoholPageNum > 1) {
-    alcoholPageNum--;
-    renderAlcoholPage(alcoholPageNum);
-  }
-});
-
-document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
-  if (alcoholPageNum < alcoholTotalPages) {
-    alcoholPageNum++;
-    renderAlcoholPage(alcoholPageNum);
-  }
-});
-/* =========================
-   PAGE NAVIGATION
-========================= */
-
-document.getElementById("drugPrevPageBtn")?.addEventListener("click", () => {
-  if (drugPageNum > 1) {
-    drugPageNum--;
-    renderDrugPage(drugPageNum);
-  }
-});
-
-document.getElementById("drugNextPageBtn")?.addEventListener("click", () => {
-  if (drugPageNum < drugTotalPages) {
-    drugPageNum++;
-    renderDrugPage(drugPageNum);
-  }
-});
