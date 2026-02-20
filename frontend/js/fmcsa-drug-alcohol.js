@@ -473,6 +473,7 @@ function disableAlcoholQuiz() {
   document.getElementById("alcoholNextBtn")?.setAttribute("disabled", true);
   document.getElementById("alcoholPrevBtn")?.setAttribute("disabled", true);
 }
+
 /* =========================
    NAVIGATION
 ========================= */
