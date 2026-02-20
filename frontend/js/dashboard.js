@@ -214,6 +214,17 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+   
+const modACompleted = localStorage.getItem("fmcsaModuleACompleted") === "true";
+const modBCompleted = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+if(modACompleted){
+  // Show Reasonable Suspicion certificate badge
+}
+
+if(modBCompleted){
+  // Show Substance Abuse certificate badge
+}
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
