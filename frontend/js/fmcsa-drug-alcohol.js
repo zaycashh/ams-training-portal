@@ -178,11 +178,6 @@ function wireButtons() {
   });
 
 }
-
-/* =========================================================
-   DRUG ENGINE (UNCHANGED)
-========================================================= */
-// KEEP YOUR EXISTING DRUG ENGINE EXACTLY AS YOU HAD IT
 /* =========================================================
    DRUG QUIZ ENGINE
 ========================================================= */
@@ -319,6 +314,164 @@ function renderDrugQuiz() {
   `;
 
   container.appendChild(card);
+}
+/* =========================================================
+   ALCOHOL QUIZ ENGINE
+========================================================= */
+
+let alcoholPage = 0;
+let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
+
+function initAlcoholQuiz() {
+  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
+
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+    disableAlcoholQuiz();
+  }
+
+  renderAlcoholQuiz();
+}
+
+function renderAlcoholQuiz() {
+
+  const container = document.getElementById("alcoholQuizQuestions");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const q = alcoholQuestions[alcoholPage];
+
+  const card = document.createElement("div");
+  card.className = "quiz-card";
+
+  card.innerHTML = `
+    <div class="quiz-question">
+      <span class="quiz-number">
+        Question ${alcoholPage + 1} of ${alcoholQuestions.length}
+      </span>
+      <h3>${q.q}</h3>
+    </div>
+    <div class="quiz-answers">
+      ${Object.entries(q.a)
+        .map(
+          ([letter, text]) => `
+            <label class="quiz-option">
+              <input type="radio" name="alcoholQ" value="${letter}"
+                ${alcoholAnswers[alcoholPage] === letter ? "checked" : ""}>
+              <span>${letter}) ${text}</span>
+            </label>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+
+  container.appendChild(card);
+}
+
+function saveAlcoholAnswer() {
+  const selected = document.querySelector("input[name='alcoholQ']:checked");
+  if (selected) {
+    alcoholAnswers[alcoholPage] = selected.value;
+  }
+}
+
+function gradeAlcoholQuiz() {
+
+  const resultBox = document.getElementById("alcoholQuizResult");
+  if (!resultBox) return;
+
+  const cooldownUntil = localStorage.getItem(ALCOHOL_COOLDOWN_KEY);
+
+  if (cooldownUntil && Date.now() < Number(cooldownUntil)) {
+
+    const minutesLeft = Math.ceil(
+      (Number(cooldownUntil) - Date.now()) / 60000
+    );
+
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ⏳ Cooldown active.<br>
+        Try again in ${minutesLeft} minute${minutesLeft !== 1 ? "s" : ""}.
+      </div>
+    `;
+
+    disableAlcoholQuiz();
+    return;
+  }
+
+  let score = 0;
+
+  alcoholQuestions.forEach((q, i) => {
+    if (alcoholAnswers[i] === q.correct) score++;
+  });
+
+  let attempts = parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
+
+  if (score >= ALCOHOL_PASS_SCORE) {
+
+    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
+    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
+    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+
+    resultBox.innerHTML = `
+      <div class="result-box pass">
+        ✅ Alcohol Quiz Passed (${score}/${alcoholQuestions.length})
+      </div>
+    `;
+
+    document.getElementById("alcoholContentSection")?.classList.add("hidden");
+    document.getElementById("alcoholQuizSection")?.classList.add("hidden");
+
+    if (localStorage.getItem(DRUG_QUIZ_KEY) === "true") {
+      localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+      document.getElementById("drugAlcoholCertificateSection")
+        ?.classList.remove("hidden");
+    }
+
+    return;
+
+  } else {
+
+    attempts++;
+    localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
+
+    const remaining = ALCOHOL_MAX_ATTEMPTS - attempts;
+
+    if (remaining <= 0) {
+
+      const cooldownTime =
+        Date.now() + ALCOHOL_COOLDOWN_MINUTES * 60000;
+
+      localStorage.setItem(ALCOHOL_COOLDOWN_KEY, cooldownTime);
+      localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
+
+      resultBox.innerHTML = `
+        <div class="result-box fail">
+          ❌ Alcohol Quiz Failed (${score}/${alcoholQuestions.length})<br>
+          ⏳ Cooldown activated for ${ALCOHOL_COOLDOWN_MINUTES} minutes.
+        </div>
+      `;
+
+      disableAlcoholQuiz();
+      return;
+    }
+
+    resultBox.innerHTML = `
+      <div class="result-box fail">
+        ❌ Alcohol Quiz Failed (${score}/${alcoholQuestions.length})<br>
+        Attempts remaining: ${remaining}
+      </div>
+    `;
+  }
+}
+
+function disableAlcoholQuiz() {
+  document.querySelectorAll("#alcoholQuizSection input")
+    .forEach(el => el.disabled = true);
+
+  document.getElementById("alcoholNextBtn")?.setAttribute("disabled", true);
+  document.getElementById("alcoholPrevBtn")?.setAttribute("disabled", true);
 }
 /* =========================
    NAVIGATION
