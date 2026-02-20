@@ -44,6 +44,69 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  /* =========================================================
+     DRUG PDF ENGINE
+  ========================================================= */
+
+  const DRUG_PDF_URL = "../assets/fmcsa-drug.pdf";
+
+  let drugPdfDoc = null;
+  let drugCurrentPage = 1;
+  let drugTotalPages = 0;
+
+  const drugCanvas = document.getElementById("drugPdfCanvas");
+  const drugCtx = drugCanvas?.getContext("2d");
+
+  pdfjsLib.getDocument(DRUG_PDF_URL).promise.then(pdf => {
+    drugPdfDoc = pdf;
+    drugTotalPages = pdf.numPages;
+
+    document.getElementById("drugTotalPages").textContent = drugTotalPages;
+
+    renderDrugPage(drugCurrentPage);
+  });
+
+  function renderDrugPage(pageNum) {
+    drugPdfDoc.getPage(pageNum).then(page => {
+      const viewport = page.getViewport({ scale: 1.2 });
+
+      drugCanvas.height = viewport.height;
+      drugCanvas.width = viewport.width;
+
+      page.render({
+        canvasContext: drugCtx,
+        viewport: viewport
+      });
+
+      document.getElementById("drugCurrentPage").textContent = pageNum;
+
+      updateDrugProgress();
+    });
+  }
+
+  document.getElementById("drugNextPageBtn")?.addEventListener("click", () => {
+    if (drugCurrentPage < drugTotalPages) {
+      drugCurrentPage++;
+      renderDrugPage(drugCurrentPage);
+    }
+  });
+
+  document.getElementById("drugPrevPageBtn")?.addEventListener("click", () => {
+    if (drugCurrentPage > 1) {
+      drugCurrentPage--;
+      renderDrugPage(drugCurrentPage);
+    }
+  });
+
+  function updateDrugProgress() {
+    const percent = (drugCurrentPage / drugTotalPages) * 100;
+    document.getElementById("drugProgressBar").style.width = percent + "%";
+
+    if (drugCurrentPage === drugTotalPages) {
+      document.getElementById("completeDrugContentBtn").disabled = false;
+    }
+  }
+
   restoreProgress();
   wireButtons();
 });
