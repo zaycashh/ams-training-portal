@@ -315,15 +315,30 @@ if(userAnswers[i]===q.correct) score++;
 
 let attempts=parseInt(localStorage.getItem(ATTEMPT_KEY))||0;
 
-if(score>=PASS_SCORE){
+if(score >= PASS_SCORE){
+
 localStorage.setItem("fmcsaModuleACompleted","true");
+
+// 🔐 Generate certificate ID
+let certId = localStorage.getItem("fmcsaModuleACertificateId");
+
+if(!certId){
+  certId = "AMS-A-" + Date.now().toString().slice(-8);
+  localStorage.setItem("fmcsaModuleACertificateId", certId);
+}
+
 localStorage.removeItem(ATTEMPT_KEY);
 localStorage.removeItem(PROGRESS_KEY);
-document.getElementById("quizResult").innerHTML=
+
+document.getElementById("quizResult").innerHTML =
 `<div class="result-box pass">
-You passed! Score: ${score}/8
+You passed! Generating Certificate...
 </div>`;
-setTimeout(()=>window.location.href="dashboard.html",2000);
+
+// Redirect after delay
+setTimeout(()=>{
+  window.location.href="dashboard.html";
+},2000);
 }
 else{
 attempts++;
