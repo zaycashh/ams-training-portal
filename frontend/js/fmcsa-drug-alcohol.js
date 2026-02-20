@@ -139,8 +139,31 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("alcoholCurrentPage").textContent = pageNum;
       updateAlcoholProgress();
     });
+   
   }
+  document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
+    if (alcoholCurrentPage < alcoholTotalPages) {
+      alcoholCurrentPage++;
+      renderAlcoholPage(alcoholCurrentPage);
+    }
+  });
 
+  document.getElementById("alcoholPrevPageBtn")?.addEventListener("click", () => {
+    if (alcoholCurrentPage > 1) {
+      alcoholCurrentPage--;
+      renderAlcoholPage(alcoholCurrentPage);
+    }
+  });
+
+  function updateAlcoholProgress() {
+    const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
+    document.getElementById("alcoholProgressBar").style.width = percent + "%";
+
+    if (alcoholCurrentPage === alcoholTotalPages) {
+      document.getElementById("completeAlcoholContentBtn").disabled = false;
+    }
+  }
+ 
   restoreProgress();
   wireButtons();
 });
