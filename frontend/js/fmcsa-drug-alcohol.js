@@ -2,6 +2,8 @@
    FMCSA DRUG & ALCOHOL MODULE (ENTERPRISE VERSION)
    Mirrors Supervisor Architecture
 ========================================================= */
+const MODULE_B_CERT_ID_KEY = "fmcsaModuleBCertificateId";
+
 // ✅ Fix PDF.js worker warning
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -594,6 +596,10 @@ function gradeAlcoholQuiz() {
 
   let attempts = parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
 
+  /* =========================
+     PASS LOGIC (CERTIFICATE)
+  ========================= */
+
   if (score >= PASS_SCORE_ALCOHOL) {
 
     localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
@@ -605,16 +611,28 @@ function gradeAlcoholQuiz() {
     resultBox.innerHTML = `
       <div class="result-box pass">
         You passed Drug & Alcohol Training!
-        Redirecting to dashboard...
+        Generating certificate...
       </div>
     `;
 
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 2000);
+    // Generate certificate ID if not exists
+    let certId = localStorage.getItem(MODULE_B_CERT_ID_KEY);
 
-    return;
+    if (!certId) {
+      certId = "AMS-B-" + Date.now().toString().slice(-8);
+      localStorage.setItem(MODULE_B_CERT_ID_KEY, certId);
+    }
+
+    setTimeout(() => {
+      showModuleBCertificate();
+    }, 1500);
+
+    return; // 🔥 IMPORTANT: stop execution here
   }
+
+  /* =========================
+     FAIL LOGIC
+  ========================= */
 
   attempts++;
   localStorage.setItem(ALCOHOL_ATTEMPT_KEY, attempts);
@@ -635,4 +653,35 @@ function gradeAlcoholQuiz() {
       Attempts remaining: ${remaining > 0 ? remaining : 0}
     </div>
   `;
+}
+/* =========================================================
+   MODULE B CERTIFICATE LOGIC
+========================================================= */
+
+function showModuleBCertificate() {
+
+  // Hide all sections
+  document.getElementById("drugContentSection")?.classList.add("hidden");
+  document.getElementById("drugQuizSection")?.classList.add("hidden");
+  document.getElementById("alcoholContentSection")?.classList.add("hidden");
+  document.getElementById("alcoholQuizSection")?.classList.add("hidden");
+
+  // Show certificate section
+  document.getElementById("moduleBCertificateSection")
+    ?.classList.remove("hidden");
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+  document.getElementById("moduleBCertName").textContent =
+    user.email || "User";
+
+  document.getElementById("moduleBCertDate").textContent =
+    new Date().toLocaleDateString();
+
+  document.getElementById("moduleBCertId").textContent =
+    localStorage.getItem(MODULE_B_CERT_ID_KEY);
+}
+
+function returnToDashboard() {
+  window.location.href = "dashboard.html";
 }
