@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("completeDrugContentBtn").disabled = false;
     }
   }
-
+ 
   restoreProgress();
   wireButtons();
 });
@@ -351,8 +351,9 @@ function gradeDrugQuiz() {
   `;
 
   setTimeout(() => {
-    showSection("alcoholContentSection");
-  }, 1500);
+  showSection("alcoholContentSection");
+  renderAlcoholPage(1);
+}, 1500);
 
   return;
 }
