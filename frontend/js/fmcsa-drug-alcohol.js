@@ -410,10 +410,10 @@ const alcoholQuestions = [
   {
     q: "Binge drinking refers to:",
     a: {
-      A: "10 drinks in 3 hours",
-      B: "5+ drinks on one occasion",
-      C: "7 drinks daily",
-      D: "Taking shots at a bar"
+      A: "For men, 10 or more drinks in a three hour period",
+      B: "For men, 5 or more drinks during a single occasion",
+      C: "For women, more than 7 drinks per day on average",
+      D: "For women, drinking shots at a bar"
     },
     correct: "B"
   },
@@ -421,21 +421,31 @@ const alcoholQuestions = [
     q: "Underage individuals begin drinking due to:",
     a: {
       A: "Peer pressure",
-      B: "Stress",
-      C: "Increased independence",
+      B: "Increased independence or desire for alcohol",
+      C: "Stress",
       D: "All of the above"
     },
     correct: "D"
   },
   {
-    q: "Which is NOT part of alcohol abuse progression?",
+    q: "Alcohol abuse is a progressive process of development. Which of thefollowing is not considered part of the process?",
     a: {
-      A: "Social drinking",
-      B: "Becoming alcoholic",
-      C: "Symptomatic drinking",
-      D: "Neurological problems"
+      A: "Being a social drinker",
+      B: "Becoming an alcoholic",
+      C: "Developing symptomatic drinking habits",
+      D: "Developing neurological problems"
     },
     correct: "D"
+  },
+ {
+    q: "Which of the following would not be considered an immediate health riskconcerning the consumption of alcohol?",
+    a: {
+      A: "Violent behavior",
+      B: "Memory problem",
+      C: "Alcohol poisoning",
+      D: "Traffic injuries"
+    },
+    correct: "B"
   }
 ];
 
