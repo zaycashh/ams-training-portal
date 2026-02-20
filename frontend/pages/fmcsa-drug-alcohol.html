@@ -50,8 +50,7 @@
       I Have Completed Drug Training Content
     </button>
   </section>
-
-  <!-- ========================
+    <!-- ========================
        DRUG QUIZ
   ========================= -->
   <section id="drugQuizSection" class="module-section hidden">
@@ -68,43 +67,24 @@
       <div id="drugQuizResult"></div>
     </div>
   </section>
-
-  <!-- ========================
-       ALCOHOL CONTENT
+    <!-- ========================
+       DRUG QUIZ
   ========================= -->
-  <section id="alcoholContentSection" class="module-section hidden">
-    <h2>Alcohol Training Content</h2>
+  <section id="drugQuizSection" class="module-section hidden">
+    <h2>Drug Quiz</h2>
 
-    <div class="pdf-viewer">
-      <canvas id="alcoholPdfCanvas"></canvas>
+    <div class="quiz-container">
+      <div id="drugQuizQuestions"></div>
 
-      <div class="pdf-controls">
-        <button id="alcoholPrevPageBtn" class="btn-secondary">← Previous</button>
-
-        <span>
-          Page <span id="alcoholCurrentPage">1</span>
-          of <span id="alcoholTotalPages">--</span>
-        </span>
-
-        <button id="alcoholNextPageBtn" class="btn-secondary">Next →</button>
+      <div class="quiz-nav">
+        <button id="drugPrevBtn" class="btn-secondary">Previous</button>
+        <button id="drugNextBtn" class="btn-primary">Next</button>
       </div>
 
-      <div class="progress-wrapper">
-        <div id="alcoholProgressBar"></div>
-      </div>
+      <div id="drugQuizResult"></div>
     </div>
-
-    <button
-      id="completeAlcoholContentBtn"
-      class="btn-primary"
-      style="margin-top:20px;"
-      disabled
-    >
-      I Have Completed Alcohol Training Content
-    </button>
   </section>
-
-  <!-- ========================
+    <!-- ========================
        ALCOHOL QUIZ
   ========================= -->
   <section id="alcoholQuizSection" class="module-section hidden">
@@ -119,29 +99,6 @@
       </div>
 
       <div id="alcoholQuizResult"></div>
-    </div>
-  </section>
-
-  <!-- ========================
-       MODULE B CERTIFICATE
-  ========================= -->
-  <section id="drugAlcoholCertificateSection" class="module-section hidden">
-    <h2>FMCSA Drug & Alcohol Certificate</h2>
-
-    <div class="certificate-box">
-      <p>
-        Congratulations! You have successfully completed
-        FMCSA Drug & Alcohol Awareness Training.
-      </p>
-
-      <p>
-        Completion Date:
-        <span id="moduleBCompletionDate"></span>
-      </p>
-
-      <button class="btn-primary" onclick="window.print()">
-        Print Certificate
-      </button>
     </div>
   </section>
 
