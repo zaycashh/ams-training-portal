@@ -43,10 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 🔒 Block re-entry if already completed
-  if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    return;
-  }
+  // 🔒 HARD LOCK — If already completed, show certificate immediately
+if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
+  showModuleBCertificate();
+  return;
+}
 
   /* =========================================================
      DRUG PDF ENGINE
