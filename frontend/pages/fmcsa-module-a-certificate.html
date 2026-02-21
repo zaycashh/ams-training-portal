@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FMCSA Reasonable Suspicion Certificate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<main class="module-container">
+
+  <header class="module-header">
+    <h1>FMCSA Reasonable Suspicion Training</h1>
+  </header>
+
+  <section class="module-section">
+
+    <div class="certificate-card">
+      <h2>🎓 FMCSA Reasonable Suspicion Training Certificate</h2>
+
+      <p><strong>Name:</strong> <span id="certName"></span></p>
+      <p><strong>Date Completed:</strong> <span id="certDate"></span></p>
+      <p><strong>Certificate ID:</strong> <span id="certId"></span></p>
+
+      <button class="btn-primary" onclick="returnToDashboard()">
+        Return to Dashboard
+      </button>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+
+(function () {
+
+  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+  document.getElementById("certName").textContent =
+    user.email || "User";
+
+  document.getElementById("certDate").textContent =
+    new Date().toLocaleDateString();
+
+  document.getElementById("certId").textContent =
+    localStorage.getItem("fmcsaModuleACertificateId");
+
+})();
+
+function returnToDashboard() {
+  window.location.href = "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>
