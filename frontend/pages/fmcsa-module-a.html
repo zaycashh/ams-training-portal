@@ -315,31 +315,35 @@ if(userAnswers[i]===q.correct) score++;
 
 let attempts=parseInt(localStorage.getItem(ATTEMPT_KEY))||0;
 
-if(score >= PASS_SCORE){
+if (score >= PASS_SCORE) {
 
-localStorage.setItem("fmcsaModuleACompleted","true");
+  localStorage.setItem("fmcsaModuleACompleted", "true");
 
-// 🔐 Generate certificate ID
-let certId = localStorage.getItem("fmcsaModuleACertificateId");
+  // 🔥 Generate Certificate ID
+  let certId = localStorage.getItem("fmcsaModuleACertificateId");
 
-if(!certId){
-  certId = "AMS-A-" + Date.now().toString().slice(-8);
-  localStorage.setItem("fmcsaModuleACertificateId", certId);
+  if (!certId) {
+    certId = "AMS-A-" + Date.now().toString().slice(-8);
+    localStorage.setItem("fmcsaModuleACertificateId", certId);
+  }
+
+  // 🔥 Store Completion Date (IMPORTANT)
+  localStorage.setItem("fmcsaModuleADate", Date.now());
+
+  localStorage.removeItem(ATTEMPT_KEY);
+  localStorage.removeItem(PROGRESS_KEY);
+
+  document.getElementById("quizResult").innerHTML =
+  `<div class="result-box pass">
+    You passed! Generating Certificate...
+  </div>`;
+
+  setTimeout(()=>{
+    window.location.href="fmcsa-module-a-certificate.html";
+  },2000);
+
 }
-
-localStorage.removeItem(ATTEMPT_KEY);
-localStorage.removeItem(PROGRESS_KEY);
-
-document.getElementById("quizResult").innerHTML =
-`<div class="result-box pass">
-You passed! Generating Certificate...
-</div>`;
-
-// Redirect after delay
-setTimeout(()=>{
-  window.location.href="fmcsa-module-a-certificate.html";
-},2000);
-}
+  
 else{
 attempts++;
 localStorage.setItem(ATTEMPT_KEY,attempts);
