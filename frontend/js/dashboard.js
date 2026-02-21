@@ -214,38 +214,52 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-   
-const modACompleted = localStorage.getItem("fmcsaModuleACompleted") === "true";
-const modBCompleted = localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
-const badgesContainer = document.getElementById("fmcsaCompletionBadges");
-const modABadge = document.getElementById("modABadge");
-const modBBadge = document.getElementById("modBBadge");
+  const modACompleted =
+    localStorage.getItem("fmcsaModuleACompleted") === "true";
 
-if (modACompleted || modBCompleted) {
-  badgesContainer?.classList.remove("hidden");
-}
+  const modBCompleted =
+    localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
-if (modACompleted) {
-  modABadge?.classList.remove("hidden");
-}
+  const badgesContainer =
+    document.getElementById("fmcsaCompletionBadges");
 
-if (modBCompleted) {
-  modBBadge?.classList.remove("hidden");
-}
+  const modABadge =
+    document.getElementById("modABadge");
+
+  const modBBadge =
+    document.getElementById("modBBadge");
+
+  /* =========================
+     SHOW COMPLETION BADGES
+  ========================= */
+
+  if (modACompleted || modBCompleted) {
+    badgesContainer?.classList.remove("hidden");
+  }
+
+  if (modACompleted) {
+    modABadge?.classList.remove("hidden");
+  }
+
+  if (modBCompleted) {
+    modBBadge?.classList.remove("hidden");
+  }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   // 🔹 Employee Welcome Banner
   if (user?.role === "employee") {
-    const welcome = document.getElementById("employeeWelcome");
+    const welcome =
+      document.getElementById("employeeWelcome");
     if (welcome) welcome.style.display = "block";
   }
 
   const status = getEmployeeSeatStatus();
 
   if (status) {
-    const el = document.getElementById("employeeSeatStatus");
+    const el =
+      document.getElementById("employeeSeatStatus");
     if (el) {
       el.innerHTML = `
         <span class="seat-badge ${status.type}">
@@ -257,22 +271,38 @@ if (modBCompleted) {
 
   updateEmployeeButtonState();
   updateFMCSATimer();
-   
-/* =========================
-   FMCSA BUTTON LABEL UPDATE
-   ========================= */
 
-const fmcsaBtn = document.getElementById("fmcsaBtn");
+  /* =========================
+     FMCSA BUTTON LABEL UPDATE
+  ========================= */
 
-if (fmcsaBtn && hasAccess("fmcsa")) {
+  const fmcsaBtn =
+    document.getElementById("fmcsaBtn");
 
-  if (localStorage.getItem("fmcsaModuleACompleted") === "true") {
-    fmcsaBtn.textContent = "Continue FMCSA Drug & Alcohol (Module B)";
-  } else {
-    fmcsaBtn.textContent = "Start FMCSA Reasonable Suspicion (Module A)";
+  if (fmcsaBtn && hasAccess("fmcsa")) {
+
+    if (modACompleted && modBCompleted) {
+
+      fmcsaBtn.textContent =
+        "View FMCSA Certificates";
+
+      fmcsaBtn.classList.remove("btn-primary");
+      fmcsaBtn.classList.add("btn-secondary");
+
+    }
+    else if (modACompleted) {
+
+      fmcsaBtn.textContent =
+        "Continue FMCSA Drug & Alcohol (Module B)";
+
+    }
+    else {
+
+      fmcsaBtn.textContent =
+        "Start FMCSA Reasonable Suspicion (Module A)";
+    }
   }
 
-}
 });
 /* =========================
    PURCHASE COURSE
