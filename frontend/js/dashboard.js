@@ -230,21 +230,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const modBBadge =
     document.getElementById("modBBadge");
 
-  /* =========================
-     SHOW COMPLETION BADGES
-  ========================= */
+/* =========================
+   SHOW COMPLETION BADGES (FORCED RESET)
+========================= */
 
-  if (modACompleted || modBCompleted) {
-    badgesContainer?.classList.remove("hidden");
-  }
+badgesContainer?.classList.add("hidden");
+modABadge?.classList.add("hidden");
+modBBadge?.classList.add("hidden");
 
-  if (modACompleted) {
-    modABadge?.classList.remove("hidden");
-  }
+if (modACompleted || modBCompleted) {
+  badgesContainer?.classList.remove("hidden");
+}
 
-  if (modBCompleted) {
-    modBBadge?.classList.remove("hidden");
-  }
+if (modACompleted) {
+  modABadge?.classList.remove("hidden");
+}
+
+if (modBCompleted) {
+  modBBadge?.classList.remove("hidden");
+}
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
