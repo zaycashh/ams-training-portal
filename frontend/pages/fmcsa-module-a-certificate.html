@@ -2,58 +2,123 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>FMCSA Reasonable Suspicion Certificate</title>
+<title>FMCSA Certificates | AMS Training Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="../css/main.css" />
+
+<style>
+.cert-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.cert-card {
+  background: #f9fafc;
+  border: 1px solid #dce3ef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.cert-card h2 {
+  margin-top: 0;
+}
+
+.cert-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.hidden {
+  display: none;
+}
+</style>
 </head>
+
 <body>
 
-<main class="module-container">
+<main class="module-container cert-container">
 
-  <header class="module-header">
-    <h1>FMCSA Reasonable Suspicion Training</h1>
-  </header>
+<header class="module-header">
+  <h1>FMCSA Training Certificates</h1>
+  <button class="btn-secondary" onclick="returnToDashboard()">
+    Return to Dashboard
+  </button>
+</header>
 
-  <section class="module-section">
+<!-- MODULE A CERT -->
+<section id="moduleACert" class="cert-card hidden">
+  <h2 class="cert-title">🎓 FMCSA Reasonable Suspicion Training</h2>
+  <p><strong>Name:</strong> <span id="aName"></span></p>
+  <p><strong>Date Completed:</strong> <span id="aDate"></span></p>
+  <p><strong>Certificate ID:</strong> <span id="aCertId"></span></p>
+</section>
 
-    <div class="certificate-card">
-      <h2>🎓 FMCSA Reasonable Suspicion Training Certificate</h2>
-
-      <p><strong>Name:</strong> <span id="certName"></span></p>
-      <p><strong>Date Completed:</strong> <span id="certDate"></span></p>
-      <p><strong>Certificate ID:</strong> <span id="certId"></span></p>
-
-      <button class="btn-primary" onclick="returnToDashboard()">
-        Return to Dashboard
-      </button>
-    </div>
-
-  </section>
+<!-- MODULE B CERT -->
+<section id="moduleBCert" class="cert-card hidden">
+  <h2 class="cert-title">🎓 FMCSA Drug & Alcohol Substance Abuse Training</h2>
+  <p><strong>Name:</strong> <span id="bName"></span></p>
+  <p><strong>Date Completed:</strong> <span id="bDate"></span></p>
+  <p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
+</section>
 
 </main>
 
 <script>
 
+/* =========================
+   AUTH GUARD
+========================= */
 (function () {
+  const user = localStorage.getItem("amsUser");
+  if (!user) {
+    window.location.replace("login.html");
+  }
+})();
 
-  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
+/* =========================
+   LOAD CERTIFICATES
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+  const modACompleted =
+    localStorage.getItem("fmcsaModuleACompleted") === "true";
+
+  const modBCompleted =
+    localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+  if (!modACompleted && !modBCompleted) {
     window.location.replace("dashboard.html");
     return;
   }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const today = new Date().toLocaleDateString();
 
-  document.getElementById("certName").textContent =
-    user.email || "User";
+  // MODULE A
+  if (modACompleted) {
+    document.getElementById("moduleACert").classList.remove("hidden");
+    document.getElementById("aName").textContent = user.email || "User";
+    document.getElementById("aDate").textContent = today;
+    document.getElementById("aCertId").textContent =
+      localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
+  }
 
-  document.getElementById("certDate").textContent =
-    new Date().toLocaleDateString();
+  // MODULE B
+  if (modBCompleted) {
+    document.getElementById("moduleBCert").classList.remove("hidden");
+    document.getElementById("bName").textContent = user.email || "User";
+    document.getElementById("bDate").textContent = today;
+    document.getElementById("bCertId").textContent =
+      localStorage.getItem("fmcsaModuleBCertificateId") || "N/A";
+  }
 
-  document.getElementById("certId").textContent =
-    localStorage.getItem("fmcsaModuleACertificateId");
+});
 
-})();
-
+/* =========================
+   RETURN
+========================= */
 function returnToDashboard() {
   window.location.href = "dashboard.html";
 }
