@@ -344,14 +344,26 @@ function handleFMCSA() {
     return;
   }
 
-  // 🔥 If Module A not completed → go to A
-  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
-    window.location.href = "fmcsa-module-a.html";
+  const modACompleted =
+    localStorage.getItem("fmcsaModuleACompleted") === "true";
+
+  const modBCompleted =
+    localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+  // ✅ BOTH COMPLETED → Go to certificates page
+  if (modACompleted && modBCompleted) {
+    window.location.href = "fmcsa-certificates.html";
     return;
   }
 
-  // 🔥 If A completed → go to Drug & Alcohol
-  window.location.href = "fmcsa-drug-alcohol.html";
+  // ✅ Only A done → go to Module B
+  if (modACompleted && !modBCompleted) {
+    window.location.href = "fmcsa-drug-alcohol.html";
+    return;
+  }
+
+  // ❌ Nothing done → go to Module A
+  window.location.href = "fmcsa-module-a.html";
 }
 /* =========================
    FMCSA COUNTDOWN DISPLAY
