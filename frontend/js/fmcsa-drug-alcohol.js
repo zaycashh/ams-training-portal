@@ -602,33 +602,38 @@ function gradeAlcoholQuiz() {
 
   if (score >= PASS_SCORE_ALCOHOL) {
 
-    localStorage.setItem(ALCOHOL_QUIZ_KEY, "true");
-    localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+  // ✅ Mark completed
+  localStorage.setItem("fmcsaModuleBCompleted", "true");
 
-    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
-    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+  // 🔥 Generate Certificate ID (if not exists)
+  let certId = localStorage.getItem("fmcsaModuleBCertificateId");
 
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        You passed Drug & Alcohol Training!
-        Generating certificate...
-      </div>
-    `;
-
-    // Generate certificate ID if not exists
-    let certId = localStorage.getItem(MODULE_B_CERT_ID_KEY);
-
-    if (!certId) {
-      certId = "AMS-B-" + Date.now().toString().slice(-8);
-      localStorage.setItem(MODULE_B_CERT_ID_KEY, certId);
-    }
-
-    setTimeout(() => {
-      showModuleBCertificate();
-    }, 1500);
-
-    return; // 🔥 IMPORTANT: stop execution here
+  if (!certId) {
+    certId = "AMS-B-" + Date.now().toString().slice(-8);
+    localStorage.setItem("fmcsaModuleBCertificateId", certId);
   }
+
+  // 🔥 Store Completion Date
+  localStorage.setItem("fmcsaModuleBDate", Date.now());
+
+  // Clean attempts
+  localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
+  localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+
+  resultBox.innerHTML = `
+    <div class="result-box pass">
+      You passed Drug & Alcohol Training!
+      Generating certificate...
+    </div>
+  `;
+
+  // 🔥 Redirect to unified certificate page
+  setTimeout(() => {
+    window.location.href = "fmcsa-certificates.html";
+  }, 1500);
+
+  return;
+}
 
   /* =========================
      FAIL LOGIC
