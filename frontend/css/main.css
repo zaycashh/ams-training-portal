@@ -224,7 +224,7 @@ body {
    UTILITIES
 ================================ */
 .hidden {
-  display: none;
+  display: none !important;
 }
 /* =========================
    MODULE NAV STATES
