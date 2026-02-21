@@ -97,13 +97,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const today = new Date().toLocaleDateString();
 
   // MODULE A
-  if (modACompleted) {
-    document.getElementById("moduleACert").classList.remove("hidden");
-    document.getElementById("aName").textContent = user.email || "User";
-    document.getElementById("aDate").textContent = today;
-    document.getElementById("aCertId").textContent =
-      localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
-  }
+if (modACompleted) {
+  document.getElementById("moduleACert").classList.remove("hidden");
+
+  document.getElementById("aName").textContent =
+    user.email || "User";
+
+  const storedADate = localStorage.getItem("fmcsaModuleADate");
+  document.getElementById("aDate").textContent =
+    storedADate
+      ? new Date(Number(storedADate)).toLocaleDateString()
+      : "N/A";
+
+  document.getElementById("aCertId").textContent =
+    localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
+}
 
   // MODULE B
   if (modBCompleted) {
