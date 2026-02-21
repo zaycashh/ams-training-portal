@@ -214,7 +214,6 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-   console.log("DASHBOARD INIT RUNNING");
 
   const modACompleted =
     localStorage.getItem("fmcsaModuleACompleted") === "true";
