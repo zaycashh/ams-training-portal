@@ -48,10 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
      PREREQUISITE CHECK — MODULE A
   ========================================================= */
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
-    alert("Complete Module A (Reasonable Suspicion) first.");
-    window.location.replace("dashboard.html");
-    return;
-  }
+  sessionStorage.setItem("amsNotice", "Complete Module A (Reasonable Suspicion) first.");
+  window.location.replace("dashboard.html");
+  return;
+}
 
   /* =========================================================
      DRUG PDF ENGINE
