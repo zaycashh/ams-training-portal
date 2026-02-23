@@ -214,6 +214,15 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+   /* =========================
+     GLOBAL NOTICE TOAST
+  ========================= */
+  const notice = sessionStorage.getItem("amsNotice");
+
+  if (notice) {
+    showToast(notice);
+    sessionStorage.removeItem("amsNotice");
+  }
 
   const modACompleted =
     localStorage.getItem("fmcsaModuleACompleted") === "true";
