@@ -33,8 +33,34 @@ const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
 /* =========================================================
    INIT
 ========================================================= */
+function isFMCSAExpired() {
+
+  const start = localStorage.getItem("fmcsa_start_date");
+  if (!start) return false;
+
+  const DAY_MS = 86400000;
+  const LIMIT_DAYS = 30;
+
+  const elapsed = Date.now() - Number(start);
+  const daysUsed = Math.floor(elapsed / DAY_MS);
+
+  return daysUsed >= LIMIT_DAYS;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+   /* =========================
+     FMCSA EXPIRATION CHECK
+  ========================= */
+  if (isFMCSAExpired()) {
+
+    sessionStorage.setItem(
+      "ams_notice",
+      "FMCSA training window expired. Repurchase required."
+    );
+
+    window.location.replace("dashboard.html");
+    return;
+  }
 
   /* =========================================================
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
