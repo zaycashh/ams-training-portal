@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
      PREREQUISITE CHECK — MODULE A
   ========================================================= */
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
-  sessionStorage.setItem("ams_Notice", "Complete Module A (Reasonable Suspicion) first.");
+  sessionStorage.setItem("ams_notice", "Complete Module A (Reasonable Suspicion) first.");
   window.location.href = "dashboard.html";
   return;
 }
