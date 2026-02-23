@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
   ========================================================= */
   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    window.location.href = "dashboard.html";
+    window.location.replace("dashboard.html");
     return;
   }
 
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================================================= */
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
   sessionStorage.setItem("amsNotice", "Complete Module A (Reasonable Suspicion) first.");
-  window.location.replace("dashboard.html");
+  window.location.href = "dashboard.html";
   return;
 }
 
