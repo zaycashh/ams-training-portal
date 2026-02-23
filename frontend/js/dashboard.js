@@ -110,7 +110,7 @@ function handleEmployeeClick() {
 
   // 🔒 Only employees can ever use company seats
   if (!user || user.role !== "employee") {
-    alert("Only employees can use company seats.");
+    showToast("Only employees can use company seats.", "error");
     return;
   }
 
@@ -135,7 +135,7 @@ function handleEmployeeClick() {
     return;
   }
 
-  alert("No seats available or purchase required.");
+  showToast("No seats available or purchase required.", "warning");
 }
 /* =========================
    START FAA COURSES
@@ -173,7 +173,7 @@ function consumeEmployeeSeatAndStart(startUrl) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (!user || !company) {
-    alert("Access error.");
+    showToast("Access error. Please refresh.", "error");
     return;
   }
 
@@ -188,7 +188,7 @@ function consumeEmployeeSeatAndStart(startUrl) {
   }
 
   if (!company.seats?.employee) {
-    alert("No seat structure found.");
+    showToast("Seat configuration error.", "error");
     return;
   }
 
@@ -197,7 +197,7 @@ function consumeEmployeeSeatAndStart(startUrl) {
   const remaining = total - used;
 
   if (remaining <= 0) {
-    alert("No seats remaining.");
+    showToast("No seats remaining.", "warning");
     return;
   }
 
@@ -336,7 +336,7 @@ function purchaseCourse(course) {
     localStorage.setItem("fmcsa_start_date", Date.now());
   }
 
-  alert(`${course.toUpperCase()} Training unlocked successfully!`);
+  showToast(`${course.toUpperCase()} Training unlocked successfully!`, "success");
 
   location.reload();
 }
