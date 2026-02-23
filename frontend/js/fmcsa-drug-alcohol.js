@@ -35,6 +35,11 @@ const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+   
+   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
+    lockToModuleBCertificate();
+    return;
+  }
 
   // 🔐 Must complete Module A first
   if (localStorage.getItem(MODULE_A_COMPLETED_KEY) !== "true") {
