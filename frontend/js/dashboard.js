@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (notice) {
     showToast(notice);
-    sessionStorage.removeItem("ams_Notice");
+    sessionStorage.removeItem("ams_notice");
   }
 
   const modACompleted =
