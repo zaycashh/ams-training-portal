@@ -35,6 +35,7 @@ const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+   console.log("MODULE B INIT RUNNING");
 
   /* =========================================================
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
