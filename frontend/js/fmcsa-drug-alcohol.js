@@ -35,12 +35,12 @@ const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-   
-   /* =========================================================
-     MODULE B HARD LOCK (FINAL AUTHORITY)
+
+  /* =========================================================
+     MODULE B COMPLETED → REDIRECT TO DASHBOARD
   ========================================================= */
   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    lockToModuleBCertificate();
+    window.location.replace("dashboard.html");
     return;
   }
 
@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.replace("dashboard.html");
     return;
   }
+
+  // Normal training flow continues below
+});
 
   /* =========================================================
      DRUG PDF ENGINE
