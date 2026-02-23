@@ -217,11 +217,11 @@ document.addEventListener("DOMContentLoaded", () => {
    /* =========================
      GLOBAL NOTICE TOAST
   ========================= */
-  const notice = sessionStorage.getItem("amsNotice");
+  const notice = sessionStorage.getItem("ams_notice");
 
   if (notice) {
     showToast(notice);
-    sessionStorage.removeItem("amsNotice");
+    sessionStorage.removeItem("ams_Notice");
   }
 
   const modACompleted =
