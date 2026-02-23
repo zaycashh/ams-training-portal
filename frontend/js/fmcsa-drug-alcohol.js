@@ -54,9 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Normal training flow continues below
-});
-
   /* =========================================================
      DRUG PDF ENGINE
   ========================================================= */
