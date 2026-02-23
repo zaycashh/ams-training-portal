@@ -214,7 +214,8 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-   /* =========================
+
+  /* =========================
      GLOBAL NOTICE TOAST
   ========================= */
   const notice = sessionStorage.getItem("ams_notice");
@@ -238,7 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const modBBadge =
     document.getElementById("modBBadge");
-
 /* =========================
    SHOW COMPLETION BADGES (FORCED RESET)
 ========================= */
