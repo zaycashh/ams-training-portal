@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
   ========================================================= */
   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    window.location.replace("dashboard.html");
+    window.location.href = "dashboard.html";
     return;
   }
 
