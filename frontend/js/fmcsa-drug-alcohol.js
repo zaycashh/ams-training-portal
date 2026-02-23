@@ -307,7 +307,7 @@ const drugQuestions = [
   correct: "A"
 },
 {
-  q: "Extreme hyperactivity, Nausea, and Secretive or suspicious behavior areall physical warning signs of addiction. True or False?",
+  q: "Extreme hyperactivity, Nausea, and Secretive or suspicious behavior are all physical warning signs of addiction. True or False?",
   a: {
     A: "True",
     B: "False",
