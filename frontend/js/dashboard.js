@@ -346,14 +346,22 @@ function purchaseCourse(course) {
 function handleFMCSA() {
 
   if (!hasAccess("fmcsa")) {
+    showToast("FMCSA training requires purchase.", "warning");
+    return;
+  }
 
-    const confirmPurchase = confirm(
-      "FMCSA Supervisor Training is required for supervisors.\n\nWould you like to purchase and unlock now?"
+  // 🔒 EXPIRATION ENFORCEMENT
+  if (isFMCSAExpired()) {
+
+    showToast(
+      "FMCSA training window expired. Repurchase required.",
+      "error"
     );
 
-    if (!confirmPurchase) return;
+    // Optional soft reset of completions
+    localStorage.removeItem("fmcsaModuleACompleted");
+    localStorage.removeItem("fmcsaModuleBCompleted");
 
-    purchaseCourse("fmcsa");
     return;
   }
 
@@ -363,19 +371,19 @@ function handleFMCSA() {
   const modBCompleted =
     localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
-  // ✅ BOTH COMPLETED → Go to certificates page
+  // ✅ BOTH COMPLETED → Certificates
   if (modACompleted && modBCompleted) {
     window.location.href = "fmcsa-certificates.html";
     return;
   }
 
-  // ✅ Only A done → go to Module B
+  // ✅ A DONE → Module B
   if (modACompleted && !modBCompleted) {
     window.location.href = "fmcsa-drug-alcohol.html";
     return;
   }
 
-  // ❌ Nothing done → go to Module A
+  // ❌ Nothing done → Module A
   window.location.href = "fmcsa-module-a.html";
 }
 /* =========================
@@ -413,6 +421,22 @@ function updateFMCSATimer() {
     `<span style="color:#b8860b;font-weight:600;">
       ⏳ ${daysLeft} day${daysLeft !== 1 ? "s" : ""} remaining
     </span>`;
+}
+/* =========================
+   FMCSA EXPIRATION CHECK
+========================= */
+function isFMCSAExpired() {
+
+  const start = localStorage.getItem("fmcsa_start_date");
+  if (!start) return false;
+
+  const DAY_MS = 86400000;
+  const LIMIT_DAYS = 30;
+
+  const elapsed = Date.now() - Number(start);
+  const daysUsed = Math.floor(elapsed / DAY_MS);
+
+  return daysUsed >= LIMIT_DAYS;
 }
 /* =========================
    TOAST NOTIFICATION
