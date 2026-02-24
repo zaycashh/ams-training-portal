@@ -43,6 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     localStorage.setItem("amsUser", JSON.stringify(user));
+    
+    // 🔐 Store permanent registration record (for login retrieval)
+    localStorage.setItem(
+      "registeredUser_" + email,
+      JSON.stringify(user)
+);
 
     // 🔥 ONLY CREATE COMPANY IF IT DOESN'T EXIST
     if (!existingCompany) {
