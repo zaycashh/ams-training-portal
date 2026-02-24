@@ -1,11 +1,12 @@
 /* =========================================================
-   COMPANY ADMIN DASHBOARD — STABLE VERSION
+   COMPANY ADMIN DASHBOARD — DRIFT-PROOF VERSION
 ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   loadCompanyDashboard(user);
 });
-   
+
 /* =========================================================
    LOAD DASHBOARD
 ========================================================= */
@@ -18,12 +19,11 @@ function loadCompanyDashboard(user) {
     return;
   }
 
-  // Company overview
   document.getElementById("companyName").textContent =
     company.name || user.company || "—";
 
   document.getElementById("companyAdmin").textContent =
-    company.adminEmail || user.email || "—";
+    user.email || "—";
 
   document.getElementById("companyModules").textContent =
     (company.modules && company.modules.length)
@@ -31,20 +31,19 @@ function loadCompanyDashboard(user) {
       : "—";
 
   loadEmployees(company.id);
-
   updateSeatCounts(company);
   renderSeatAssignments(company);
 }
 
-
 /* =========================================================
-   DERIVED SEAT SYSTEM
+   DERIVED SEAT SYSTEM (SOURCE OF TRUTH = usedSeats)
 ========================================================= */
+
 function getSeatStats(company) {
 
   const total = company?.seats?.employee?.total ?? 0;
 
-  // ✅ SOURCE OF TRUTH
+  // ✅ ONLY SOURCE OF TRUTH
   const used = Object.keys(company?.usedSeats || {}).length;
 
   const remaining = total - used;
@@ -69,6 +68,7 @@ function updateSeatCounts(company) {
 ========================================================= */
 
 function loadEmployees(companyId) {
+
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
@@ -89,13 +89,13 @@ function loadEmployees(companyId) {
   }
 
   employees.forEach(emp => {
+
+    const seatAssigned = company.usedSeats && company.usedSeats[emp.email];
+
     const tr = document.createElement("tr");
 
-    const key = emp.email;
-    const seatAssigned = company.usedSeats && company.usedSeats[key];
-
     tr.innerHTML = `
-      <td>${emp.name || "—"}</td>
+      <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
       <td>${emp.email}</td>
       <td>Employee</td>
       <td>
@@ -112,7 +112,7 @@ function loadEmployees(companyId) {
       <td>
         ${
           seatAssigned
-            ? `<button class="btn-secondary" onclick="revokeSeat('${key}')">
+            ? `<button class="btn-secondary" onclick="revokeSeat('${emp.email}')">
                 Revoke Seat
                </button>`
             : ""
@@ -127,26 +127,23 @@ function loadEmployees(companyId) {
   });
 }
 
-
 /* =========================================================
    REVOKE SEAT
 ========================================================= */
 
-function revokeSeat(userKey) {
+function revokeSeat(email) {
+
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats || !company.usedSeats[userKey]) {
+  if (!company.usedSeats || !company.usedSeats[email]) {
     alert("Seat not found.");
     return;
   }
 
   if (!confirm("Revoke this seat?")) return;
 
-  delete company.usedSeats[userKey];
+  delete company.usedSeats[email];
 
-if (company.seats?.employee?.used > 0) {
-  company.seats.employee.used -= 1;
-}
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Seat revoked successfully.");
@@ -155,19 +152,18 @@ if (company.seats?.employee?.used > 0) {
   loadCompanyDashboard(user);
 }
 
-
 /* =========================================================
    RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
+
 function renderSeatAssignments(company) {
+
   const list = document.getElementById("seatUserList");
   if (!list) return;
 
   list.innerHTML = "";
 
   const usedSeats = company.usedSeats || {};
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
   const employeeKeys = Object.keys(usedSeats);
 
   if (!employeeKeys.length) {
@@ -176,8 +172,7 @@ function renderSeatAssignments(company) {
     return;
   }
 
-  employeeKeys.forEach(key => {
-    const email = key;
+  employeeKeys.forEach(email => {
 
     const li = document.createElement("li");
 
@@ -185,7 +180,7 @@ function renderSeatAssignments(company) {
       ${email}
       <button class="btn-secondary"
               style="margin-left:10px;"
-              onclick="revokeSeat('${key}')">
+              onclick="revokeSeat('${email}')">
         Revoke
       </button>
     `;
@@ -195,23 +190,23 @@ function renderSeatAssignments(company) {
 }
 
 /* =========================================================
-   BUY 5 MORE SEATS (STACKING)
+   BUY 5 MORE SEATS (STACKING SAFE)
 ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
   const buyBtn = document.getElementById("buySeatsBtn");
   if (!buyBtn) return;
 
   buyBtn.addEventListener("click", () => {
-    const company = JSON.parse(
-      localStorage.getItem("companyProfile") || "{}"
-    );
+
+    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
     if (!company.seats) company.seats = {};
     if (!company.seats.employee) {
-      company.seats.employee = { total: 0, used: 0 };
+      company.seats.employee = { total: 0 };
     }
 
-    // Add 5 seats per purchase
     company.seats.employee.total += 5;
 
     localStorage.setItem("companyProfile", JSON.stringify(company));
@@ -222,8 +217,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadCompanyDashboard(user);
   });
 });
+
 /* =========================================================
-   INVITE EMPLOYEE (SEAT-AWARE)
+   INVITE EMPLOYEE (SEAT SAFE)
 ========================================================= */
 
 function inviteEmployee() {
@@ -239,9 +235,7 @@ function inviteEmployee() {
     return;
   }
 
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (!company) {
     msg.textContent = "Company profile not found.";
@@ -250,7 +244,7 @@ function inviteEmployee() {
   }
 
   const totalSeats = company.seats?.employee?.total ?? 0;
-  const usedSeats = company.seats?.employee?.used ?? 0;
+  const usedSeats = Object.keys(company.usedSeats || {}).length;
 
   if (usedSeats >= totalSeats) {
     msg.textContent = "No seats available. Please purchase more seats.";
@@ -260,14 +254,12 @@ function inviteEmployee() {
 
   company.invites = company.invites || {};
 
-  // Prevent duplicate invite
   if (company.invites[email]) {
     msg.textContent = `Invite already exists. Code: ${company.invites[email].code}`;
     msg.style.color = "#b8860b";
     return;
   }
 
-  // Generate secure 6-character code
   const inviteCode = Math.random()
     .toString(36)
     .substring(2, 8)
@@ -285,13 +277,12 @@ function inviteEmployee() {
 
   emailInput.value = "";
 }
+
 /* =========================================================
    LOGOUT
 ========================================================= */
 
 function logout() {
   localStorage.removeItem("amsUser");
-
-  // Always send back to login page safely
   window.location.href = "/ams-training-portal/frontend/pages/login.html";
 }
