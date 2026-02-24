@@ -5,38 +5,41 @@
   <title>Register | AMS Training Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
 <main class="auth-container">
+  <div class="auth-card">
 
-  <h1>Register for AMS</h1>
-  <p>Select how you would like to register:</p>
+    <h1>Register for AMS</h1>
+    <p>Select how you would like to register:</p>
 
-  <div class="role-options">
+    <div class="form-actions" style="flex-direction:column; gap:15px; margin-top:20px;">
 
-    <button class="btn-primary"
-      onclick="window.location.href='register-company.html'">
-      🏢 Register as Company Owner
-    </button>
+      <button type="button" class="btn-primary"
+        onclick="window.location.href='register-company.html'">
+        🏢 Register as Company Owner
+      </button>
 
-    <button class="btn-secondary"
-      onclick="window.location.href='register-employee.html'">
-      👷 Register as Employee (Invite Required)
-    </button>
+      <button type="button" class="btn-secondary"
+        onclick="window.location.href='register-employee.html'">
+        👷 Register as Employee (Invite Required)
+      </button>
 
-    <button class="btn-secondary"
-      onclick="window.location.href='register-individual.html'">
-      👤 Register as Individual
-    </button>
+      <button type="button" class="btn-secondary"
+        onclick="window.location.href='register-individual.html'">
+        👤 Register as Individual
+      </button>
+
+    </div>
+
+    <p style="margin-top:25px;">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
 
   </div>
-
-  <p style="margin-top:20px;">
-    Already have an account?
-    <a href="login.html">Login</a>
-  </p>
-
 </main>
 
 </body>
