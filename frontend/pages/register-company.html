@@ -127,6 +127,10 @@ document.getElementById("companyRegisterForm")
     companyId,
     createdAt: Date.now()
   };
+    // Save to users database
+const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+users.push(companyAdminUser);
+localStorage.setItem("ams_users", JSON.stringify(users));
 
   localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
 
