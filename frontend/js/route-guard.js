@@ -181,3 +181,13 @@ if (module === "employee" && user.role === "employee") {
     }
   }
 })();
+/* =========================================================
+   GLOBAL LOGOUT (AVAILABLE ON ALL PAGES)
+========================================================= */
+
+function logout() {
+  localStorage.removeItem("amsUser");
+  window.location.replace(
+    "/ams-training-portal/frontend/pages/login.html"
+  );
+}
