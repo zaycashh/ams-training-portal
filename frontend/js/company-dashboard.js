@@ -41,8 +41,12 @@ function loadCompanyDashboard(user) {
    DERIVED SEAT SYSTEM
 ========================================================= */
 function getSeatStats(company) {
+
   const total = company?.seats?.employee?.total ?? 0;
-  const used = company?.seats?.employee?.used ?? 0;
+
+  // ✅ SOURCE OF TRUTH
+  const used = Object.keys(company?.usedSeats || {}).length;
+
   const remaining = total - used;
 
   return {
@@ -51,6 +55,7 @@ function getSeatStats(company) {
     remaining: remaining < 0 ? 0 : remaining
   };
 }
+
 function updateSeatCounts(company) {
   const stats = getSeatStats(company);
 
