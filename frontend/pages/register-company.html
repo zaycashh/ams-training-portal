@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Register Company | AMS</title>
+  <title>Create Company Account | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
 </head>
@@ -10,27 +10,50 @@
 
 <main class="auth-container">
   <div class="auth-card">
+
+    <!-- Back Link -->
+    <div class="back-link">
+      <a href="register-select.html">← Back to Registration Options</a>
+    </div>
+
     <h2>Create Company Account</h2>
+    <p>This account is for company administrators who manage employee seats.</p>
 
-    <form id="companyRegisterForm">
-      <label>Company Name</label>
-      <input type="text" id="companyName" required />
+    <form id="companyRegisterForm" class="auth-form">
 
-      <label>Admin Email</label>
-      <input type="email" id="adminEmail" required />
+      <div class="form-row">
+        <label for="companyName">Company Name</label>
+        <input type="text" id="companyName" required />
+      </div>
 
-      <label>Password</label>
-      <input type="password" id="password" required />
+      <div class="form-row">
+        <label for="adminEmail">Admin Email</label>
+        <input type="email" id="adminEmail" required />
+      </div>
 
-      <button type="submit" class="btn-primary">
-        Create Company
-      </button>
+      <div class="form-row">
+        <label for="password">Password</label>
+        <input type="password" id="password" required />
+      </div>
+
+      <div class="form-row">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          Create Company
+        </button>
+      </div>
+
+      <p style="margin-top:14px; text-align:center;">
+        Already have an account?
+        <a href="login.html">Login</a>
+      </p>
+
     </form>
 
-    <p style="margin-top:20px;">
-      Already have an account?
-      <a href="login.html">Login</a>
-    </p>
   </div>
 </main>
 
@@ -53,14 +76,21 @@ document.getElementById("companyRegisterForm")
   const password = document
     .getElementById("password").value;
 
-  if (!companyName || !adminEmail || !password) {
+  const confirmPassword = document
+    .getElementById("confirmPassword").value;
+
+  if (!companyName || !adminEmail || !password || !confirmPassword) {
     alert("Please complete all fields.");
     return;
   }
 
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
   // Generate unique company ID
-  const companyId =
-    "comp-" + Date.now();
+  const companyId = "comp-" + Date.now();
 
   /* =========================================================
      ENTERPRISE-GRADE COMPANY STRUCTURE
@@ -72,7 +102,6 @@ document.getElementById("companyRegisterForm")
     adminEmail,
     createdAt: Date.now(),
 
-    // scalable seat system
     seats: {
       employee: {
         total: 5,
@@ -81,9 +110,7 @@ document.getElementById("companyRegisterForm")
     },
 
     usedSeats: {},
-
     modules: [],
-
     employees: {}
   };
 
@@ -93,14 +120,16 @@ document.getElementById("companyRegisterForm")
   );
 
   /* =========================================================
-     CREATE OWNER USER
+     CREATE COMPANY ADMIN USER
   ========================================================= */
 
   const ownerUser = {
     id: "owner-" + adminEmail,
     email: adminEmail,
     role: "company_admin",
-    companyId: companyId
+    type: "company",
+    companyId: companyId,
+    createdAt: Date.now()
   };
 
   localStorage.setItem(
