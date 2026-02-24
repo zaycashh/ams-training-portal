@@ -48,6 +48,9 @@ document.getElementById("employeeRegisterForm")
   localStorage.setItem("ams_users", JSON.stringify(users));
 
   delete company.invites[email];
+    
+  company.seats.employee.used += 1;
+    
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   localStorage.setItem("amsUser", JSON.stringify(employeeUser));
