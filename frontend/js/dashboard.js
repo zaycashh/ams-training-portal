@@ -202,7 +202,6 @@ function consumeEmployeeSeatAndStart(startUrl) {
   }
 
   // ✅ Proper seat consumption
-  company.seats.employee.used += 1;
   company.usedSeats[user.email] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
@@ -214,6 +213,19 @@ function consumeEmployeeSeatAndStart(startUrl) {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+   
+   /* =========================================================
+   🔒 ROLE LOCK — HIDE FMCSA FOR EMPLOYEES
+========================================================= */
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (user?.role === "employee") {
+  const fmcsaSection = document.querySelector(".fmcsa-section");
+  if (fmcsaSection) {
+    fmcsaSection.style.display = "none";
+  }
+}
 
   /* =========================
      GLOBAL NOTICE TOAST
