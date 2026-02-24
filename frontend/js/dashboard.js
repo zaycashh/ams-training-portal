@@ -190,6 +190,45 @@ function consumeEmployeeSeatAndStart(startUrl) {
   window.location.href = startUrl;
 }
 
+function updateFMCSATimer() {
+  const paid = localStorage.getItem("paid_fmcsa") === "true";
+  if (!paid) return;
+
+  const purchaseDate = localStorage.getItem("fmcsaPurchaseDate");
+  if (!purchaseDate) return;
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const expiration = parseInt(purchaseDate) + THIRTY_DAYS;
+  const remaining = expiration - now;
+
+  const fmcsaCard = document.getElementById("fmcsaCard");
+  if (!fmcsaCard) return;
+
+  if (remaining <= 0) {
+    // Expired
+    localStorage.removeItem("paid_fmcsa");
+    localStorage.removeItem("fmcsaPurchaseDate");
+
+    const btn = fmcsaCard.querySelector("button");
+    if (btn) {
+      btn.textContent = "Expired — Purchase Required";
+      btn.onclick = () =>
+        (window.location.href = "../pages/payment.html?module=fmcsa");
+    }
+
+    return;
+  }
+
+  const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
+
+  const info = fmcsaCard.querySelector(".fmcsa-timer");
+  if (info) {
+    info.textContent = `Access expires in ${daysLeft} day${
+      daysLeft > 1 ? "s" : ""
+    }`;
+  }
+}
 /* =========================
    INIT
 ========================= */
