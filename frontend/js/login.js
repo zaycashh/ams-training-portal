@@ -116,21 +116,18 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
    INDIVIDUAL CLIENT (B2C)
 ========================================================= */
 
-// Preserve registration data if it exists
-const existingUser =
-  JSON.parse(localStorage.getItem("amsUser")) || {};
+// Retrieve stored registration record
+const registeredUser =
+  JSON.parse(localStorage.getItem("registeredUser_" + email)) || null;
 
-const user = {
-  ...existingUser,
-  id: existingUser.id || "ind-" + email,
-  email,
-  role: "individual",
-  companyId: null
-};
+if (!registeredUser) {
+  alert("Account not found. Please register first.");
+  return;
+}
 
-localStorage.setItem("amsUser", JSON.stringify(user));
-redirectByRole(user);
-}); 
+// Restore full profile into active session
+localStorage.setItem("amsUser", JSON.stringify(registeredUser));
+redirectByRole(registeredUser);
 /* =========================================================
    ENTERPRISE ROLE REDIRECT
 ========================================================= */
