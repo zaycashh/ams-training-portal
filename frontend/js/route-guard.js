@@ -52,13 +52,13 @@
   if (!module) return;
 
   /* =========================================================
-     STEP 3 – ROLE → MODULE ENFORCEMENT
-  ========================================================= */
+   STEP 3 – ROLE → MODULE ENFORCEMENT
+========================================================= */
 
-  const role = user.role;
-  const type = user.type || "company"; // safeguard default
-   
-   // 🔒 Individual users cannot access company employee module
+const role = user.role;
+const type = user.type || "company"; // safeguard default
+
+// 🔒 Individual users cannot access company employee module
 if (type === "individual" && module === "employee") {
   sessionStorage.setItem(
     "ams_notice",
@@ -68,12 +68,12 @@ if (type === "individual" && module === "employee") {
   return;
 }
 
-  const roleAccess = {
-    der: ["der"],
-    employee: ["employee"],
-    supervisor: ["supervisor"],
-    owner: [] // owners/admins cannot access modules directly
-  };
+const roleAccess = {
+  der: ["der"],
+  employee: ["employee"],
+  supervisor: ["supervisor"],
+  owner: []
+};
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
     sessionStorage.setItem(
