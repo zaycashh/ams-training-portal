@@ -162,3 +162,4 @@ function redirectByRole(user) {
       break;
   }
 }
+});
