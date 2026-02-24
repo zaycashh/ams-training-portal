@@ -1,100 +1,56 @@
-/* =========================================================
-   EMPLOYEE REGISTRATION — B2B ONLY
-========================================================= */
-
-document
-  .getElementById("employeeRegisterForm")
+document.getElementById("employeeRegisterForm")
   .addEventListener("submit", function (e) {
-    e.preventDefault();
 
-    const email = document
-      .getElementById("email")
-      .value.trim()
-      .toLowerCase();
+  e.preventDefault();
 
-    const password = document.getElementById("password").value;
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+  const inviteCode = document.getElementById("inviteCode").value.trim();
 
-    if (!email || !password) {
-      alert("Please fill all fields.");
-      return;
-    }
+  const msg = document.getElementById("msg");
 
-    const company = JSON.parse(
-      localStorage.getItem("companyProfile") || "null"
-    );
+  if (!firstName || !lastName || !phone || !email || !password || !inviteCode) {
+    msg.textContent = "Please complete all fields.";
+    return;
+  }
 
-    if (!company) {
-      alert("No company found. Please contact your administrator.");
-      return;
-    }
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-    // Ensure invites object exists
-    if (!company.invites) {
-      company.invites = {};
-    }
+  if (!company || !company.invites) {
+    msg.textContent = "Invalid invite code.";
+    return;
+  }
 
-    // Validate invite
-    if (!company.invites[email]) {
-      alert("You are not invited. Please contact your company administrator.");
-      return;
-    }
+  const inviteEntry = company.invites[email];
 
-    /* =========================================================
-       PREVENT DUPLICATE USER REGISTRATION
-    ========================================================= */
+  if (!inviteEntry || inviteEntry.code !== inviteCode) {
+    msg.textContent = "Invalid or expired invite code.";
+    return;
+  }
 
-    const users = JSON.parse(
-      localStorage.getItem("ams_users") || "[]"
-    );
+  const employeeUser = {
+    id: "emp-" + email,
+    firstName,
+    lastName,
+    phone,
+    email,
+    role: "employee",
+    type: "company",
+    companyId: company.id,
+    createdAt: Date.now()
+  };
 
-    const existingUser = users.find(u => u.email === email);
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  users.push(employeeUser);
+  localStorage.setItem("ams_users", JSON.stringify(users));
 
-    if (existingUser) {
-      alert("An account with this email already exists.");
-      return;
-    }
+  delete company.invites[email];
+  localStorage.setItem("companyProfile", JSON.stringify(company));
 
-    /* =========================================================
-       CREATE EMPLOYEE USER (NO SEAT ASSIGNED YET)
-    ========================================================= */
+  localStorage.setItem("amsUser", JSON.stringify(employeeUser));
 
-    const employeeUser = {
-      id: "emp-" + email,
-      email,
-      role: "employee",
-      companyId: company.id,
-      type: "company", // 🔐 REQUIRED for route guard separation
-      createdAt: Date.now()
-    };
-
-    users.push(employeeUser);
-
-    localStorage.setItem(
-      "ams_users",
-      JSON.stringify(users)
-    );
-
-    /* =========================================================
-       REMOVE INVITE AFTER SUCCESS
-    ========================================================= */
-
-    delete company.invites[email];
-
-    localStorage.setItem(
-      "companyProfile",
-      JSON.stringify(company)
-    );
-
-    /* =========================================================
-       LOG USER IN
-    ========================================================= */
-
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify(employeeUser)
-    );
-
-    alert("Employee account created successfully.");
-
-    window.location.replace("dashboard.html");
-  });
+  window.location.replace("dashboard.html");
+});
