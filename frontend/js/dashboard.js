@@ -49,7 +49,7 @@ function getEmployeeSeatStatus() {
   }
 
   const total = company?.seats?.employee?.total ?? 0;
-  const used = company?.seats?.employee?.used ?? 0;
+  const used = Object.keys(company?.usedSeats || {}).length;
   const remaining = total - used;
 
   if (remaining > 0) {
@@ -86,7 +86,7 @@ function updateEmployeeButtonState() {
   }
 
   const total = company?.seats?.employee?.total ?? 0;
-  const used = company?.seats?.employee?.used ?? 0;
+  const used = Object.keys(company?.usedSeats || {}).length;
   const remaining = total - used;
    
   if (remaining > 0) {
@@ -126,9 +126,9 @@ function handleEmployeeClick() {
     return;
   }
 
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = company?.seats?.employee?.used ?? 0;
-  const remaining = total - used;
+  const total = company.seats.employee.total ?? 0;
+  const used = Object.keys(company.usedSeats || {}).length;
+  const remaining = total - used;;
 
   if (remaining > 0) {
     consumeEmployeeSeatAndStart("employee-training.html");
