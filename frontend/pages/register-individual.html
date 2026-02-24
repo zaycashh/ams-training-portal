@@ -1,3 +1,63 @@
-<a href="register-individual.html" class="btn-secondary">
-  Register as Individual
-</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register Individual | AMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- =========================================================
+     AUTO-REDIRECT IF ALREADY LOGGED IN
+========================================================= -->
+<script>
+(function () {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) return;
+
+  // Company users go to company dashboard
+  if (user.type === "company") {
+    window.location.replace("company-dashboard.html");
+    return;
+  }
+
+  // Individual users go to normal dashboard
+  window.location.replace("dashboard.html");
+})();
+</script>
+
+<main class="auth-container">
+  <div class="auth-card">
+    <h2>Create Individual Account</h2>
+    <p>This account is for single-user access (no company required).</p>
+
+    <form id="individualRegisterForm">
+      <label>Email</label>
+      <input type="email" id="email" required />
+
+      <label>Password</label>
+      <input type="password" id="password" required />
+
+      <button type="submit" class="btn-primary">
+        Create Account
+      </button>
+    </form>
+
+    <p id="msg" style="margin-top:10px;"></p>
+
+    <p style="margin-top:15px;">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+</main>
+
+<!-- =========================================================
+     INDIVIDUAL REGISTRATION LOGIC
+========================================================= -->
+<script src="../js/register-individual.js"></script>
+
+</body>
+</html>
