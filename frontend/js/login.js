@@ -47,9 +47,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // Clear previous session
-  localStorage.removeItem("amsUser");
-
   const company = JSON.parse(
     localStorage.getItem("companyProfile") || "null"
   );
@@ -115,21 +112,24 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  /* =========================================================
-     INDIVIDUAL CLIENT (B2C)
-  ========================================================= */
+/* =========================================================
+   INDIVIDUAL CLIENT (B2C)
+========================================================= */
 
-  const user = {
-    id: "ind-" + email,
-    email,
-    role: "individual",
-    companyId: null
-  };
+// Preserve registration data if it exists
+const existingUser =
+  JSON.parse(localStorage.getItem("amsUser")) || {};
 
-  localStorage.setItem("amsUser", JSON.stringify(user));
-  redirectByRole(user);
-});
+const user = {
+  ...existingUser,
+  id: existingUser.id || "ind-" + email,
+  email,
+  role: "individual",
+  companyId: null
+};
 
+localStorage.setItem("amsUser", JSON.stringify(user));
+redirectByRole(user);
 
 /* =========================================================
    ENTERPRISE ROLE REDIRECT
