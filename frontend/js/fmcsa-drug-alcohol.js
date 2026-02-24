@@ -442,9 +442,8 @@ function gradeDrugQuiz() {
     </div>
   `;
 
-  setTimeout(() => {
+ setTimeout(() => {
   showSection("alcoholContentSection");
-  renderAlcoholPage(1);
 }, 1500);
 
   return;
