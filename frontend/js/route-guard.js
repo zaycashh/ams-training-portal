@@ -1,7 +1,7 @@
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD
    (Authentication + Role Access + Seat Logic)
-   SAFE MERGED VERSION
+   TYPE-AWARE STABLE VERSION
 ========================================================= */
 
 (function () {
@@ -24,9 +24,7 @@
      STEP 1 – GLOBAL AUTH CHECK
   ========================================================= */
 
-  // 🔐 Not logged in
   if (!user) {
-    // Allow login & register pages
     if (
       path.includes("login.html") ||
       path.includes("register.html") ||
@@ -37,7 +35,6 @@
     return;
   }
 
-  // 🔐 Logged in users cannot access auth pages
   if (
     path.includes("login.html") ||
     path.includes("register.html") ||
@@ -57,34 +54,38 @@
      STEP 3 – ROLE → MODULE ENFORCEMENT
   ========================================================= */
 
-  const role = user.role; // der | employee | supervisor | individual | owner
+  const role = user.role;
+  const type = user.type || "company"; // safeguard default
 
   const roleAccess = {
     der: ["der"],
     employee: ["employee"],
     supervisor: ["supervisor"],
-    individual: ["der", "employee", "supervisor"],
-    owner: [] // owner cannot access modules directly
+    owner: [] // owners/admins cannot access modules directly
   };
-   // 🔥 Allow FMCSA modules if purchased
-if (
-  (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
-  localStorage.getItem("paid_fmcsa") === "true"
-) {
-  return;
-}
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
-  sessionStorage.setItem(
-    "ams_notice",
-    "You don’t have access to that training module."
-  );
-  redirectToRoleDashboard(user);
-  return;
-}
+    sessionStorage.setItem(
+      "ams_notice",
+      "You don’t have access to that training module."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
 
   /* =========================================================
-     STEP 4 – PAYMENT / SEAT ACCESS ENFORCEMENT
+     FMCSA MODULE ACCESS
+  ========================================================= */
+
+  if (
+    (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
+    localStorage.getItem("paid_fmcsa") === "true"
+  ) {
+    return;
+  }
+
+  /* =========================================================
+     STEP 4 – PAYMENT / SEAT ENFORCEMENT
   ========================================================= */
 
   const paymentFlags = {
@@ -98,10 +99,10 @@ if (
   const hasIndividualPurchase =
     payKey && localStorage.getItem(payKey) === "true";
 
-  // 🔥 COMPANY SEAT SYSTEM (USED SEATS MODEL)
   let hasEmployeeSeat = false;
 
-  if (module === "employee") {
+  if (module === "employee" && type === "company") {
+
     const company = JSON.parse(
       localStorage.getItem("companyProfile") || "null"
     );
@@ -118,33 +119,34 @@ if (
       hasEmployeeSeat = assigned && seatStructureValid;
     }
   }
-   /* =========================================================
-   PAYMENT ENFORCEMENT
-========================================================= */
 
-// If individual role → must have purchase
-if (user.role === "individual") {
-  if (!hasIndividualPurchase) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You must purchase this training before accessing it."
-    );
-    redirectToRoleDashboard(user);
-    return;
-  }
-}
+  /* =========================================================
+     PAYMENT ENFORCEMENT LOGIC
+  ========================================================= */
 
-// If employee role → must have individual purchase OR valid seat
-if (module === "employee" && user.role === "employee") {
-  if (!hasIndividualPurchase && !hasEmployeeSeat) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You do not have access to this employee training."
-    );
-    redirectToRoleDashboard(user);
-    return;
+  // 🔵 Individual Users (B2C)
+  if (type === "individual") {
+    if (!hasIndividualPurchase) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "You must purchase this training before accessing it."
+      );
+      redirectToRoleDashboard(user);
+      return;
+    }
   }
-}
+
+  // 🟢 Company Employees (B2B)
+  if (module === "employee" && type === "company" && role === "employee") {
+    if (!hasIndividualPurchase && !hasEmployeeSeat) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "You do not have access to this employee training."
+      );
+      redirectToRoleDashboard(user);
+      return;
+    }
+  }
 
   /* =========================================================
      STEP 5 – COMPLETION HARD LOCK
@@ -163,7 +165,6 @@ if (module === "employee" && user.role === "employee") {
     localStorage.getItem(completedKey) === "true"
   ) {
     console.log("✅ Module completed — certificate-only access enforced");
-    // Module JS handles certificate-only UI
   }
 
   /* =========================================================
@@ -171,23 +172,21 @@ if (module === "employee" && user.role === "employee") {
   ========================================================= */
 
   function redirectToRoleDashboard(user) {
-    switch (user.role) {
-      case "company_admin":
-      case "owner":
-        window.location.replace(ROUTES.companyDashboard);
-        break;
-      default:
-        window.location.replace(ROUTES.dashboard);
+    if (user.type === "company" &&
+        (user.role === "company_admin" || user.role === "owner")) {
+      window.location.replace(ROUTES.companyDashboard);
+    } else {
+      window.location.replace(ROUTES.dashboard);
     }
   }
+
 })();
+
 /* =========================================================
-   GLOBAL LOGOUT (AVAILABLE ON ALL PAGES)
+   GLOBAL LOGOUT
 ========================================================= */
 
 function logout() {
   localStorage.removeItem("amsUser");
-  window.location.replace(
-    "/ams-training-portal/frontend/pages/login.html"
-  );
+  window.location.replace("login.html");
 }
