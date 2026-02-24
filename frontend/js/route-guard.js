@@ -20,31 +20,25 @@
 };
 
   /* =========================================================
-     STEP 1 – GLOBAL AUTH CHECK
-  ========================================================= */
+   STEP 1 – GLOBAL AUTH CHECK
+========================================================= */
 
-  if (!user) {
-    if (
-      path.includes("login.html") ||
-      path.includes("register-select.html") ||
-      path.includes("register-company.html") ||
-      path.includes("register-employee.html") ||
-      path.includes("register-individual.html")
-    )
+if (!user) {
 
-    window.location.replace(ROUTES.login);
-    return;
-  }
-
+  // Allow public auth pages
   if (
     path.includes("login.html") ||
-    path.includes("register.html") ||
-    path.includes("register-select.html")
+    path.includes("register-select.html") ||
+    path.includes("register-company.html") ||
+    path.includes("register-employee.html") ||
+    path.includes("register-individual.html")
   ) {
-    redirectToRoleDashboard(user);
-    return;
+    return; // ✅ allow access
   }
 
+  window.location.replace(ROUTES.login);
+  return;
+}
   /* =========================================================
      STEP 2 – NOT A MODULE PAGE
   ========================================================= */
