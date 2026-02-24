@@ -57,6 +57,16 @@
 
   const role = user.role;
   const type = user.type || "company"; // safeguard default
+   
+   // 🔒 Individual users cannot access company employee module
+if (type === "individual" && module === "employee") {
+  sessionStorage.setItem(
+    "ams_notice",
+    "This training is available through company enrollment only."
+  );
+  redirectToRoleDashboard(user);
+  return;
+}
 
   const roleAccess = {
     der: ["der"],
