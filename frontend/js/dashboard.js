@@ -193,7 +193,7 @@ function consumeEmployeeSeatAndStart(startUrl) {
   }
 
   const total = company.seats.employee.total ?? 0;
-  const used = company.seats.employee.used ?? 0;
+  const used = Object.keys(company.usedSeats || {}).length;
   const remaining = total - used;
 
   if (remaining <= 0) {
