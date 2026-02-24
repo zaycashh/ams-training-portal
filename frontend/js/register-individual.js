@@ -1,25 +1,39 @@
 /* =========================================================
-   INDIVIDUAL REGISTRATION — B2C ONLY
+   INDIVIDUAL REGISTRATION — FULL PROFILE VERSION
 ========================================================= */
 
 document
   .getElementById("individualRegisterForm")
   .addEventListener("submit", function (e) {
+
     e.preventDefault();
 
-    const email = document
-      .getElementById("email")
-      .value.trim()
-      .toLowerCase();
-
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const company = document.getElementById("company").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
 
-    if (!email || !password) {
+    if (
+      !firstName ||
+      !lastName ||
+      !company ||
+      !phone ||
+      !email ||
+      !password ||
+      !confirmPassword
+    ) {
       alert("Please complete all fields.");
       return;
     }
 
-    // Prevent duplicate users
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
     const users = JSON.parse(
       localStorage.getItem("ams_users") || "[]"
     );
@@ -31,37 +45,25 @@ document
       return;
     }
 
-    /* =========================================================
-       CREATE INDIVIDUAL USER
-    ========================================================= */
-
     const individualUser = {
       id: "ind-" + email,
+      firstName,
+      lastName,
+      company,
+      phone,
       email,
       role: "employee",
-      type: "individual", // 🔐 critical separation flag
-      createdAt: Date.now()
+      type: "individual",
+      createdAt: new Date().toISOString()
     };
 
     users.push(individualUser);
 
-    localStorage.setItem(
-      "ams_users",
-      JSON.stringify(users)
-    );
-
-    localStorage.setItem(
-      "amsUser",
-      JSON.stringify(individualUser)
-    );
-
-    // B2C unlock
+    localStorage.setItem("ams_users", JSON.stringify(users));
+    localStorage.setItem("amsUser", JSON.stringify(individualUser));
     localStorage.setItem("paid_employee", "true");
 
-    // Remove any B2B data
-    localStorage.removeItem("companyProfile");
-
-    alert("Individual account created successfully.");
+    alert("Account created successfully.");
 
     window.location.replace("dashboard.html");
-  });
+});
