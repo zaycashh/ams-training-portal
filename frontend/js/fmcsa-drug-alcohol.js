@@ -714,8 +714,11 @@ function showModuleBCertificate() {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
+  const fullName =
+  `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
   document.getElementById("moduleBCertName").textContent =
-    user.email || "User";
+    fullName || user.email || "Participant";
 
   document.getElementById("moduleBCertDate").textContent =
     new Date().toLocaleDateString();
