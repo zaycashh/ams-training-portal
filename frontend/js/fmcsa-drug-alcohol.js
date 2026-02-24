@@ -520,7 +520,7 @@ const alcoholQuestions = [
     correct: "D"
   },
   {
-    q: "Alcohol abuse is a progressive process of development. Which of thefollowing is not considered part of the process?",
+    q: "Alcohol abuse is a progressive process of development. Which of the following is not considered part of the process?",
     a: {
       A: "Being a social drinker",
       B: "Becoming an alcoholic",
