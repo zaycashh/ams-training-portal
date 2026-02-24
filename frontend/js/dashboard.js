@@ -271,8 +271,6 @@ if (modBCompleted) {
   modBBadge?.classList.remove("hidden");
 }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
   // 🔹 Employee Welcome Banner
   if (user?.role === "employee") {
     const welcome =
