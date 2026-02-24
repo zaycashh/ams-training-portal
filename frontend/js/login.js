@@ -130,7 +130,7 @@ const user = {
 
 localStorage.setItem("amsUser", JSON.stringify(user));
 redirectByRole(user);
-
+}); 
 /* =========================================================
    ENTERPRISE ROLE REDIRECT
 ========================================================= */
@@ -162,4 +162,3 @@ function redirectByRole(user) {
       break;
   }
 }
-});
