@@ -128,6 +128,7 @@ if (!registeredUser) {
 // Restore full profile into active session
 localStorage.setItem("amsUser", JSON.stringify(registeredUser));
 redirectByRole(registeredUser);
+   
 /* =========================================================
    ENTERPRISE ROLE REDIRECT
 ========================================================= */
