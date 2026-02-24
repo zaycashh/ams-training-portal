@@ -110,16 +110,6 @@
 <script>
 
 /* =========================
-   AUTH GUARD
-========================= */
-(function () {
-  const user = localStorage.getItem("amsUser");
-  if (!user) {
-    window.location.replace("login.html");
-  }
-})();
-
-/* =========================
    LOAD CERTIFICATES
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
