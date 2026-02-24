@@ -53,14 +53,22 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
   if (isFMCSAExpired()) {
 
-    sessionStorage.setItem(
-      "ams_notice",
-      "FMCSA training window expired. Repurchase required."
-    );
+  // 🔥 Clear module progress on expiration
+  localStorage.removeItem("fmcsaModuleACompleted");
+  localStorage.removeItem("fmcsaModuleBCompleted");
+  localStorage.removeItem("fmcsaDrugQuizPassed");
+  localStorage.removeItem("fmcsaAlcoholQuizPassed");
+  localStorage.removeItem("fmcsaDrugContentCompleted");
+  localStorage.removeItem("fmcsaAlcoholContentCompleted");
 
-    window.location.replace("dashboard.html");
-    return;
-  }
+  sessionStorage.setItem(
+    "ams_notice",
+    "FMCSA training window expired. Repurchase required."
+  );
+
+  window.location.replace("dashboard.html");
+  return;
+}
 
   /* =========================================================
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
