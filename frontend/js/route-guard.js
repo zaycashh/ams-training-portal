@@ -13,12 +13,11 @@
   const BASE = "/ams-training-portal/frontend/pages/";
 
   const ROUTES = {
-    login: BASE + "login.html",
-    register: BASE + "register.html",
-    registerSelect: BASE + "register-select.html",
-    dashboard: BASE + "dashboard.html",
-    companyDashboard: BASE + "company-dashboard.html"
-  };
+  login: BASE + "login.html",
+  registerSelect: BASE + "register-select.html",
+  dashboard: BASE + "dashboard.html",
+  companyDashboard: BASE + "company-dashboard.html"
+};
 
   /* =========================================================
      STEP 1 – GLOBAL AUTH CHECK
@@ -27,9 +26,11 @@
   if (!user) {
     if (
       path.includes("login.html") ||
-      path.includes("register.html") ||
-      path.includes("register-select.html")
-    ) return;
+      path.includes("register-select.html") ||
+      path.includes("register-company.html") ||
+      path.includes("register-employee.html") ||
+      path.includes("register-individual.html")
+    )
 
     window.location.replace(ROUTES.login);
     return;
