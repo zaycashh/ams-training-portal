@@ -468,3 +468,21 @@ body {
 .ams-toast.error {
   background: #c0392b;
 }
+/* ===============================
+   BACK LINK (REGISTRATION NAV)
+================================ */
+.back-link {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.back-link a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2563eb;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
