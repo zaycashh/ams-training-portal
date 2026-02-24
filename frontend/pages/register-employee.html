@@ -15,9 +15,9 @@
   if (!user) return;
 
   if (user.role === "company_admin" || user.role === "owner") {
-    window.location.href = "/ams-training-portal/frontend/pages/company-dashboard.html";
+    window.location.replace("company-dashboard.html");
   } else {
-    window.location.href = "/ams-training-portal/frontend/pages/dashboard.html";
+    window.location.replace("dashboard.html");
   }
 })();
 </script>
