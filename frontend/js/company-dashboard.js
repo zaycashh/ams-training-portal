@@ -218,46 +218,68 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 /* =========================================================
-   INVITE EMPLOYEE
+   INVITE EMPLOYEE (SEAT-AWARE)
 ========================================================= */
+
 function inviteEmployee() {
-  const input = document.getElementById("inviteEmail");
+
+  const emailInput = document.getElementById("inviteEmail");
   const msg = document.getElementById("inviteMsg");
 
-  if (!input) return;
-
-  const email = input.value.trim().toLowerCase();
+  const email = emailInput.value.trim().toLowerCase();
 
   if (!email) {
-    msg.textContent = "Enter an employee email.";
+    msg.textContent = "Please enter an employee email.";
     msg.style.color = "red";
     return;
   }
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
 
-  if (!company.invites) {
-    company.invites = {};
+  if (!company) {
+    msg.textContent = "Company profile not found.";
+    msg.style.color = "red";
+    return;
   }
 
+  const totalSeats = company.seats?.employee?.total ?? 0;
+  const usedSeats = company.seats?.employee?.used ?? 0;
+
+  if (usedSeats >= totalSeats) {
+    msg.textContent = "No seats available. Please purchase more seats.";
+    msg.style.color = "red";
+    return;
+  }
+
+  company.invites = company.invites || {};
+
+  // Prevent duplicate invite
   if (company.invites[email]) {
-    msg.textContent = "Employee already invited.";
-    msg.style.color = "red";
+    msg.textContent = `Invite already exists. Code: ${company.invites[email].code}`;
+    msg.style.color = "#b8860b";
     return;
   }
+
+  // Generate secure 6-character code
+  const inviteCode = Math.random()
+    .toString(36)
+    .substring(2, 8)
+    .toUpperCase();
 
   company.invites[email] = {
-    invitedAt: Date.now(),
-    status: "pending"
+    code: inviteCode,
+    createdAt: Date.now()
   };
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  input.value = "";
-  msg.textContent = "Employee invited successfully.";
+  msg.textContent = `Invite created. Code: ${inviteCode}`;
   msg.style.color = "green";
-}
 
+  emailInput.value = "";
+}
 /* =========================================================
    LOGOUT
 ========================================================= */
