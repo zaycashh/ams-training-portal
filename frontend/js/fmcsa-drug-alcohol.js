@@ -156,6 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let alcoholPdfDoc = null;
   let alcoholCurrentPage = 1;
   let alcoholTotalPages = 0;
+   
+  let alcoholRendering = false;
+  let alcoholRenderTask = null;
 
   const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
   const alcoholCtx = alcoholCanvas?.getContext("2d");
@@ -168,22 +171,40 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function renderAlcoholPage(pageNum) {
-    alcoholPdfDoc.getPage(pageNum).then(page => {
-      const viewport = page.getViewport({ scale: 1.2 });
 
-      alcoholCanvas.height = viewport.height;
-      alcoholCanvas.width = viewport.width;
+  if (alcoholRendering && alcoholRenderTask) {
+    alcoholRenderTask.cancel();
+  }
 
-      page.render({
-        canvasContext: alcoholCtx,
-        viewport: viewport
+  alcoholRendering = true;
+
+  alcoholPdfDoc.getPage(pageNum).then(page => {
+
+    const viewport = page.getViewport({ scale: 1.2 });
+
+    alcoholCanvas.height = viewport.height;
+    alcoholCanvas.width = viewport.width;
+
+    const renderContext = {
+      canvasContext: alcoholCtx,
+      viewport: viewport
+    };
+
+    alcoholRenderTask = page.render(renderContext);
+
+    alcoholRenderTask.promise
+      .then(() => {
+        alcoholRendering = false;
+      })
+      .catch(() => {
+        alcoholRendering = false;
       });
 
-      document.getElementById("alcoholCurrentPage").textContent = pageNum;
-      updateAlcoholProgress();
-    });
+    document.getElementById("alcoholCurrentPage").textContent = pageNum;
+    updateAlcoholProgress();
+  });
+}
    
-  }
   document.getElementById("alcoholNextPageBtn")?.addEventListener("click", () => {
     if (alcoholCurrentPage < alcoholTotalPages) {
       alcoholCurrentPage++;
