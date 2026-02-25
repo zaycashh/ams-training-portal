@@ -76,12 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     🔴 LIVE SEAT WATCHER
-     (Kicks user if revoked while inside)
-  ========================== */
-  if (user.type === "company" && user.role === "employee") {
+   🔴 LIVE MULTI-TAB SEAT WATCHER
+========================= */
 
-    setInterval(() => {
+if (user.type === "company" && user.role === "employee") {
+
+  window.addEventListener("storage", (event) => {
+
+    if (event.key === "companyProfile") {
 
       const updatedCompany = JSON.parse(
         localStorage.getItem("companyProfile") || "null"
@@ -96,11 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.location.replace("../pages/dashboard.html");
       }
+    }
 
-    }, 2000); // checks every 2 seconds
-  }
+  });
 
-});
+}
 /* =========================================================
    TAB STATE HANDLING
 ========================================================= */
