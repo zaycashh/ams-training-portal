@@ -89,6 +89,7 @@ if (module === "employee") {
 }
 
 const roleAccess = {
+  individual: ["der", "supervisor", "employee"],
   der: ["der"],
   employee: ["employee"],
   supervisor: ["supervisor"],
