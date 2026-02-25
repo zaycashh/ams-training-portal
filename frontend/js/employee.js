@@ -15,7 +15,11 @@ const EMPLOYEE_ATTEMPTS_KEY = "employeeQuizAttempts";
 const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 
-/* =========================
+/* =========================================================
+   PAGE LOAD — HYBRID ACCESS CONTROL
+========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+   /* =========================
    LIVE SEAT VALIDATION
 ========================= */
 
@@ -38,11 +42,6 @@ if (user?.type === "company" && user?.role === "employee") {
     window.location.replace("dashboard.html");
     return;   // ✅ now legal (inside function)
   }
-}
-/* =========================================================
-   PAGE LOAD — HYBRID ACCESS CONTROL
-========================================================= */
-document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "employee") return;
 
