@@ -19,7 +19,6 @@ document
     if (
       !firstName ||
       !lastName ||
-      !company ||
       !phone ||
       !email ||
       !password ||
@@ -49,7 +48,6 @@ document
       id: "ind-" + email,
       firstName,
       lastName,
-      company,
       phone,
       email,
       role: "individual",
