@@ -59,8 +59,8 @@ if (!user) {
    STEP 3 – ROLE → MODULE ENFORCEMENT
 ========================================================= */
 
-const hasEmployeeSeat =
-  !!company?.usedSeats?.[user?.email];
+   const hasEmployeeSeat =
+     !!company?.usedSeats?.[user?.email];
 
    /* =========================================================
    HYBRID EMPLOYEE ACCESS (INDIVIDUAL + COMPANY)
