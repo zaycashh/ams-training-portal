@@ -52,7 +52,7 @@ document
       company,
       phone,
       email,
-      role: "employee",
+      role: "individual",
       type: "individual",
       createdAt: new Date().toISOString()
     };
@@ -61,7 +61,6 @@ document
 
     localStorage.setItem("ams_users", JSON.stringify(users));
     localStorage.setItem("amsUser", JSON.stringify(individualUser));
-    localStorage.setItem("paid_employee", "true");
 
     alert("Account created successfully.");
 
