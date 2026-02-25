@@ -362,3 +362,31 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 }
+/* =========================
+   FMCSA BUTTON HANDLER
+========================= */
+
+function handleFMCSA() {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) return;
+
+  // Individual purchase logic
+  if (user.type === "individual") {
+    if (localStorage.getItem("paid_fmcsa") === "true") {
+      window.location.href = "fmcsa-module-a.html";
+    } else {
+      window.location.href = "payment.html?module=fmcsa";
+    }
+    return;
+  }
+
+  // Company logic (optional future expansion)
+  if (user.type === "company") {
+    if (localStorage.getItem("paid_fmcsa") === "true") {
+      window.location.href = "fmcsa-module-a.html";
+    } else {
+      window.location.href = "payment.html?module=fmcsa";
+    }
+  }
+}
