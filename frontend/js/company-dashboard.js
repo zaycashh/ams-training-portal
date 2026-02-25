@@ -90,7 +90,9 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
-    const seatAssigned = company.usedSeats && company.usedSeats[emp.email];
+    company.usedSeats[email] = {
+  assignedAt: Date.now()
+};
 
     const tr = document.createElement("tr");
 
@@ -99,28 +101,23 @@ function loadEmployees(companyId) {
       <td>${emp.email}</td>
       <td>Employee</td>
       <td>
-        ${
-          seatAssigned
-            ? "Seat Assigned"
-            : emp.completed
-              ? "Completed"
-              : emp.acceptedAt
-                ? "In Progress"
-                : "Invited"
-        }
-      </td>
-      <td>
-        ${
-          seatAssigned
-            ? `<button class="btn-secondary" onclick="revokeSeat('${emp.email}')">
-                Revoke Seat
-               </button>`
-            : ""
-        }
-        <button class="btn-secondary" onclick="removeEmployee('${emp.email}')">
-          Remove
-        </button>
-      </td>
+  ${
+    seatAssigned
+      ? `<button class="btn-secondary"
+           onclick="revokeSeat('${emp.email}')">
+           Revoke Seat
+         </button>`
+      : `<button class="btn-primary"
+           onclick="assignSeat('${emp.email}')">
+           Assign Seat
+         </button>`
+  }
+
+  <button class="btn-secondary"
+    onclick="removeEmployee('${emp.email}')">
+    Remove
+  </button>
+</td>
     `;
 
     tbody.appendChild(tr);
