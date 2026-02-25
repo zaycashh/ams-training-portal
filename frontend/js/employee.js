@@ -19,29 +19,30 @@ const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
    PAGE LOAD — HYBRID ACCESS CONTROL
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
-   /* =========================
-   LIVE SEAT VALIDATION
-========================= */
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  let company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-if (user?.type === "company" && user?.role === "employee") {
+  /* =========================
+     LIVE SEAT VALIDATION
+  ========================== */
 
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "null"
-  );
+  if (user?.type === "company" && user?.role === "employee") {
 
-  const hasSeat = !!company?.usedSeats?.[user.email];
+    const hasSeat = !!company?.usedSeats?.[user.email];
 
-  if (!hasSeat) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "Your company seat has been revoked. Please contact your administrator."
-    );
+    if (!hasSeat) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "Your company seat has been revoked. Please contact your administrator."
+      );
 
-    window.location.replace("dashboard.html");
-    return;   // ✅ now legal (inside function)
+      window.location.replace("dashboard.html");
+      return;
+    }
   }
+
+});
 
   if (document.body.dataset.module !== "employee") return;
 
