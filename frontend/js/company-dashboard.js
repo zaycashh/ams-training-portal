@@ -90,9 +90,8 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
-    company.usedSeats[email] = {
-  assignedAt: Date.now()
-};
+    const seatAssigned =
+      company.usedSeats && company.usedSeats[emp.email];
 
     const tr = document.createElement("tr");
 
