@@ -25,12 +25,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  if (!user || user.role !== "employee") return;
-  if (!company) return;
-   
-   // 🔒 HARD REVOCATION ENFORCEMENT
-if (!company.usedSeats?.[user.email]) {
-  alert("Your company seat has been revoked. Please contact your administrator.");
+  // 🚀 USER ACCESS CONTROL
+
+if (!user) {
+  window.location.replace("../pages/login.html");
+  return;
+}
+
+// 🟢 INDIVIDUAL PURCHASE ACCESS
+if (
+  user.role === "individual" &&
+  localStorage.getItem("paid_employee") === "true"
+) {
+  console.log("Individual purchase access granted.");
+}
+
+// 🟢 COMPANY SEAT ACCESS
+else if (
+  user.role === "employee" &&
+  company?.usedSeats?.[user.email]
+) {
+  console.log("Company seat access granted.");
+}
+
+// 🔴 BLOCK EVERYONE ELSE
+else {
+  alert("This training is available through company enrollment only.");
   window.location.replace("../pages/dashboard.html");
   return;
 }
