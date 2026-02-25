@@ -132,23 +132,28 @@ function handleEmployeeClick() {
     return;
   }
 
-  // 🔵 COMPANY EMPLOYEE FLOW
-  if (user.role === "employee" && user.type === "company") {
-    if (!company) {
-      showToast("Company profile not found.", "error");
-      return;
-    }
+  // 🔵 COMPANY EMPLOYEE FLOW (Admin-Controlled Seats)
+if (user.role === "employee" && user.type === "company") {
 
-    // Initialize usedSeats if missing
-    if (!company.usedSeats) {
-      company.usedSeats = {};
-    }
+  if (!company) {
+    showToast("Company profile not found.", "error");
+    return;
+  }
 
-    // Already assigned seat
-    if (company.usedSeats[user.email]) {
-      startFAA("employee");
-      return;
-    }
+  // Seat already assigned
+  if (company.usedSeats?.[user.email]) {
+    startFAA("employee");
+    return;
+  }
+
+  // 🔴 No seat assigned — show admin warning
+  showToast(
+    "You do not have a company seat assigned. Please contact your administrator.",
+    "warning"
+  );
+
+  return;
+}
 
     const total = company?.seats?.employee?.total ?? 0;
     const used = Object.keys(company.usedSeats).length;
