@@ -1,3 +1,34 @@
-<button id="payNowBtn" class="btn-primary">
-  Complete Purchase
-</button>
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const module = params.get("module");
+
+  const payBtn = document.getElementById("payNowBtn");
+
+  if (!module || !payBtn) return;
+
+  payBtn.addEventListener("click", () => {
+    simulateStripeSuccess(module);
+  });
+});
+
+function simulateStripeSuccess(module) {
+  if (module === "fmcsa") {
+    localStorage.setItem("paid_fmcsa", "true");
+    localStorage.setItem("fmcsaPurchaseDate", Date.now());
+  }
+
+  if (module === "der") {
+    localStorage.setItem("paid_der", "true");
+  }
+
+  if (module === "supervisor") {
+    localStorage.setItem("paid_supervisor", "true");
+  }
+
+  if (module === "employee") {
+    localStorage.setItem("paid_employee", "true");
+  }
+
+  alert("Payment successful!");
+  window.location.href = "dashboard.html";
+}
