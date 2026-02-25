@@ -20,25 +20,6 @@ const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  let company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-
-  /* LIVE SEAT VALIDATION */
-  if (user?.type === "company" && user?.role === "employee") {
-
-    const hasSeat = !!company?.usedSeats?.[user.email];
-
-    if (!hasSeat) {
-      sessionStorage.setItem(
-        "ams_notice",
-        "Your company seat has been revoked. Please contact your administrator."
-      );
-
-      window.location.replace("dashboard.html");
-      return;
-    }
-  }
-
   if (document.body.dataset.module !== "employee") return;
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -51,9 +32,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
+     COMPANY LIVE SEAT VALIDATION
+  ========================== */
+  if (user.type === "company" && user.role === "employee") {
+
+    if (!company?.usedSeats?.[user.email]) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "Your company seat has been revoked. Please contact your administrator."
+      );
+
+      window.location.replace("../pages/dashboard.html");
+      return;
+    }
+
+    console.log("Company seat access granted.");
+  }
+
+  /* =========================
      INDIVIDUAL PURCHASE FLOW
-  ========================= */
-  if (user.type === "individual") {
+  ========================== */
+  else if (user.type === "individual") {
 
     if (localStorage.getItem("paid_employee") !== "true") {
       alert("You must purchase this training before accessing it.");
@@ -65,22 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     COMPANY SEAT FLOW
-  ========================= */
-  else if (user.type === "company" && user.role === "employee") {
-
-    if (!company?.usedSeats?.[user.email]) {
-      alert("You do not have a company seat assigned.");
-      window.location.replace("../pages/dashboard.html");
-      return;
-    }
-
-    console.log("Company seat access granted.");
-  }
-
-  /* =========================
      BLOCK ALL OTHER ROLES
-  ========================= */
+  ========================== */
   else {
     alert("You do not have access to this training.");
     window.location.replace("../pages/dashboard.html");
@@ -95,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showSection("content");
 });
-
 /* =========================================================
    TAB STATE HANDLING
 ========================================================= */
