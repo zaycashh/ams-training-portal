@@ -115,38 +115,41 @@ function updateEmployeeButtonState() {
   btn.textContent = "No Seats Available";
 }
 
-/* =========================
-   EMPLOYEE BUTTON CLICK
-========================= */
 function handleEmployeeClick() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  if (!user || user.role !== "employee") {
-    showToast("Only employees can use company seats.", "error");
+  if (!user) {
+    showToast("Please log in.", "error");
     return;
   }
 
-  if (localStorage.getItem("paid_employee") === "true") {
+  // 🟢 INDIVIDUAL PURCHASE
+  if (
+    user.role === "individual" &&
+    localStorage.getItem("paid_employee") === "true"
+  ) {
     startFAA("employee");
     return;
   }
 
-  if (company?.usedSeats?.[user.email]) {
+  // 🟢 COMPANY SEAT
+  if (
+    user.role === "employee" &&
+    company?.usedSeats?.[user.email]
+  ) {
     startFAA("employee");
     return;
   }
 
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
-  const remaining = total - used;
-
-  if (remaining > 0) {
-    consumeEmployeeSeatAndStart("employee-training.html");
+  // 🟡 INDIVIDUAL NOT PAID
+  if (user.role === "individual") {
+    window.location.href = "../pages/payment.html?module=employee";
     return;
   }
 
-  showToast("No seats available or purchase required.", "warning");
+  // 🔴 BLOCK EVERYTHING ELSE
+  showToast("This training is available through company enrollment only.", "warning");
 }
 
 /* =========================
