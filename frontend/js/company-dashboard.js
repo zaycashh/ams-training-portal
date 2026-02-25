@@ -151,7 +151,32 @@ function revokeSeat(email) {
   const user = JSON.parse(localStorage.getItem("amsUser"));
   loadCompanyDashboard(user);
 }
+/* =========================================================
+   REMOVE EMPLOYEE
+========================================================= */
+function removeEmployee(email) {
 
+  if (!confirm("Remove this employee from the company?")) return;
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  // Remove employee from user list
+  const updatedUsers = users.filter(u => u.email !== email);
+
+  localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
+
+  // Also revoke seat if assigned
+  if (company.usedSeats && company.usedSeats[email]) {
+    delete company.usedSeats[email];
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+  }
+
+  alert("Employee removed successfully.");
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  loadCompanyDashboard(user);
+}
 /* =========================================================
    RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
