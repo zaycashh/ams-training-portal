@@ -36,7 +36,7 @@ if (user?.type === "company" && user?.role === "employee") {
     );
 
     window.location.replace("dashboard.html");
-    return;
+    return;   // ✅ now legal (inside function)
   }
 }
 /* =========================================================
