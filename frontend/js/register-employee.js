@@ -31,6 +31,10 @@ document.getElementById("employeeRegisterForm")
     return;
   }
 
+  /* =========================================================
+     CREATE EMPLOYEE USER (LIFECYCLE SAFE)
+  ========================================================= */
+
   const employeeUser = {
     id: "emp-" + email,
     firstName,
@@ -40,6 +44,8 @@ document.getElementById("employeeRegisterForm")
     role: "employee",
     type: "company",
     companyId: company.id,
+    acceptedAt: Date.now(),   // 🔥 FIX
+    completed: false,
     createdAt: Date.now()
   };
 
@@ -47,11 +53,20 @@ document.getElementById("employeeRegisterForm")
   users.push(employeeUser);
   localStorage.setItem("ams_users", JSON.stringify(users));
 
+  /* =========================================================
+     REMOVE INVITE
+  ========================================================= */
+
   delete company.invites[email];
-    
-  company.seats.employee.used += 1;
-    
+
+  // ⚠️ DO NOT TOUCH seats.employee.used
+  // Your system now derives seat usage from company.usedSeats ONLY
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  /* =========================================================
+     LOGIN SESSION
+  ========================================================= */
 
   localStorage.setItem("amsUser", JSON.stringify(employeeUser));
 
