@@ -23,10 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   let company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  /* =========================
-     LIVE SEAT VALIDATION
-  ========================== */
-
+  /* LIVE SEAT VALIDATION */
   if (user?.type === "company" && user?.role === "employee") {
 
     const hasSeat = !!company?.usedSeats?.[user.email];
@@ -41,8 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
   }
-
-});
 
   if (document.body.dataset.module !== "employee") return;
 
