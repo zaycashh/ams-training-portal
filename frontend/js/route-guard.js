@@ -52,11 +52,39 @@ if (!user) {
 const role = user.role;
 const type = user.type || "company"; // safeguard default
 
-// 🔒 Individual users cannot access company employee module
-if (type === "individual" && module === "employee") {
+const role = user.role;
+const type = user.type || "company";
+   /* =========================================================
+   HYBRID EMPLOYEE ACCESS (INDIVIDUAL + COMPANY)
+========================================================= */
+
+if (module === "employee") {
+
+  const payKey = "paid_employee";
+  const hasIndividualPurchase =
+    localStorage.getItem(payKey) === "true";
+
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  const hasEmployeeSeat =
+    company?.usedSeats?.[user?.email] === true;
+
+  // 🟢 Individual purchase allowed
+  if (type === "individual" && hasIndividualPurchase) {
+    return;
+  }
+
+  // 🟢 Company seat allowed
+  if (type === "company" && role === "employee" && hasEmployeeSeat) {
+    return;
+  }
+
+  // 🔴 Block everyone else
   sessionStorage.setItem(
     "ams_notice",
-    "This training is available through company enrollment only."
+    "You must purchase or be assigned a company seat to access this training."
   );
   redirectToRoleDashboard(user);
   return;
