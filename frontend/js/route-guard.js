@@ -59,8 +59,8 @@ if (!user) {
    STEP 3 – ROLE → MODULE ENFORCEMENT
 ========================================================= */
 
-const role = user.role;
-const type = user.type || "company"; // safeguard default
+const hasEmployeeSeat =
+  !!company?.usedSeats?.[user?.email];
 
    /* =========================================================
    HYBRID EMPLOYEE ACCESS (INDIVIDUAL + COMPANY)
@@ -116,40 +116,63 @@ const roleAccess = {
   }
 
   /* =========================================================
-     STEP 4 – PAYMENT / SEAT ENFORCEMENT
-  ========================================================= */
+   STEP 4 – PAYMENT / SEAT ENFORCEMENT
+========================================================= */
 
-  const paymentFlags = {
-    der: "paid_der",
-    employee: "paid_employee",
-    supervisor: "paid_supervisor"
-  };
+const paymentFlags = {
+  der: "paid_der",
+  employee: "paid_employee",
+  supervisor: "paid_supervisor"
+};
 
-  const payKey = paymentFlags[module];
+const payKey = paymentFlags[module];
 
-  const hasIndividualPurchase =
-    payKey && localStorage.getItem(payKey) === "true";
+const hasIndividualPurchase =
+  payKey && localStorage.getItem(payKey) === "true";
 
-  let hasEmployeeSeat = false;
+let hasEmployeeSeat = false;
 
-  if (module === "employee" && type === "company") {
+if (module === "employee" && type === "company") {
 
-    const company = JSON.parse(
-      localStorage.getItem("companyProfile") || "null"
-    );
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
 
-    if (company && user?.email) {
+  if (company && user?.email) {
 
-      const assigned = company.usedSeats?.[user.email] === true;
+    // ✅ Seat exists if key exists (object or true)
+    hasEmployeeSeat = !!company.usedSeats?.[user.email];
 
-      const total = company?.seats?.employee?.total ?? 0;
-      const used = company?.seats?.employee?.used ?? 0;
-
-      const seatStructureValid = used <= total;
-
-      hasEmployeeSeat = assigned && seatStructureValid;
-    }
   }
+}
+
+/* =========================================================
+   PAYMENT ENFORCEMENT LOGIC
+========================================================= */
+
+// 🔵 Individual Users (B2C)
+if (type === "individual") {
+  if (!hasIndividualPurchase) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must purchase this training before accessing it."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
+}
+
+// 🟢 Company Employees (B2B)
+if (module === "employee" && type === "company" && role === "employee") {
+  if (!hasEmployeeSeat) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must be assigned a company seat to access this training."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
+}
 
   /* =========================================================
      PAYMENT ENFORCEMENT LOGIC
