@@ -124,7 +124,7 @@ function handleEmployeeClick() {
     return;
   }
 
-  // 🟢 INDIVIDUAL PURCHASE
+  // 🔵 INDIVIDUAL PURCHASE FLOW
   if (
     user.role === "individual" &&
     localStorage.getItem("paid_employee") === "true"
@@ -133,23 +133,59 @@ function handleEmployeeClick() {
     return;
   }
 
-  // 🟢 COMPANY SEAT
-  if (
-    user.role === "employee" &&
-    company?.usedSeats?.[user.email]
-  ) {
-    startFAA("employee");
-    return;
-  }
-
-  // 🟡 INDIVIDUAL NOT PAID
+  // 🔵 INDIVIDUAL NOT PAID
   if (user.role === "individual") {
     window.location.href = "../pages/payment.html?module=employee";
     return;
   }
 
-  // 🔴 BLOCK EVERYTHING ELSE
-  showToast("This training is available through company enrollment only.", "warning");
+  // 🔵 COMPANY EMPLOYEE FLOW
+  if (user.role === "employee" && user.type === "company") {
+    if (!company) {
+      showToast("Company profile not found.", "error");
+      return;
+    }
+
+    // Initialize usedSeats if missing
+    if (!company.usedSeats) {
+      company.usedSeats = {};
+    }
+
+    // Already assigned seat
+    if (company.usedSeats[user.email]) {
+      startFAA("employee");
+      return;
+    }
+
+    const total = company?.seats?.employee?.total ?? 0;
+    const used = Object.keys(company.usedSeats).length;
+    const remaining = total - used;
+
+    if (remaining <= 0) {
+      showToast("No seats available.", "error");
+      return;
+    }
+
+    // ✅ ASSIGN SEAT
+    company.usedSeats[user.email] = {
+      assignedAt: Date.now()
+    };
+
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+
+    showToast("Company seat assigned successfully.", "success");
+
+    updateEmployeeButtonState();
+
+    startFAA("employee");
+    return;
+  }
+
+  // 🔴 FALLBACK BLOCK
+  showToast(
+    "This training is available through company enrollment only.",
+    "warning"
+  );
 }
 
 /* =========================
