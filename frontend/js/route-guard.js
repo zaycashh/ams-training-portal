@@ -52,8 +52,6 @@ if (!user) {
 const role = user.role;
 const type = user.type || "company"; // safeguard default
 
-const role = user.role;
-const type = user.type || "company";
    /* =========================================================
    HYBRID EMPLOYEE ACCESS (INDIVIDUAL + COMPANY)
 ========================================================= */
