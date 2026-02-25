@@ -44,6 +44,16 @@ if (!user) {
   ========================================================= */
 
   if (!module) return;
+   /* =========================================================
+     FMCSA MODULE ACCESS
+  ========================================================= */
+
+  if (
+    (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
+    localStorage.getItem("paid_fmcsa") === "true"
+  ) {
+    return;
+  }
 
   /* =========================================================
    STEP 3 – ROLE → MODULE ENFORCEMENT
@@ -102,17 +112,6 @@ const roleAccess = {
       "You don’t have access to that training module."
     );
     redirectToRoleDashboard(user);
-    return;
-  }
-
-  /* =========================================================
-     FMCSA MODULE ACCESS
-  ========================================================= */
-
-  if (
-    (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
-    localStorage.getItem("paid_fmcsa") === "true"
-  ) {
     return;
   }
 
