@@ -62,7 +62,6 @@ function updateSeatCounts(company) {
   document.getElementById("seatUsed").textContent = stats.usedSeats;
   document.getElementById("seatRemaining").textContent = stats.remaining;
 }
-
 /* =========================================================
    LOAD EMPLOYEES
 ========================================================= */
@@ -72,7 +71,14 @@ function loadEmployees(companyId) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  // Ensure usedSeats always exists
+  if (!company.usedSeats) {
+    company.usedSeats = {};
+  }
+
   const tbody = document.getElementById("employeeTable");
+  if (!tbody) return;
+
   tbody.innerHTML = "";
 
   const employees = users.filter(
@@ -90,8 +96,7 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
-    const seatAssigned =
-      company.usedSeats && company.usedSeats[emp.email];
+    const seatAssigned = !!company.usedSeats[emp.email];
 
     const tr = document.createElement("tr");
 
@@ -100,34 +105,75 @@ function loadEmployees(companyId) {
       <td>${emp.email}</td>
       <td>Employee</td>
       <td>
-  ${
-    seatAssigned
-      ? `<button class="btn-secondary"
-           onclick="revokeSeat('${emp.email}')">
-           Revoke Seat
-         </button>`
-      : `<button class="btn-primary"
-           onclick="assignSeat('${emp.email}')">
-           Assign Seat
-         </button>`
-  }
+        ${
+          seatAssigned
+            ? `<button class="btn-secondary"
+                 onclick="revokeSeat('${emp.email}')">
+                 Revoke Seat
+               </button>`
+            : `<button class="btn-primary"
+                 onclick="assignSeat('${emp.email}')">
+                 Assign Seat
+               </button>`
+        }
 
-  <button class="btn-secondary"
-    onclick="removeEmployee('${emp.email}')">
-    Remove
-  </button>
-</td>
+        <button class="btn-secondary"
+          onclick="removeEmployee('${emp.email}')">
+          Remove
+        </button>
+      </td>
     `;
 
     tbody.appendChild(tr);
   });
 }
 
+
 /* =========================================================
-   REVOKE SEAT
+   ASSIGN SEAT (GLOBAL SAFE)
 ========================================================= */
 
-function revokeSeat(email) {
+window.assignSeat = function (email) {
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) {
+    company.usedSeats = {};
+  }
+
+  if (company.usedSeats[email]) {
+    alert("Seat already assigned.");
+    return;
+  }
+
+  const total = company?.seats?.employee?.total ?? 0;
+  const used = Object.keys(company.usedSeats).length;
+  const remaining = total - used;
+
+  if (remaining <= 0) {
+    alert("No seats available.");
+    return;
+  }
+
+  if (!confirm("Assign seat to this employee?")) return;
+
+  company.usedSeats[email] = {
+    assignedAt: Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("Seat assigned successfully.");
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  if (user) loadCompanyDashboard(user);
+};
+
+/* =========================================================
+   REVOKE SEAT (GLOBAL SAFE)
+========================================================= */
+
+window.revokeSeat = function (email) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
@@ -145,8 +191,8 @@ function revokeSeat(email) {
   alert("Seat revoked successfully.");
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
-  loadCompanyDashboard(user);
-}
+  if (user) loadCompanyDashboard(user);
+};
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
