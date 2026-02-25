@@ -9,6 +9,8 @@
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body.dataset.module; // der | employee | supervisor
   const path = window.location.pathname;
+  const role = user?.role;
+  const type = user?.type || "company";
 
   const BASE = "/ams-training-portal/frontend/pages/";
 
