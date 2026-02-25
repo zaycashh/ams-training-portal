@@ -252,9 +252,36 @@ function updateFMCSATimer() {
   }
 }
 /* =========================
+   DER BUTTON STATE
+========================= */
+function updateDERButtonState() {
+  const btn = document.getElementById("derBtn");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!btn || !user) return;
+
+  if (user.type === "individual") {
+    btn.disabled = false;
+
+    if (localStorage.getItem("paid_der") === "true") {
+      btn.textContent = "Start Training";
+      btn.onclick = () => startFAA("der");
+    } else {
+      btn.textContent = "Locked — Purchase Required";
+      btn.onclick = () =>
+        (window.location.href = "payment.html?module=der");
+    }
+
+    return;
+  }
+
+  // Company users keep locked
+  btn.disabled = true;
+}
+/* =========================
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+   
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
@@ -288,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateEmployeeButtonState();
+  updateDERButtonState();
   updateFMCSATimer();
 });
 
