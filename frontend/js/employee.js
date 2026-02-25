@@ -15,6 +15,30 @@ const EMPLOYEE_ATTEMPTS_KEY = "employeeQuizAttempts";
 const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 
+/* =========================
+   LIVE SEAT VALIDATION
+========================= */
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (user?.type === "company" && user?.role === "employee") {
+
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "null"
+  );
+
+  const hasSeat = !!company?.usedSeats?.[user.email];
+
+  if (!hasSeat) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "Your company seat has been revoked. Please contact your administrator."
+    );
+
+    window.location.replace("dashboard.html");
+    return;
+  }
+}
 /* =========================================================
    PAGE LOAD — HYBRID ACCESS CONTROL
 ========================================================= */
