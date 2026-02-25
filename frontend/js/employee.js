@@ -1,6 +1,6 @@
 /* =========================================================
    EMPLOYEE TRAINING MODULE
-   UI + SEAT SYSTEM (DERIVED MODEL)
+   Hybrid Access Model (Individual + Company)
    Security handled by route-guard.js
 ========================================================= */
 
@@ -16,7 +16,7 @@ const EMPLOYEE_COOLDOWN_KEY = "employeeQuizCooldownUntil";
 const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
 
 /* =========================================================
-   PAGE LOAD + SEAT VALIDATION (FINAL ENTERPRISE MODEL)
+   PAGE LOAD — HYBRID ACCESS CONTROL
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -25,66 +25,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  // 🚀 USER ACCESS CONTROL
-
-if (!user) {
-  window.location.replace("../pages/login.html");
-  return;
-}
-
-// 🟢 INDIVIDUAL PURCHASE ACCESS
-if (
-  user.role === "individual" &&
-  localStorage.getItem("paid_employee") === "true"
-) {
-  console.log("Individual purchase access granted.");
-}
-
-// 🟢 COMPANY SEAT ACCESS
-else if (
-  user.role === "employee" &&
-  company?.usedSeats?.[user.email]
-) {
-  console.log("Company seat access granted.");
-}
-
-// 🔴 BLOCK EVERYONE ELSE
-else {
-  alert("This training is available through company enrollment only.");
-  window.location.replace("../pages/dashboard.html");
-  return;
-}
-
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = company?.seats?.employee?.used ?? 0;
-  const remaining = total - used;
-
-  // 🚫 No seats purchased
-  if (total === 0) {
-    alert("No company seats available. Please contact your administrator.");
-    window.location.replace("../pages/dashboard.html");
+  // 🔐 Must be logged in
+  if (!user) {
+    window.location.replace("../pages/login.html");
     return;
   }
 
-  // ✅ Already assigned
-  if (company.usedSeats?.[user.email]) {
-    console.log("Seat already assigned.");
+  /* =========================
+     INDIVIDUAL PURCHASE FLOW
+  ========================= */
+  if (user.type === "individual") {
+
+    if (localStorage.getItem("paid_employee") !== "true") {
+      alert("You must purchase this training before accessing it.");
+      window.location.replace("../pages/dashboard.html");
+      return;
+    }
+
+    console.log("Individual purchase access granted.");
   }
 
-  // ✅ Assign seat if available
-  else if (remaining > 0) {
-    if (!company.usedSeats) company.usedSeats = {};
-    company.usedSeats[user.email] = true;
+  /* =========================
+     COMPANY SEAT FLOW
+  ========================= */
+  else if (user.type === "company" && user.role === "employee") {
 
-    company.seats.employee.used += 1;
+    if (!company?.usedSeats?.[user.email]) {
+      alert("You do not have a company seat assigned.");
+      window.location.replace("../pages/dashboard.html");
+      return;
+    }
 
-    localStorage.setItem("companyProfile", JSON.stringify(company));
-    console.log("✅ Employee seat assigned.");
+    console.log("Company seat access granted.");
   }
 
-  // 🚫 All seats used
+  /* =========================
+     BLOCK ALL OTHER ROLES
+  ========================= */
   else {
-    alert("All company seats are currently in use.");
+    alert("You do not have access to this training.");
     window.location.replace("../pages/dashboard.html");
     return;
   }
@@ -174,6 +153,7 @@ function completeEmployeeContent() {
    QUIZ RESULT HANDLER
 ========================================================= */
 function handleEmployeeQuizResult(score, total) {
+
   const percent = Math.round((score / total) * 100);
   const attempts =
     parseInt(localStorage.getItem(EMPLOYEE_ATTEMPTS_KEY) || "0", 10) + 1;
@@ -181,6 +161,7 @@ function handleEmployeeQuizResult(score, total) {
   localStorage.setItem(EMPLOYEE_ATTEMPTS_KEY, attempts);
 
   if (percent >= EMPLOYEE_PASS_PERCENTAGE) {
+
     localStorage.setItem(EMPLOYEE_PASSED_KEY, "true");
     localStorage.removeItem(EMPLOYEE_ATTEMPTS_KEY);
     localStorage.removeItem(EMPLOYEE_COOLDOWN_KEY);
@@ -196,6 +177,7 @@ function handleEmployeeQuizResult(score, total) {
   }
 
   if (attempts >= EMPLOYEE_MAX_ATTEMPTS) {
+
     localStorage.setItem(
       EMPLOYEE_COOLDOWN_KEY,
       Date.now() + EMPLOYEE_COOLDOWN_MINUTES * 60000
@@ -227,9 +209,10 @@ function finishEmployeeTraining() {
 }
 
 /* =========================================================
-   CERTIFICATE LOCK + QR
+   CERTIFICATE LOCK
 ========================================================= */
 function lockToCertificate() {
+
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
   document.getElementById("certificateSection")?.classList.remove("hidden");
@@ -243,6 +226,7 @@ function lockToCertificate() {
 }
 
 function populateEmployeeCertificate() {
+
   let code = localStorage.getItem(EMPLOYEE_CERT_CODE_KEY);
 
   if (!code) {
@@ -263,7 +247,7 @@ function populateEmployeeCertificate() {
 }
 
 /* =========================================================
-   CONTENT → QUIZ BUTTON
+   CONTENT BUTTON
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("continueToQuizBtn");
