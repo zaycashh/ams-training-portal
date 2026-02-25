@@ -159,20 +159,14 @@ function handleEmployeeClick() {
       return;
     }
 
-    // ✅ ASSIGN SEAT
-    company.usedSeats[user.email] = {
-      assignedAt: Date.now()
-    };
+    if (remaining <= 0) {
+  showToast("No seats available.", "error");
+  return;
+}
 
-    localStorage.setItem("companyProfile", JSON.stringify(company));
-
-    showToast("Company seat assigned successfully.", "success");
-
-    updateEmployeeButtonState();
-
-    startFAA("employee");
-    return;
-  }
+// ❌ Do NOT auto-assign seat anymore
+showToast("You must be assigned a company seat by your administrator.", "warning");
+return;
 
   // 🔴 FALLBACK BLOCK
   showToast(
