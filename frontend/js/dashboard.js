@@ -278,6 +278,32 @@ function updateDERButtonState() {
   btn.disabled = true;
 }
 /* =========================
+   SUPERVISOR BUTTON STATE
+========================= */
+function updateSupervisorButtonState() {
+  const btn = document.getElementById("supervisorBtn");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!btn || !user) return;
+
+  if (user.type === "individual") {
+    btn.disabled = false;
+
+    if (localStorage.getItem("paid_supervisor") === "true") {
+      btn.textContent = "Start Training";
+      btn.onclick = () => startFAA("supervisor");
+    } else {
+      btn.textContent = "Locked — Purchase Required";
+      btn.onclick = () =>
+        (window.location.href = "payment.html?module=supervisor");
+    }
+
+    return;
+  }
+
+  // Company users stay locked
+  btn.disabled = true;
+}
+/* =========================
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
@@ -316,7 +342,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateEmployeeButtonState();
   updateDERButtonState();
-  updateFMCSATimer();
+  updateSupervisorButtonState();
+  updateFMCSATimer();;
 });
 
 /* =========================
