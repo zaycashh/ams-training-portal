@@ -308,6 +308,9 @@ function updateSupervisorButtonState() {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
    
+   updateFMCSAStatus();
+});
+   
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
@@ -387,6 +390,29 @@ function handleFMCSA() {
       window.location.href = "fmcsa-module-a.html";
     } else {
       window.location.href = "payment.html?module=fmcsa";
+    }
+  }
+}
+/* =========================
+   FMCSA COMPLETION STATUS
+========================= */
+function updateFMCSAStatus() {
+  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
+  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+  const modABadge = document.getElementById("modABadge");
+  const modBBadge = document.getElementById("modBBadge");
+
+  if (modA && modABadge) modABadge.classList.remove("hidden");
+  if (modB && modBBadge) modBBadge.classList.remove("hidden");
+
+  if (modA && modB) {
+    const btn = document.getElementById("fmcsaBtn");
+    if (btn) {
+      btn.textContent = "View FMCSA Certificate";
+      btn.onclick = () => {
+        window.location.href = "fmcsa-certificates.html";
+      };
     }
   }
 }
