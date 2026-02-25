@@ -307,12 +307,10 @@ function updateSupervisorButtonState() {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-   
-   updateFMCSAStatus();
-});
-   
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  updateFMCSAStatus();
 
   /* 🔒 Hide FMCSA for employees */
   if (user?.role === "employee") {
@@ -346,9 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
   updateEmployeeButtonState();
   updateDERButtonState();
   updateSupervisorButtonState();
-  updateFMCSATimer();;
-});
+  updateFMCSATimer();
 
+});
 /* =========================
    TOAST
 ========================= */
