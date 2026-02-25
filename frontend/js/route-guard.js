@@ -77,7 +77,7 @@ if (module === "employee") {
   );
 
   const hasEmployeeSeat =
-    company?.usedSeats?.[user?.email] === true;
+  company?.usedSeats?.[user?.email] !== undefined;
 
   // 🟢 Individual purchase allowed
   if (type === "individual" && hasIndividualPurchase) {
