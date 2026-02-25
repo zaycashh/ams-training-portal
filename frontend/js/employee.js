@@ -32,14 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     COMPANY LIVE SEAT VALIDATION
+     COMPANY SEAT VALIDATION
   ========================== */
   if (user.type === "company" && user.role === "employee") {
 
-    if (!company?.usedSeats?.[user.email]) {
+    if (!company?.usedSeats || !(user.email in company.usedSeats)) {
       sessionStorage.setItem(
         "ams_notice",
-        "Your company seat has been revoked. Please contact your administrator."
+        "Your company seat has been revoked."
       );
 
       window.location.replace("../pages/dashboard.html");
@@ -63,11 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Individual purchase access granted.");
   }
 
-  /* =========================
-     BLOCK ALL OTHER ROLES
-  ========================== */
   else {
-    alert("You do not have access to this training.");
     window.location.replace("../pages/dashboard.html");
     return;
   }
@@ -75,10 +71,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔒 Hard lock if already completed
   if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
     lockToCertificate();
-    return;
+  } else {
+    showSection("content");
   }
 
-  showSection("content");
+  /* =========================
+     🔴 LIVE SEAT WATCHER
+     (Kicks user if revoked while inside)
+  ========================== */
+  if (user.type === "company" && user.role === "employee") {
+
+    setInterval(() => {
+
+      const updatedCompany = JSON.parse(
+        localStorage.getItem("companyProfile") || "null"
+      );
+
+      if (!updatedCompany?.usedSeats || !(user.email in updatedCompany.usedSeats)) {
+
+        sessionStorage.setItem(
+          "ams_notice",
+          "Your company seat has been revoked."
+        );
+
+        window.location.replace("../pages/dashboard.html");
+      }
+
+    }, 2000); // checks every 2 seconds
+  }
+
 });
 /* =========================================================
    TAB STATE HANDLING
