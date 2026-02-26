@@ -1,21 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const params = new URLSearchParams(window.location.search);
   const module = params.get("module");
   const productType = params.get("type");
   const qty = parseInt(params.get("qty") || "1", 10);
-  const params = new URLSearchParams(window.location.search);
-  const module = params.get("module");
 
   const payBtn = document.getElementById("payNowBtn");
 
-  if (!module || !payBtn) return;
+  if (!payBtn) return;
 
   payBtn.addEventListener("click", () => {
-    simulateStripeSuccess(module);
+    simulateStripeSuccess(module, productType, qty);
   });
+
 });
 
-function simulateStripeSuccess(module) {
+
+function simulateStripeSuccess(module, productType, qty) {
+
+  /* ===============================
+     MODULE PURCHASES
+  =============================== */
+
   if (module === "fmcsa") {
     localStorage.setItem("paid_fmcsa", "true");
     localStorage.setItem("fmcsaPurchaseDate", Date.now());
@@ -33,20 +39,27 @@ function simulateStripeSuccess(module) {
     localStorage.setItem("paid_employee", "true");
   }
 
-  alert("Payment successful!");
-  window.location.href = "dashboard.html";
-}
+  /* ===============================
+     SEAT PURCHASE
+  =============================== */
 
-if (productType === "employee_seats") {
+  if (productType === "employee_seats") {
 
-  const company = JSON.parse(localStorage.getItem("companyProfile"));
+    const company = JSON.parse(
+      localStorage.getItem("companyProfile") || "{}"
+    );
 
-  if (!company.seats) company.seats = {};
-  if (!company.seats.employee) {
-    company.seats.employee = { total: 0 };
+    if (!company.seats) company.seats = {};
+    if (!company.seats.employee) {
+      company.seats.employee = { total: 0 };
+    }
+
+    company.seats.employee.total += qty;
+
+    localStorage.setItem("companyProfile", JSON.stringify(company));
   }
 
-  company.seats.employee.total += 5;
+  alert("Payment successful!");
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  window.location.href = "dashboard.html";
 }
