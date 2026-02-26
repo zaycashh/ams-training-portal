@@ -40,26 +40,37 @@ function simulateStripeSuccess(module, productType, qty) {
   }
 
   /* ===============================
-     SEAT PURCHASE
-  =============================== */
+   SEAT PURCHASE
+=============================== */
 
-  if (productType === "employee_seats") {
+if (productType === "employee_seats") {
 
-    const company = JSON.parse(
-      localStorage.getItem("companyProfile") || "{}"
-    );
+  const company = JSON.parse(
+    localStorage.getItem("companyProfile") || "{}"
+  );
 
-    if (!company.seats) company.seats = {};
-    if (!company.seats.employee) {
-      company.seats.employee = { total: 0 };
-    }
-
-    company.seats.employee.total += qty;
-
-    localStorage.setItem("companyProfile", JSON.stringify(company));
+  if (!company.seats) company.seats = {};
+  if (!company.seats.employee) {
+    company.seats.employee = { total: 0 };
   }
 
-  alert("Payment successful!");
+  company.seats.employee.total += qty;
 
-  window.location.href = "dashboard.html";
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+}
+
+alert("Payment successful!");
+
+// 🔐 Smart Redirect Logic
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (productType === "employee_seats" &&
+    (user?.role === "company_admin" || user?.role === "owner")) {
+
+  window.location.replace("company-dashboard.html");
+
+} else {
+
+  window.location.replace("dashboard.html");
+
 }
