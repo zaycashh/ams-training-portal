@@ -71,10 +71,7 @@ function loadEmployees(companyId) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  // Ensure usedSeats always exists
-  if (!company.usedSeats) {
-    company.usedSeats = {};
-  }
+  if (!company.usedSeats) company.usedSeats = {};
 
   const tbody = document.getElementById("employeeTable");
   if (!tbody) return;
@@ -98,12 +95,28 @@ function loadEmployees(companyId) {
 
     const seatAssigned = !!company.usedSeats[emp.email];
 
+    // 🔵 Per-employee completion tracking
+    const completedKey = `employeeTrainingCompleted_${emp.email}`;
+    const trainingCompleted =
+      localStorage.getItem(completedKey) === "true";
+
+    let statusLabel = "Invited";
+
+    if (seatAssigned && !trainingCompleted) {
+      statusLabel = "In Progress";
+    }
+
+    if (seatAssigned && trainingCompleted) {
+      statusLabel = "Completed";
+    }
+
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
       <td>${emp.email}</td>
       <td>Employee</td>
+      <td>${statusLabel}</td>
       <td>
         ${
           seatAssigned
@@ -116,7 +129,6 @@ function loadEmployees(companyId) {
                  Assign Seat
                </button>`
         }
-
         <button class="btn-secondary"
           onclick="removeEmployee('${emp.email}')">
           Remove
@@ -130,16 +142,13 @@ function loadEmployees(companyId) {
 
 
 /* =========================================================
-   ASSIGN SEAT (GLOBAL SAFE)
+   ASSIGN SEAT
 ========================================================= */
 
 window.assignSeat = function (email) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.usedSeats) {
-    company.usedSeats = {};
-  }
+  if (!company.usedSeats) company.usedSeats = {};
 
   if (company.usedSeats[email]) {
     alert("Seat already assigned.");
@@ -163,14 +172,13 @@ window.assignSeat = function (email) {
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("Seat assigned successfully.");
-
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (user) loadCompanyDashboard(user);
 };
 
+
 /* =========================================================
-   REVOKE SEAT (GLOBAL SAFE)
+   REVOKE SEAT
 ========================================================= */
 
 window.revokeSeat = function (email) {
@@ -188,37 +196,35 @@ window.revokeSeat = function (email) {
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("Seat revoked successfully.");
-
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (user) loadCompanyDashboard(user);
 };
+
+
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
-function removeEmployee(email) {
+
+window.removeEmployee = function (email) {
 
   if (!confirm("Remove this employee from the company?")) return;
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  // Remove employee from user list
   const updatedUsers = users.filter(u => u.email !== email);
-
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  // Also revoke seat if assigned
   if (company.usedSeats && company.usedSeats[email]) {
     delete company.usedSeats[email];
     localStorage.setItem("companyProfile", JSON.stringify(company));
   }
 
-  alert("Employee removed successfully.");
-
   const user = JSON.parse(localStorage.getItem("amsUser"));
-  loadCompanyDashboard(user);
-}
+  if (user) loadCompanyDashboard(user);
+};
+
+
 /* =========================================================
    RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
@@ -256,8 +262,9 @@ function renderSeatAssignments(company) {
   });
 }
 
+
 /* =========================================================
-   BUY 5 MORE SEATS (STACKING SAFE)
+   BUY 5 MORE SEATS (STACK SAFE)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -278,18 +285,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     localStorage.setItem("companyProfile", JSON.stringify(company));
 
-    alert("5 seats added successfully.");
-
     const user = JSON.parse(localStorage.getItem("amsUser"));
-    loadCompanyDashboard(user);
+    if (user) loadCompanyDashboard(user);
   });
 });
 
+
 /* =========================================================
-   INVITE EMPLOYEE (SEAT SAFE)
+   INVITE EMPLOYEE
 ========================================================= */
 
-function inviteEmployee() {
+window.inviteEmployee = function () {
 
   const emailInput = document.getElementById("inviteEmail");
   const msg = document.getElementById("inviteMsg");
@@ -343,7 +349,8 @@ function inviteEmployee() {
   msg.style.color = "green";
 
   emailInput.value = "";
-}
+};
+
 
 /* =========================================================
    LOGOUT
