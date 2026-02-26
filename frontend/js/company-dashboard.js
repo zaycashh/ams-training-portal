@@ -274,22 +274,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   buyBtn.addEventListener("click", () => {
 
-    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    // 🔵 Redirect to payment page instead of directly adding seats
+    window.location.href =
+      "../pages/payment.html?type=employee_seats&qty=5";
 
-    if (!company.seats) company.seats = {};
-    if (!company.seats.employee) {
-      company.seats.employee = { total: 0 };
-    }
-
-    company.seats.employee.total += 5;
-
-    localStorage.setItem("companyProfile", JSON.stringify(company));
-
-    const user = JSON.parse(localStorage.getItem("amsUser"));
-    if (user) loadCompanyDashboard(user);
   });
-});
 
+});
 
 /* =========================================================
    INVITE EMPLOYEE
