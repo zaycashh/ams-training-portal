@@ -9,37 +9,105 @@
 </head>
 <body>
 
-<main class="auth-container">
-  <div class="auth-card">
+<main>
 
-    <h1>Register for AMS</h1>
-    <p>Select how you would like to register:</p>
+  <!-- HERO SECTION -->
+  <section style="
+    background:#0b1f3a;
+    color:white;
+    text-align:center;
+    padding:50px 20px 40px;
+  ">
+    <h1 style="font-weight:600; font-size:28px; margin-bottom:10px;">
+      AMS Drug & Alcohol Compliance Certification Portal
+    </h1>
 
-    <div class="form-actions" style="flex-direction:column; gap:15px; margin-top:20px;">
-
-      <button type="button" class="btn-primary"
-        onclick="window.location.href='register-company.html'">
-        🏢 Register as Company Owner
-      </button>
-
-      <button type="button" class="btn-secondary"
-        onclick="window.location.href='register-employee.html'">
-        👷 Register as Employee (Invite Required)
-      </button>
-
-      <button type="button" class="btn-secondary"
-        onclick="window.location.href='register-individual.html'">
-        👤 Register as Individual
-      </button>
-
-    </div>
-
-    <p style="margin-top:25px;">
-      Already have an account?
-      <a href="login.html">Login</a>
+    <p style="font-size:15px; opacity:0.9;">
+      FAA & FMCSA Drug & Alcohol Awareness Training Programs
     </p>
 
+    <div style="
+      margin-top:15px;
+      font-size:13px;
+      opacity:0.85;
+      letter-spacing:0.5px;
+    ">
+      ✔ DOT Compliant &nbsp; | &nbsp;
+      ✔ Instant Certificate Generation &nbsp; | &nbsp;
+      ✔ Employer Seat Management
+    </div>
+  </section>
+
+  <!-- REGISTRATION CARD -->
+  <div class="auth-container" style="margin-top:-40px;">
+    <div class="auth-card" style="padding:30px;">
+
+      <h2 style="text-align:center; font-weight:600; margin-bottom:25px;">
+        Select Your Registration Type
+      </h2>
+
+      <div style="display:flex; flex-direction:column; gap:18px;">
+
+        <!-- COMPANY -->
+        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
+          <h3 style="margin-bottom:6px;">Company Owner / Administrator</h3>
+          <p style="font-size:13px; color:#555; margin-bottom:12px;">
+            Manage employee training seats, monitor certification status,
+            and maintain FAA & FMCSA compliance records.
+          </p>
+          <button class="btn-primary"
+            onclick="window.location.href='register-company.html'">
+            Register as Company Owner
+          </button>
+        </div>
+
+        <!-- EMPLOYEE -->
+        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
+          <h3 style="margin-bottom:6px;">Employee (Invite Required)</h3>
+          <p style="font-size:13px; color:#555; margin-bottom:12px;">
+            Complete company-assigned Drug & Alcohol Awareness certification
+            under FAA or FMCSA requirements.
+          </p>
+          <button class="btn-secondary"
+            onclick="window.location.href='register-employee.html'">
+            Register as Employee
+          </button>
+        </div>
+
+        <!-- INDIVIDUAL -->
+        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
+          <h3 style="margin-bottom:6px;">Individual Certification</h3>
+          <p style="font-size:13px; color:#555; margin-bottom:12px;">
+            Purchase and complete required Drug & Alcohol Awareness
+            training independently.
+          </p>
+          <button class="btn-secondary"
+            onclick="window.location.href='register-individual.html'">
+            Register as Individual
+          </button>
+        </div>
+
+      </div>
+
+      <p style="margin-top:30px; text-align:center;">
+        Already have an account?
+        <a href="login.html">Login to secure portal</a>
+      </p>
+
+      <p style="
+        margin-top:25px;
+        font-size:11px;
+        text-align:center;
+        color:#666;
+      ">
+        AMS (Airport Medical Solutions) provides FAA & FMCSA compliant
+        training programs. AMS is a private compliance DOT Solution it 
+        is not a government agency.
+      </p>
+
+    </div>
   </div>
+
 </main>
 
 </body>
