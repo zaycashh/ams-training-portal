@@ -74,3 +74,4 @@ if (productType === "employee_seats" &&
   window.location.replace("dashboard.html");
 
 }
+});
