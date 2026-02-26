@@ -46,48 +46,51 @@
         Select Your Registration Type
       </h2>
 
-      <div style="display:flex; flex-direction:column; gap:18px;">
+      <div style="display:flex; flex-direction:column; gap:25px;">
 
-        <!-- COMPANY -->
-        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
-          <h3 style="margin-bottom:6px;">Company Owner / Administrator</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:12px;">
-            Manage employee training seats, monitor certification status,
-            and maintain FAA & FMCSA compliance records.
-          </p>
-          <button class="btn-primary"
-            onclick="window.location.href='register-company.html'">
-            Register as Company Owner
-          </button>
-        </div>
+  <!-- COMPANY (FULL WIDTH) -->
+  <div style="border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
+    <h3 style="margin-bottom:6px;">Company Owner / Administrator</h3>
+    <p style="font-size:13px; color:#555; margin-bottom:15px;">
+      Manage employee training seats, monitor certification status,
+      and maintain FAA & FMCSA compliance records.
+    </p>
+    <button class="btn-primary"
+      onclick="window.location.href='register-company.html'">
+      Register as Company Owner
+    </button>
+  </div>
 
-        <!-- EMPLOYEE -->
-        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
-          <h3 style="margin-bottom:6px;">Employee (Invite Required)</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:12px;">
-            Complete company-assigned Drug & Alcohol Awareness certification
-            under FAA or FMCSA requirements.
-          </p>
-          <button class="btn-primary"
-            onclick="window.location.href='register-employee.html'">
-            Register as Employee
-          </button>
-        </div>
+  <!-- TWO COLUMN ROW -->
+  <div style="display:flex; gap:20px; flex-wrap:wrap;">
 
-        <!-- INDIVIDUAL -->
-        <div style="border:1px solid #e2e6ea; padding:18px; border-radius:8px;">
-          <h3 style="margin-bottom:6px;">Individual Certification</h3>
-          <p style="font-size:13px; color:#555; margin-bottom:12px;">
-            Purchase and complete required Drug & Alcohol Awareness
-            training independently.
-          </p>
-          <button class="btn-primary"
-            onclick="window.location.href='register-individual.html'">
-            Register as Individual
-          </button>
-        </div>
+    <!-- EMPLOYEE -->
+    <div style="flex:1; min-width:260px; border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
+      <h3 style="margin-bottom:6px;">Employee</h3>
+      <p style="font-size:13px; color:#555; margin-bottom:15px;">
+        Complete company-assigned Drug & Alcohol certification.
+      </p>
+      <button class="btn-primary"
+        onclick="window.location.href='register-employee.html'">
+        Register as Employee
+      </button>
+    </div>
 
-      </div>
+    <!-- INDIVIDUAL -->
+    <div style="flex:1; min-width:260px; border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
+      <h3 style="margin-bottom:6px;">Individual</h3>
+      <p style="font-size:13px; color:#555; margin-bottom:15px;">
+        Purchase and complete certification independently.
+      </p>
+      <button class="btn-primary"
+        onclick="window.location.href='register-individual.html'">
+        Register as Individual
+      </button>
+    </div>
+
+  </div>
+
+</div>
 
       <p style="margin-top:30px; text-align:center;">
         Already have an account?
