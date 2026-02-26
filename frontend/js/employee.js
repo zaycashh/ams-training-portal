@@ -69,11 +69,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔒 Hard lock if already completed
-  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
+   
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (user) {
+  const completedKey = `employeeTrainingCompleted_${user.email}`;
+
+  if (localStorage.getItem(completedKey) === "true") {
     lockToCertificate();
   } else {
     showSection("content");
   }
+}
 
   /* =========================
    🔴 LIVE MULTI-TAB SEAT WATCHER
@@ -133,10 +140,14 @@ function setActiveTab(tab) {
 ========================================================= */
 function showSection(section) {
 
-  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (user) {
+  const completedKey = `employeeTrainingCompleted_${user.email}`;
+  if (localStorage.getItem(completedKey) === "true") {
     lockToCertificate();
     return;
   }
+}
 
   if (section === "quiz") {
     if (localStorage.getItem(EMPLOYEE_CONTENT_DONE_KEY) !== "true") return;
@@ -231,7 +242,14 @@ function handleEmployeeQuizResult(score, total) {
    FINALIZE TRAINING
 ========================================================= */
 function finishEmployeeTraining() {
-  localStorage.setItem(EMPLOYEE_COMPLETED_KEY, "true");
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  const completedKey = `employeeTrainingCompleted_${user.email}`;
+
+  localStorage.setItem(completedKey, "true");
+
   lockToCertificate();
 }
 
