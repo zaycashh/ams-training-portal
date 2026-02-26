@@ -64,14 +64,13 @@ alert("Payment successful!");
 // 🔐 Smart Redirect Logic
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if (productType === "employee_seats" &&
-    (user?.role === "company_admin" || user?.role === "owner")) {
-
+if (
+  productType === "employee_seats" &&
+  (user?.role === "company_admin" || user?.role === "owner")
+) {
   window.location.replace("company-dashboard.html");
-
 } else {
-
   window.location.replace("dashboard.html");
+}
 
 }
-});
