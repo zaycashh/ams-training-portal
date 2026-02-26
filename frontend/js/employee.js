@@ -69,8 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔒 Hard lock if already completed
-   
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
 if (user) {
   const completedKey = `employeeTrainingCompleted_${user.email}`;
