@@ -7,85 +7,121 @@
   <link rel="stylesheet" href="../css/main.css" />
   <link rel="icon" href="data:,">
 </head>
-<body>
+  
+<body style="margin:0; background:#f4f6f9; font-family:'Segoe UI', Arial, sans-serif; color:#1a1a1a;">
 
-<main>
+<!-- HERO -->
+<section style="background:#0b1f3a; padding:80px 20px 70px;">
 
-  <!-- HERO -->
-<section style="
-  background:#0b1f3a;
-  color:white;
-  text-align:center;
-  padding:60px 20px 80px;
-">
-    <h1 style="font-weight:600; font-size:28px; margin-bottom:10px;">
-      AMS Drug & Alcohol Compliance Certification Portal
+  <div style="max-width:1100px; margin:0 auto; text-align:center; color:white;">
+
+    <div style="font-size:13px; letter-spacing:1px; opacity:0.8; margin-bottom:15px;">
+      ADVANCED MANAGEMENT SYSTEMS (AMS)
+    </div>
+
+    <h1 style="font-size:32px; font-weight:600; margin-bottom:12px;">
+      Drug & Alcohol Compliance Certification Portal
     </h1>
 
-    <p style="font-size:15px; opacity:0.9;">
+    <p style="font-size:16px; opacity:0.9; margin-bottom:25px;">
       FAA & FMCSA Drug & Alcohol Awareness Training Programs
     </p>
 
-    <div style="
-      margin-top:15px;
-      font-size:13px;
-      opacity:0.85;
-      letter-spacing:0.5px;
-    ">
-      ✔ DOT Compliant &nbsp; | &nbsp;
-      ✔ Instant Certificate Generation &nbsp; | &nbsp;
-      ✔ Employer Seat Management
+    <div style="font-size:13px; opacity:0.85;">
+      DOT Compliant &nbsp; | &nbsp;
+      Instant Certificate Generation &nbsp; | &nbsp;
+      Employer Seat Management
     </div>
-  </section>
 
-  <!-- REGISTRATION CARD -->
-  <div class="auth-container">
-    <div class="auth-card">
+  </div>
 
-      <h2 style="text-align:center; font-weight:600; margin-bottom:25px;">
-        Select Your Registration Type
-      </h2>
+</section>
 
-      <div style="display:flex; flex-direction:column; gap:25px;">
+<!-- MAIN CONTENT -->
+<section style="max-width:1100px; margin:60px auto; padding:0 20px;">
 
-  <!-- COMPANY (FULL WIDTH) -->
-  <div style="border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
-    <h3 style="margin-bottom:6px;">Company Owner / Administrator</h3>
-    <p style="font-size:13px; color:#555; margin-bottom:15px;">
-      Manage employee training seats, monitor certification status,
-      and maintain FAA & FMCSA compliance records.
+  <h2 style="text-align:center; font-size:24px; font-weight:600; margin-bottom:45px;">
+    Select Your Registration Type
+  </h2>
+
+  <!-- COMPANY OWNER (Primary Block) -->
+  <div style="
+    background:white;
+    padding:35px;
+    border-radius:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.06);
+    margin-bottom:35px;
+    border:1px solid #e6e9ef;
+  ">
+    <h3 style="font-size:18px; margin-bottom:10px;">
+      Company Owner / Administrator
+    </h3>
+
+    <p style="color:#555; line-height:1.6; margin-bottom:22px;">
+      Create and manage company accounts, assign employee training seats,
+      monitor certification completion status, and maintain FAA & FMCSA
+      compliance records within a centralized compliance dashboard.
     </p>
+
     <button class="btn-primary"
+      style="padding:12px 22px; font-size:14px;"
       onclick="window.location.href='register-company.html'">
       Register as Company Owner
     </button>
   </div>
 
-  <!-- TWO COLUMN ROW -->
-  <div style="display:flex; gap:20px; flex-wrap:wrap;">
+  <!-- TWO COLUMN SECTION -->
+  <div style="display:flex; gap:30px; flex-wrap:wrap;">
 
     <!-- EMPLOYEE -->
-    <div style="flex:1; min-width:260px; border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
-      <h3 style="margin-bottom:6px;">Employee</h3>
-      <p style="font-size:13px; color:#555; margin-bottom:15px;">
-        Complete company-assigned Drug & Alcohol certification.
+    <div style="
+      flex:1;
+      min-width:320px;
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.05);
+      border:1px solid #e6e9ef;
+    ">
+      <h3 style="font-size:17px; margin-bottom:10px;">
+        Employee (Invite Required)
+      </h3>
+
+      <p style="color:#555; line-height:1.6; margin-bottom:22px;">
+        Complete company-assigned FAA or FMCSA Drug & Alcohol Awareness
+        certification training as required under federal transportation
+        safety regulations.
       </p>
+
       <button class="btn-primary"
+        style="padding:12px 20px; font-size:14px;"
         onclick="window.location.href='register-employee.html'">
         Register as Employee
       </button>
     </div>
 
     <!-- INDIVIDUAL -->
-    <div style="flex:1; min-width:260px; border:1px solid #e2e6ea; padding:20px; border-radius:8px;">
-      <h3 style="margin-bottom:6px;">Individual</h3>
-      <p style="font-size:13px; color:#555; margin-bottom:15px;">
-        Purchase and complete FAA or FMCSA Drug & Alcohol Awareness 
-        certification programs independently. Select the appropriate 
-        training module based on federal regulatory requirements 
-        applicable to your position or organization.
+    <div style="
+      flex:1;
+      min-width:320px;
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.05);
+      border:1px solid #e6e9ef;
+    ">
+      <h3 style="font-size:17px; margin-bottom:10px;">
+        Individual Certification
+      </h3>
+
+      <p style="color:#555; line-height:1.6; margin-bottom:22px;">
+        Select and purchase FAA or FMCSA Drug & Alcohol Awareness training
+        programs independently. Choose the certification module that applies
+        to your specific regulatory requirements or employer compliance needs.
       </p>
+
       <button class="btn-primary"
+        style="padding:12px 20px; font-size:14px;"
         onclick="window.location.href='register-individual.html'">
         Register as Individual
       </button>
@@ -93,7 +129,33 @@
 
   </div>
 
-</div>
+  <!-- LOGIN SECTION -->
+  <div style="text-align:center; margin-top:50px; font-size:14px;">
+    Already have an account?
+    <a href="login.html" style="color:#1f4ed8; font-weight:500;">
+      Login to Secure Portal
+    </a>
+  </div>
+
+  <!-- LEGAL FOOTER -->
+  <div style="
+    text-align:center;
+    font-size:11px;
+    color:#777;
+    margin-top:40px;
+    max-width:750px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.6;
+  ">
+    AMS (Advanced Management Systems) provides FAA & FMCSA compliant
+    training programs. AMS is a private compliance training provider
+    and is not a government agency.
+  </div>
+
+</section>
+
+</body>
 
       <p style="margin-top:30px; text-align:center;">
         Already have an account?
