@@ -488,11 +488,3 @@ function handleDerFmcsa() {
     window.location.href = "payment.html?module=der_fmcsa";
   }
 }
-
-function handleFMCSA() {
-  if (localStorage.getItem("paid_fmcsa") === "true") {
-    window.location.href = "fmcsa-drug-alcohol.html";
-  } else {
-    window.location.href = "payment.html?module=fmcsa";
-  }
-}
