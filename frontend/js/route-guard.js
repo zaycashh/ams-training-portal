@@ -50,12 +50,50 @@ if (!user) {
      FMCSA MODULE ACCESS
   ========================================================= */
 
-  if (
-    (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") &&
-    localStorage.getItem("paid_fmcsa") === "true"
-  ) {
+  /* =========================================================
+   FMCSA MODULE ACCESS + 30-DAY EXPIRATION
+========================================================= */
+
+if (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") {
+
+  const paid = localStorage.getItem("paid_fmcsa");
+  const purchaseDate = parseInt(
+    localStorage.getItem("paid_fmcsa_date") || "0",
+    10
+  );
+
+  // ❌ Not purchased
+  if (paid !== "true" || !purchaseDate) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must purchase FMCSA training to access this module."
+    );
+    redirectToRoleDashboard(user);
     return;
   }
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  // ❌ Expired
+  if (now - purchaseDate > THIRTY_DAYS) {
+
+    // Auto-revoke
+    localStorage.removeItem("paid_fmcsa");
+    localStorage.removeItem("paid_fmcsa_date");
+
+    sessionStorage.setItem(
+      "ams_notice",
+      "Your FMCSA training access has expired (30 days). Please repurchase to continue."
+    );
+
+    redirectToRoleDashboard(user);
+    return;
+  }
+
+  // ✅ Valid + Not Expired
+  return;
+}
 
    /* =========================================================
    HYBRID EMPLOYEE ACCESS (INDIVIDUAL + COMPANY)
