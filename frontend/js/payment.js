@@ -69,7 +69,7 @@ alert("Payment successful!");
   return;
 }
   if (module === "fmcsa") {
-  window.location.replace("fmcsa-drug-alcohol.html");
+  window.location.replace("fmcsa.html"); // or your Module A file
   return;
 }
 
