@@ -116,22 +116,6 @@ if (
   return; // ✅ Access allowed
 }
 
-  const paid = localStorage.getItem("paid_fmcsa");
-  const purchaseDate = parseInt(
-    localStorage.getItem("paid_fmcsa_date") || "0",
-    10
-  );
-
-  // ❌ Not purchased
-  if (paid !== "true" || !purchaseDate) {
-    sessionStorage.setItem(
-      "ams_notice",
-      "You must purchase FMCSA training to access this module."
-    );
-    redirectToRoleDashboard(user);
-    return;
-  }
-
   const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
   const now = Date.now();
 
