@@ -14,20 +14,20 @@
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   if (!user) {
-   window.location.replace("login.html");
+   window.location.replace("/ams-training-portal/frontend/pages/login.html");
     return;
   }
 
   // 🔒 Block employees
   if (user.role === "employee") {
     alert("Unauthorized access.");
-    window.location.replace("dashboard.html");
+    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
     return;
   }
 
   // 💳 Must purchase bundle
   if (localStorage.getItem("paid_fmcsa") !== "true") {
-    window.location.replace("dashboard.html");
+    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
     return;
   }
 
@@ -45,14 +45,14 @@
     alert("Your FMCSA training access has expired. Please repurchase.");
     localStorage.removeItem("paid_fmcsa");
     localStorage.removeItem("fmcsaPurchaseDate");
-    window.location.replace("dashboard.html");
+    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
     return;
   }
 
   // 🚧 Must complete Module A first
   if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
     alert("Complete Module A first.");
-    window.location.replace("fmcsa-module-a.html");
+    window.location.replace("/ams-training-portal/frontend/pages/fmcsa-module-a.html");
     return;
   }
 
@@ -65,21 +65,21 @@
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   if (!user) {
-   window.location.replace("login.html");
+   window.location.replace("/ams-training-portal/frontend/pages/login.html");
     return;
   }
 
   // 🔒 Block employees
   if (user.role === "employee") {
     alert("Unauthorized access.");
-    window.location.replace("login.html");
+    window.location.replace("/ams-training-portal/frontend/pages/login.html");
     return;
   }
 
   // 🔒 Must purchase FMCSA
   if (localStorage.getItem("paid_fmcsa") !== "true") {
     alert("FMCSA Training requires purchase.");
-    window.location.replace("dashboard.html");
+    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
     return;
   }
 
@@ -95,7 +95,7 @@
 
     if (daysUsed >= LIMIT_DAYS) {
       alert("FMCSA training window expired. Repurchase required.");
-      window.location.replace("dashboard.html");
+      window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
       return;
     }
   }
