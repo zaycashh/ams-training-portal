@@ -68,6 +68,10 @@ alert("Payment successful!");
   window.location.replace("fmcsa-der.html");
   return;
 }
+  if (module === "fmcsa") {
+  window.location.replace("fmcsa-drug-alcohol.html");
+  return;
+}
 
 // 🔐 Smart Redirect Logic
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
