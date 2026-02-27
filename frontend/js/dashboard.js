@@ -391,9 +391,6 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 }
-/* =========================
-   FMCSA BUTTON HANDLER
-========================= */
 
 /* =========================
    FMCSA BUTTON HANDLER
