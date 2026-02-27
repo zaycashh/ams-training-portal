@@ -32,8 +32,9 @@ function simulateStripeSuccess(module, productType, qty) {
   
   if (module === "der_fmcsa") {
   localStorage.setItem("paid_der_fmcsa", "true");
+  localStorage.setItem("paid_der_fmcsa_date", Date.now().toString());
 }
-
+  
   if (module === "supervisor") {
     localStorage.setItem("paid_supervisor", "true");
   }
