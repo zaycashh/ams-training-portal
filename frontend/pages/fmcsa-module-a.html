@@ -37,22 +37,6 @@
     return;
   }
 
-  <script>
-(function () {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user) {
-    window.location.replace("../login.html");
-    return;
-  }
-
-  if (user.role === "employee") {
-    alert("Unauthorized access.");
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
   const paid = localStorage.getItem("paid_fmcsa") === "true";
   const purchaseDate = parseInt(
     localStorage.getItem("fmcsaPurchaseDate") || "0",
@@ -72,8 +56,8 @@
   }
 
 })();
+</script>
   
-<script>
 (function () {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
