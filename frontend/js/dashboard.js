@@ -336,16 +336,34 @@ function updateSupervisorButtonState() {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   
-   /* =========================
+/* =========================
    FMCSA BUNDLED MODULE
 ========================= */
 
 const fmcsaBtn = document.getElementById("fmcsaBtn");
 
 if (fmcsaBtn) {
-  if (localStorage.getItem("paid_fmcsa") === "true") {
+
+  const paid = localStorage.getItem("paid_fmcsa") === "true";
+  const purchaseDate = parseInt(
+    localStorage.getItem("fmcsaPurchaseDate") || "0",
+    10
+  );
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  const expired = paid && purchaseDate && (now - purchaseDate > THIRTY_DAYS);
+
+  if (expired) {
+    localStorage.removeItem("paid_fmcsa");
+    localStorage.removeItem("fmcsaPurchaseDate");
+    fmcsaBtn.textContent = "Expired — Repurchase Required";
+  } 
+  else if (paid) {
     fmcsaBtn.textContent = "Start FMCSA Training";
-  } else {
+  } 
+  else {
     fmcsaBtn.textContent = "Locked — Purchase Required";
   }
 }
