@@ -30,6 +30,10 @@ function simulateStripeSuccess(module, productType, qty) {
   if (module === "der") {
     localStorage.setItem("paid_der", "true");
   }
+  
+  if (module === "der_fmcsa") {
+  localStorage.setItem("paid_der_fmcsa", "true");
+}
 
   if (module === "supervisor") {
     localStorage.setItem("paid_supervisor", "true");
@@ -60,6 +64,11 @@ if (productType === "employee_seats") {
 }
 
 alert("Payment successful!");
+  
+  if (module === "der_fmcsa") {
+  window.location.replace("fmcsa-der.html");
+  return;
+}
 
 // 🔐 Smart Redirect Logic
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
