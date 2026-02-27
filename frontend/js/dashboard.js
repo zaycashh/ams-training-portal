@@ -335,6 +335,20 @@ function updateSupervisorButtonState() {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+  
+   /* =========================
+   FMCSA BUNDLED MODULE
+========================= */
+
+const fmcsaBtn = document.getElementById("fmcsaBtn");
+
+if (fmcsaBtn) {
+  if (localStorage.getItem("paid_fmcsa") === "true") {
+    fmcsaBtn.textContent = "Start FMCSA Training";
+  } else {
+    fmcsaBtn.textContent = "Locked — Purchase Required";
+  }
+}
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
