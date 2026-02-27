@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FMCSA DER Training | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
 
+<body data-module="fmcsa-der">
+
+<main class="module-container">
+
+  <!-- HEADER -->
+  <header class="module-header">
+    <h1>FMCSA Designated Employer Representative (DER)</h1>
+    <button class="btn-secondary" onclick="goBack()">Back to Dashboard</button>
+  </header>
+
+  <!-- INFO -->
+  <section class="module-section">
+    <p>
+      This training satisfies Designated Employer Representative (DER)
+      requirements under <strong>DOT 49 CFR Part 382</strong> for
+      FMCSA-regulated motor carriers.
+    </p>
+  </section>
+
+  <!-- CONTENT SECTION -->
+  <section class="module-section" id="contentSection">
+    <h2>Training Content</h2>
+
+    <p>
+      The Designated Employer Representative (DER) is responsible for
+      oversight of the company’s DOT drug and alcohol testing program.
+    </p>
+
+    <p>
+      This module covers:
+    </p>
+
+    <ul>
+      <li>Program oversight responsibilities</li>
+      <li>Testing procedures & documentation</li>
+      <li>Recordkeeping requirements</li>
+      <li>Regulatory enforcement standards</li>
+      <li>Compliance management under FMCSA regulations</li>
+    </ul>
+
+    <button class="btn-primary" onclick="unlockQuiz()">
+      Mark Content Complete
+    </button>
+  </section>
+
+  <!-- QUIZ SECTION (Placeholder) -->
+  <section class="module-section hidden" id="quizSection">
+    <h2>DER – FMCSA Knowledge Check</h2>
+    <p>Quiz engine will be added in next step.</p>
+  </section>
+
+  <!-- CERTIFICATE SECTION (Placeholder) -->
+  <section class="module-section hidden" id="certificateSection">
+    <h2>Certificate of Completion</h2>
+    <p>Certificate generation will be implemented next.</p>
+  </section>
+
+</main>
+
+<script src="../js/fmcsa-der.js"></script>
+
+<script>
+function goBack() {
+  window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
