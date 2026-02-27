@@ -448,3 +448,10 @@ function updateFMCSAStatus() {
     }
   }
 }
+function handleDerFmcsa() {
+  if (localStorage.getItem("paid_der_fmcsa") === "true") {
+    window.location.href = "fmcsa-der.html";
+  } else {
+    window.location.href = "payment.html?module=der_fmcsa";
+  }
+}
