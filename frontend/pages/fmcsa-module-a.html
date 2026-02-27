@@ -72,27 +72,43 @@
   }
 
 })();
-</script>
+  
+<script>
+(function () {
 
-  const start = localStorage.getItem("fmcsa_start_date");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  if (start) {
-    const DAY_MS = 86400000;
-    const LIMIT_DAYS = 30;
+  if (!user) {
+    window.location.replace("../login.html");
+    return;
+  }
 
-    const elapsed = Date.now() - Number(start);
-    const daysUsed = Math.floor(elapsed / DAY_MS);
+  if (user.role === "employee") {
+    alert("Unauthorized access.");
+    window.location.replace("../dashboard.html");
+    return;
+  }
 
-    if (daysUsed >= LIMIT_DAYS) {
-      alert("FMCSA training window expired. Repurchase required.");
-      window.location.replace("../dashboard.html");
-      return;
-    }
+  const paid = localStorage.getItem("paid_fmcsa") === "true";
+  const purchaseDate = parseInt(
+    localStorage.getItem("fmcsaPurchaseDate") || "0",
+    10
+  );
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const expired = paid && purchaseDate && (now - purchaseDate > THIRTY_DAYS);
+
+  if (!paid || expired) {
+    alert("Your FMCSA training access has expired. Please repurchase.");
+    localStorage.removeItem("paid_fmcsa");
+    localStorage.removeItem("fmcsaPurchaseDate");
+    window.location.replace("../dashboard.html");
+    return;
   }
 
 })();
 </script>
-
 <main class="module-container">
 
 <header class="module-header">
