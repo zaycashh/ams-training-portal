@@ -8,101 +8,7 @@
 </head>
 
 <body data-module="fmcsa-drug-alcohol">
-  <script>
-(function () {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user) {
-   window.location.replace("/ams-training-portal/frontend/pages/login.html");
-    return;
-  }
-
-  // 🔒 Block employees
-  if (user.role === "employee") {
-    alert("Unauthorized access.");
-    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
-    return;
-  }
-
-  // 💳 Must purchase bundle
-  if (localStorage.getItem("paid_fmcsa") !== "true") {
-    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
-    return;
-  }
-
-  // ⏳ Expiration check
-  const purchaseDate = parseInt(
-    localStorage.getItem("fmcsaPurchaseDate") || "0",
-    10
-  );
-
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-  const expired = purchaseDate && (now - purchaseDate > THIRTY_DAYS);
-
-  if (expired) {
-    alert("Your FMCSA training access has expired. Please repurchase.");
-    localStorage.removeItem("paid_fmcsa");
-    localStorage.removeItem("fmcsaPurchaseDate");
-    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
-    return;
-  }
-
-  // 🚧 Must complete Module A first
-  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
-    alert("Complete Module A first.");
-    window.location.replace("/ams-training-portal/frontend/pages/fmcsa-module-a.html");
-    return;
-  }
-
-})();
-</script>
-  
-<script>
-(function () {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user) {
-   window.location.replace("/ams-training-portal/frontend/pages/login.html");
-    return;
-  }
-
-  // 🔒 Block employees
-  if (user.role === "employee") {
-    alert("Unauthorized access.");
-    window.location.replace("/ams-training-portal/frontend/pages/login.html");
-    return;
-  }
-
-  // 🔒 Must purchase FMCSA
-  if (localStorage.getItem("paid_fmcsa") !== "true") {
-    alert("FMCSA Training requires purchase.");
-    window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
-    return;
-  }
-
-  // 🔒 Expiration enforcement
-  const start = localStorage.getItem("fmcsa_start_date");
-
-  if (start) {
-    const DAY_MS = 86400000;
-    const LIMIT_DAYS = 30;
-
-    const elapsed = Date.now() - Number(start);
-    const daysUsed = Math.floor(elapsed / DAY_MS);
-
-    if (daysUsed >= LIMIT_DAYS) {
-      alert("FMCSA training window expired. Repurchase required.");
-      window.location.replace("/ams-training-portal/frontend/pages/dashboard.html");
-      return;
-    }
-  }
-
-})();
-</script>
-  
 <main class="module-container">
 
   <header class="module-header">
@@ -135,11 +41,7 @@
       </div>
     </div>
 
-    <button
-      id="completeDrugContentBtn"
-      class="btn-primary"
-      disabled
-    >
+    <button id="completeDrugContentBtn" class="btn-primary" disabled>
       I Have Completed Drug Awareness Training Content
     </button>
   </section>
@@ -187,11 +89,7 @@
       </div>
     </div>
 
-    <button
-      id="completeAlcoholContentBtn"
-      class="btn-primary"
-      disabled
-    >
+    <button id="completeAlcoholContentBtn" class="btn-primary" disabled>
       I Have Completed Alcohol Substance Abuse Training Content
     </button>
   </section>
@@ -213,27 +111,27 @@
       <div id="alcoholQuizResult"></div>
     </div>
   </section>
-  <!-- =========================================================
-     MODULE B CERTIFICATE SECTION
-========================================================= -->
-<section id="moduleBCertificateSection" class="hidden module-section">
 
-  <div class="certificate-card">
-    <h2>🎓 FMCSA Drug & Alcohol Substance Abuse Training Certificate</h2>
+  <!-- ========================
+       MODULE B CERTIFICATE
+  ========================= -->
+  <section id="moduleBCertificateSection" class="hidden module-section">
+    <div class="certificate-card">
+      <h2>🎓 FMCSA Drug & Alcohol Substance Abuse Training Certificate</h2>
 
-    <p><strong>Name:</strong> <span id="moduleBCertName"></span></p>
-    <p><strong>Date Completed:</strong> <span id="moduleBCertDate"></span></p>
-    <p><strong>Certificate ID:</strong> <span id="moduleBCertId"></span></p>
+      <p><strong>Name:</strong> <span id="moduleBCertName"></span></p>
+      <p><strong>Date Completed:</strong> <span id="moduleBCertDate"></span></p>
+      <p><strong>Certificate ID:</strong> <span id="moduleBCertId"></span></p>
 
-    <button class="btn-primary" onclick="returnToDashboard()">
-      Return to Dashboard
-    </button>
-  </div>
-
-</section>
+      <button class="btn-primary" onclick="returnToDashboard()">
+        Return to Dashboard
+      </button>
+    </div>
+  </section>
 
 </main>
 
+<!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="../js/route-guard.js"></script>
 <script src="../js/fmcsa-drug-alcohol.js"></script>
