@@ -54,7 +54,67 @@ if (!user) {
    FMCSA MODULE ACCESS + 30-DAY EXPIRATION
 ========================================================= */
 
-if (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") {
+/* =========================================================
+   FMCSA MODULE ACCESS + 30-DAY EXPIRATION
+========================================================= */
+
+if (
+  module === "fmcsa-module-a" ||
+  module === "fmcsa-drug-alcohol" ||
+  module === "fmcsa-der"
+) {
+
+  const paymentMap = {
+    "fmcsa-module-a": "paid_fmcsa",
+    "fmcsa-drug-alcohol": "paid_fmcsa",
+    "fmcsa-der": "paid_der_fmcsa"
+  };
+
+  const dateMap = {
+    "fmcsa-module-a": "paid_fmcsa_date",
+    "fmcsa-drug-alcohol": "paid_fmcsa_date",
+    "fmcsa-der": "paid_der_fmcsa_date"
+  };
+
+  const paidKey = paymentMap[module];
+  const dateKey = dateMap[module];
+
+  const paid = localStorage.getItem(paidKey);
+  const purchaseDate = parseInt(
+    localStorage.getItem(dateKey) || "0",
+    10
+  );
+
+  // ❌ Not purchased
+  if (paid !== "true" || !purchaseDate) {
+    sessionStorage.setItem(
+      "ams_notice",
+      "You must purchase this FMCSA training to access it."
+    );
+    redirectToRoleDashboard(user);
+    return;
+  }
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  // ❌ Expired
+  if (now - purchaseDate > THIRTY_DAYS) {
+
+    localStorage.removeItem(paidKey);
+    localStorage.removeItem(dateKey);
+
+    sessionStorage.setItem(
+      "ams_notice",
+      "Your FMCSA training access has expired (30 days). Please repurchase to continue."
+    );
+
+    redirectToRoleDashboard(user);
+    return;
+  }
+
+  return; // ✅ Access allowed
+}
 
   const paid = localStorage.getItem("paid_fmcsa");
   const purchaseDate = parseInt(
