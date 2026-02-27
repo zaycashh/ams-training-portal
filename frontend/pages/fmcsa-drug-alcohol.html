@@ -8,6 +8,57 @@
 </head>
 
 <body data-module="fmcsa-drug-alcohol">
+  <script>
+(function () {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) {
+    window.location.replace("../login.html");
+    return;
+  }
+
+  // 🔒 Block employees
+  if (user.role === "employee") {
+    alert("Unauthorized access.");
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+  // 💳 Must purchase bundle
+  if (localStorage.getItem("paid_fmcsa") !== "true") {
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+  // ⏳ Expiration check
+  const purchaseDate = parseInt(
+    localStorage.getItem("fmcsaPurchaseDate") || "0",
+    10
+  );
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const expired = purchaseDate && (now - purchaseDate > THIRTY_DAYS);
+
+  if (expired) {
+    alert("Your FMCSA training access has expired. Please repurchase.");
+    localStorage.removeItem("paid_fmcsa");
+    localStorage.removeItem("fmcsaPurchaseDate");
+    window.location.replace("../dashboard.html");
+    return;
+  }
+
+  // 🚧 Must complete Module A first
+  if (localStorage.getItem("fmcsaModuleACompleted") !== "true") {
+    alert("Complete Module A first.");
+    window.location.replace("../fmcsa-module-a.html");
+    return;
+  }
+
+})();
+</script>
+  
 <script>
 (function () {
 
