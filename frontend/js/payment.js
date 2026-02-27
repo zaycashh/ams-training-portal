@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
 function simulateStripeSuccess(module, productType, qty) {
 
   /* ===============================
