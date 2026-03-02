@@ -5,8 +5,14 @@
   <title>FMCSA DER Training | AMS Training Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
-</head>
 
+  <!-- PDF.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  </script>
+</head>
 <body data-module="fmcsa-der">
   
 <main class="module-container">
@@ -27,30 +33,19 @@
   </section>
 
   <!-- CONTENT SECTION -->
-  <section class="module-section" id="contentSection">
-    <h2>Training Content</h2>
+<section class="module-section" id="contentSection">
 
-    <p>
-      The Designated Employer Representative (DER) is responsible for
-      oversight of the company’s DOT drug and alcohol testing program.
-    </p>
+  <h2>DER Training Slides</h2>
 
-    <p>
-      This module covers:
-    </p>
+  <div id="pdfContainer" style="text-align:center;"></div>
 
-    <ul>
-      <li>Program oversight responsibilities</li>
-      <li>Testing procedures & documentation</li>
-      <li>Recordkeeping requirements</li>
-      <li>Regulatory enforcement standards</li>
-      <li>Compliance management under FMCSA regulations</li>
-    </ul>
-
-    <button class="btn-primary" onclick="unlockQuiz()">
-      Mark Content Complete
+  <div style="margin-top:20px; text-align:center;">
+    <button id="completeContentBtn" class="btn-primary" disabled>
+      Complete Content
     </button>
-  </section>
+  </div>
+
+</section>
 
   <!-- QUIZ SECTION (Placeholder) -->
   <section class="module-section hidden" id="quizSection">
