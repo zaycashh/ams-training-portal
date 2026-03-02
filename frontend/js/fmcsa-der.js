@@ -4,8 +4,7 @@
 
 const DER_CONTENT_KEY = "fmcsaDerContentCompleted";
 
-// 👉 Make sure your PDF exists in this path
-https://zaycashh.github.io/ams-training-portal/frontend/assets/FMSCA-DER-Drug-Alc-Reg-Training.pdf
+const url = "../assets/FMSCA-DER-Drug-Alc-Reg-Training.pdf";
 
 const pdfContainer = document.getElementById("pdfContainer");
 const completeBtn = document.getElementById("completeContentBtn");
