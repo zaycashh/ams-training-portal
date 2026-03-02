@@ -31,28 +31,31 @@ function renderPage(num) {
 
   pdfDoc.getPage(num).then(page => {
 
+    const containerWidth = pdfContainer.clientWidth;
+
+    const viewport = page.getViewport({ scale: 1 });
+    const scale = containerWidth / viewport.width;
+    const scaledViewport = page.getViewport({ scale });
+
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
-    const viewport = page.getViewport({ scale: 1.3 });
-
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    page.render({
-      canvasContext: context,
-      viewport: viewport
-    });
+    canvas.height = scaledViewport.height;
+    canvas.width = scaledViewport.width;
 
     pdfContainer.innerHTML = "";
     pdfContainer.appendChild(canvas);
+
+    page.render({
+      canvasContext: context,
+      viewport: scaledViewport
+    });
 
     // Enable complete button only on last page
     if (num === totalPages) {
       completeBtn.disabled = false;
     }
   });
-}
 
 /* =========================================================
    CLICK TO ADVANCE SLIDES
