@@ -1,43 +1,81 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================================================
+   FMCSA DER – PDF CONTENT ENGINE
+========================================================= */
 
-  /* =========================
-     PURCHASE GUARD
-  ========================= */
+const DER_CONTENT_KEY = "fmcsaDerContentCompleted";
 
-  if (localStorage.getItem("paid_der_fmcsa") !== "true") {
-    alert("DER FMCSA training requires purchase.");
-    window.location.href = "dashboard.html";
-    return;
-  }
+// 👉 Make sure your PDF exists in this path
+const url = "/ams-training-portal/frontend/assets/fmcsa-der-training.pdf";
 
-  /* =========================
-     RESTORE PROGRESS
-  ========================= */
+const pdfContainer = document.getElementById("pdfContainer");
+const completeBtn = document.getElementById("completeContentBtn");
 
-  const contentDone = localStorage.getItem("der_fmcsa_content_done");
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
 
-  if (contentDone === "true") {
-    showQuiz();
-  }
+/* =========================================================
+   LOAD PDF
+========================================================= */
 
+pdfjsLib.getDocument(url).promise.then(pdf => {
+  pdfDoc = pdf;
+  totalPages = pdf.numPages;
+  renderPage(currentPage);
 });
 
+/* =========================================================
+   RENDER PAGE
+========================================================= */
 
-/* =========================
-   CONTENT COMPLETE
-========================= */
+function renderPage(num) {
 
-function unlockQuiz() {
-  localStorage.setItem("der_fmcsa_content_done", "true");
-  showQuiz();
+  pdfDoc.getPage(num).then(page => {
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    const viewport = page.getViewport({ scale: 1.3 });
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    page.render({
+      canvasContext: context,
+      viewport: viewport
+    });
+
+    pdfContainer.innerHTML = "";
+    pdfContainer.appendChild(canvas);
+
+    // Enable complete button only on last page
+    if (num === totalPages) {
+      completeBtn.disabled = false;
+    }
+  });
 }
 
+/* =========================================================
+   CLICK TO ADVANCE SLIDES
+========================================================= */
 
-/* =========================
-   SHOW QUIZ
-========================= */
+pdfContainer.addEventListener("click", () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPage(currentPage);
+  }
+});
 
-function showQuiz() {
-  document.getElementById("contentSection")?.classList.add("hidden");
-  document.getElementById("quizSection")?.classList.remove("hidden");
-}
+/* =========================================================
+   COMPLETE CONTENT
+========================================================= */
+
+completeBtn.addEventListener("click", () => {
+
+  localStorage.setItem(DER_CONTENT_KEY, "true");
+
+  alert("Content completed. Quiz unlocked.");
+
+  document.getElementById("quizSection").classList.remove("hidden");
+
+});
