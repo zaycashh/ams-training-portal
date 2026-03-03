@@ -488,3 +488,25 @@ function handleDerFmcsa() {
     window.location.href = "payment.html?module=der_fmcsa";
   }
 }
+/* =========================
+   DER COMPLETION STATUS
+========================= */
+function updateDERButtonState() {
+
+  const derCompleted =
+    localStorage.getItem("fmcsaDERCompleted") === "true";
+
+  const derBtn = document.getElementById("derBtn");
+  const derBadge = document.getElementById("derBadge");
+
+  if (derCompleted && derBadge) {
+    derBadge.classList.remove("hidden");
+  }
+
+  if (derCompleted && derBtn) {
+    derBtn.textContent = "View DER Certificate";
+    derBtn.onclick = () => {
+      window.location.href = "fmcsa-certificates.html";
+    };
+  }
+}
