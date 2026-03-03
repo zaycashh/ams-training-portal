@@ -286,16 +286,38 @@ function updateSubmitState() {
 
     if (scorePercent >= DER_PASS_PERCENT) {
 
-      const certId = "DER-" + Date.now().toString().slice(-8);
+  // Mark module complete
+  localStorage.setItem("fmcsaDERCompleted", "true");
 
-      localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
-      localStorage.setItem("fmcsaDERCompleted", "true");
-      localStorage.setItem("derCertificateId", certId);
+  // Generate certificate ID only once
+  let certId = localStorage.getItem("derCertificateId");
 
-      localStorage.removeItem(DER_ATTEMPTS_KEY);
-      localStorage.removeItem(DER_COOLDOWN_KEY);
+  if (!certId) {
+    certId = "AMS-DER-" + Date.now().toString().slice(-8);
+    localStorage.setItem("derCertificateId", certId);
+  }
 
-      window.location.href = "fmcsa-certificates.html";
+  // Store completion date
+  localStorage.setItem("fmcsaDERDate", Date.now());
+
+  // Cleanup attempts
+  localStorage.removeItem(DER_ATTEMPTS_KEY);
+  localStorage.removeItem(DER_COOLDOWN_KEY);
+
+  // Show success message
+  if (resultBox) {
+    resultBox.innerHTML = `
+      <div class="result-box pass">
+        You passed! Generating Certificate...
+      </div>
+    `;
+  }
+
+  // Redirect after delay
+  setTimeout(() => {
+    window.location.href = "fmcsa-certificates.html";
+  }, 2000);
+}
 
     } else {
 
