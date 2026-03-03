@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const derQuestions = [
 
     {
-      q: "If an employee is issued a medical marijuana card, they would NOT be considered positive if they test for marijuana on a DOT test.",
+      q: "If an employee as a result of a medical issue was issued a medical marijuana card, the employee would NOT be considered positive if he/she tested for it on a DOT test. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
     },
@@ -129,37 +129,37 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     {
-      q: "Marijuana is the most widely used illicit drug in the United States.",
+      q: "Marijuana is the most widely used illicit drug in the United States. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "A"
     },
 
     {
-      q: "A DER may delegate DER duties to a service agent.",
+      q: "A company DER may delegate the DER duties to a service agent. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
     },
 
     {
-      q: "In a quarterly random pool, an employee may be selected more than once in the same year.",
+      q: "If a company has their random pool setup to have pulls on a quarterly basis, an employee could be selected for a random drug test for each quarter. TRUE or FALSE?.",
       a: { A: "True", B: "False" },
       correct: "A"
     },
 
     {
-      q: "All motor vehicle accidents automatically require drug and alcohol testing.",
+      q: "All motor vehicle accidents require that a driver be drug & alcohol tested. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
     },
 
     {
-      q: "Employers are required to pay for a SAP evaluation after a violation.",
+      q: "As an employer, you are required to provide a SAP evaluation or any subsequent recommended education or treatment for an employee who has violated a DOT drug and alcohol regulation. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
     },
 
     {
-      q: "Return-to-Duty and Follow-Up tests are conducted exactly like random tests.",
+      q: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?.",
       a: { A: "True", B: "False" },
       correct: "B"
     }
