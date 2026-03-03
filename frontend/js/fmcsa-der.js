@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     {
-      q: "State legalization of marijuana overrides DOT drug testing regulations.",
+      q: "Recently, some states passed laws to permit use of marijuana for so-called “recreational” purposes. A covered driver tests Positive and due to the State’s new legislation, the driver would NOT be subject the DOT Drug testing regulations as they apply to marijuana. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
     },
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     {
-      q: "If a company has their random pool setup to have pulls on a quarterly basis, an employee could be selected for a random drug test for each quarter. TRUE or FALSE?.",
+      q: "If a company has their random pool setup to have pulls on a quarterly basis, an employee could be selected for a random drug test for each quarter. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "A"
     },
