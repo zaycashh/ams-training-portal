@@ -67,11 +67,38 @@
 </section>
 
   <!-- QUIZ SECTION (Placeholder) -->
-  <section class="module-section hidden" id="quizSection">
-    <h2>DER – FMCSA Knowledge Check</h2>
-    <p>Quiz engine will be added in next step.</p>
-  </section>
 
+  <section class="module-section hidden" id="quizSection">
+
+  <h2>DER – FMCSA Knowledge Check</h2>
+
+  <div id="quizContainer"></div>
+
+  <div class="quiz-nav" style="margin-top:20px; text-align:center;">
+    <button id="prevQuestionBtn" class="btn-secondary">
+      Back
+    </button>
+
+    <span style="margin:0 15px;">
+      Question <span id="currentQuestion">1</span> of
+      <span id="totalQuestions">--</span>
+    </span>
+
+    <button id="nextQuestionBtn" class="btn-secondary">
+      Next
+    </button>
+  </div>
+
+  <div style="margin-top:20px; text-align:center;">
+    <button id="submitQuizBtn" class="btn-primary" disabled>
+      Submit Quiz
+    </button>
+  </div>
+
+  <div id="quizResult" style="margin-top:20px; text-align:center;"></div>
+
+</section>
+  
   <!-- CERTIFICATE SECTION (Placeholder) -->
   <section class="module-section hidden" id="certificateSection">
     <h2>Certificate of Completion</h2>
