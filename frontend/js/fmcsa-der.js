@@ -182,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (quizContainer) initQuiz();
 
   function initQuiz() {
+     updateSubmitState();
 
     if (totalQuestionsEl) totalQuestionsEl.textContent = derQuestions.length;
 
@@ -216,6 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("input[name='answer']").forEach(input => {
       input.addEventListener("change", e => {
         selectedAnswers[currentQuestionIndex] = e.target.value;
+        updateSubmitState();
       });
     });
   }
@@ -237,7 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
+   
+function updateSubmitState() {
+  if (!submitBtn) return;
+  submitBtn.disabled = Object.keys(selectedAnswers).length !== derQuestions.length;
+}
   if (submitBtn) {
     submitBtn.addEventListener("click", () => {
 
