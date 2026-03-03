@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       q: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?.",
       a: { A: "True", B: "False" },
-      correct: "B"
+      correct: "B",
       explanation: "FALSE (§40.67(b)) –They MUST be conducted under direct observation."
     }
 
