@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("contentSection").classList.add("hidden");
     document.getElementById("quizSection").classList.remove("hidden");
 
-  });
+  }
 
   /* =========================================================
      RESTORE PROGRESS
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("contentSection").classList.add("hidden");
     document.getElementById("quizSection").classList.remove("hidden");
   }
-
+});
 /* =========================================================
    FMCSA DER – QUIZ ENGINE
 ========================================================= */
