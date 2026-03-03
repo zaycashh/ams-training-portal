@@ -190,19 +190,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (quizContainer) initQuiz();
 
   function initQuiz() {
-     updateSubmitState();
 
-    if (totalQuestionsEl) totalQuestionsEl.textContent = derQuestions.length;
+  checkCooldown();
 
-    if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
-      showCertificateSection();
-      return;
-    }
-
-    checkCooldown();
-    renderQuestion();
+  if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
+    window.location.href = "fmcsa-certificates.html";
+    return;
   }
 
+  renderQuestion();
+}
+   
   function renderQuestion() {
 
     const question = derQuestions[currentQuestionIndex];
@@ -285,41 +283,47 @@ function updateSubmitState() {
       });
 
       const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
+       
+       if (scorePercent >= DER_PASS_PERCENT) {
 
-      if (scorePercent >= DER_PASS_PERCENT) {
+  const certId = "DER-" + Date.now().toString().slice(-8);
 
-        localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
-        localStorage.setItem("fmcsaDERCompleted", "true"); 
-        localStorage.removeItem(DER_ATTEMPTS_KEY);
-        localStorage.removeItem(DER_COOLDOWN_KEY);
-        showCertificateSection();
+  localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
+  localStorage.setItem("fmcsaDERCompleted", "true");
+  localStorage.setItem("derCertificateId", certId);
+
+  localStorage.removeItem(DER_ATTEMPTS_KEY);
+  localStorage.removeItem(DER_COOLDOWN_KEY);
+
+  window.location.href = "fmcsa-certificates.html";
+}
 
       } else {
 
-        derAttempts++;
-        localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+  derAttempts++;
+  localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
 
-        if (derAttempts >= DER_MAX_ATTEMPTS) {
-          const cooldownUntil = Date.now() + DER_COOLDOWN_MINUTES * 60000;
-          localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
-          location.reload();
-          return;
-        }
+  if (derAttempts >= DER_MAX_ATTEMPTS) {
 
-        if (resultBox) {
-          resultBox.innerHTML = `
-            <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
-              <h3>Score: ${scorePercent}%</h3>
-              <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
-              ${reviewHTML}
-            </div>
-          `;
-        }
+    const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
+    localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
 
-      }
-    });
+    alert("Maximum attempts reached. 15-minute cooldown activated.");
+
+    window.location.reload();
+    return;
   }
 
+  if (resultBox) {
+    resultBox.innerHTML = `
+      <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
+        <h3>Score: ${scorePercent}%</h3>
+        <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
+        ${reviewHTML}
+      </div>
+    `;
+  }
+}
   function checkCooldown() {
     const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
 
