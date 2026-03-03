@@ -289,6 +289,7 @@ function updateSubmitState() {
       if (scorePercent >= DER_PASS_PERCENT) {
 
         localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
+        localStorage.setItem("fmcsaDERCompleted", "true"); 
         localStorage.removeItem(DER_ATTEMPTS_KEY);
         localStorage.removeItem(DER_COOLDOWN_KEY);
         showCertificateSection();
