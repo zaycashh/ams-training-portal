@@ -253,76 +253,79 @@ function updateSubmitState() {
   submitBtn.disabled = Object.keys(selectedAnswers).length !== derQuestions.length;
 }
   if (submitBtn) {
-    submitBtn.addEventListener("click", () => {
+  submitBtn.addEventListener("click", () => {
 
-            let correctCount = 0;
-      let reviewHTML = "";
+    let correctCount = 0;
+    let reviewHTML = "";
 
-      derQuestions.forEach((question, index) => {
-        const userAnswer = selectedAnswers[index];
+    derQuestions.forEach((question, index) => {
+      const userAnswer = selectedAnswers[index];
 
-        if (userAnswer === question.correct) {
-          correctCount++;
-        } else {
-          reviewHTML += `
-            <div style="margin-top:15px;">
-              <p><strong>Question ${index + 1}:</strong> ${question.q}</p>
-              <p style="color:#c0392b;">
-                Your Answer: ${userAnswer || "Not Answered"}
-              </p>
-              <p style="color:#27ae60;">
-                Correct Answer: ${question.correct}
-              </p>
-              <p>
-                <strong>Explanation:</strong> ${question.explanation || "Review training material."}
-              </p>
-              <hr/>
-            </div>
-          `;
-        }
-      });
-
-      const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
-       
-       if (scorePercent >= DER_PASS_PERCENT) {
-
-  const certId = "DER-" + Date.now().toString().slice(-8);
-
-  localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
-  localStorage.setItem("fmcsaDERCompleted", "true");
-  localStorage.setItem("derCertificateId", certId);
-
-  localStorage.removeItem(DER_ATTEMPTS_KEY);
-  localStorage.removeItem(DER_COOLDOWN_KEY);
-
-  window.location.href = "fmcsa-certificates.html";
-}
-
+      if (userAnswer === question.correct) {
+        correctCount++;
       } else {
+        reviewHTML += `
+          <div style="margin-top:15px;">
+            <p><strong>Question ${index + 1}:</strong> ${question.q}</p>
+            <p style="color:#c0392b;">
+              Your Answer: ${userAnswer || "Not Answered"}
+            </p>
+            <p style="color:#27ae60;">
+              Correct Answer: ${question.correct}
+            </p>
+            <p>
+              <strong>Explanation:</strong> ${question.explanation || "Review training material."}
+            </p>
+            <hr/>
+          </div>
+        `;
+      }
+    });
 
-  derAttempts++;
-  localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+    const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
 
-  if (derAttempts >= DER_MAX_ATTEMPTS) {
+    if (scorePercent >= DER_PASS_PERCENT) {
 
-    const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
-    localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
+      const certId = "DER-" + Date.now().toString().slice(-8);
 
-    alert("Maximum attempts reached. 15-minute cooldown activated.");
+      localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
+      localStorage.setItem("fmcsaDERCompleted", "true");
+      localStorage.setItem("derCertificateId", certId);
 
-    window.location.reload();
-    return;
-  }
+      localStorage.removeItem(DER_ATTEMPTS_KEY);
+      localStorage.removeItem(DER_COOLDOWN_KEY);
 
-  if (resultBox) {
-    resultBox.innerHTML = `
-      <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
-        <h3>Score: ${scorePercent}%</h3>
-        <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
-        ${reviewHTML}
-      </div>
-    `;
-  }
+      window.location.href = "fmcsa-certificates.html";
+
+    } else {
+
+      derAttempts++;
+      localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+
+      if (derAttempts >= DER_MAX_ATTEMPTS) {
+
+        const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
+        localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
+
+        alert("Maximum attempts reached. 15-minute cooldown activated.");
+
+        window.location.reload();
+        return;
+      }
+
+      if (resultBox) {
+        resultBox.innerHTML = `
+          <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
+            <h3>Score: ${scorePercent}%</h3>
+            <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
+            ${reviewHTML}
+          </div>
+        `;
+      }
+
+    }
+
+  });
 }
   function checkCooldown() {
     const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
