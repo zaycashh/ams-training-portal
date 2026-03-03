@@ -333,7 +333,7 @@ function updateSubmitState() {
     if (Date.now() < cooldownUntil) {
       const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
       alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
-      window.location.href = "dashboard.html";
+      window.location.href = "../dashboard.html";
     }
   }
 
