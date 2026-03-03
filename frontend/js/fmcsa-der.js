@@ -203,7 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <p><strong>${question.q}</strong></p>
       ${Object.entries(question.a).map(([key, value]) => `
         <label>
-          <input type="radio" name="answer" value="${key}">
+          <input type="radio" name="answer" value="${key}"
+            ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}
+          >
           ${key}. ${value}
         </label>
       `).join("")}
