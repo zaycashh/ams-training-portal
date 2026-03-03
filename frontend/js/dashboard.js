@@ -482,6 +482,14 @@ function updateFMCSAStatus() {
 }
 
 function handleDerFmcsa() {
+
+  const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
+
+  if (completed) {
+    window.location.href = "fmcsa-certificates.html";
+    return;
+  }
+
   if (localStorage.getItem("paid_der_fmcsa") === "true") {
     window.location.href = "fmcsa-der.html";
   } else {
