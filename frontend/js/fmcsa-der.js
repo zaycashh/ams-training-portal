@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("quizSection").classList.remove("hidden");
   }
 
-});
 /* =========================================================
    FMCSA DER – QUIZ ENGINE
 ========================================================= */
@@ -373,3 +372,4 @@ function showCertificateSection() {
   document.getElementById("quizSection").classList.add("hidden");
   document.getElementById("certificateSection").classList.remove("hidden");
 }
+});
