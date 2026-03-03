@@ -39,11 +39,30 @@
 
   <div id="pdfContainer" style="text-align:center;"></div>
 
-  <div style="margin-top:20px; text-align:center;">
-    <button id="completeContentBtn" class="btn-primary" disabled>
-      Complete Content
-    </button>
-  </div>
+<!-- PDF NAVIGATION CONTROLS -->
+<div class="pdf-controls" style="margin-top:20px; text-align:center;">
+
+  <button id="prevPageBtn" class="btn-secondary">
+    Back
+  </button>
+
+  <span style="margin:0 15px;">
+    Page <span id="currentPage">1</span> of
+    <span id="totalPages">--</span>
+  </span>
+
+  <button id="nextPageBtn" class="btn-secondary">
+    Next
+  </button>
+
+</div>
+
+<!-- COMPLETE BUTTON -->
+<div style="margin-top:20px; text-align:center;">
+  <button id="completeContentBtn" class="btn-primary" disabled>
+    Complete Content
+  </button>
+</div>
 
 </section>
 
