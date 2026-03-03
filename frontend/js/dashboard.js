@@ -504,7 +504,7 @@ function updateDERButtonState() {
   const derCompleted =
     localStorage.getItem("fmcsaDERCompleted") === "true";
 
-  const derBtn = document.getElementById("derBtn");
+  const derBtn = document.getElementById("derFmcsaBtn");
   const derBadge = document.getElementById("derBadge");
 
   if (derCompleted && derBadge) {
