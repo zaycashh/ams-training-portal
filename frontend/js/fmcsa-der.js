@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
       q: "All motor vehicle accidents require that a driver be drug & alcohol tested. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
-      explanation: FALSE–As per §382..303(a)&(b), a driver is only subject to testing if the accident was a “qualifying” accident.
+      explanation: "FALSE–As per §382..303(a)&(b), a driver is only subject to testing if the accident was a “qualifying” accident."
     },
 
     {
