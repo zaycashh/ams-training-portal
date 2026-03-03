@@ -162,7 +162,8 @@ document.addEventListener("DOMContentLoaded", () => {
       q: "As an employer, you are required to provide a SAP evaluation or any subsequent recommended education or treatment for an employee who has violated a DOT drug and alcohol regulation. TRUE or FALSE?",
       a: { A: "True", B: "False" },
       correct: "B"
-    },explanation: "FALSE (§40.289(a)).You are NOT required to provide a SAP evaluation or any subsequent recommended education or treatment. You ARE however, required to provide names, addresses, and phone numbers for Substance Abuse Professionals to the employee. (§40.287)." 
+      explanation: "FALSE (§40.289(a)).You are NOT required to provide a SAP evaluation or any subsequent recommended education or treatment. You ARE however, required to provide names, addresses, and phone numbers for Substance Abuse Professionals to the employee. (§40.287)." 
+    }, 
 
     {
       q: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?.",
