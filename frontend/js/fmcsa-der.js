@@ -1,18 +1,29 @@
 /* =========================================================
-   FMCSA DER – PDF CONTENT ENGINE (Supervisor Architecture)
+   FMCSA DER – COMPLETE ENGINE (PDF + QUIZ)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  /* =========================================================
+     PDF CONTENT ENGINE
+  ========================================================= */
+
   const DER_CONTENT_KEY = "der_fmcsa_content_done";
+  const DER_QUIZ_PASSED_KEY = "der_fmcsa_quiz_passed";
+  const DER_ATTEMPTS_KEY = "der_fmcsa_quiz_attempts";
+  const DER_COOLDOWN_KEY = "der_fmcsa_quiz_cooldown";
+
+  const DER_PASS_PERCENT = 80;
+  const DER_MAX_ATTEMPTS = 3;
+  const DER_COOLDOWN_MINUTES = 15;
 
   const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
 
   const pdfContainer = document.getElementById("pdfContainer");
   const completeBtn = document.getElementById("completeContentBtn");
 
-  const prevBtn = document.getElementById("prevPageBtn");
-  const nextBtn = document.getElementById("nextPageBtn");
+  const prevPageBtn = document.getElementById("prevPageBtn");
+  const nextPageBtn = document.getElementById("nextPageBtn");
 
   const currentPageEl = document.getElementById("currentPage");
   const totalPagesEl = document.getElementById("totalPages");
@@ -21,356 +32,260 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPage = 1;
   let totalPages = 0;
 
-  /* =========================================================
-     LOAD PDF
-  ========================================================= */
+  if (pdfContainer) {
 
-  pdfjsLib.getDocument(url).promise.then(pdf => {
-    pdfDoc = pdf;
-    totalPages = pdf.numPages;
-
-    totalPagesEl.textContent = totalPages;
-
-    renderPage(currentPage);
-  });
-
-  /* =========================================================
-     RENDER PAGE (Responsive Fit)
-  ========================================================= */
-
-  function renderPage(num) {
-
-  pdfDoc.getPage(num).then(page => {
-
-    let containerWidth = pdfContainer.clientWidth;
-
-    // Fallback if container width is 0
-    if (!containerWidth || containerWidth < 100) {
-      containerWidth = 800; // safe default width
-    }
-
-    const viewport = page.getViewport({ scale: 1 });
-
-    const scale = containerWidth / viewport.width;
-
-    const scaledViewport = page.getViewport({ scale });
-
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    canvas.height = scaledViewport.height;
-    canvas.width = scaledViewport.width;
-
-    pdfContainer.innerHTML = "";
-    pdfContainer.appendChild(canvas);
-
-    page.render({
-      canvasContext: context,
-      viewport: scaledViewport
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      pdfDoc = pdf;
+      totalPages = pdf.numPages;
+      if (totalPagesEl) totalPagesEl.textContent = totalPages;
+      renderPage(currentPage);
     });
 
-    currentPageEl.textContent = num;
+    function renderPage(num) {
 
-    prevBtn.disabled = num === 1;
-    nextBtn.disabled = num === totalPages;
+      pdfDoc.getPage(num).then(page => {
 
-    if (num === totalPages) {
-      completeBtn.disabled = false;
-    } else {
-      completeBtn.disabled = true;
+        let containerWidth = pdfContainer.clientWidth || 800;
+
+        const viewport = page.getViewport({ scale: 1 });
+        const scale = containerWidth / viewport.width;
+        const scaledViewport = page.getViewport({ scale });
+
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.height = scaledViewport.height;
+        canvas.width = scaledViewport.width;
+
+        pdfContainer.innerHTML = "";
+        pdfContainer.appendChild(canvas);
+
+        page.render({
+          canvasContext: context,
+          viewport: scaledViewport
+        });
+
+        if (currentPageEl) currentPageEl.textContent = num;
+
+        if (prevPageBtn) prevPageBtn.disabled = num === 1;
+        if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
+
+        if (completeBtn) {
+          completeBtn.disabled = num !== totalPages;
+        }
+
+      });
     }
 
-  });
-}
+    if (prevPageBtn) {
+      prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+        }
+      });
+    }
+
+    if (nextPageBtn) {
+      nextPageBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage(currentPage);
+        }
+      });
+    }
+
+    if (completeBtn) {
+      completeBtn.addEventListener("click", () => {
+        localStorage.setItem(DER_CONTENT_KEY, "true");
+        document.getElementById("contentSection").classList.add("hidden");
+        document.getElementById("quizSection").classList.remove("hidden");
+      });
+    }
+
+    if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
+      document.getElementById("contentSection").classList.add("hidden");
+      document.getElementById("quizSection").classList.remove("hidden");
+    }
+
+  }
 
   /* =========================================================
-     NAVIGATION BUTTONS
+     QUIZ ENGINE
   ========================================================= */
 
-  prevBtn.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderPage(currentPage);
+  const derQuestions = [
+
+    {
+      q: "If an employee is issued a medical marijuana card, they would NOT be considered positive if they test for marijuana on a DOT test.",
+      a: { A: "True", B: "False" },
+      correct: "B"
+    },
+
+    {
+      q: "State legalization of marijuana overrides DOT drug testing regulations.",
+      a: { A: "True", B: "False" },
+      correct: "B"
+    },
+
+    {
+      q: "Marijuana is the most widely used illicit drug in the United States.",
+      a: { A: "True", B: "False" },
+      correct: "A"
+    },
+
+    {
+      q: "A DER may delegate DER duties to a service agent.",
+      a: { A: "True", B: "False" },
+      correct: "B"
+    },
+
+    {
+      q: "In a quarterly random pool, an employee may be selected more than once in the same year.",
+      a: { A: "True", B: "False" },
+      correct: "A"
+    },
+
+    {
+      q: "All motor vehicle accidents automatically require drug and alcohol testing.",
+      a: { A: "True", B: "False" },
+      correct: "B"
+    },
+
+    {
+      q: "Employers are required to pay for a SAP evaluation after a violation.",
+      a: { A: "True", B: "False" },
+      correct: "B"
+    },
+
+    {
+      q: "Return-to-Duty and Follow-Up tests are conducted exactly like random tests.",
+      a: { A: "True", B: "False" },
+      correct: "B"
     }
-  });
 
-  nextBtn.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderPage(currentPage);
-    }
-  });
+  ];
 
-  /* =========================================================
-     COMPLETE CONTENT
-  ========================================================= */
+  let currentQuestionIndex = 0;
+  let selectedAnswers = {};
+  let derAttempts = parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10);
 
-  completeBtn.addEventListener("click", () => {
+  const quizContainer = document.getElementById("quizContainer");
+  const prevQuestionBtn = document.getElementById("prevQuestionBtn");
+  const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+  const submitBtn = document.getElementById("submitQuizBtn");
+  const resultBox = document.getElementById("quizResult");
 
-    localStorage.setItem(DER_CONTENT_KEY, "true");
+  const currentQuestionEl = document.getElementById("currentQuestion");
+  const totalQuestionsEl = document.getElementById("totalQuestions");
 
-    document.getElementById("contentSection").classList.add("hidden");
-    document.getElementById("quizSection").classList.remove("hidden");
+  if (quizContainer) initQuiz();
 
-  }
+  function initQuiz() {
 
-  /* =========================================================
-     RESTORE PROGRESS
-  ========================================================= */
+    if (totalQuestionsEl) totalQuestionsEl.textContent = derQuestions.length;
 
-  if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
-    document.getElementById("contentSection").classList.add("hidden");
-    document.getElementById("quizSection").classList.remove("hidden");
-  }
-});
-/* =========================================================
-   FMCSA DER – QUIZ ENGINE
-========================================================= */
-
-const DER_PASS_PERCENT = 80;
-const DER_MAX_ATTEMPTS = 3;
-const DER_COOLDOWN_MINUTES = 15;
-
-const DER_QUIZ_PASSED_KEY = "der_fmcsa_quiz_passed";
-const DER_ATTEMPTS_KEY = "der_fmcsa_quiz_attempts";
-const DER_COOLDOWN_KEY = "der_fmcsa_quiz_cooldown";
-
-/* =========================================================
-   QUESTIONS
-========================================================= */
-
-const derQuestions = [
-
-  {
-    q: "If an employee as a result of a medical issue was issued a medical marijuana card, the employee would NOT be considered positive if he/she tested for it on a DOT test. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "B",
-    explanation: "FALSE –Having a medical marijuana card issued does NOT excuse a covered employee from the DOT regulations.."
-  },
-
-  {
-    q: "Recently, some states passed laws to permit use of marijuana for so-called “recreational” purposes. A covered driver tests Positive and due to the State’s new legislation, the driver would NOT be subject the DOT Drug testing regulations as they apply to marijuana. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "B",
-    explanation: "FALSE –State laws will have no bearing on the Dept. of Transportation’s regulated drug testing program. The Dept. of Transportation’s Drug and Alcohol Testing Regulations –49 CFR Part 40 –does not authorize the use of Schedule I drugs, including marijuana, for ANY reason."
-  },
-
-  {
-    q: "Marijuana is the most widely used illicit drug in the United States. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "A",
-    explanation: "TRUE–Surveys show that marijuana IS the most common illicit drug used in the United States. Over three-quarters of all drug addicts use, or have used marijuana."
-  },
-
-  {
-    q: "A company DER may delegate the DER duties to a service agent. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "B",
-    explanation: "FALSE –as per §40.3 & §40.15, by definition of a DER, those duties may NOT be performed by a service agent."
-  },
-
-  {
-    q: "If a company has their random pool setup to have pulls on a quarterly basis, an employee could be selected for a random drug test for each quarter. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "B",
-    explanation: "TRUE–a random pool allows for every driver to be a potential pull for each selection period (quarterly). That is why it is called RANDOM."
-  },
-
-  {
-    q: "All motor vehicle accidents require that a driver be drug & alcohol tested. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "A",
-    explanation: "FALSE–As per §382..303(a)&(b), a driver is only subject to testing if the accident was a “qualifying” accident."
-  },
-
-  {
-    q: "As an employer, you are required to provide a SAP evaluation or any subsequent recommended education or treatment for an employee who has violated a DOT drug and alcohol regulation. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "A",
-    explanation: "FALSE (§40.289(a)).You are NOT required to provide a SAP evaluation or any subsequent recommended education or treatment. You ARE however, required to provide names, addresses, and phone numbers for Substance Abuse Professionals to the employee. (§40.287)"
-  },
-
-  {
-    q: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?",
-    a: { A: "True", B: "False" },
-    correct: "B",
-    explanation: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?."
-  }
-
-];
-
-/* =========================================================
-   ENGINE VARIABLES
-========================================================= */
-
-let currentQuestionIndex = 0;
-let selectedAnswers = {};
-let derAttempts = parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10);
-
-const quizContainer = document.getElementById("quizContainer");
-const prevBtn = document.getElementById("prevQuestionBtn");
-const nextBtn = document.getElementById("nextQuestionBtn");
-const submitBtn = document.getElementById("submitQuizBtn");
-const resultBox = document.getElementById("quizResult");
-
-const currentQuestionEl = document.getElementById("currentQuestion");
-const totalQuestionsEl = document.getElementById("totalQuestions");
-
-if (quizContainer) initDerQuiz();
-
-/* =========================================================
-   INIT
-========================================================= */
-
-function initDerQuiz() {
-
-  totalQuestionsEl.textContent = derQuestions.length;
-
-  if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
-    showCertificateSection();
-    return;
-  }
-
-  checkCooldown();
-
-  renderQuestion();
-}
-
-/* =========================================================
-   RENDER QUESTION
-========================================================= */
-
-function renderQuestion() {
-
-  const question = derQuestions[currentQuestionIndex];
-
-  quizContainer.innerHTML = `
-    <div class="question">
-      <p><strong>${question.q}</strong></p>
-      <div class="answers">
-        ${Object.entries(question.a).map(([key, value]) => `
-          <label>
-            <input type="radio" name="answer" value="${key}"
-              ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}
-            />
-            ${key}. ${value}
-          </label>
-        `).join("")}
-      </div>
-    </div>
-  `;
-
-  currentQuestionEl.textContent = currentQuestionIndex + 1;
-
-  prevBtn.disabled = currentQuestionIndex === 0;
-  nextBtn.disabled = currentQuestionIndex === derQuestions.length - 1;
-
-  updateSubmitState();
-
-  document.querySelectorAll("input[name='answer']").forEach(input => {
-    input.addEventListener("change", e => {
-      selectedAnswers[currentQuestionIndex] = e.target.value;
-      updateSubmitState();
-    });
-  });
-}
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-prevBtn.addEventListener("click", () => {
-  if (currentQuestionIndex > 0) {
-    currentQuestionIndex--;
-    renderQuestion();
-  }
-});
-
-nextBtn.addEventListener("click", () => {
-  if (currentQuestionIndex < derQuestions.length - 1) {
-    currentQuestionIndex++;
-    renderQuestion();
-  }
-});
-
-/* =========================================================
-   SUBMIT LOGIC
-========================================================= */
-
-submitBtn.addEventListener("click", () => {
-
-  let correctCount = 0;
-
-  derQuestions.forEach((question, index) => {
-    if (selectedAnswers[index] === question.correct) {
-      correctCount++;
-    }
-  });
-
-  const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
-
-  if (scorePercent >= DER_PASS_PERCENT) {
-
-    localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
-
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        ✅ You passed with ${scorePercent}%.
-      </div>
-    `;
-
-    setTimeout(showCertificateSection, 1200);
-
-  } else {
-
-    derAttempts++;
-    localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
-
-    if (derAttempts >= DER_MAX_ATTEMPTS) {
-      const cooldownUntil = Date.now() + DER_COOLDOWN_MINUTES * 60000;
-      localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
-      alert("Maximum attempts reached. 15-minute cooldown activated.");
-      location.reload();
+    if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
+      showCertificateSection();
       return;
     }
 
-    resultBox.innerHTML = `
-      <div class="result-box fail">
-        ❌ You scored ${scorePercent}%. Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}.
-      </div>
+    checkCooldown();
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+
+    const question = derQuestions[currentQuestionIndex];
+
+    quizContainer.innerHTML = `
+      <p><strong>${question.q}</strong></p>
+      ${Object.entries(question.a).map(([key, value]) => `
+        <label>
+          <input type="radio" name="answer" value="${key}">
+          ${key}. ${value}
+        </label>
+      `).join("")}
     `;
+
+    if (currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
+
+    if (prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
+    if (nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === derQuestions.length - 1;
+
+    document.querySelectorAll("input[name='answer']").forEach(input => {
+      input.addEventListener("change", e => {
+        selectedAnswers[currentQuestionIndex] = e.target.value;
+      });
+    });
   }
-});
 
-/* =========================================================
-   SUBMIT ENABLE CHECK
-========================================================= */
-
-function updateSubmitState() {
-  const answeredAll = Object.keys(selectedAnswers).length === derQuestions.length;
-  submitBtn.disabled = !answeredAll;
-}
-
-/* =========================================================
-   COOLDOWN CHECK
-========================================================= */
-
-function checkCooldown() {
-  const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
-
-  if (Date.now() < cooldownUntil) {
-    const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
-    alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
-    window.location.href = "dashboard.html";
+  if (prevQuestionBtn) {
+    prevQuestionBtn.addEventListener("click", () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+      }
+    });
   }
-}
 
-/* =========================================================
-   CERTIFICATE UNLOCK
-========================================================= */
+  if (nextQuestionBtn) {
+    nextQuestionBtn.addEventListener("click", () => {
+      if (currentQuestionIndex < derQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      }
+    });
+  }
 
-function showCertificateSection() {
-  document.getElementById("quizSection").classList.add("hidden");
-  document.getElementById("certificateSection").classList.remove("hidden");
-}
+  if (submitBtn) {
+    submitBtn.addEventListener("click", () => {
+
+      let correctCount = 0;
+
+      derQuestions.forEach((question, index) => {
+        if (selectedAnswers[index] === question.correct) {
+          correctCount++;
+        }
+      });
+
+      const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
+
+      if (scorePercent >= DER_PASS_PERCENT) {
+        localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
+        showCertificateSection();
+      } else {
+
+        derAttempts++;
+        localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+
+        if (derAttempts >= DER_MAX_ATTEMPTS) {
+          const cooldownUntil = Date.now() + DER_COOLDOWN_MINUTES * 60000;
+          localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
+          alert("Maximum attempts reached. 15-minute cooldown activated.");
+          location.reload();
+          return;
+        }
+
+        alert(`You scored ${scorePercent}%. Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}.`);
+      }
+
+    });
+  }
+
+  function checkCooldown() {
+    const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
+
+    if (Date.now() < cooldownUntil) {
+      const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
+      alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
+      window.location.href = "dashboard.html";
+    }
+  }
+
+  function showCertificateSection() {
+    document.getElementById("quizSection").classList.add("hidden");
+    document.getElementById("certificateSection").classList.remove("hidden");
+  }
+
 });
