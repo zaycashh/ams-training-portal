@@ -1,83 +1,120 @@
 /* =========================================================
-   FMCSA DER – PDF CONTENT ENGINE
+   FMCSA DER – PDF CONTENT ENGINE (Supervisor Architecture)
 ========================================================= */
 
-const DER_CONTENT_KEY = "fmcsaDerContentCompleted";
+document.addEventListener("DOMContentLoaded", () => {
 
-const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
+  const DER_CONTENT_KEY = "der_fmcsa_content_done";
 
-const pdfContainer = document.getElementById("pdfContainer");
-const completeBtn = document.getElementById("completeContentBtn");
+  const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
 
-let pdfDoc = null;
-let currentPage = 1;
-let totalPages = 0;
+  const pdfContainer = document.getElementById("pdfContainer");
+  const completeBtn = document.getElementById("completeContentBtn");
 
-/* =========================================================
-   LOAD PDF
-========================================================= */
+  const prevBtn = document.getElementById("prevPageBtn");
+  const nextBtn = document.getElementById("nextPageBtn");
 
-pdfjsLib.getDocument(url).promise.then(pdf => {
-  pdfDoc = pdf;
-  totalPages = pdf.numPages;
-  renderPage(currentPage);
-});
+  const currentPageEl = document.getElementById("currentPage");
+  const totalPagesEl = document.getElementById("totalPages");
 
-/* =========================================================
-   RENDER PAGE
-========================================================= */
+  let pdfDoc = null;
+  let currentPage = 1;
+  let totalPages = 0;
 
-function renderPage(num) {
+  /* =========================================================
+     LOAD PDF
+  ========================================================= */
 
-  pdfDoc.getPage(num).then(page => {
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    pdfDoc = pdf;
+    totalPages = pdf.numPages;
 
-    const containerWidth = pdfContainer.clientWidth;
+    totalPagesEl.textContent = totalPages;
 
-    const viewport = page.getViewport({ scale: 1 });
-    const scale = containerWidth / viewport.width;
-    const scaledViewport = page.getViewport({ scale });
+    renderPage(currentPage);
+  });
 
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+  /* =========================================================
+     RENDER PAGE (Responsive Fit)
+  ========================================================= */
 
-    canvas.height = scaledViewport.height;
-    canvas.width = scaledViewport.width;
+  function renderPage(num) {
 
-    pdfContainer.innerHTML = "";
-    pdfContainer.appendChild(canvas);
+    pdfDoc.getPage(num).then(page => {
 
-    page.render({
-      canvasContext: context,
-      viewport: scaledViewport
+      const containerWidth = pdfContainer.clientWidth;
+
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = containerWidth / viewport.width;
+      const scaledViewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      canvas.height = scaledViewport.height;
+      canvas.width = scaledViewport.width;
+
+      pdfContainer.innerHTML = "";
+      pdfContainer.appendChild(canvas);
+
+      page.render({
+        canvasContext: context,
+        viewport: scaledViewport
+      });
+
+      currentPageEl.textContent = num;
+
+      // Button logic
+      prevBtn.disabled = num === 1;
+      nextBtn.disabled = num === totalPages;
+
+      // Unlock complete only on last page
+      if (num === totalPages) {
+        completeBtn.disabled = false;
+      } else {
+        completeBtn.disabled = true;
+      }
     });
+  }
 
-    // Enable complete button only on last page
-    if (num === totalPages) {
-      completeBtn.disabled = false;
+  /* =========================================================
+     NAVIGATION BUTTONS
+  ========================================================= */
+
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderPage(currentPage);
     }
   });
 
-/* =========================================================
-   CLICK TO ADVANCE SLIDES
-========================================================= */
+  nextBtn.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderPage(currentPage);
+    }
+  });
 
-pdfContainer.addEventListener("click", () => {
-  if (currentPage < totalPages) {
-    currentPage++;
-    renderPage(currentPage);
+  /* =========================================================
+     COMPLETE CONTENT
+  ========================================================= */
+
+  completeBtn.addEventListener("click", () => {
+
+    localStorage.setItem(DER_CONTENT_KEY, "true");
+
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
+
+  });
+
+  /* =========================================================
+     RESTORE PROGRESS
+  ========================================================= */
+
+  if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
   }
-});
-
-/* =========================================================
-   COMPLETE CONTENT
-========================================================= */
-
-completeBtn.addEventListener("click", () => {
-
-  localStorage.setItem(DER_CONTENT_KEY, "true");
-
-  alert("Content completed. Quiz unlocked.");
-
-  document.getElementById("quizSection").classList.remove("hidden");
 
 });
