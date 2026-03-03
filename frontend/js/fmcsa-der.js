@@ -142,58 +142,59 @@ const DER_COOLDOWN_KEY = "der_fmcsa_quiz_cooldown";
 const derQuestions = [
 
   {
-    q: "Who is responsible for overseeing a company's DOT drug and alcohol testing program?",
-    a: {
-      A: "The Safety Director",
-      B: "The Designated Employer Representative (DER)",
-      C: "The Driver",
-      D: "The Medical Review Officer"
-    },
-    correct: "B"
+    q: "If an employee as a result of a medical issue was issued a medical marijuana card, the employee would NOT be considered positive if he/she tested for it on a DOT test. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "B",
+    explanation: "FALSE –Having a medical marijuana card issued does NOT excuse a covered employee from the DOT regulations.."
   },
 
   {
-    q: "Under 49 CFR Part 382, the DER must ensure testing is conducted when?",
-    a: {
-      A: "Only after accidents",
-      B: "Randomly and as required by regulation",
-      C: "Once per year",
-      D: "Only when requested by drivers"
-    },
-    correct: "B"
+    q: "Recently, some states passed laws to permit use of marijuana for so-called “recreational” purposes. A covered driver tests Positive and due to the State’s new legislation, the driver would NOT be subject the DOT Drug testing regulations as they apply to marijuana. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "B",
+    explanation: "FALSE –State laws will have no bearing on the Dept. of Transportation’s regulated drug testing program. The Dept. of Transportation’s Drug and Alcohol Testing Regulations –49 CFR Part 40 –does not authorize the use of Schedule I drugs, including marijuana, for ANY reason."
   },
 
   {
-    q: "Who receives test results from the Medical Review Officer (MRO)?",
-    a: {
-      A: "The driver",
-      B: "The DER",
-      C: "The dispatcher",
-      D: "The HR assistant"
-    },
-    correct: "B"
+    q: "Marijuana is the most widely used illicit drug in the United States. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "A",
+    explanation: "TRUE–Surveys show that marijuana IS the most common illicit drug used in the United States. Over three-quarters of all drug addicts use, or have used marijuana."
   },
 
   {
-    q: "What must the DER ensure regarding records?",
-    a: {
-      A: "They are destroyed immediately",
-      B: "They are shared publicly",
-      C: "They are maintained according to FMCSA retention rules",
-      D: "They are optional"
-    },
-    correct: "C"
+    q: "A company DER may delegate the DER duties to a service agent. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "B",
+    explanation: "FALSE –as per §40.3 & §40.15, by definition of a DER, those duties may NOT be performed by a service agent."
   },
 
   {
-    q: "If a driver tests positive, the DER must:",
-    a: {
-      A: "Ignore it",
-      B: "Allow the driver to continue driving",
-      C: "Remove the driver from safety-sensitive duties",
-      D: "Wait 30 days"
-    },
-    correct: "C"
+    q: "If a company has their random pool setup to have pulls on a quarterly basis, an employee could be selected for a random drug test for each quarter. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "B",
+    explanation: "TRUE–a random pool allows for every driver to be a potential pull for each selection period (quarterly). That is why it is called RANDOM."
+  },
+
+  {
+    q: "All motor vehicle accidents require that a driver be drug & alcohol tested. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "A",
+    explanation: "FALSE–As per §382..303(a)&(b), a driver is only subject to testing if the accident was a “qualifying” accident."
+  },
+
+  {
+    q: "As an employer, you are required to provide a SAP evaluation or any subsequent recommended education or treatment for an employee who has violated a DOT drug and alcohol regulation. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "A",
+    explanation: "FALSE (§40.289(a)).You are NOT required to provide a SAP evaluation or any subsequent recommended education or treatment. You ARE however, required to provide names, addresses, and phone numbers for Substance Abuse Professionals to the employee. (§40.287)"
+  },
+
+  {
+    q: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?",
+    a: { A: "True", B: "False" },
+    correct: "B",
+    explanation: "Return-to-Duty and Follow-Up tests are performed the same as a Random test. TRUE or FALSE?."
   }
 
 ];
