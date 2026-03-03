@@ -40,42 +40,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderPage(num) {
 
-    pdfDoc.getPage(num).then(page => {
+  pdfDoc.getPage(num).then(page => {
 
-      const containerWidth = pdfContainer.clientWidth;
+    let containerWidth = pdfContainer.clientWidth;
 
-      const viewport = page.getViewport({ scale: 1 });
-      const scale = containerWidth / viewport.width;
-      const scaledViewport = page.getViewport({ scale });
+    // Fallback if container width is 0
+    if (!containerWidth || containerWidth < 100) {
+      containerWidth = 800; // safe default width
+    }
 
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
+    const viewport = page.getViewport({ scale: 1 });
 
-      canvas.height = scaledViewport.height;
-      canvas.width = scaledViewport.width;
+    const scale = containerWidth / viewport.width;
 
-      pdfContainer.innerHTML = "";
-      pdfContainer.appendChild(canvas);
+    const scaledViewport = page.getViewport({ scale });
 
-      page.render({
-        canvasContext: context,
-        viewport: scaledViewport
-      });
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
-      currentPageEl.textContent = num;
+    canvas.height = scaledViewport.height;
+    canvas.width = scaledViewport.width;
 
-      // Button logic
-      prevBtn.disabled = num === 1;
-      nextBtn.disabled = num === totalPages;
+    pdfContainer.innerHTML = "";
+    pdfContainer.appendChild(canvas);
 
-      // Unlock complete only on last page
-      if (num === totalPages) {
-        completeBtn.disabled = false;
-      } else {
-        completeBtn.disabled = true;
-      }
+    page.render({
+      canvasContext: context,
+      viewport: scaledViewport
     });
-  }
+
+    currentPageEl.textContent = num;
+
+    prevBtn.disabled = num === 1;
+    nextBtn.disabled = num === totalPages;
+
+    if (num === totalPages) {
+      completeBtn.disabled = false;
+    } else {
+      completeBtn.disabled = true;
+    }
+
+  });
+}
 
   /* =========================================================
      NAVIGATION BUTTONS
