@@ -1,89 +1,64 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const params = new URLSearchParams(window.location.search);
-  const module = params.get("module");
-  const productType = params.get("type");
-  const qty = parseInt(params.get("qty") || "1", 10);
-
   const payBtn = document.getElementById("payNowBtn");
-
   if (!payBtn) return;
 
+  const params = new URLSearchParams(window.location.search);
+  const module = params.get("module");
+  const type = params.get("type");
+
   payBtn.addEventListener("click", () => {
-    simulateStripeSuccess(module, productType, qty);
+
+    /* ================================
+       FMCSA DER PURCHASE
+    ================================= */
+
+    if (module === "fmcsa-der" || type === "der_fmcsa") {
+
+      localStorage.setItem("paid_der_fmcsa", "true");
+      localStorage.setItem("paid_der_fmcsa_date", Date.now());
+
+      alert("Purchase successful!");
+
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* ================================
+       FMCSA SUPERVISOR BUNDLE
+    ================================= */
+
+    if (module === "fmcsa-module-a" || type === "fmcsa_bundle") {
+
+      localStorage.setItem("paid_fmcsa", "true");
+      localStorage.setItem("fmcsaPurchaseDate", Date.now());
+
+      alert("Purchase successful!");
+
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* ================================
+       EMPLOYEE TRAINING
+    ================================= */
+
+    if (module === "employee") {
+
+      localStorage.setItem("paid_employee", "true");
+
+      alert("Purchase successful!");
+
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* ================================
+       DEFAULT
+    ================================= */
+
+    alert("Unknown purchase type.");
+
   });
 
 });
-
-function simulateStripeSuccess(module, productType, qty) {
-
-  /* ===============================
-     MODULE PURCHASES
-  =============================== */
-
-  if (module === "fmcsa") {
-    localStorage.setItem("paid_fmcsa", "true");
-    localStorage.setItem("fmcsaPurchaseDate", Date.now());
-  }
-
-  if (module === "der") {
-    localStorage.setItem("paid_der", "true");
-  }
-  
-  if (module === "der_fmcsa") {
-  localStorage.setItem("paid_der_fmcsa", "true");
-  localStorage.setItem("paid_der_fmcsa_date", Date.now().toString());
-}
-  
-  if (module === "supervisor") {
-    localStorage.setItem("paid_supervisor", "true");
-  }
-
-  if (module === "employee") {
-    localStorage.setItem("paid_employee", "true");
-  }
-
-  /* ===============================
-   SEAT PURCHASE
-=============================== */
-
-if (productType === "employee_seats") {
-
-  const company = JSON.parse(
-    localStorage.getItem("companyProfile") || "{}"
-  );
-
-  if (!company.seats) company.seats = {};
-  if (!company.seats.employee) {
-    company.seats.employee = { total: 0 };
-  }
-
-  company.seats.employee.total += qty;
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-}
-
-alert("Payment successful!");
-  
-  if (module === "der_fmcsa") {
-  window.location.replace("fmcsa-der.html");
-  return;
-}
-  if (module === "fmcsa") {
-  window.location.replace("fmcsa-module-a.html");
-  return;
-}
-
-// 🔐 Smart Redirect Logic
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-if (
-  productType === "employee_seats" &&
-  (user?.role === "company_admin" || user?.role === "owner")
-) {
-  window.location.replace("company-dashboard.html");
-} else {
-  window.location.replace("dashboard.html");
-}
-
-}
