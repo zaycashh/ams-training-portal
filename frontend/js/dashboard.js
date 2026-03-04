@@ -336,38 +336,6 @@ function updateSupervisorButtonState() {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   
-/* =========================
-   FMCSA BUNDLED MODULE
-========================= */
-
-const fmcsaBtn = document.getElementById("fmcsaBtn");
-
-if (fmcsaBtn) {
-
-  const paid = localStorage.getItem("paid_fmcsa") === "true";
-  const purchaseDate = parseInt(
-    localStorage.getItem("fmcsaPurchaseDate") || "0",
-    10
-  );
-
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-
-  const expired = paid && purchaseDate && (now - purchaseDate > THIRTY_DAYS);
-
-  if (expired) {
-    localStorage.removeItem("paid_fmcsa");
-    localStorage.removeItem("fmcsaPurchaseDate");
-    fmcsaBtn.textContent = "Expired — Repurchase Required";
-  } 
-  else if (paid) {
-    fmcsaBtn.textContent = "Start FMCSA Training";
-  } 
-  else {
-    fmcsaBtn.textContent = "Locked — Purchase Required";
-  }
-}
-
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   updateFMCSAStatus();
@@ -405,6 +373,7 @@ if (fmcsaBtn) {
   updateDERButtonState();
   updateSupervisorButtonState();
   updateFMCSATimer();
+  updateFMCSAModuleButtons();
 
 });
 /* =========================
@@ -424,39 +393,6 @@ function showToast(message, type = "info") {
   }, 4000);
 }
 
-/* =========================
-   FMCSA BUTTON HANDLER
-========================= */
-function handleFMCSA() {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
-  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
-
-  // Must be purchased first
-  if (localStorage.getItem("paid_fmcsa") !== "true") {
-    window.location.href = "payment.html?module=fmcsa";
-    return;
-  }
-
-  // 🟢 Nothing done → Start Module A
-  if (!modA) {
-    window.location.href = "fmcsa-module-a.html";
-    return;
-  }
-
-  // 🟡 A done but B not done → Start Module B
-  if (modA && !modB) {
-    window.location.href = "fmcsa-drug-alcohol.html";
-    return;
-  }
-
-  // 🔵 Both complete → Certificates
-  if (modA && modB) {
-    window.location.href = "fmcsa-certificates.html";
-  }
-}
 /* =========================
    FMCSA COMPLETION STATUS
 ========================= */
@@ -527,4 +463,87 @@ function updateDERButtonState() {
     };
 
   }
+}
+/* =========================
+   FMCSA MODULE UNLOCK SYSTEM
+========================= */
+
+function updateFMCSAModuleButtons() {
+
+  const paid = localStorage.getItem("paid_fmcsa") === "true";
+
+  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
+  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+  const modABtn = document.getElementById("fmcsaModABtn");
+  const modBBtn = document.getElementById("fmcsaModBBtn");
+  const certBtn = document.getElementById("fmcsaCertBtn");
+
+  if (!modABtn || !modBBtn || !certBtn) return;
+
+  /* NOT PURCHASED */
+  if (!paid) {
+
+    modABtn.textContent = "Locked — Purchase Required";
+    modABtn.onclick = () => {
+      window.location.href = "payment.html?module=fmcsa";
+    };
+
+    modBBtn.disabled = true;
+    modBBtn.textContent = "Locked — Purchase Required";
+
+    certBtn.classList.add("hidden");
+
+    return;
+  }
+
+  /* MODULE A NOT DONE */
+  if (!modA) {
+
+    modABtn.textContent = "Start Module A – Reasonable Suspicion";
+    modABtn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+
+    modBBtn.disabled = true;
+    modBBtn.textContent = "Locked — Complete Module A";
+
+    certBtn.classList.add("hidden");
+
+    return;
+  }
+
+  /* MODULE A COMPLETE */
+  if (modA && !modB) {
+
+    modABtn.textContent = "✔ Module A Completed";
+    modABtn.disabled = true;
+
+    modBBtn.disabled = false;
+    modBBtn.textContent = "Start Module B – Drug & Alcohol";
+    modBBtn.onclick = () => {
+      window.location.href = "fmcsa-drug-alcohol.html";
+    };
+
+    certBtn.classList.add("hidden");
+
+    return;
+  }
+
+  /* BOTH MODULES COMPLETE */
+  if (modA && modB) {
+
+    modABtn.textContent = "✔ Module A Completed";
+    modABtn.disabled = true;
+
+    modBBtn.textContent = "✔ Module B Completed";
+    modBBtn.disabled = true;
+
+    certBtn.classList.remove("hidden");
+    certBtn.onclick = () => {
+      window.location.href = "fmcsa-certificates.html";
+    };
+
+  }
+
 }
