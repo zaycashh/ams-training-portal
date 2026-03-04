@@ -516,7 +516,7 @@ function updateFMCSAModuleButtons() {
 
     modABtn.textContent = "Locked — Purchase Required";
     modABtn.onclick = () => {
-      window.location.href = "payment.html?module=fmcsa";
+      window.location.href = "payment.html?type=fmcsa";
     };
 
     modBBtn.disabled = true;
