@@ -340,13 +340,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateFMCSAStatus();
 
-  /* 🔒 Hide FMCSA for employees */
-  if (user?.role === "employee") {
-    const fmcsaSection = document.querySelector(".fmcsa-section");
-    if (fmcsaSection) {
-      fmcsaSection.style.display = "none";
-    }
-  }
+  /* 🔒 Hide FMCSA sections for employees */
+if (user?.role === "employee") {
+
+  const fmcsaSections = document.querySelectorAll(".fmcsa-section");
+
+  fmcsaSections.forEach(section => {
+    section.style.display = "none";
+  });
+
+}
 
   /* Global Notice */
   const notice = sessionStorage.getItem("ams_notice");
