@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
        FMCSA SUPERVISOR BUNDLE
     ================================= */
 
-    if (module === "fmcsa-module-a" || type === "fmcsa_bundle") {
+    if (module === "fmcsa-module-a" || type === "fmcsa") {
 
       localStorage.setItem("paid_fmcsa", "true");
       localStorage.setItem("fmcsaPurchaseDate", Date.now());
