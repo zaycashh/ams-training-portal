@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DER_MAX_ATTEMPTS = 3;
   const DER_COOLDOWN_MINUTES = 15;
 
-  const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
+  frontend/assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf
 
   const pdfContainer = document.getElementById("pdfContainer");
   const completeBtn = document.getElementById("completeContentBtn");
@@ -291,8 +291,6 @@ function updateSubmitState() {
 
   // Generate certificate ID only once
   let certId = localStorage.getItem("fmcsaDERCertificateId");
-
-let certId = localStorage.getItem("fmcsaDERCertificateId");
 
 if (!certId) {
   certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
