@@ -430,9 +430,26 @@ function handleDerFmcsa() {
     window.location.href = "payment.html?module=der_fmcsa";
   }
 }
-/* =========================
-   DER COMPLETION STATUS
-========================= */
+
+function updateFMCSAProgress() {
+
+  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
+  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+  const fill = document.getElementById("fmcsaProgressFill");
+  const text = document.getElementById("fmcsaProgressText");
+
+  if (!fill || !text) return;
+
+  let percent = 0;
+
+  if (modA) percent = 50;
+  if (modA && modB) percent = 100;
+
+  fill.style.width = percent + "%";
+  text.textContent = percent + "% Complete";
+
+}
 /* =========================
    DER COMPLETION STATUS
 ========================= */
