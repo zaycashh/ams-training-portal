@@ -7,197 +7,246 @@
 <link rel="stylesheet" href="../css/main.css" />
 
 <style>
-.cert-container {
-  max-width: 900px;
-  margin: auto;
+.cert-container{
+max-width:900px;
+margin:auto;
 }
 
-.cert-card {
-  background: #f9fafc;
-  border: 1px solid #dce3ef;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
+.cert-card{
+background:#f9fafc;
+border:1px solid #dce3ef;
+border-radius:8px;
+padding:20px;
+margin-bottom:20px;
 }
 
-.cert-card h2 {
-  margin-top: 0;
+.cert-card h2{
+margin-top:0;
 }
 
-.cert-title {
-  font-size: 20px;
-  font-weight: 600;
+.cert-title{
+font-size:20px;
+font-weight:600;
 }
 
-.hidden {
-  display: none;
+.hidden{
+display:none;
 }
 </style>
 </head>
 
 <body>
+
 <script>
-(function () {
+(function(){
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  if (!user) {
-    window.location.replace("../login.html");
-    return;
-  }
-
-  // 🔒 Block employees
-  if (user.role === "employee") {
-    alert("Unauthorized access.");
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
-  // 🔒 Must have either FMCSA Supervisor OR FMCSA DER access
-const supervisorPurchased =
-  localStorage.getItem("paid_fmcsa") === "true";
-
-const derPurchased =
-  localStorage.getItem("paid_der_fmcsa") === "true";
-
-if (!supervisorPurchased && !derPurchased) {
-  alert("FMCSA Training requires purchase.");
-  window.location.replace("../dashboard.html");
-  return;
+if(!user){
+window.location.replace("../login.html");
+return;
 }
 
-  // 🔒 Expiration enforcement
-  const start = localStorage.getItem("fmcsa_start_date");
+/* BLOCK EMPLOYEES */
+if(user.role === "employee"){
+alert("Unauthorized access.");
+window.location.replace("../dashboard.html");
+return;
+}
 
-  if (start) {
-    const DAY_MS = 86400000;
-    const LIMIT_DAYS = 30;
+/* CHECK PURCHASE ACCESS */
 
-    const elapsed = Date.now() - Number(start);
-    const daysUsed = Math.floor(elapsed / DAY_MS);
+const supervisorPurchased =
+localStorage.getItem("paid_fmcsa") === "true";
 
-    if (daysUsed >= LIMIT_DAYS) {
-      alert("FMCSA training window expired. Repurchase required.");
-      window.location.replace("../dashboard.html");
-      return;
-    }
-  }
+const derPurchased =
+localStorage.getItem("paid_der_fmcsa") === "true";
+
+if(!supervisorPurchased && !derPurchased){
+alert("FMCSA Training requires purchase.");
+window.location.replace("../dashboard.html");
+return;
+}
+
+/* OPTIONAL 30 DAY EXPIRATION */
+
+const start = localStorage.getItem("fmcsa_start_date");
+
+if(start){
+
+const DAY_MS = 86400000;
+const LIMIT_DAYS = 30;
+
+const elapsed = Date.now() - Number(start);
+const daysUsed = Math.floor(elapsed / DAY_MS);
+
+if(daysUsed >= LIMIT_DAYS){
+
+alert("FMCSA training window expired. Repurchase required.");
+window.location.replace("../dashboard.html");
+return;
+
+}
+
+}
 
 })();
 </script>
-  
+
 <main class="module-container cert-container">
 
 <header class="module-header">
-  <h1>FMCSA Training Certificates</h1>
-  <button class="btn-secondary" onclick="returnToDashboard()">
-    Return to Dashboard
-  </button>
+<h1>FMCSA Training Certificates</h1>
+
+<button class="btn-secondary" onclick="returnToDashboard()">
+Return to Dashboard
+</button>
+
 </header>
+
 
 <!-- MODULE A CERT -->
 <section id="moduleACert" class="cert-card hidden">
-  <h2 class="cert-title">🎓 FMCSA Reasonable Suspicion Training</h2>
-  <p><strong>Name:</strong> <span id="aName"></span></p>
-  <p><strong>Date Completed:</strong> <span id="aDate"></span></p>
-  <p><strong>Certificate ID:</strong> <span id="aCertId"></span></p>
+
+<h2 class="cert-title">🎓 FMCSA Reasonable Suspicion Training</h2>
+
+<p><strong>Name:</strong> <span id="aName"></span></p>
+<p><strong>Date Completed:</strong> <span id="aDate"></span></p>
+<p><strong>Certificate ID:</strong> <span id="aCertId"></span></p>
+
 </section>
+
 
 <!-- MODULE B CERT -->
 <section id="moduleBCert" class="cert-card hidden">
-  <h2 class="cert-title">🎓 FMCSA Drug & Alcohol Substance Abuse Training</h2>
-  <p><strong>Name:</strong> <span id="bName"></span></p>
-  <p><strong>Date Completed:</strong> <span id="bDate"></span></p>
-  <p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
+
+<h2 class="cert-title">🎓 FMCSA Drug & Alcohol Substance Abuse Training</h2>
+
+<p><strong>Name:</strong> <span id="bName"></span></p>
+<p><strong>Date Completed:</strong> <span id="bDate"></span></p>
+<p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
+
 </section>
 
-  <!-- DER CERT -->
+
+<!-- DER CERT -->
 <section id="derCert" class="cert-card hidden">
-  <h2 class="cert-title">🎓 FMCSA DER Training</h2>
-  <p><strong>Name:</strong> <span id="derName"></span></p>
-  <p><strong>Date Completed:</strong> <span id="derDate"></span></p>
-  <p><strong>Certificate ID:</strong> <span id="derCertId"></span></p>
+
+<h2 class="cert-title">🎓 FMCSA DER Training</h2>
+
+<p><strong>Name:</strong> <span id="derName"></span></p>
+<p><strong>Date Completed:</strong> <span id="derDate"></span></p>
+<p><strong>Certificate ID:</strong> <span id="derCertId"></span></p>
+
 </section>
 
 </main>
 
+
 <script>
 
-/* =========================
-   LOAD CERTIFICATES
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
+/* ===================================
+LOAD CERTIFICATES
+=================================== */
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+document.addEventListener("DOMContentLoaded",()=>{
 
-  const modACompleted =
-    localStorage.getItem("fmcsaModuleACompleted") === "true";
+const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  const modBCompleted =
-    localStorage.getItem("fmcsaModuleBCompleted") === "true";
+const modACompleted =
+localStorage.getItem("fmcsaModuleACompleted") === "true";
 
-  if (!modACompleted && !modBCompleted) {
-    window.location.replace("dashboard.html");
-    return;
-  }
+const modBCompleted =
+localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
-  const today = new Date().toLocaleDateString();
+const derCompleted =
+localStorage.getItem("fmcsaDERCompleted") === "true";
 
-  // MODULE A
-if (modACompleted) {
-  document.getElementById("moduleACert").classList.remove("hidden");
+/* IF NOTHING COMPLETED RETURN */
 
-  document.getElementById("aName").textContent =
-    user.email || "User";
+if(!modACompleted && !modBCompleted && !derCompleted){
 
-  const storedADate = localStorage.getItem("fmcsaModuleADate");
-  document.getElementById("aDate").textContent =
-    storedADate
-      ? new Date(Number(storedADate)).toLocaleDateString()
-      : "N/A";
+window.location.replace("dashboard.html");
+return;
 
-  document.getElementById("aCertId").textContent =
-    localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
 }
 
-  // MODULE B
-  if (modBCompleted) {
-    document.getElementById("moduleBCert").classList.remove("hidden");
-    document.getElementById("bName").textContent = user.email || "User";
-    document.getElementById("bDate").textContent = today;
-    document.getElementById("bCertId").textContent =
-      localStorage.getItem("fmcsaModuleBCertificateId") || "N/A";
-  }
-  
-  // DER CERTIFICATE
-  const derCompleted =
-    localStorage.getItem("fmcsaDERCompleted") === "true";
 
-  if (derCompleted) {
+/* MODULE A */
 
-    document.getElementById("derCert").classList.remove("hidden");
+if(modACompleted){
 
-    document.getElementById("derName").textContent =
-      user.email || "User";
+document.getElementById("moduleACert").classList.remove("hidden");
 
-    const storedDate = localStorage.getItem("fmcsaDERDate");
+document.getElementById("aName").textContent =
+user.email || "User";
 
-    document.getElementById("derDate").textContent =
-      storedDate
-        ? new Date(Number(storedDate)).toLocaleDateString()
-        : "N/A";
+const storedADate =
+localStorage.getItem("fmcsaModuleADate");
 
-    document.getElementById("derCertId").textContent =
-      localStorage.getItem("fmcsaDERCertificateId") || "N/A";
-  }
-  
+document.getElementById("aDate").textContent =
+storedADate
+? new Date(Number(storedADate)).toLocaleDateString()
+: "N/A";
+
+document.getElementById("aCertId").textContent =
+localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
+
+}
+
+
+/* MODULE B */
+
+if(modBCompleted){
+
+document.getElementById("moduleBCert").classList.remove("hidden");
+
+document.getElementById("bName").textContent =
+user.email || "User";
+
+const storedBDate =
+localStorage.getItem("fmcsaModuleBDate");
+
+document.getElementById("bDate").textContent =
+storedBDate
+? new Date(Number(storedBDate)).toLocaleDateString()
+: new Date().toLocaleDateString();
+
+document.getElementById("bCertId").textContent =
+localStorage.getItem("fmcsaModuleBCertificateId") || "N/A";
+
+}
+
+
+/* DER CERTIFICATE */
+
+if(derCompleted){
+
+document.getElementById("derCert").classList.remove("hidden");
+
+document.getElementById("derName").textContent =
+user.email || "User";
+
+const storedDate =
+localStorage.getItem("fmcsaDERDate");
+
+document.getElementById("derDate").textContent =
+storedDate
+? new Date(Number(storedDate)).toLocaleDateString()
+: "N/A";
+
+document.getElementById("derCertId").textContent =
+localStorage.getItem("fmcsaDERCertificateId") || "N/A";
+
+}
+
 });
 
-/* =========================
-   RETURN
-========================= */
-function returnToDashboard() {
-  window.location.href = "dashboard.html";
+
+/* RETURN BUTTON */
+
+function returnToDashboard(){
+window.location.href="dashboard.html";
 }
 
 </script>
