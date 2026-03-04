@@ -88,71 +88,46 @@
   <!-- FMCSA -->
   <hr class="section-divider" />
 
-  <div class="fmcsa-section">
-    <h2>FMCSA Supervisor Training (Bundled Program)</h2>
+ <div class="fmcsa-section">
 
-    <p>
-      This is a bundled training package required for supervisors under
-      <strong>FMCSA regulations</strong>.
-      Includes Reasonable Suspicion and Drug & Alcohol Awareness Training.
-    </p>
+<h2>FMCSA Supervisor Training (Bundled Program)</h2>
 
-    <p class="section-note">
-      ⚠ This training must be purchased and completed within 30 days.
-    </p>
+<p>
+This training bundle includes the required DOT FMCSA supervisor
+drug and alcohol awareness courses.
+</p>
 
-    <div class="fmcsa-modules">
+<div class="modules-grid">
 
-  <button
-    id="fmcsaModABtn"
-    class="btn-primary"
-  >
-    Start Module A – Reasonable Suspicion
+<!-- MODULE A -->
+<div class="module-card" id="fmcsaModACard">
+  <h3>Module A – Reasonable Suspicion</h3>
+  <p>Supervisor observation and documentation training.</p>
+
+  <button id="fmcsaModABtn" class="btn-primary">
+    Locked — Purchase Required
   </button>
+</div>
 
-  <button
-    id="fmcsaModBBtn"
-    class="btn-secondary"
-  >
+<!-- MODULE B -->
+<div class="module-card" id="fmcsaModBCard">
+  <h3>Module B – Drug & Alcohol Awareness</h3>
+  <p>Substance abuse education and testing compliance.</p>
+
+  <button id="fmcsaModBBtn" class="btn-primary" disabled>
     Locked — Complete Module A
   </button>
+</div>
 
-  <button
-    id="fmcsaCertBtn"
-    class="btn-secondary hidden"
-  >
-    View FMCSA Certificate
+<!-- CERTIFICATE -->
+<div class="module-card hidden" id="fmcsaCertCard">
+  <h3>FMCSA Training Certificate</h3>
+  <p>Download your FMCSA supervisor training certificate.</p>
+
+  <button id="fmcsaCertBtn" class="btn-primary">
+    View Certificate
   </button>
-
 </div>
-    
-    <!-- ✅ COMPLETION BADGES -->
-    
-    <div class="progress-bar-container">
-
-  <div class="progress-bar">
-    <div id="fmcsaProgressFill" class="progress-fill"></div>
-  </div>
-
-  <div id="fmcsaProgressText" class="progress-text">
-    0% Complete
-  </div>
-
-</div>
-    
-<div class="fmcsa-progress">
-
-  <div id="modABadge" class="progress-step hidden">
-    ✔ Module A Completed – Reasonable Suspicion
-  </div>
-
-  <div id="modBBadge" class="progress-step hidden">
-    ✔ Module B Completed – Drug & Alcohol
-  </div>
-
-  <div id="certBadge" class="progress-step hidden">
-    🎓 FMCSA Certificate Available
-  </div>
 
 </div>
 
