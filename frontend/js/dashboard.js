@@ -374,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
  updateSupervisorButtonState();
  updateFMCSATimer();
  updateFMCSAModuleButtons();
+ updateFMCSAStatus();  
  updateFMCSAStatus();
  updateFMCSAProgress();
 
@@ -456,7 +457,8 @@ function updateFMCSAProgress() {
    DER COMPLETION STATUS
 ========================= */
 function updateFMCSDERButtonState() {
-  const derCompleted =
+  
+   const derCompleted =
     localStorage.getItem("fmcsaDERCompleted") === "true";
 
   const derBtn = document.getElementById("derFmcsaBtn");
