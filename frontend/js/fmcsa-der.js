@@ -290,12 +290,14 @@ function updateSubmitState() {
   localStorage.setItem("fmcsaDERCompleted", "true");
 
   // Generate certificate ID only once
-  let certId = localStorage.getItem("derCertificateId");
+  let certId = localStorage.getItem("fmcsaDERCertificateId");
 
-  if (!certId) {
-    certId = "AMS-DER-" + Date.now().toString().slice(-8);
-    localStorage.setItem("derCertificateId", certId);
-  }
+let certId = localStorage.getItem("fmcsaDERCertificateId");
+
+if (!certId) {
+  certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
+  localStorage.setItem("fmcsaDERCertificateId", certId);
+}
 
   // Store completion date
   localStorage.setItem("fmcsaDERDate", Date.now());
