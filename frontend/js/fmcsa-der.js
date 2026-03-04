@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================================================= */
 
   const DER_CONTENT_KEY = "der_fmcsa_content_done";
+  const DER_QUIZ_PASSED_KEY = "der_fmcsa_quiz_passed";
   const DER_ATTEMPTS_KEY = "der_fmcsa_quiz_attempts";
   const DER_COOLDOWN_KEY = "der_fmcsa_quiz_cooldown";
 
