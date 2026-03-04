@@ -75,13 +75,24 @@
     const purchaseDate = parseInt(localStorage.getItem(dateKey) || "0", 10);
 
     if (paid !== "true" || !purchaseDate) {
-      sessionStorage.setItem(
-        "ams_notice",
-        "You must purchase this FMCSA training to access it."
-      );
-      redirectToRoleDashboard(user);
-      return;
-    }
+
+  // Redirect DER to payment simulation
+  if (module === "fmcsa-der") {
+    window.location.replace(
+      BASE + "payment.html?module=fmcsa-der&type=der_fmcsa"
+    );
+    return;
+  }
+
+  // Other FMCSA modules still require supervisor bundle
+  sessionStorage.setItem(
+    "ams_notice",
+    "You must purchase this FMCSA training to access it."
+  );
+
+  redirectToRoleDashboard(user);
+  return;
+}
 
     const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
