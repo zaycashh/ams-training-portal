@@ -264,6 +264,7 @@ function updateSubmitState() {
       if (userAnswer === question.correct) {
         correctCount++;
       } else {
+         
         reviewHTML += `
           <div style="margin-top:15px;">
             <p><strong>Question ${index + 1}:</strong> ${question.q}</p>
@@ -340,6 +341,7 @@ function updateSubmitState() {
   }
 
 }
+
   function checkCooldown() {
     const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
 
