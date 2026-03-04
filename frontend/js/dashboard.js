@@ -458,39 +458,38 @@ function updateFMCSAProgress() {
 ========================= */
 function updateFMCSDERButtonState() {
 
+  const derFmcsaBtn = document.getElementById("derFmcsaBtn");
+  if (!derFmcsaBtn) return;
+
   const paid = localStorage.getItem("paid_der_fmcsa") === "true";
   const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
-
-  const derBtn = document.getElementById("derFmcsaBtn");
-  if (!derBtn) return;
 
   /* COMPLETED */
   if (completed) {
 
-    derBtn.textContent = "View DER Certificate";
-    derBtn.onclick = () => {
+    derFmcsaBtn.textContent = "View DER Certificate";
+    derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-certificates.html";
     };
 
     return;
   }
 
-  /* PURCHASED BUT NOT COMPLETED */
+  /* PURCHASED */
   if (paid) {
 
-    derBtn.textContent = "Start DER Training";
-    derBtn.onclick = () => {
+    derFmcsaBtn.textContent = "Start DER Training";
+    derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-der.html";
     };
 
     return;
   }
 
-  /* NOT PURCHASED */
+  /* LOCKED */
 
-  derBtn.textContent = "🔒 Locked — Purchase Required";
-
-  derBtn.onclick = () => {
+  derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+  derFmcsaBtn.onclick = () => {
     window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
   };
 
