@@ -586,3 +586,16 @@ body {
 .section-block {
   margin-top: 40px;
 }
+/* Make bundle modules equal width */
+
+.bundle-modules {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* When only one module exists (DER section) */
+.bundle-section .bundle-modules:has(.module-card:only-child) {
+  grid-template-columns: 1fr;
+  max-width: 500px;
+}
