@@ -564,4 +564,5 @@ if (modA && modB) {
     window.location.href = "fmcsa-certificates.html";
   };
 }
-   
+
+}
