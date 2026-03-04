@@ -313,17 +313,22 @@ if (submitBtn) {
 
     if (scorePercent >= DER_PASS_PERCENT) {
 
-      localStorage.setItem("fmcsaDERCompleted", "true");
-      localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
+  localStorage.setItem("fmcsaDERCompleted", "true");
 
-      let certId = localStorage.getItem("fmcsaDERCertificateId");
+  // REQUIRED FOR ROUTE GUARD
+  localStorage.setItem("paid_der_fmcsa", "true");
+  localStorage.setItem("paid_der_fmcsa_date", Date.now());
 
-      if (!certId) {
-        certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
-        localStorage.setItem("fmcsaDERCertificateId", certId);
-      }
+  localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
-      localStorage.setItem("fmcsaDERDate", Date.now());
+  let certId = localStorage.getItem("fmcsaDERCertificateId");
+
+  if (!certId) {
+    certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
+    localStorage.setItem("fmcsaDERCertificateId", certId);
+  }
+
+  localStorage.setItem("fmcsaDERDate", Date.now());
 
       localStorage.removeItem(DER_ATTEMPTS_KEY);
       localStorage.removeItem(DER_COOLDOWN_KEY);
