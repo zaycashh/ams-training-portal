@@ -7,7 +7,7 @@
 (function () {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const module = document.body.dataset.module;
+  const module = document.body?.dataset?.module || "";
   const path = window.location.pathname;
   const role = user?.role;
   const type = user?.type || "company";
