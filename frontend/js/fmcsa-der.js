@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DER_MAX_ATTEMPTS = 3;
   const DER_COOLDOWN_MINUTES = 15;
 
-  frontend/assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf
+  const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
 
   const pdfContainer = document.getElementById("pdfContainer");
   const completeBtn = document.getElementById("completeContentBtn");
