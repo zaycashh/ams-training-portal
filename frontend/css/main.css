@@ -527,3 +527,23 @@ body {
   border: 1px solid #e1c88b;
   border-radius: 8px;
 }
+/* ===============================
+   PORTAL HEADER (Dashboard)
+================================ */
+
+.portal-header {
+  background: #0c2545;
+  color: white;
+  padding: 45px 20px;
+  text-align: center;
+}
+
+.portal-header h1 {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.portal-header p {
+  opacity: 0.9;
+  font-size: 16px;
+}
