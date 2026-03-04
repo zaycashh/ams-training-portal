@@ -548,20 +548,20 @@ function updateFMCSAModuleButtons() {
     return;
   }
 
-  /* BOTH MODULES COMPLETE */
-  if (modA && modB) {
+/* BOTH MODULES COMPLETE */
+if (modA && modB) {
 
-    modABtn.textContent = "✔ Module A Completed";
-    modABtn.disabled = true;
+  modABtn.textContent = "✔ Module A Completed";
+  modABtn.disabled = true;
 
-    modBBtn.textContent = "✔ Module B Completed";
-    modBBtn.disabled = true;
+  modBBtn.textContent = "✔ Module B Completed";
+  modBBtn.disabled = true;
 
-    certBtn.classList.remove("hidden");
-    certBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html";
-    };
+  const certCard = document.getElementById("fmcsaCertCard");
+  if (certCard) certCard.classList.remove("hidden");
 
-  }
+  certBtn.onclick = () => {
+    window.location.href = "fmcsa-certificates.html";
+  };
 
 }
