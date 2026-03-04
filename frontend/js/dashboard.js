@@ -457,30 +457,43 @@ function updateFMCSAProgress() {
    DER COMPLETION STATUS
 ========================= */
 function updateFMCSDERButtonState() {
-  
-   const derCompleted =
-    localStorage.getItem("fmcsaDERCompleted") === "true";
+
+  const paid = localStorage.getItem("paid_der_fmcsa") === "true";
+  const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
 
   const derBtn = document.getElementById("derFmcsaBtn");
   if (!derBtn) return;
 
-  if (derCompleted) {
+  /* COMPLETED */
+  if (completed) {
 
-    // Completed → View Certificate
     derBtn.textContent = "View DER Certificate";
     derBtn.onclick = () => {
       window.location.href = "fmcsa-certificates.html";
     };
 
-  } else {
+    return;
+  }
 
-    // Not completed → Go to DER training
+  /* PURCHASED BUT NOT COMPLETED */
+  if (paid) {
+
     derBtn.textContent = "Start DER Training";
     derBtn.onclick = () => {
       window.location.href = "fmcsa-der.html";
     };
 
+    return;
   }
+
+  /* NOT PURCHASED */
+
+  derBtn.textContent = "🔒 Locked — Purchase Required";
+
+  derBtn.onclick = () => {
+    window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
+  };
+
 }
 /* =========================
    FMCSA MODULE UNLOCK SYSTEM
