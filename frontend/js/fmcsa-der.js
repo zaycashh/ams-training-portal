@@ -289,22 +289,18 @@ function updateSubmitState() {
   // Mark module complete
   localStorage.setItem("fmcsaDERCompleted", "true");
 
-  // Generate certificate ID only once
   let certId = localStorage.getItem("fmcsaDERCertificateId");
 
-if (!certId) {
-  certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
-  localStorage.setItem("fmcsaDERCertificateId", certId);
-}
+  if (!certId) {
+    certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
+    localStorage.setItem("fmcsaDERCertificateId", certId);
+  }
 
-  // Store completion date
   localStorage.setItem("fmcsaDERDate", Date.now());
 
-  // Cleanup attempts
   localStorage.removeItem(DER_ATTEMPTS_KEY);
   localStorage.removeItem(DER_COOLDOWN_KEY);
 
-  // Show success message
   if (resultBox) {
     resultBox.innerHTML = `
       <div class="result-box pass">
@@ -313,41 +309,36 @@ if (!certId) {
     `;
   }
 
-  // Redirect after delay
   setTimeout(() => {
     window.location.href = "fmcsa-certificates.html";
   }, 2000);
-}
 
-    } else {
+} else {
 
-      derAttempts++;
-      localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+  derAttempts++;
+  localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
 
-      if (derAttempts >= DER_MAX_ATTEMPTS) {
+  if (derAttempts >= DER_MAX_ATTEMPTS) {
 
-        const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
-        localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
+    const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
+    localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
 
-        alert("Maximum attempts reached. 15-minute cooldown activated.");
+    alert("Maximum attempts reached. 15-minute cooldown activated.");
 
-        window.location.reload();
-        return;
-      }
+    window.location.reload();
+    return;
+  }
 
-      if (resultBox) {
-        resultBox.innerHTML = `
-          <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
-            <h3>Score: ${scorePercent}%</h3>
-            <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
-            ${reviewHTML}
-          </div>
-        `;
-      }
+  if (resultBox) {
+    resultBox.innerHTML = `
+      <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
+        <h3>Score: ${scorePercent}%</h3>
+        <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
+        ${reviewHTML}
+      </div>
+    `;
+  }
 
-    }
-
-  });
 }
   function checkCooldown() {
     const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
