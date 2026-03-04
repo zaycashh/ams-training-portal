@@ -563,3 +563,5 @@ if (modA && modB) {
   certBtn.onclick = () => {
     window.location.href = "fmcsa-certificates.html";
   };
+}
+   
