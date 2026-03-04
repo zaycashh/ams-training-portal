@@ -53,12 +53,18 @@
     return;
   }
 
-  // 🔒 Must purchase FMCSA
-  if (localStorage.getItem("paid_fmcsa") !== "true") {
-    alert("FMCSA Training requires purchase.");
-    window.location.replace("../dashboard.html");
-    return;
-  }
+  // 🔒 Must have either FMCSA Supervisor OR FMCSA DER access
+const supervisorPurchased =
+  localStorage.getItem("paid_fmcsa") === "true";
+
+const derPurchased =
+  localStorage.getItem("paid_der_fmcsa") === "true";
+
+if (!supervisorPurchased && !derPurchased) {
+  alert("FMCSA Training requires purchase.");
+  window.location.replace("../dashboard.html");
+  return;
+}
 
   // 🔒 Expiration enforcement
   const start = localStorage.getItem("fmcsa_start_date");
@@ -103,6 +109,14 @@
   <p><strong>Name:</strong> <span id="bName"></span></p>
   <p><strong>Date Completed:</strong> <span id="bDate"></span></p>
   <p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
+</section>
+
+  <!-- DER CERT -->
+<section id="derCert" class="cert-card hidden">
+  <h2 class="cert-title">🎓 FMCSA DER Training</h2>
+  <p><strong>Name:</strong> <span id="derName"></span></p>
+  <p><strong>Date Completed:</strong> <span id="derDate"></span></p>
+  <p><strong>Certificate ID:</strong> <span id="derCertId"></span></p>
 </section>
 
 </main>
@@ -154,7 +168,29 @@ if (modACompleted) {
     document.getElementById("bCertId").textContent =
       localStorage.getItem("fmcsaModuleBCertificateId") || "N/A";
   }
+  
+  // DER CERTIFICATE
+  const derCompleted =
+    localStorage.getItem("fmcsaDERCompleted") === "true";
 
+  if (derCompleted) {
+
+    document.getElementById("derCert").classList.remove("hidden");
+
+    document.getElementById("derName").textContent =
+      user.email || "User";
+
+    const storedDate = localStorage.getItem("fmcsaDERDate");
+
+    document.getElementById("derDate").textContent =
+      storedDate
+        ? new Date(Number(storedDate)).toLocaleDateString()
+        : "N/A";
+
+    document.getElementById("derCertId").textContent =
+      localStorage.getItem("fmcsaDERCertificateId") || "N/A";
+  }
+  
 });
 
 /* =========================
