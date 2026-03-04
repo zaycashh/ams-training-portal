@@ -101,13 +101,30 @@
       ⚠ This training must be purchased and completed within 30 days.
     </p>
 
-    <button
-  id="fmcsaBtn"
-  class="btn-primary"
-  onclick="handleFMCSA()"
->
-  Locked — Purchase Required
-</button>
+    <div class="fmcsa-modules">
+
+  <button
+    id="fmcsaModABtn"
+    class="btn-primary"
+  >
+    Start Module A – Reasonable Suspicion
+  </button>
+
+  <button
+    id="fmcsaModBBtn"
+    class="btn-secondary"
+  >
+    Locked — Complete Module A
+  </button>
+
+  <button
+    id="fmcsaCertBtn"
+    class="btn-secondary hidden"
+  >
+    View FMCSA Certificate
+  </button>
+
+</div>
     
     <!-- ✅ COMPLETION BADGES -->
 <div id="fmcsaCompletionBadges" style="margin-top:10px;">
