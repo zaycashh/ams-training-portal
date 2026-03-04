@@ -329,8 +329,7 @@ function updateSubmitState() {
     window.location.reload();
     return;
   }
-
-  if (resultBox) {
+         if (resultBox) {
     resultBox.innerHTML = `
       <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
         <h3>Score: ${scorePercent}%</h3>
@@ -340,7 +339,11 @@ function updateSubmitState() {
     `;
   }
 
-}
+}  // closes else block
+
+}); // closes submitBtn.addEventListener
+
+}  // closes if (submitBtn)
 
   function checkCooldown() {
     const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
