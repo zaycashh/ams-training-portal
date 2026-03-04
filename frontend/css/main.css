@@ -521,3 +521,14 @@ body {
 .module-card h3{
   margin-top:0;
 }
+/* FMCSA DER highlight style */
+#derFmcsaBtn {
+  margin-top: 10px;
+}
+
+.fmcsa-der-card {
+  background: #f6eddc;
+  border: 1px solid #e3c98f;
+  border-radius: 8px;
+  padding: 20px;
+}
