@@ -374,8 +374,8 @@ document.addEventListener("DOMContentLoaded", () => {
  updateSupervisorButtonState();
  updateFMCSATimer();
  updateFMCSAModuleButtons();
+ updateFMCSDERButtonState();
  updateFMCSAStatus();  
- updateFMCSAStatus();
  updateFMCSAProgress();
 
 });
