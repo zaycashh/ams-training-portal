@@ -369,12 +369,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  updateEmployeeButtonState();
-  updateDERButtonState();
-  updateSupervisorButtonState();
-  updateFMCSATimer();
-  updateFMCSAModuleButtons();
-  updateFMCSAProgress();
+ updateEmployeeButtonState();
+ updateDERButtonState();
+ updateSupervisorButtonState();
+ updateFMCSATimer();
+ updateFMCSAModuleButtons();
+ updateFMCSAStatus();
+ updateFMCSAProgress();
 
 });
 /* =========================
@@ -454,8 +455,7 @@ function updateFMCSAProgress() {
 /* =========================
    DER COMPLETION STATUS
 ========================= */
-function updateDERButtonState() {
-
+function updateFMCSDERButtonState() {
   const derCompleted =
     localStorage.getItem("fmcsaDERCompleted") === "true";
 
