@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================================================= */
 
   const DER_CONTENT_KEY = "der_fmcsa_content_done";
-  const DER_QUIZ_PASSED_KEY = "der_fmcsa_quiz_passed";
   const DER_ATTEMPTS_KEY = "der_fmcsa_quiz_attempts";
   const DER_COOLDOWN_KEY = "der_fmcsa_quiz_cooldown";
 
@@ -35,81 +34,105 @@ document.addEventListener("DOMContentLoaded", () => {
   if (pdfContainer) {
 
     pdfjsLib.getDocument(url).promise.then(pdf => {
+
       pdfDoc = pdf;
       totalPages = pdf.numPages;
+
       if (totalPagesEl) totalPagesEl.textContent = totalPages;
+
       renderPage(currentPage);
+
     });
-
-    function renderPage(num) {
-
-      pdfDoc.getPage(num).then(page => {
-
-        let containerWidth = pdfContainer.clientWidth || 800;
-
-        const viewport = page.getViewport({ scale: 1 });
-        const scale = containerWidth / viewport.width;
-        const scaledViewport = page.getViewport({ scale });
-
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
-
-        pdfContainer.innerHTML = "";
-        pdfContainer.appendChild(canvas);
-
-        page.render({
-          canvasContext: context,
-          viewport: scaledViewport
-        });
-
-        if (currentPageEl) currentPageEl.textContent = num;
-
-        if (prevPageBtn) prevPageBtn.disabled = num === 1;
-        if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
-
-        if (completeBtn) {
-          completeBtn.disabled = num !== totalPages;
-        }
-
-      });
-    }
-
-    if (prevPageBtn) {
-      prevPageBtn.addEventListener("click", () => {
-        if (currentPage > 1) {
-          currentPage--;
-          renderPage(currentPage);
-        }
-      });
-    }
-
-    if (nextPageBtn) {
-      nextPageBtn.addEventListener("click", () => {
-        if (currentPage < totalPages) {
-          currentPage++;
-          renderPage(currentPage);
-        }
-      });
-    }
-
-    if (completeBtn) {
-      completeBtn.addEventListener("click", () => {
-        localStorage.setItem(DER_CONTENT_KEY, "true");
-        document.getElementById("contentSection").classList.add("hidden");
-        document.getElementById("quizSection").classList.remove("hidden");
-      });
-    }
-
-    if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
-      document.getElementById("contentSection").classList.add("hidden");
-      document.getElementById("quizSection").classList.remove("hidden");
-    }
 
   }
 
+  function renderPage(num) {
+
+    pdfDoc.getPage(num).then(page => {
+
+      let containerWidth = pdfContainer.clientWidth || 800;
+
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = containerWidth / viewport.width;
+      const scaledViewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      canvas.height = scaledViewport.height;
+      canvas.width = scaledViewport.width;
+
+      pdfContainer.innerHTML = "";
+      pdfContainer.appendChild(canvas);
+
+      page.render({
+        canvasContext: context,
+        viewport: scaledViewport
+      });
+
+      if (currentPageEl) currentPageEl.textContent = num;
+
+      if (prevPageBtn) prevPageBtn.disabled = num === 1;
+      if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
+
+      if (completeBtn) {
+        completeBtn.disabled = num !== totalPages;
+      }
+
+    });
+
+  }
+
+  if (prevPageBtn) {
+
+    prevPageBtn.addEventListener("click", () => {
+
+      if (currentPage > 1) {
+
+        currentPage--;
+        renderPage(currentPage);
+
+      }
+
+    });
+
+  }
+
+  if (nextPageBtn) {
+
+    nextPageBtn.addEventListener("click", () => {
+
+      if (currentPage < totalPages) {
+
+        currentPage++;
+        renderPage(currentPage);
+
+      }
+
+    });
+
+  }
+
+  if (completeBtn) {
+
+    completeBtn.addEventListener("click", () => {
+
+      localStorage.setItem(DER_CONTENT_KEY, "true");
+
+      document.getElementById("contentSection").classList.add("hidden");
+      document.getElementById("quizSection").classList.remove("hidden");
+
+    });
+
+  }
+
+  if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
+
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
+
+  }
+   
   /* =========================================================
      QUIZ ENGINE
   ========================================================= */
@@ -175,21 +198,25 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let currentQuestionIndex = 0;
-  let selectedAnswers = {};
-  let derAttempts = parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10);
+let selectedAnswers = {};
+let derAttempts = parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10);
 
-  const quizContainer = document.getElementById("quizContainer");
-  const prevQuestionBtn = document.getElementById("prevQuestionBtn");
-  const nextQuestionBtn = document.getElementById("nextQuestionBtn");
-  const submitBtn = document.getElementById("submitQuizBtn");
-  const resultBox = document.getElementById("quizResult");
+const quizContainer = document.getElementById("quizContainer");
+const prevQuestionBtn = document.getElementById("prevQuestionBtn");
+const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+const submitBtn = document.getElementById("submitQuizBtn");
+const resultBox = document.getElementById("quizResult");
 
-  const currentQuestionEl = document.getElementById("currentQuestion");
-  const totalQuestionsEl = document.getElementById("totalQuestions");
+const currentQuestionEl = document.getElementById("currentQuestion");
+const totalQuestionsEl = document.getElementById("totalQuestions");
 
-  if (quizContainer) initQuiz();
+if (totalQuestionsEl) totalQuestionsEl.textContent = derQuestions.length;
 
-  function initQuiz() {
+if (submitBtn) submitBtn.disabled = true;
+
+if (quizContainer) initQuiz();
+
+function initQuiz() {
 
   checkCooldown();
 
@@ -200,164 +227,164 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderQuestion();
 }
-   
-  function renderQuestion() {
 
-    const question = derQuestions[currentQuestionIndex];
+function renderQuestion() {
 
-    quizContainer.innerHTML = `
-      <p><strong>${question.q}</strong></p>
-      ${Object.entries(question.a).map(([key, value]) => `
-        <label>
-          <input type="radio" name="answer" value="${key}"
-            ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}
-          >
-          ${key}. ${value}
-        </label>
-      `).join("")}
-    `;
+  const question = derQuestions[currentQuestionIndex];
 
-    if (currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
+  quizContainer.innerHTML = `
+    <p><strong>${question.q}</strong></p>
+    ${Object.entries(question.a).map(([key, value]) => `
+      <label>
+        <input type="radio" name="answer" value="${key}"
+        ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}>
+        ${key}. ${value}
+      </label>
+    `).join("")}
+  `;
 
-    if (prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
-    if (nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === derQuestions.length - 1;
+  if (currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
 
-    document.querySelectorAll("input[name='answer']").forEach(input => {
-      input.addEventListener("change", e => {
-        selectedAnswers[currentQuestionIndex] = e.target.value;
-        updateSubmitState();
-      });
+  if (prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
+  if (nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === derQuestions.length - 1;
+
+  document.querySelectorAll("input[name='answer']").forEach(input => {
+    input.addEventListener("change", e => {
+      selectedAnswers[currentQuestionIndex] = e.target.value;
+      updateSubmitState();
     });
-  }
+  });
+}
 
-  if (prevQuestionBtn) {
-    prevQuestionBtn.addEventListener("click", () => {
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        renderQuestion();
-      }
-    });
-  }
+if (prevQuestionBtn) {
+  prevQuestionBtn.addEventListener("click", () => {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      renderQuestion();
+    }
+  });
+}
 
-  if (nextQuestionBtn) {
-    nextQuestionBtn.addEventListener("click", () => {
-      if (currentQuestionIndex < derQuestions.length - 1) {
-        currentQuestionIndex++;
-        renderQuestion();
-      }
-    });
-  }
-   
+if (nextQuestionBtn) {
+  nextQuestionBtn.addEventListener("click", () => {
+    if (currentQuestionIndex < derQuestions.length - 1) {
+      currentQuestionIndex++;
+      renderQuestion();
+    }
+  });
+}
+
 function updateSubmitState() {
   if (!submitBtn) return;
   submitBtn.disabled = Object.keys(selectedAnswers).length !== derQuestions.length;
 }
-  if (submitBtn) {
+
+if (submitBtn) {
+
   submitBtn.addEventListener("click", () => {
 
     let correctCount = 0;
     let reviewHTML = "";
 
     derQuestions.forEach((question, index) => {
+
       const userAnswer = selectedAnswers[index];
 
       if (userAnswer === question.correct) {
         correctCount++;
       } else {
-         
+
         reviewHTML += `
-          <div style="margin-top:15px;">
-            <p><strong>Question ${index + 1}:</strong> ${question.q}</p>
-            <p style="color:#c0392b;">
-              Your Answer: ${userAnswer || "Not Answered"}
-            </p>
-            <p style="color:#27ae60;">
-              Correct Answer: ${question.correct}
-            </p>
-            <p>
-              <strong>Explanation:</strong> ${question.explanation || "Review training material."}
-            </p>
-            <hr/>
-          </div>
+        <div style="margin-top:15px;">
+          <p><strong>Question ${index + 1}:</strong> ${question.q}</p>
+          <p style="color:#c0392b;">Your Answer: ${userAnswer || "Not Answered"}</p>
+          <p style="color:#27ae60;">Correct Answer: ${question.correct}</p>
+          <p><strong>Explanation:</strong> ${question.explanation || "Review training material."}</p>
+          <hr/>
+        </div>
         `;
+
       }
+
     });
 
     const scorePercent = Math.round((correctCount / derQuestions.length) * 100);
 
     if (scorePercent >= DER_PASS_PERCENT) {
 
-  // Mark module complete
-  localStorage.setItem("fmcsaDERCompleted", "true");
+      localStorage.setItem("fmcsaDERCompleted", "true");
+      localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
-  let certId = localStorage.getItem("fmcsaDERCertificateId");
+      let certId = localStorage.getItem("fmcsaDERCertificateId");
 
-  if (!certId) {
-    certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
-    localStorage.setItem("fmcsaDERCertificateId", certId);
-  }
+      if (!certId) {
+        certId = "AMS-FMCSA-DER-" + Date.now().toString().slice(-8);
+        localStorage.setItem("fmcsaDERCertificateId", certId);
+      }
 
-  localStorage.setItem("fmcsaDERDate", Date.now());
+      localStorage.setItem("fmcsaDERDate", Date.now());
 
-  localStorage.removeItem(DER_ATTEMPTS_KEY);
-  localStorage.removeItem(DER_COOLDOWN_KEY);
+      localStorage.removeItem(DER_ATTEMPTS_KEY);
+      localStorage.removeItem(DER_COOLDOWN_KEY);
 
-  if (resultBox) {
-    resultBox.innerHTML = `
-      <div class="result-box pass">
+      if (resultBox) {
+        resultBox.innerHTML = `
+        <div class="result-box pass">
         You passed! Generating Certificate...
-      </div>
-    `;
-  }
+        </div>
+        `;
+      }
 
-  setTimeout(() => {
-    window.location.href = "fmcsa-certificates.html";
-  }, 2000);
+      setTimeout(() => {
+        window.location.href = "fmcsa-certificates.html";
+      }, 2000);
 
-} else {
+    } else {
 
-  derAttempts++;
-  localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
+      derAttempts++;
+      localStorage.setItem(DER_ATTEMPTS_KEY, derAttempts);
 
-  if (derAttempts >= DER_MAX_ATTEMPTS) {
+      if (derAttempts >= DER_MAX_ATTEMPTS) {
 
-    const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
-    localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
+        const cooldownUntil = Date.now() + (DER_COOLDOWN_MINUTES * 60000);
+        localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
 
-    alert("Maximum attempts reached. 15-minute cooldown activated.");
+        alert("Maximum attempts reached. 15-minute cooldown activated.");
+        window.location.reload();
+        return;
 
-    window.location.reload();
-    return;
-  }
-         if (resultBox) {
-    resultBox.innerHTML = `
-      <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
-        <h3>Score: ${scorePercent}%</h3>
-        <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
-        ${reviewHTML}
-      </div>
-    `;
-  }
+      }
 
-}  // closes else block
+      if (resultBox) {
 
-}); // closes submitBtn.addEventListener
+        resultBox.innerHTML = `
+        <div style="padding:15px; background:#fff4f4; border:1px solid #ffcccc; border-radius:8px;">
+          <h3>Score: ${scorePercent}%</h3>
+          <p>Attempt ${derAttempts} of ${DER_MAX_ATTEMPTS}</p>
+          ${reviewHTML}
+        </div>
+        `;
 
-}  // closes if (submitBtn)
+      }
 
-  function checkCooldown() {
-    const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
-
-    if (Date.now() < cooldownUntil) {
-      const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
-      alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
-      window.location.href = "../dashboard.html";
     }
+
+  });
+
+}
+
+function checkCooldown() {
+
+  const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
+
+  if (Date.now() < cooldownUntil) {
+
+    const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
+
+    alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
+
+    window.location.href = "../dashboard.html";
+
   }
 
-  function showCertificateSection() {
-    document.getElementById("quizSection").classList.add("hidden");
-    document.getElementById("certificateSection").classList.remove("hidden");
-  }
-
-});
+}
