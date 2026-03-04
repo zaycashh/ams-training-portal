@@ -521,14 +521,9 @@ body {
 .module-card h3{
   margin-top:0;
 }
-/* FMCSA DER highlight style */
-#derFmcsaBtn {
-  margin-top: 10px;
-}
-
+/* Match FMCSA DER box to supervisor bundle color */
 .fmcsa-der-card {
-  background: #f4ecd8;
-  border: 1px solid #e3c98f;
+  background: #efe6d1 !important;
+  border: 1px solid #e1c88b;
   border-radius: 8px;
-  padding: 20px;
 }
