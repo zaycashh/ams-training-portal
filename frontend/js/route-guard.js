@@ -63,10 +63,10 @@
     };
 
     const dateMap = {
-      "fmcsa-module-a": "paid_fmcsa_date",
-      "fmcsa-drug-alcohol": "paid_fmcsa_date",
+      "fmcsa-module-a": "fmcsaPurchaseDate",
+      "fmcsa-drug-alcohol": "fmcsaPurchaseDate",
       "fmcsa-der": "paid_der_fmcsa_date"
-    };
+    };;
 
     const paidKey = paymentMap[module];
     const dateKey = dateMap[module];
