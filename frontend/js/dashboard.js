@@ -560,6 +560,8 @@ if (modA && modB) {
   const certCard = document.getElementById("fmcsaCertCard");
   if (certCard) certCard.classList.remove("hidden");
 
+  certBtn.textContent = "View / Download Certificate";
+
   certBtn.onclick = () => {
     window.location.href = "fmcsa-certificates.html";
   };
