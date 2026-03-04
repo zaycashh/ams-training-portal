@@ -499,22 +499,32 @@ function handleDerFmcsa() {
 /* =========================
    DER COMPLETION STATUS
 ========================= */
+/* =========================
+   DER COMPLETION STATUS
+========================= */
 function updateDERButtonState() {
 
   const derCompleted =
     localStorage.getItem("fmcsaDERCompleted") === "true";
 
   const derBtn = document.getElementById("derFmcsaBtn");
-  const derBadge = document.getElementById("derBadge");
+  if (!derBtn) return;
 
-  if (derCompleted && derBadge) {
-    derBadge.classList.remove("hidden");
-  }
+  if (derCompleted) {
 
-  if (derCompleted && derBtn) {
+    // Completed → View Certificate
     derBtn.textContent = "View DER Certificate";
     derBtn.onclick = () => {
       window.location.href = "fmcsa-certificates.html";
     };
+
+  } else {
+
+    // Not completed → Go to DER training
+    derBtn.textContent = "Start DER Training";
+    derBtn.onclick = () => {
+      window.location.href = "fmcsa-der.html";
+    };
+
   }
 }
