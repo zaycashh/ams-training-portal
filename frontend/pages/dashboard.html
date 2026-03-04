@@ -149,9 +149,8 @@ drug and alcohol awareness courses.
     DOT 49 CFR Part 382 Compliance
 </p>
 
-<button class="btn-primary"
-onclick="window.location.href='payment.html?module=fmcsa-der&type=der_fmcsa'">
-Locked — Purchase Required
+<button id="derTrainingBtn" class="btn-primary">
+Loading...
 </button>
 </div>
 
@@ -160,5 +159,38 @@ Locked — Purchase Required
 <!-- CORE DASHBOARD LOGIC -->
 <script src="../js/dashboard.js"></script>
 
+  <script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const derBtn = document.getElementById("derTrainingBtn");
+
+  if (!derBtn) return;
+
+  const paidDER = localStorage.getItem("paid_der_fmcsa") === "true";
+
+  if (paidDER) {
+
+    derBtn.textContent = "Start DER Training";
+
+    derBtn.onclick = () => {
+      window.location.href = "fmcsa-der.html";
+    };
+
+  } else {
+
+    derBtn.textContent = "🔒 Locked — Purchase Required";
+
+    derBtn.onclick = () => {
+      window.location.href =
+        "payment.html?module=fmcsa-der&type=der_fmcsa";
+    };
+
+  }
+
+});
+
+</script>
+  
 </body>
 </html>
