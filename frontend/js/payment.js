@@ -40,6 +40,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================================
+   FAA DER PURCHASE
+================================ */
+
+if (module === "der") {
+
+  localStorage.setItem("paid_der", "true");
+
+  alert("Purchase successful!");
+
+  window.location.href = "dashboard.html";
+  return;
+}
+    /* ================================
+   FAA SUPERVISOR PURCHASE
+================================ */
+
+if (module === "supervisor") {
+
+  localStorage.setItem("paid_supervisor", "true");
+
+  alert("Purchase successful!");
+
+  window.location.href = "dashboard.html";
+  return;
+}
+
+    /* ================================
        EMPLOYEE TRAINING
     ================================= */
 
