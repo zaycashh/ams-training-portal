@@ -103,55 +103,19 @@ Return to Dashboard
 </button>
 
 </header>
+  
+  <!-- MODULE A CERT -->
+<section id="moduleACert" class="cert-card hidden">
 
+<h2 class="cert-title">🎓 FMCSA Reasonable Suspicion Training</h2>
 
-/* MODULE A */
+<p><strong>Name:</strong> <span id="aName"></span></p>
+<p><strong>Date Completed:</strong> <span id="aDate"></span></p>
+<p><strong>Certificate ID:</strong> <span id="aCertId"></span></p>
 
-if(modACompleted){
+<div id="aQR" style="margin-top:10px;"></div>
 
-document.getElementById("moduleACert").classList.remove("hidden");
-
-document.getElementById("aName").textContent =
-user.fullName || (user.firstName + " " + user.lastName) || user.email || "User";
-
-const storedADate =
-localStorage.getItem("fmcsaModuleADate");
-
-document.getElementById("aDate").textContent =
-storedADate
-? new Date(Number(storedADate)).toLocaleDateString()
-: "N/A";
-
-/* CERT ID */
-
-const certIdA =
-localStorage.getItem("fmcsaModuleACertificateId");
-
-document.getElementById("aCertId").textContent =
-certIdA || "N/A";
-
-/* QR CODE */
-
-if(certIdA && typeof QRCode !== "undefined"){
-
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdA;
-
-new QRCode(
-document.getElementById("aQR"),
-{
-text: verifyUrl,
-width: 128,
-height: 128
-}
-);
-
-}
-
-}
-
+</section>
 
 <!-- MODULE B CERT -->
 <section id="moduleBCert" class="cert-card hidden">
@@ -232,9 +196,6 @@ storedADate
 const certIdA =
 localStorage.getItem("fmcsaModuleACertificateId");
 
-const certIdA =
-localStorage.getItem("fmcsaModuleACertificateId");
-
 document.getElementById("aCertId").textContent =
 certIdA || "N/A";
 
@@ -252,24 +213,6 @@ height:128
 });
 
 }
-
-/* GENERATE QR */
-
-if(certIdA && typeof QRCode !== "undefined"){
-
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdA;
-
-new QRCode(document.getElementById("aQR"),{
-text: verifyUrl,
-width:128,
-height:128
-});
-
-}
-
 
 /* MODULE B */
 
