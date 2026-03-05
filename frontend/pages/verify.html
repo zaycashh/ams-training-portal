@@ -1,94 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Certificate Verification | AMS Training Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<title>AMS Certificate Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="../css/main.css" />
+<style>
+body{
+font-family:Arial;
+background:#f5f7fb;
+padding:40px;
+}
 
-  <style>
-    .verify-box {
-      max-width: 480px;
-      margin: 60px auto;
-      padding: 24px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      text-align: center;
-      background: #fff;
-    }
+.verify-box{
+max-width:600px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
 
-    .status-valid {
-      color: #1b7f3b;
-      font-weight: bold;
-    }
+.valid{
+color:green;
+font-weight:700;
+}
 
-    .status-invalid {
-      color: #b00020;
-      font-weight: bold;
-    }
-  </style>
+.invalid{
+color:red;
+font-weight:700;
+}
+</style>
 </head>
+
 <body>
 
-  <main class="verify-box">
+<div class="verify-box">
 
-    <h2>Certificate Verification</h2>
+<h2>AMS Certificate Verification</h2>
 
-    <p id="verifyStatus">Verifying certificate…</p>
+<p id="status">Checking certificate...</p>
 
-    <div id="verifyDetails" style="display:none;">
-      <p><strong>Verification ID:</strong></p>
-      <p id="verifyId"></p>
+<div id="details"></div>
 
-      <p><strong>Issued Date:</strong></p>
-      <p id="verifyDate"></p>
+</div>
 
-      <p><strong>Status:</strong></p>
-      <p id="verifyResult"></p>
-    </div>
+<script src="../js/certificate-engine.js"></script>
 
-  </main>
+<script>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
 
-    const statusEl = document.getElementById("verifyStatus");
-    const detailsEl = document.getElementById("verifyDetails");
-    const idEl = document.getElementById("verifyId");
-    const dateEl = document.getElementById("verifyDate");
-    const resultEl = document.getElementById("verifyResult");
+const status = document.getElementById("status");
+const details = document.getElementById("details");
 
-    if (!id) {
-      statusEl.textContent = "No verification ID provided.";
-      statusEl.className = "status-invalid";
-    } else {
-      const record = JSON.parse(
-        localStorage.getItem("derCertificateVerification") || "null"
-      );
+const cert = getCertificate(certId);
 
-      if (record && record.id === id) {
-        statusEl.textContent = "Certificate Verified";
-        statusEl.className = "status-valid";
+if(!cert){
 
-        idEl.textContent = record.id;
-        dateEl.textContent = new Date(record.issuedAt).toLocaleDateString();
-        resultEl.textContent = "VALID";
-        resultEl.className = "status-valid";
+status.innerHTML = "<span class='invalid'>❌ Certificate Not Found</span>";
 
-        detailsEl.style.display = "block";
-      } else {
-        statusEl.textContent = "Certificate Not Found";
-        statusEl.className = "status-invalid";
+}else{
 
-        resultEl.textContent = "INVALID";
-        resultEl.className = "status-invalid";
+status.innerHTML = "<span class='valid'>✔ Certificate Verified</span>";
 
-        detailsEl.style.display = "block";
-      }
-    }
-  </script>
+details.innerHTML = `
+<p><strong>Name:</strong> ${cert.name}</p>
+<p><strong>Email:</strong> ${cert.email}</p>
+<p><strong>Training:</strong> ${cert.module}</p>
+<p><strong>Date Completed:</strong> ${new Date(cert.completed).toLocaleDateString()}</p>
+<p><strong>Certificate ID:</strong> ${cert.id}</p>
+`;
+
+}
+
+</script>
 
 </body>
 </html>
