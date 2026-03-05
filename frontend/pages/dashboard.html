@@ -8,29 +8,7 @@
   <link rel="stylesheet" href="../css/main.css" />
   <link rel="icon" href="data:,">
 </head>
-<body>
-
-<script>
-(function () {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user) {
-    window.location.replace("login.html");
-    return;
-  }
-
-  // Only allow company admins or owners
-  if (user.role !== "company_admin" && user.role !== "owner") {
-    alert("Unauthorized access.");
-    window.location.replace("dashboard.html");
-    return;
-  }
-
-})();
-  
-</script>
-  
+<body> 
   <header class="portal-header">
   <div class="header-inner">
     <h1>AMS Training Portal</h1>
