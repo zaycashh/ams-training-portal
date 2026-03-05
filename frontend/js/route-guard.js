@@ -40,12 +40,40 @@
     return;
   }
 
-  /* =========================================================
-     STEP 2 – NOT A MODULE PAGE
-  ========================================================= */
+ /* =========================================================
+   STEP 2 – NON-MODULE PAGE PROTECTION
+========================================================= */
 
-  if (!module) return;
+if (!module) {
 
+  /* BLOCK EMPLOYEES FROM ADMIN + FMCSA PAGES */
+  if (role === "employee") {
+
+    if (
+      path.includes("company-dashboard") ||
+      path.includes("fmcsa-module") ||
+      path.includes("fmcsa-der") ||
+      path.includes("fmcsa-certificates") ||
+      path.includes("payment")
+    ) {
+      redirectToRoleDashboard(user);
+      return;
+    }
+
+  }
+
+  /* BLOCK NON-ADMINS FROM COMPANY DASHBOARD */
+  if (
+    path.includes("company-dashboard") &&
+    role !== "company_admin" &&
+    role !== "owner"
+  ) {
+    redirectToRoleDashboard(user);
+    return;
+  }
+
+  return;
+}
   /* =========================================================
      FMCSA MODULE ACCESS + 30-DAY EXPIRATION
   ========================================================= */
