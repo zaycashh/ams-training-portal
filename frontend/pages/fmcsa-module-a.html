@@ -31,11 +31,17 @@
     return;
   }
 
-  if (user.role === "employee") {
-    alert("Unauthorized access.");
-    window.location.replace("../dashboard.html");
-    return;
-  }
+  if (user?.role === "employee") {
+
+  sessionStorage.setItem(
+    "ams_notice",
+    "You don't have permission to access that training."
+  );
+
+  window.location.replace("../dashboard.html");
+  return;
+
+}
 
   const paid = localStorage.getItem("paid_fmcsa") === "true";
   const purchaseDate = parseInt(
