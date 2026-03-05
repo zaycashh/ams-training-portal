@@ -74,6 +74,31 @@ if (!module) {
 
   return;
 }
+   /* =========================================================
+   ROLE BLOCK BEFORE PAYMENT LOGIC
+========================================================= */
+
+if (role === "employee") {
+
+  if (
+    module === "fmcsa-module-a" ||
+    module === "fmcsa-drug-alcohol" ||
+    module === "fmcsa-der" ||
+    module === "supervisor" ||
+    module === "der"
+  ) {
+
+    sessionStorage.setItem(
+      "ams_notice",
+      "You don't have access to that training."
+    );
+
+    redirectToRoleDashboard(user);
+    return;
+
+  }
+
+}
   /* =========================================================
      FMCSA MODULE ACCESS + 30-DAY EXPIRATION
   ========================================================= */
