@@ -308,8 +308,15 @@ window.inviteEmployee = function () {
     return;
   }
 
+  company.invites = company.invites || {};
+  company.usedSeats = company.usedSeats || {};
+
   const totalSeats = company.seats?.employee?.total ?? 0;
-  const usedSeats = Object.keys(company.usedSeats || {}).length;
+  const usedSeats = Object.keys(company.usedSeats).length;
+
+  /* ========================================
+     BLOCK IF SEATS ARE FULL
+  ======================================== */
 
   if (usedSeats >= totalSeats) {
     msg.textContent = "No seats available. Please purchase more seats.";
@@ -317,13 +324,44 @@ window.inviteEmployee = function () {
     return;
   }
 
-  company.invites = company.invites || {};
+  /* ========================================
+     BLOCK IF TRAINING ALREADY COMPLETED
+  ======================================== */
+
+  const completedKey = `employeeTrainingCompleted_${email}`;
+  const trainingCompleted =
+    localStorage.getItem(completedKey) === "true";
+
+  if (trainingCompleted) {
+    msg.textContent = "Employee already completed training.";
+    msg.style.color = "red";
+    return;
+  }
+
+  /* ========================================
+     BLOCK IF SEAT ALREADY ASSIGNED
+  ======================================== */
+
+  if (company.usedSeats[email]) {
+    msg.textContent = "Employee already has a seat assigned.";
+    msg.style.color = "red";
+    return;
+  }
+
+  /* ========================================
+     BLOCK IF INVITE ALREADY EXISTS
+  ======================================== */
 
   if (company.invites[email]) {
-    msg.textContent = `Invite already exists. Code: ${company.invites[email].code}`;
+    msg.textContent =
+      `Invite already exists. Code: ${company.invites[email].code}`;
     msg.style.color = "#b8860b";
     return;
   }
+
+  /* ========================================
+     GENERATE INVITE CODE
+  ======================================== */
 
   const inviteCode = Math.random()
     .toString(36)
@@ -342,7 +380,6 @@ window.inviteEmployee = function () {
 
   emailInput.value = "";
 };
-
 
 /* =========================================================
    LOGOUT
