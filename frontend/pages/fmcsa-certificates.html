@@ -183,7 +183,10 @@ if(modACompleted){
 document.getElementById("moduleACert").classList.remove("hidden");
 
 document.getElementById("aName").textContent =
-user.fullName || (user.firstName + " " + user.lastName) || "User";
+user.fullName || 
+((user.firstName || "") + " " + (user.lastName || "")).trim() || 
+user.email || 
+"User";
 
 const storedADate =
 localStorage.getItem("fmcsaModuleADate");
@@ -223,7 +226,10 @@ if(modBCompleted){
 document.getElementById("moduleBCert").classList.remove("hidden");
 
 document.getElementById("bName").textContent =
-user.fullName || (user.firstName + " " + user.lastName) || "User";
+user.fullName || 
+((user.firstName || "") + " " + (user.lastName || "")).trim() || 
+user.email || 
+"User";
 
 const storedBDate =
 localStorage.getItem("fmcsaModuleBDate");
@@ -246,7 +252,10 @@ if(derCompleted){
 document.getElementById("derCert").classList.remove("hidden");
 
 document.getElementById("derName").textContent =
-user.fullName || (user.firstName + " " + user.lastName) || "User";
+user.fullName || 
+((user.firstName || "") + " " + (user.lastName || "")).trim() || 
+user.email || 
+"User";
 
 const storedDate =
 localStorage.getItem("fmcsaDERDate");
