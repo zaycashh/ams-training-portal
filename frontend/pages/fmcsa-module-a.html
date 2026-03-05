@@ -107,6 +107,7 @@ const url = "../assets/fmcsa/1-Sup-Reas-Susp-Training.pdf";
 let pdfDoc = null;
 let pageNum = 1;
 let totalPages = 0;
+let rendering = false;  
 
 const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d");
@@ -121,23 +122,35 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 });
 
 function renderPage(num) {
+
+  if (rendering) return;
+  rendering = true;
+
   pdfDoc.getPage(num).then(page => {
+
     const viewport = page.getViewport({ scale: 1 });
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    page.render({
+    const renderTask = page.render({
       canvasContext: ctx,
       viewport: viewport
     });
 
+    renderTask.promise.then(() => {
+      rendering = false;
+    });
+
     document.getElementById("currentPage").textContent = num;
+
     document.getElementById("progressBar").style.width =
       (num / totalPages * 100) + "%";
 
     completeBtn.disabled = (num !== totalPages);
+
   });
+
 }
 
 document.getElementById("prevPageBtn").onclick = () => {
