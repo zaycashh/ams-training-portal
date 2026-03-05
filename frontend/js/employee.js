@@ -277,7 +277,13 @@ function populateEmployeeCertificate() {
     localStorage.setItem(EMPLOYEE_CERT_CODE_KEY, code);
   }
 
-  document.getElementById("certName").textContent = "Employee Name";
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (user) {
+  document.getElementById("certName").textContent =
+    user.fullName || (user.firstName + " " + user.lastName);
+}
+   
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
   document.getElementById("certVerify").textContent = code;
