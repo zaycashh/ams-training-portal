@@ -121,8 +121,6 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
   renderPage(pageNum);
 });
 
-let rendering = false;
-
 function renderPage(num) {
 
   if (rendering) return;
