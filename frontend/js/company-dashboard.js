@@ -229,39 +229,34 @@ window.removeEmployee = function (email) {
    RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
 
-function renderSeatAssignments(company) {
+window.revokeSeat = function (email) {
 
-  const list = document.getElementById("seatUserList");
-  if (!list) return;
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  list.innerHTML = "";
-
-  const usedSeats = company.usedSeats || {};
-  const employeeKeys = Object.keys(usedSeats);
-
-  if (!employeeKeys.length) {
-    list.innerHTML =
-      "<li style='opacity:.6;'>No active seat assignments</li>";
+  if (!company.usedSeats || !company.usedSeats[email]) {
+    alert("Seat not found.");
     return;
   }
 
-  employeeKeys.forEach(email => {
+  // 🔒 Prevent revoking completed training seats
+  const completedKey = `employeeTrainingCompleted_${email}`;
+  const trainingCompleted =
+    localStorage.getItem(completedKey) === "true";
 
-    const li = document.createElement("li");
+  if (trainingCompleted) {
+    alert("Seat cannot be revoked. This employee has already completed training.");
+    return;
+  }
 
-    li.innerHTML = `
-      ${email}
-      <button class="btn-secondary"
-              style="margin-left:10px;"
-              onclick="revokeSeat('${email}')">
-        Revoke
-      </button>
-    `;
+  if (!confirm("Revoke this seat?")) return;
 
-    list.appendChild(li);
-  });
-}
+  delete company.usedSeats[email];
 
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  if (user) loadCompanyDashboard(user);
+};
 
 /* =========================================================
    BUY 5 MORE SEATS (STACK SAFE)
