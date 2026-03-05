@@ -59,7 +59,28 @@ Verify Certificate
 </main>
 
 <script>
+/* ===================================
+AUTO VERIFY FROM URL
+Example:
+verify.html?id=AMS-A-48392144
+=================================== */
 
+document.addEventListener("DOMContentLoaded", () => {
+
+const params = new URLSearchParams(window.location.search);
+
+const certId = params.get("id");
+
+if(certId){
+
+document.getElementById("certInput").value = certId;
+
+verifyCert();
+
+}
+
+});
+  
 function verifyCert(){
 
 const certId =
