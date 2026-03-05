@@ -10,6 +10,26 @@
 </head>
 
 <body data-role="company-admin">
+  
+  <script>
+(function () {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // Not logged in
+  if (!user) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  // Only allow company admin or owner
+  if (user.role !== "company_admin" && user.role !== "owner") {
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+})();
+</script>
 
 <main class="module-container">
 
