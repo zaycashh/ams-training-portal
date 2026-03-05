@@ -44,15 +44,20 @@ document
     }
 
     const individualUser = {
-      id: "ind-" + email,
-      firstName,
-      lastName,
-      phone,
-      email,
-      role: "individual",
-      type: "individual",
-      createdAt: new Date().toISOString()
-    };
+  id: "ind-" + email,
+
+  firstName,
+  lastName,
+  fullName: firstName + " " + lastName,
+
+  phone,
+  email,
+
+  role: "individual",
+  type: "individual",
+
+  createdAt: new Date().toISOString()
+};
 
     users.push(individualUser);
 
