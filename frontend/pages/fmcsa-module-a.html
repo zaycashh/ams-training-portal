@@ -18,38 +18,8 @@
 </style>
 </head>
 
-<body>
-
-<!-- 🔐 ROUTE SECURITY GUARD -->
-  <script src="../js/route-guard.js"></script>
-  
-<script>
-(function () {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  window.location.replace("../dashboard.html");
-
-  const paid = localStorage.getItem("paid_fmcsa") === "true";
-  const purchaseDate = parseInt(
-    localStorage.getItem("fmcsaPurchaseDate") || "0",
-    10
-  );
-
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-  const expired = paid && purchaseDate && (now - purchaseDate > THIRTY_DAYS);
-
-  if (!paid || expired) {
-    alert("Your FMCSA training access has expired. Please repurchase.");
-    localStorage.removeItem("paid_fmcsa");
-    localStorage.removeItem("fmcsaPurchaseDate");
-    window.location.replace("../dashboard.html");
-    return;
-  }
-
-})();
-</script>
+<body data-module="fmcsa-module-a">
+<script src="../js/route-guard.js"></script>
   
 <main class="module-container">
 
