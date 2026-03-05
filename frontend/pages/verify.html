@@ -95,20 +95,51 @@ result.innerHTML =
 return;
 }
 
-/* SEARCH LOCAL CERT DATA */
+/* CHECK CERTIFICATE REGISTRY */
 
-const certs = [
+fetch("../data/certificates.json")
+.then(res => res.json())
+.then(certificates => {
 
-localStorage.getItem("employeeCertificateCode"),
-localStorage.getItem("SUPERVISOR_CERT_CODE"),
-localStorage.getItem("DER_CERT_CODE"),
-localStorage.getItem("fmcsaModuleACertificateId"),
-localStorage.getItem("fmcsaModuleBCertificateId"),
-localStorage.getItem("fmcsaDERCertificateId")
+const cert = certificates.find(c => c.id === certId);
 
-];
+if(cert){
 
-if(certs.includes(certId)){
+result.innerHTML = `
+<div class="verify-result valid">
+Certificate Verified ✔
+<br><br>
+Name: ${cert.name}
+<br>
+Course: ${cert.course}
+<br>
+Date Completed: ${cert.date}
+<br>
+Certificate ID: ${cert.id}
+</div>
+`;
+
+}
+else{
+
+result.innerHTML = `
+<div class="verify-result invalid">
+Certificate NOT FOUND
+</div>
+`;
+
+}
+
+})
+.catch(() => {
+
+result.innerHTML = `
+<div class="verify-result invalid">
+Error loading certificate registry
+</div>
+`;
+
+});
 
 result.innerHTML = `
 <div class="verify-result valid">
