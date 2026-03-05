@@ -113,6 +113,8 @@ Return to Dashboard
 <p><strong>Name:</strong> <span id="aName"></span></p>
 <p><strong>Date Completed:</strong> <span id="aDate"></span></p>
 <p><strong>Certificate ID:</strong> <span id="aCertId"></span></p>
+  
+<div id="aQR" style="margin-top:10px;"></div>  
 
 </section>
 
@@ -126,6 +128,8 @@ Return to Dashboard
 <p><strong>Date Completed:</strong> <span id="bDate"></span></p>
 <p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
 
+<div id="bQR" style="margin-top:10px;"></div>  
+
 </section>
 
 
@@ -137,6 +141,8 @@ Return to Dashboard
 <p><strong>Name:</strong> <span id="derName"></span></p>
 <p><strong>Date Completed:</strong> <span id="derDate"></span></p>
 <p><strong>Certificate ID:</strong> <span id="derCertId"></span></p>
+
+<div id="derQR" style="margin-top:10px;"></div>  
 
 </section>
 
@@ -189,8 +195,26 @@ storedADate
 ? new Date(Number(storedADate)).toLocaleDateString()
 : "N/A";
 
+const certIdA =
+localStorage.getItem("fmcsaModuleACertificateId");
+
 document.getElementById("aCertId").textContent =
-localStorage.getItem("fmcsaModuleACertificateId") || "N/A";
+certIdA || "N/A";
+
+/* GENERATE QR */
+
+if(certIdA && typeof QRCode !== "undefined"){
+
+const verifyUrl =
+window.location.origin +
+"/ams-training-portal/frontend/pages/verify.html?id=" +
+certIdA;
+
+new QRCode(document.getElementById("aQR"),{
+text: verifyUrl,
+width:128,
+height:128
+});
 
 }
 
@@ -250,6 +274,8 @@ window.location.href="dashboard.html";
 }
 
 </script>
+  
+<script src="../js/qr-generator.js"></script>
 
 </body>
 </html>
