@@ -198,8 +198,26 @@ storedADate
 const certIdA =
 localStorage.getItem("fmcsaModuleACertificateId");
 
+const certIdA =
+localStorage.getItem("fmcsaModuleACertificateId");
+
 document.getElementById("aCertId").textContent =
 certIdA || "N/A";
+
+if(certIdA && typeof QRCode !== "undefined"){
+
+const verifyUrl =
+window.location.origin +
+"/ams-training-portal/frontend/pages/verify.html?id=" +
+certIdA;
+
+new QRCode(document.getElementById("aQR"),{
+text: verifyUrl,
+width:128,
+height:128
+});
+
+}
 
 /* GENERATE QR */
 
