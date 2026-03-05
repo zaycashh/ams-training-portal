@@ -212,18 +212,24 @@ window.removeEmployee = function (email) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  // 🔵 Check if training was completed
+  const completedKey = `employeeTrainingCompleted_${email}`;
+  const trainingCompleted =
+    localStorage.getItem(completedKey) === "true";
+
   const updatedUsers = users.filter(u => u.email !== email);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  if (company.usedSeats && company.usedSeats[email]) {
+  // 🔒 Only restore seat if training NOT completed
+  if (company.usedSeats && company.usedSeats[email] && !trainingCompleted) {
     delete company.usedSeats[email];
-    localStorage.setItem("companyProfile", JSON.stringify(company));
   }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (user) loadCompanyDashboard(user);
 };
-
 
 /* =========================================================
    RENDER ACTIVE SEAT ASSIGNMENTS
