@@ -1,77 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>AMS Certificate Verification</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Certificate Verification | AMS Training Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="../css/main.css">
 
 <style>
-body{
-font-family:Arial;
-background:#f5f7fb;
-padding:40px;
+.verify-box{
+max-width:700px;
+margin:auto;
+background:#fff;
+padding:30px;
+border-radius:8px;
+border:1px solid #dce3ef;
 }
 
-.verify-box{
-max-width:600px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 10px 30px rgba(0,0,0,.1);
+.verify-result{
+margin-top:20px;
+padding:15px;
+border-radius:6px;
 }
 
 .valid{
-color:green;
-font-weight:700;
+background:#e6f4ea;
+color:#1e7e34;
 }
 
 .invalid{
-color:red;
-font-weight:700;
+background:#fdecea;
+color:#c82333;
 }
 </style>
+
 </head>
 
 <body>
 
+<main class="module-container">
+
+<h1>Certificate Verification</h1>
+
 <div class="verify-box">
 
-<h2>AMS Certificate Verification</h2>
+<p>Enter Certificate ID:</p>
 
-<p id="status">Checking certificate...</p>
+<input type="text" id="certInput" placeholder="AMS-XXXXXXX">
 
-<div id="details"></div>
+<button onclick="verifyCert()" class="btn-primary">
+Verify Certificate
+</button>
+
+<div id="result"></div>
 
 </div>
 
-<script src="../js/certificate-engine.js"></script>
+</main>
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
+function verifyCert(){
 
-const status = document.getElementById("status");
-const details = document.getElementById("details");
+const certId =
+document.getElementById("certInput").value.trim();
 
-const cert = getCertificate(certId);
+const result =
+document.getElementById("result");
 
-if(!cert){
+if(!certId){
+result.innerHTML =
+"<div class='verify-result invalid'>Enter a certificate ID.</div>";
+return;
+}
 
-status.innerHTML = "<span class='invalid'>❌ Certificate Not Found</span>";
+/* SEARCH LOCAL CERT DATA */
 
-}else{
+const certs = [
 
-status.innerHTML = "<span class='valid'>✔ Certificate Verified</span>";
+localStorage.getItem("employeeCertificateCode"),
+localStorage.getItem("SUPERVISOR_CERT_CODE"),
+localStorage.getItem("DER_CERT_CODE"),
+localStorage.getItem("fmcsaModuleACertificateId"),
+localStorage.getItem("fmcsaModuleBCertificateId"),
+localStorage.getItem("fmcsaDERCertificateId")
 
-details.innerHTML = `
-<p><strong>Name:</strong> ${cert.name}</p>
-<p><strong>Email:</strong> ${cert.email}</p>
-<p><strong>Training:</strong> ${cert.module}</p>
-<p><strong>Date Completed:</strong> ${new Date(cert.completed).toLocaleDateString()}</p>
-<p><strong>Certificate ID:</strong> ${cert.id}</p>
+];
+
+if(certs.includes(certId)){
+
+result.innerHTML = `
+<div class="verify-result valid">
+Certificate Verified ✔
+<br><br>
+Certificate ID: ${certId}
+</div>
 `;
+
+}
+else{
+
+result.innerHTML = `
+<div class="verify-result invalid">
+Certificate NOT FOUND
+</div>
+`;
+
+}
 
 }
 
