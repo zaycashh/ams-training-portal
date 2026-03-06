@@ -1,200 +1,439 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>FMCSA Employee Drug & Alcohol Awareness Training</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+/* =========================================================
+   FMCSA EMPLOYEE TRAINING ENGINE
+   PDF + QUIZ + CERTIFICATE
+========================================================= */
 
-<link rel="stylesheet" href="../css/main.css" />
+document.addEventListener("DOMContentLoaded", () => {
 
-<style>
+/* =========================================================
+   CONFIG KEYS
+========================================================= */
 
-.quiz-container{
-max-width:800px;
-margin:auto;
+const CONTENT_KEY = "fmcsaEmployeeContentCompleted";
+const QUIZ_KEY = "fmcsaEmployeeQuizPassed";
+const COMPLETED_KEY = "fmcsaEmployeeCompleted";
+
+const ATTEMPTS_KEY = "fmcsaEmployeeAttempts";
+const COOLDOWN_KEY = "fmcsaEmployeeCooldown";
+
+const CERT_ID_KEY = "fmcsaEmployeeCertificateId";
+const CERT_DATE_KEY = "fmcsaEmployeeDate";
+
+/* =========================================================
+   QUIZ SETTINGS
+========================================================= */
+
+const PASS_PERCENT = 80;
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_MINUTES = 15;
+
+/* =========================================================
+   PDF CONFIG
+========================================================= */
+
+const url = "../assets/FMCSA-Employee-Awareness.pdf";
+
+const pdfContainer = document.getElementById("pdfContainer");
+const completeBtn = document.getElementById("completeContentBtn");
+
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
+
+const currentPageEl = document.getElementById("currentPage");
+const totalPagesEl = document.getElementById("totalPages");
+
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
+
+/* =========================================================
+   PDF LOADER
+========================================================= */
+
+if(pdfContainer){
+
+pdfjsLib.getDocument(url).promise.then(pdf => {
+
+pdfDoc = pdf;
+totalPages = pdf.numPages;
+
+if(totalPagesEl) totalPagesEl.textContent = totalPages;
+
+renderPage(currentPage);
+
+});
+
 }
 
-.quiz-nav{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
+function renderPage(num){
+
+pdfDoc.getPage(num).then(page => {
+
+let containerWidth = pdfContainer.clientWidth || 800;
+
+const viewport = page.getViewport({scale:1});
+const scale = containerWidth / viewport.width;
+
+const scaledViewport = page.getViewport({scale});
+
+const canvas = document.createElement("canvas");
+const context = canvas.getContext("2d");
+
+canvas.height = scaledViewport.height;
+canvas.width = scaledViewport.width;
+
+pdfContainer.innerHTML="";
+pdfContainer.appendChild(canvas);
+
+page.render({
+canvasContext:context,
+viewport:scaledViewport
+});
+
+if(currentPageEl) currentPageEl.textContent=num;
+
+if(prevPageBtn) prevPageBtn.disabled = num === 1;
+if(nextPageBtn) nextPageBtn.disabled = num === totalPages;
+
+if(completeBtn){
+completeBtn.disabled = num !== totalPages;
 }
 
-.hidden{
-display:none;
+});
+
 }
 
-.result-box{
-padding:15px;
-margin-top:15px;
-border-radius:6px;
+/* =========================================================
+   PDF NAVIGATION
+========================================================= */
+
+if(prevPageBtn){
+
+prevPageBtn.addEventListener("click",()=>{
+
+if(currentPage > 1){
+
+currentPage--;
+renderPage(currentPage);
+
 }
 
-.pass{
-background:#e6f4ea;
-color:#1e7e34;
+});
+
 }
 
-.fail{
-background:#fdecea;
-color:#c0392b;
+if(nextPageBtn){
+
+nextPageBtn.addEventListener("click",()=>{
+
+if(currentPage < totalPages){
+
+currentPage++;
+renderPage(currentPage);
+
 }
 
-.pdf-controls{
-display:flex;
-justify-content:space-between;
-margin-top:15px;
+});
+
 }
 
-</style>
-</head>
+/* =========================================================
+   CONTENT COMPLETE
+========================================================= */
 
+if(completeBtn){
 
-<body data-module="fmcsa-employee">
+completeBtn.addEventListener("click",()=>{
 
-<!-- ROUTE GUARD -->
-<script>
+localStorage.setItem(CONTENT_KEY,"true");
 
-(function(){
+document.getElementById("contentSection").classList.add("hidden");
+document.getElementById("quizSection").classList.remove("hidden");
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+});
 
-if(!user){
+}
 
-window.location.replace("login.html");
+if(localStorage.getItem(CONTENT_KEY)==="true"){
+
+document.getElementById("contentSection").classList.add("hidden");
+document.getElementById("quizSection").classList.remove("hidden");
+
+}
+
+/* =========================================================
+   QUIZ QUESTIONS
+========================================================= */
+
+const questions = [
+
+{
+q:"DOT drug and alcohol testing regulations apply to safety-sensitive transportation employees.",
+a:{A:"True",B:"False"},
+correct:"A"
+},
+
+{
+q:"Employees are allowed to refuse a DOT drug test without consequence.",
+a:{A:"True",B:"False"},
+correct:"B"
+},
+
+{
+q:"Alcohol misuse can impact job safety and performance.",
+a:{A:"True",B:"False"},
+correct:"A"
+},
+
+{
+q:"A positive drug test may lead to removal from safety-sensitive duties.",
+a:{A:"True",B:"False"},
+correct:"A"
+},
+
+{
+q:"DOT regulations are optional for transportation employers.",
+a:{A:"True",B:"False"},
+correct:"B"
+}
+
+];
+
+let currentQuestionIndex = 0;
+let selectedAnswers = {};
+
+let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY)||"0",10);
+
+const quizContainer = document.getElementById("quizContainer");
+const prevQuestionBtn = document.getElementById("prevQuestionBtn");
+const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+const submitBtn = document.getElementById("submitQuizBtn");
+
+const resultBox = document.getElementById("quizResult");
+
+const currentQuestionEl = document.getElementById("currentQuestion");
+const totalQuestionsEl = document.getElementById("totalQuestions");
+
+if(totalQuestionsEl) totalQuestionsEl.textContent = questions.length;
+
+if(submitBtn) submitBtn.disabled=true;
+
+if(quizContainer) initQuiz();
+
+/* =========================================================
+   QUIZ INIT
+========================================================= */
+
+function initQuiz(){
+
+checkCooldown();
+
+if(localStorage.getItem(QUIZ_KEY)==="true"){
+
+window.location.href="fmcsa-certificates.html";
 return;
 
 }
 
-/* BLOCK EMPLOYEES IF NEEDED */
+renderQuestion();
 
-if(user.role === "employee"){
-// allowed
 }
 
-})();
+/* =========================================================
+   RENDER QUESTION
+========================================================= */
 
-</script>
+function renderQuestion(){
 
+const question = questions[currentQuestionIndex];
 
-<main class="module-container">
+quizContainer.innerHTML = `
+<p><strong>${question.q}</strong></p>
 
-<header class="module-header">
+${Object.entries(question.a).map(([key,value])=>`
 
-<h1>FMCSA Employee Drug & Alcohol Awareness Training</h1>
+<label>
+<input type="radio" name="answer" value="${key}"
+${selectedAnswers[currentQuestionIndex]===key?"checked":""}>
+${key}. ${value}
+</label>
 
-<button class="btn-secondary" onclick="goBack()">
-Back to Dashboard
-</button>
+`).join("")}
 
-</header>
+`;
 
+if(currentQuestionEl) currentQuestionEl.textContent=currentQuestionIndex+1;
 
-<!-- INFO -->
+if(prevQuestionBtn) prevQuestionBtn.disabled=currentQuestionIndex===0;
+if(nextQuestionBtn) nextQuestionBtn.disabled=currentQuestionIndex===questions.length-1;
 
-<section class="module-section">
+document.querySelectorAll("input[name='answer']").forEach(input=>{
 
-<p>
+input.addEventListener("change",e=>{
 
-This training provides safety-sensitive employees awareness of
-DOT Drug and Alcohol testing regulations and responsibilities.
+selectedAnswers[currentQuestionIndex]=e.target.value;
+updateSubmitState();
 
-</p>
+});
 
-</section>
+});
 
+}
 
+/* =========================================================
+   QUIZ NAV
+========================================================= */
 
-<!-- CONTENT SECTION -->
+if(prevQuestionBtn){
 
-<section class="module-section" id="contentSection">
+prevQuestionBtn.addEventListener("click",()=>{
 
-<h2>Training Content</h2>
+if(currentQuestionIndex>0){
 
-<div id="pdfContainer"></div>
+currentQuestionIndex--;
+renderQuestion();
 
-<div class="pdf-controls">
+}
 
-<button id="prevPageBtn">Previous</button>
+});
 
-<span>
-Page <span id="currentPage">1</span> of
-<span id="totalPages">0</span>
-</span>
+}
 
-<button id="nextPageBtn">Next</button>
+if(nextQuestionBtn){
 
+nextQuestionBtn.addEventListener("click",()=>{
+
+if(currentQuestionIndex < questions.length-1){
+
+currentQuestionIndex++;
+renderQuestion();
+
+}
+
+});
+
+}
+
+/* =========================================================
+   ENABLE SUBMIT
+========================================================= */
+
+function updateSubmitState(){
+
+if(!submitBtn) return;
+
+submitBtn.disabled = Object.keys(selectedAnswers).length !== questions.length;
+
+}
+
+/* =========================================================
+   QUIZ SUBMIT
+========================================================= */
+
+if(submitBtn){
+
+submitBtn.addEventListener("click",()=>{
+
+let correct=0;
+
+questions.forEach((q,i)=>{
+
+if(selectedAnswers[i]===q.correct){
+correct++;
+}
+
+});
+
+const scorePercent = Math.round((correct/questions.length)*100);
+
+if(scorePercent>=PASS_PERCENT){
+
+/* PASS */
+
+localStorage.setItem(COMPLETED_KEY,"true");
+localStorage.setItem(QUIZ_KEY,"true");
+
+localStorage.setItem("paid_employee_fmcsa","true");
+
+let certId = localStorage.getItem(CERT_ID_KEY);
+
+if(!certId){
+
+certId = "AMS-E-" + Date.now().toString().slice(-8);
+
+localStorage.setItem(CERT_ID_KEY,certId);
+
+}
+
+localStorage.setItem(CERT_DATE_KEY,Date.now());
+
+localStorage.removeItem(ATTEMPTS_KEY);
+localStorage.removeItem(COOLDOWN_KEY);
+
+resultBox.innerHTML=`
+<div class="result-box pass">
+You passed! Generating certificate...
 </div>
+`;
 
-<br>
+setTimeout(()=>{
 
-<button id="completeContentBtn" disabled>
+window.location.href="fmcsa-certificates.html";
 
-Mark Content Complete
+},2000);
 
-</button>
+}else{
 
-</section>
+/* FAIL */
 
+attempts++;
+localStorage.setItem(ATTEMPTS_KEY,attempts);
 
+if(attempts>=MAX_ATTEMPTS){
 
-<!-- QUIZ SECTION -->
+const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
 
-<section class="module-section hidden" id="quizSection">
+localStorage.setItem(COOLDOWN_KEY,cooldownUntil);
 
-<h2>Employee Awareness Quiz</h2>
+alert("Maximum attempts reached. 15 minute cooldown.");
 
-<div id="quizContainer" class="quiz-container"></div>
+window.location.reload();
 
-<div class="quiz-nav">
+return;
 
-<button id="prevQuestionBtn">Previous</button>
+}
 
-<span>
-Question <span id="currentQuestion">1</span> of
-<span id="totalQuestions">0</span>
-</span>
-
-<button id="nextQuestionBtn">Next</button>
-
+resultBox.innerHTML=`
+<div class="result-box fail">
+Score: ${scorePercent}% <br>
+Attempt ${attempts} of ${MAX_ATTEMPTS}
 </div>
+`;
 
-<br>
+}
 
-<button id="submitQuizBtn" disabled>
+});
 
-Submit Quiz
+}
 
-</button>
+/* =========================================================
+   COOLDOWN CHECK
+========================================================= */
 
-<div id="quizResult"></div>
+function checkCooldown(){
 
-</section>
+const cooldownUntil = parseInt(localStorage.getItem(COOLDOWN_KEY)||"0",10);
 
+if(Date.now()<cooldownUntil){
 
-</main>
+const minutesLeft = Math.ceil((cooldownUntil-Date.now())/60000);
 
-
-<!-- PDF JS -->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-
-<!-- MODULE ENGINE -->
-
-<script src="../js/fmcsa-employee-training.js"></script>
-
-
-<script>
-
-function goBack(){
+alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
 
 window.location.href="dashboard.html";
 
 }
 
-</script>
+}
 
-
-</body>
-</html>
+});
