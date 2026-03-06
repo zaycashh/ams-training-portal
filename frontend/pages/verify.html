@@ -106,12 +106,14 @@ const cert = certificates.find(c => c.id === certId);
 
 if(cert){
 
-/* FORMAT DATE MM/DD/YYYY */
+/* FORCE US DATE FORMAT */
 
-const formattedDate = new Date(cert.date).toLocaleDateString("en-US",{
-  month:"2-digit",
-  day:"2-digit",
-  year:"numeric"
+const dateObj = new Date(cert.date);
+
+const formattedDate = dateObj.toLocaleDateString("en-US", {
+month: "2-digit",
+day: "2-digit",
+year: "numeric"
 });
 
 result.innerHTML = `
