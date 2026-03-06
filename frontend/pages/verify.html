@@ -106,6 +106,14 @@ const cert = certificates.find(c => c.id === certId);
 
 if(cert){
 
+/* FORMAT DATE MM/DD/YYYY */
+
+const formattedDate = new Date(cert.date).toLocaleDateString("en-US",{
+  month:"2-digit",
+  day:"2-digit",
+  year:"numeric"
+});
+
 result.innerHTML = `
 <div class="verify-result valid">
 Certificate Verified ✔
@@ -114,7 +122,7 @@ Name: ${cert.name}
 <br>
 Course: ${cert.course}
 <br>
-Date Completed: ${cert.date}
+Date Completed: ${formattedDate}
 <br>
 Certificate ID: ${cert.id}
 </div>
