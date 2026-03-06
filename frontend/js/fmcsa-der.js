@@ -324,7 +324,7 @@ if (submitBtn) {
   let certId = localStorage.getItem("fmcsaDERCertificateId");
 
   if (!certId) {
-    certId = "AMS-DER-" + Date.now().toString().slice(-8);
+    certId = "AMS-D-" + Date.now().toString().slice(-8);
     localStorage.setItem("fmcsaDERCertificateId", certId);
   }
 
