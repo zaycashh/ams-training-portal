@@ -669,78 +669,7 @@ function gradeAlcoholQuiz() {
 
   let attempts = parseInt(localStorage.getItem(ALCOHOL_ATTEMPT_KEY)) || 0;
 
-  /* =========================
-     PASS LOGIC (CERTIFICATE)
-  ========================= */
-
-  if (score >= PASS_SCORE_ALCOHOL) {
-
-  // ✅ Mark completed
-  localStorage.setItem("fmcsaModuleBCompleted", "true");
-
-  // 🔥 Generate Certificate ID (if not exists)
-  let certId = localStorage.getItem("fmcsaModuleBCertificateId");
-
-if (!certId) {
-
-  certId = generateCertificateId("AMS-B");
-  localStorage.setItem("fmcsaModuleBCertificateId", certId);
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-
-  const certificate = {
-    id: certId,
-    name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
-    course: "FMCSA Drug & Alcohol Substance Abuse Training",
-    date: new Date().toLocaleDateString()
-  };
-
-  const certs =
-    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
-
-  certs.push(certificate);
-
-  localStorage.setItem("amsCertificates", JSON.stringify(certs));
-}
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-
-  const certificate = {
-    id: certId,
-    name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
-    course: "FMCSA Drug & Alcohol Substance Abuse Training",
-    date: new Date().toLocaleDateString()
-  };
-
-  const certs =
-  JSON.parse(localStorage.getItem("amsCertificates") || "[]");
-
-  certs.push(certificate);
-
-  localStorage.setItem("amsCertificates", JSON.stringify(certs));
-}
-
-  // 🔥 Store Completion Date
-  localStorage.setItem("fmcsaModuleBDate", Date.now());
-
-  // Clean attempts
-  localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
-  localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
-
-  resultBox.innerHTML = `
-    <div class="result-box pass">
-      You passed Drug & Alcohol Training!
-      Generating certificate...
-    </div>
-  `;
-
-  // 🔥 Redirect to unified certificate page
-  setTimeout(() => {
-    window.location.href = "fmcsa-certificates.html";
-  }, 1500);
-
-  return;
-}
+ localStorage.setItem("amsCertificates", JSON.stringify(certs));
 
   /* =========================
      FAIL LOGIC
