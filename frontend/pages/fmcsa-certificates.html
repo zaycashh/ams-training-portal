@@ -101,10 +101,9 @@ return;
 <button class="btn-secondary" onclick="returnToDashboard()">
 Return to Dashboard
 </button>
-
 </header>
-  
-  <!-- MODULE A CERT -->
+
+<!-- MODULE A CERT -->
 <section id="moduleACert" class="cert-card hidden">
 
 <h2 class="cert-title">🎓 FMCSA Reasonable Suspicion Training</h2>
@@ -126,10 +125,9 @@ Return to Dashboard
 <p><strong>Date Completed:</strong> <span id="bDate"></span></p>
 <p><strong>Certificate ID:</strong> <span id="bCertId"></span></p>
 
-<div id="bQR" style="margin-top:10px;"></div>  
+<div id="bQR" style="margin-top:10px;"></div>
 
 </section>
-
 
 <!-- DER CERT -->
 <section id="derCert" class="cert-card hidden">
@@ -140,12 +138,11 @@ Return to Dashboard
 <p><strong>Date Completed:</strong> <span id="derDate"></span></p>
 <p><strong>Certificate ID:</strong> <span id="derCertId"></span></p>
 
-<div id="derQR" style="margin-top:10px;"></div>  
+<div id="derQR" style="margin-top:10px;"></div>
 
 </section>
 
 </main>
-
 
 <script>
 
@@ -169,23 +166,22 @@ localStorage.getItem("fmcsaDERCompleted") === "true";
 /* IF NOTHING COMPLETED RETURN */
 
 if(!modACompleted && !modBCompleted && !derCompleted){
-
 window.location.replace("dashboard.html");
 return;
-
 }
 
-
-/* MODULE A */
+/* ===============================
+MODULE A
+=============================== */
 
 if(modACompleted){
 
 document.getElementById("moduleACert").classList.remove("hidden");
 
 document.getElementById("aName").textContent =
-user.fullName || 
-((user.firstName || "") + " " + (user.lastName || "")).trim() || 
-user.email || 
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
 "User";
 
 const storedADate =
@@ -202,7 +198,7 @@ localStorage.getItem("fmcsaModuleACertificateId");
 document.getElementById("aCertId").textContent =
 certIdA || "N/A";
 
-if(certIdA && typeof QRCode !== "undefined"){
+if(certIdA){
 
 const verifyUrl =
 window.location.origin +
@@ -217,8 +213,11 @@ height:128
 
 }
 
-}  
-* MODULE B */
+}
+
+/* ===============================
+MODULE B
+=============================== */
 
 if(modBCompleted){
 
@@ -244,35 +243,35 @@ localStorage.getItem("fmcsaModuleBCertificateId");
 document.getElementById("bCertId").textContent =
 certIdB || "N/A";
 
-/* GENERATE QR */
-
-if(certIdB && typeof QRCode !== "undefined"){
+if(certIdB){
 
 const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdB;
 
-new QRCode(document.getElementById("bQR"), {
+new QRCode(document.getElementById("bQR"),{
 text: verifyUrl,
-width: 128,
-height: 128
+width:128,
+height:128
 });
 
 }
 
 }
 
-/* DER CERTIFICATE */
+/* ===============================
+DER CERTIFICATE
+=============================== */
 
 if(derCompleted){
 
 document.getElementById("derCert").classList.remove("hidden");
 
 document.getElementById("derName").textContent =
-user.fullName || 
-((user.firstName || "") + " " + (user.lastName || "")).trim() || 
-user.email || 
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
 "User";
 
 const storedDate =
@@ -283,13 +282,30 @@ storedDate
 ? new Date(Number(storedDate)).toLocaleDateString()
 : "N/A";
 
+const certIdDER =
+localStorage.getItem("fmcsaDERCertificateId");
+
 document.getElementById("derCertId").textContent =
-localStorage.getItem("fmcsaDERCertificateId") || "N/A";
+certIdDER || "N/A";
+
+if(certIdDER){
+
+const verifyUrl =
+window.location.origin +
+"/ams-training-portal/frontend/pages/verify.html?id=" +
+certIdDER;
+
+new QRCode(document.getElementById("derQR"),{
+text: verifyUrl,
+width:128,
+height:128
+});
+
+}
 
 }
 
 });
-
 
 /* RETURN BUTTON */
 
@@ -298,7 +314,8 @@ window.location.href="dashboard.html";
 }
 
 </script>
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 </body>
 </html>
