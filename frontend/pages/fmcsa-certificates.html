@@ -189,7 +189,7 @@ localStorage.getItem("fmcsaModuleADate");
 
 document.getElementById("aDate").textContent =
 storedADate
-? new Date(Number(storedADate)).toLocaleDateString()
+? new Date(Number(storedADate)).toLocaleDateString("en-US")
 : "N/A";
 
 const certIdA =
