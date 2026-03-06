@@ -1,26 +1,30 @@
 /* =========================================================
-   FMCSA EMPLOYEE TRAINING ENGINE
-   PDF + QUIZ + CERTIFICATE
+   INITIALIZE MODULE
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
-
-if(localStorage.getItem(CONTENT_KEY)){
+if(localStorage.getItem(CONTENT_KEY)==="true"){
 
 document.getElementById("contentSection").classList.add("hidden");
 document.getElementById("quizSection").classList.remove("hidden");
 
-loadQuiz();
+initQuiz();
 
 }
 
-pdfDoc = await pdfjsLib.getDocument(PDF_URL).promise;
+if(pdfContainer){
 
-totalPagesSpan.textContent = pdfDoc.numPages;
+pdfjsLib.getDocument(url).promise.then(pdf => {
+
+pdfDoc = pdf;
+totalPages = pdf.numPages;
+
+if(totalPagesEl) totalPagesEl.textContent = totalPages;
 
 renderPage(currentPage);
 
 });
+
+}
 /* =========================================================
    CONFIG KEYS
 ========================================================= */
