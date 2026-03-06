@@ -216,7 +216,9 @@ correct:"B"
 ];
 
 let currentQuestionIndex = 0;
-let selectedAnswers = {};
+let selectedAnswers = JSON.parse(
+localStorage.getItem("fmcsaEmployeeAnswers") || "{}"
+);
 
 let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY)||"0",10);
 
@@ -287,7 +289,12 @@ document.querySelectorAll("input[name='answer']").forEach(input=>{
 
 input.addEventListener("change",e=>{
 
-selectedAnswers[currentQuestionIndex]=e.target.value;
+selectedAnswers[currentQuestionIndex] = e.target.value;
+
+localStorage.setItem(
+"fmcsaEmployeeAnswers",
+JSON.stringify(selectedAnswers)
+);
 updateSubmitState();
 
 });
@@ -385,6 +392,7 @@ localStorage.setItem(CERT_DATE_KEY,Date.now());
 
 localStorage.removeItem(ATTEMPTS_KEY);
 localStorage.removeItem(COOLDOWN_KEY);
+localStorage.removeItem("fmcsaEmployeeAnswers");   
 
 resultBox.innerHTML=`
 <div class="result-box pass">
