@@ -600,7 +600,12 @@ body {
   max-width: 500px;
 }
 .training-date{
-font-size:13px;
-color:#6b7280;
+display:inline-block;
 margin-top:8px;
+font-size:12px;
+background:#e6f4ea;
+color:#1e7e34;
+padding:4px 8px;
+border-radius:4px;
+font-weight:600;
 }
