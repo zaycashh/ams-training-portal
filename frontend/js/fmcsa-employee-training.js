@@ -1,31 +1,4 @@
 /* =========================================================
-   INITIALIZE MODULE
-========================================================= */
-
-if(localStorage.getItem(CONTENT_KEY)==="true"){
-
-document.getElementById("contentSection").classList.add("hidden");
-document.getElementById("quizSection").classList.remove("hidden");
-
-initQuiz();
-
-}
-
-if(pdfContainer){
-
-pdfjsLib.getDocument(url).promise.then(pdf => {
-
-pdfDoc = pdf;
-totalPages = pdf.numPages;
-
-if(totalPagesEl) totalPagesEl.textContent = totalPages;
-
-renderPage(currentPage);
-
-});
-
-}
-/* =========================================================
    CONFIG KEYS
 ========================================================= */
 
@@ -461,6 +434,34 @@ alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
 window.location.href="dashboard.html";
 
 }
+
+}
+
+/* =========================================================
+   INITIALIZE MODULE
+========================================================= */
+
+if(localStorage.getItem(CONTENT_KEY)==="true"){
+
+document.getElementById("contentSection").classList.add("hidden");
+document.getElementById("quizSection").classList.remove("hidden");
+
+initQuiz();
+
+}
+
+if(pdfContainer){
+
+pdfjsLib.getDocument(url).promise.then(pdf => {
+
+pdfDoc = pdf;
+totalPages = pdf.numPages;
+
+if(totalPagesEl) totalPagesEl.textContent = totalPages;
+
+renderPage(currentPage);
+
+});
 
 }
 
