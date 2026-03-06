@@ -494,12 +494,18 @@ body {
   margin: 10px 0 20px 0;
 }
 
-.fmcsa-progress-bar {
-  width: 100%;
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 6px;
-  overflow: hidden;
+.fmcsa-progress-bar{
+height:8px;
+background:#e5e7eb;
+border-radius:6px;
+overflow:hidden;
+}
+
+#fmcsaProgressFill{
+height:100%;
+background:#2563eb;
+border-radius:6px;
+transition:width .3s ease;
 }
 
 #fmcsaProgressFill {
@@ -629,4 +635,35 @@ border-bottom:1px solid #e5e7eb;
 
 .cert-table tr:hover{
 background:#f9fafb;
+}
+.modules-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:20px;
+margin-top:20px;
+}
+
+.module-card{
+background:#fff;
+border-radius:10px;
+padding:20px;
+box-shadow:0 2px 8px rgba(0,0,0,0.06);
+transition:transform .15s ease;
+}
+
+.module-card:hover{
+transform:translateY(-2px);
+}
+.fmcsa-progress-bar{
+height:8px;
+background:#e5e7eb;
+border-radius:6px;
+overflow:hidden;
+}
+
+#fmcsaProgressFill{
+height:100%;
+background:#2563eb;
+border-radius:6px;
+transition:width .3s ease;
 }
