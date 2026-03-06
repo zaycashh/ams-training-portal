@@ -86,6 +86,22 @@ function verifyCert(){
 
 const certId =
 document.getElementById("certInput").value.trim();
+  
+  /* VALIDATE CERTIFICATE FORMAT */
+
+const certPattern = /^AMS-[EDSB]-\d{8}$/;
+
+if(!certPattern.test(certId)){
+
+result.innerHTML = `
+<div class="verify-result invalid">
+Invalid certificate format.
+</div>
+`;
+
+return;
+
+}
 
 const result =
 document.getElementById("result");
@@ -106,8 +122,7 @@ const cert = certificates.find(c => c.id === certId);
 
 if(cert){
   
-let moduleType = "";
-
+let moduleType = "AMS Training Module";
 if(cert.id.includes("-E-")) moduleType = "FMCSA Employee Awareness";
 if(cert.id.includes("-D-")) moduleType = "FMCSA DER Training";
 if(cert.id.includes("-S-")) moduleType = "FMCSA Supervisor Training";
