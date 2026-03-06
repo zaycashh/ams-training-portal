@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FMCSA Employee Drug & Alcohol Awareness Training</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<link rel="stylesheet" href="../css/main.css" />
+
+<style>
+
+.quiz-container{
+max-width:800px;
+margin:auto;
+}
+
+.quiz-nav{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+}
+
+.hidden{
+display:none;
+}
+
+.result-box{
+padding:15px;
+margin-top:15px;
+border-radius:6px;
+}
+
+.pass{
+background:#e6f4ea;
+color:#1e7e34;
+}
+
+.fail{
+background:#fdecea;
+color:#c0392b;
+}
+
+.pdf-controls{
+display:flex;
+justify-content:space-between;
+margin-top:15px;
+}
+
+</style>
+</head>
+
+
+<body data-module="fmcsa-employee">
+
+<!-- ROUTE GUARD -->
+<script>
+
+(function(){
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if(!user){
+
+window.location.replace("login.html");
+return;
+
+}
+
+/* BLOCK EMPLOYEES IF NEEDED */
+
+if(user.role === "employee"){
+// allowed
+}
+
+})();
+
+</script>
+
+
+<main class="module-container">
+
+<header class="module-header">
+
+<h1>FMCSA Employee Drug & Alcohol Awareness Training</h1>
+
+<button class="btn-secondary" onclick="goBack()">
+Back to Dashboard
+</button>
+
+</header>
+
+
+<!-- INFO -->
+
+<section class="module-section">
+
+<p>
+
+This training provides safety-sensitive employees awareness of
+DOT Drug and Alcohol testing regulations and responsibilities.
+
+</p>
+
+</section>
+
+
+
+<!-- CONTENT SECTION -->
+
+<section class="module-section" id="contentSection">
+
+<h2>Training Content</h2>
+
+<div id="pdfContainer"></div>
+
+<div class="pdf-controls">
+
+<button id="prevPageBtn">Previous</button>
+
+<span>
+Page <span id="currentPage">1</span> of
+<span id="totalPages">0</span>
+</span>
+
+<button id="nextPageBtn">Next</button>
+
+</div>
+
+<br>
+
+<button id="completeContentBtn" disabled>
+
+Mark Content Complete
+
+</button>
+
+</section>
+
+
+
+<!-- QUIZ SECTION -->
+
+<section class="module-section hidden" id="quizSection">
+
+<h2>Employee Awareness Quiz</h2>
+
+<div id="quizContainer" class="quiz-container"></div>
+
+<div class="quiz-nav">
+
+<button id="prevQuestionBtn">Previous</button>
+
+<span>
+Question <span id="currentQuestion">1</span> of
+<span id="totalQuestions">0</span>
+</span>
+
+<button id="nextQuestionBtn">Next</button>
+
+</div>
+
+<br>
+
+<button id="submitQuizBtn" disabled>
+
+Submit Quiz
+
+</button>
+
+<div id="quizResult"></div>
+
+</section>
+
+
+</main>
+
+
+<!-- PDF JS -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+
+<!-- MODULE ENGINE -->
+
+<script src="../js/fmcsa-employee-training.js"></script>
+
+
+<script>
+
+function goBack(){
+
+window.location.href="dashboard.html";
+
+}
+
+</script>
+
+
+</body>
+</html>
