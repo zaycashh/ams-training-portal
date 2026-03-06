@@ -218,6 +218,31 @@ height:128
 }
 
 }  
+* MODULE B */
+
+if(modBCompleted){
+
+document.getElementById("moduleBCert").classList.remove("hidden");
+
+document.getElementById("bName").textContent =
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
+"User";
+
+const storedBDate =
+localStorage.getItem("fmcsaModuleBDate");
+
+document.getElementById("bDate").textContent =
+storedBDate
+? new Date(Number(storedBDate)).toLocaleDateString()
+: new Date().toLocaleDateString();
+
+const certIdB =
+localStorage.getItem("fmcsaModuleBCertificateId");
+
+document.getElementById("bCertId").textContent =
+certIdB || "N/A";
 
 /* GENERATE QR */
 
