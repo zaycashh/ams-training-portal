@@ -599,3 +599,8 @@ body {
   grid-template-columns: 1fr;
   max-width: 500px;
 }
+.training-date{
+font-size:13px;
+color:#6b7280;
+margin-top:8px;
+}
