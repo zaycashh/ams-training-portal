@@ -234,7 +234,7 @@ localStorage.getItem("fmcsaModuleBDate");
 
 document.getElementById("bDate").textContent =
 storedBDate
-? new Date(Number(storedBDate)).toLocaleDateString()
+? new Date(Number(storedBDate)).toLocaleDateString("en-US")
 : new Date().toLocaleDateString();
 
 const certIdB =
@@ -279,7 +279,7 @@ localStorage.getItem("fmcsaDERDate");
 
 document.getElementById("derDate").textContent =
 storedDate
-? new Date(Number(storedDate)).toLocaleDateString()
+? new Date(Number(storedDate)).toLocaleDateString("en-US")
 : "N/A";
 
 const certIdDER =
