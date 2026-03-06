@@ -734,10 +734,9 @@ padding:30px;
 border-radius:10px;
 border:1px solid #e5e7eb;
 }
+/* FIX subtitle color */
 .section-note{
-color:#1f2937; /* dark gray / almost black */
-font-weight:400;
-margin-bottom:20px;
+color:#000 !important;
 }
 .fmcsa-section h2{
 margin-top:0;
