@@ -115,7 +115,7 @@ Locked — Purchase Required
 </button>
 </div>
 
-  <p id="moduleACompletionDate" class="training-date"></p>
+<div id="moduleACompletionDate" class="training-date"></div>
 
 <div class="module-card">
 <h3>Module B – Drug & Alcohol Awareness</h3>
@@ -126,7 +126,7 @@ Locked — Complete Module A
 </button>
 </div>
 
-  <p id="moduleBCompletionDate" class="training-date"></p>
+<div id="moduleBCompletionDate" class="training-date"></div>
 
 <div class="module-card hidden" id="fmcsaCertCard">
 <h3>FMCSA Training Certificate</h3>
@@ -187,7 +187,7 @@ DOT Drug & Alcohol Awareness Training for safety-sensitive employees.
 Loading...
 </button>
   
-<p id="employeeCompletionDate" class="training-date"></p>
+<div id="employeeCompletionDate" class="training-date"></div>
 
 </div>
 
@@ -274,7 +274,35 @@ window.location.href = "fmcsa-employee-training.html";
 }
 
 });
+  
+/* ================================
+   SHOW COMPLETION DATES
+================================ */
 
+const modADate = localStorage.getItem("fmcsaModuleADate");
+const modBDate = localStorage.getItem("fmcsaModuleBDate");
+const derDate = localStorage.getItem("fmcsaDERDate");
+const empDate = localStorage.getItem("fmcsaEmployeeDate");
+
+if(modADate && document.getElementById("moduleACompletionDate")){
+document.getElementById("moduleACompletionDate").textContent =
+"Completed: " + new Date(Number(modADate)).toLocaleDateString("en-US");
+}
+
+if(modBDate && document.getElementById("moduleBCompletionDate")){
+document.getElementById("moduleBCompletionDate").textContent =
+"Completed: " + new Date(Number(modBDate)).toLocaleDateString("en-US");
+}
+
+if(derDate && document.getElementById("derCompletionDate")){
+document.getElementById("derCompletionDate").textContent =
+"Completed: " + new Date(Number(derDate)).toLocaleDateString("en-US");
+}
+
+if(empDate && document.getElementById("employeeCompletionDate")){
+document.getElementById("employeeCompletionDate").textContent =
+"Completed: " + new Date(Number(empDate)).toLocaleDateString("en-US");
+}
 </script>
 
 </body>
