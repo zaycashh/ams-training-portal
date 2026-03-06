@@ -666,10 +666,27 @@ function gradeAlcoholQuiz() {
   // 🔥 Generate Certificate ID (if not exists)
   let certId = localStorage.getItem("fmcsaModuleBCertificateId");
 
-  if (!certId) {
-    certId = "AMS-B-" + Date.now().toString().slice(-8);
-    localStorage.setItem("fmcsaModuleBCertificateId", certId);
-  }
+if (!certId) {
+
+  certId = "AMS-B-" + Date.now().toString().slice(-8);
+  localStorage.setItem("fmcsaModuleBCertificateId", certId);
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+  const certificate = {
+    id: certId,
+    name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
+    course: "FMCSA Drug & Alcohol Substance Abuse Training",
+    date: new Date().toLocaleDateString()
+  };
+
+  const certs =
+  JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+
+  certs.push(certificate);
+
+  localStorage.setItem("amsCertificates", JSON.stringify(certs));
+}
 
   // 🔥 Store Completion Date
   localStorage.setItem("fmcsaModuleBDate", Date.now());
