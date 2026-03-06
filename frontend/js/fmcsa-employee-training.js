@@ -3,8 +3,24 @@
    PDF + QUIZ + CERTIFICATE
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
+if(localStorage.getItem(CONTENT_KEY)){
+
+document.getElementById("contentSection").classList.add("hidden");
+document.getElementById("quizSection").classList.remove("hidden");
+
+loadQuiz();
+
+}
+
+pdfDoc = await pdfjsLib.getDocument(PDF_URL).promise;
+
+totalPagesSpan.textContent = pdfDoc.numPages;
+
+renderPage(currentPage);
+
+});
 /* =========================================================
    CONFIG KEYS
 ========================================================= */
