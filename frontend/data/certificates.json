@@ -3,13 +3,12 @@
     "id": "AMS-A-97365183",
     "name": "John Owner",
     "course": "FMCSA Reasonable Suspicion Training",
-    "date": "3/5/2026"
+    "date": "2026-03-05"
+  },
+  {
+    "id": "AMS-B-82930412",
+    "name": "Jose DeJesus",
+    "course": "FMCSA Drug & Alcohol Training",
+    "date": "2026-03-05"
   }
-]
-{
-"id":"AMS-B-82930412",
-"name":"Jose DeJesus",
-"course":"FMCSA Drug & Alcohol Training",
-"date":"2026-03-05"
-}
 ]
