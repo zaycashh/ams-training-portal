@@ -181,11 +181,202 @@ drug and alcohol awareness courses.
 DOT Drug & Alcohol Awareness Training for safety-sensitive employees.
 </p>
 
-<button class="btn-primary"
-onclick="window.location.href='fmcsa-employee-training.html'">
+<button id="employeeTrainingBtn" class="btn-primary">
+Loading...
+</button>
 
-Start Training
+</div>
+  
+</main>
 
+<!-- CORE DASHBOARD LOGIC -->
+<script src="../js/dashboard.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AMS Training Portal – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body> 
+  <header class="portal-header">
+  <div class="header-inner">
+    <h1>AMS Training Portal</h1>
+    <p>FAA & FMCSA Drug & Alcohol Compliance Training</p>
+  </div>
+</header>
+
+<!-- 🔐 HARD LOGIN GUARD -->
+<script>
+(function () {
+  const user = localStorage.getItem("amsUser");
+  if (!user) {
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+<main class="dashboard-container">
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <h1>Welcome to AMS Training Portal</h1>
+    <button class="btn-secondary" onclick="logout()">Log Out</button>
+  </header>
+
+  <!-- EMPLOYEE FIRST-LOGIN WELCOME -->
+  <div
+    id="employeeWelcome"
+    style="display:none; padding:12px; margin-bottom:12px;
+           border:1px solid #d7e3ff; background:#f5f9ff; border-radius:6px;">
+    <strong>Welcome!</strong>
+    You’ve been invited by your company to complete required training.
+  </div>
+
+  <h2 class="section-title">
+    FAA / DOT Drug & Alcohol Training (Individual Modules)
+  </h2>
+
+  <p class="section-note">
+    Select the course that matches your role. These courses are purchased individually
+    and are commonly required for FAA and DOT compliance.
+  </p>
+
+  <!-- MODULES -->
+  <section class="modules-grid">
+
+    <!-- DER -->
+    <div class="module-card locked" id="derCard">
+      <h2>DER Training</h2>
+      <p>Designated Employer Representative Training</p>
+      <button id="derBtn" class="btn-primary" disabled>
+        Locked — Purchase Required
+      </button>
+    </div>
+
+    <!-- SUPERVISOR -->
+    <div class="module-card locked" id="supervisorCard">
+      <h2>Supervisor Training</h2>
+      <p>Drug & Alcohol Supervisor Training</p>
+      <button id="supervisorBtn" class="btn-primary" disabled>
+        Locked — Purchase Required
+      </button>
+    </div>
+
+    <!-- EMPLOYEE -->
+    <div class="module-card locked" id="employeeCard">
+      <h2>Employee Training</h2>
+      <p>Drug & Alcohol Awareness Training</p>
+
+      <button
+  id="employeeBtn"
+  class="btn-primary"
+  onclick="handleEmployeeClick()"
+  disabled
+>
+  Locked — Purchase Required
+</button>
+
+      <div id="employeeSeatStatus" class="seat-status"></div>
+    </div>
+  </section>
+
+  <!-- FMCSA -->
+  <hr class="section-divider" />
+
+ <div class="fmcsa-section">
+
+<h2>FMCSA Supervisor Training (Bundled Program)</h2>
+   
+   <div class="fmcsa-progress-wrapper">
+  <div class="fmcsa-progress-bar">
+    <div id="fmcsaProgressFill"></div>
+  </div>
+  <p id="fmcsaProgressText">0% Complete</p>
+</div>
+
+<p>
+This training bundle includes the required DOT FMCSA supervisor
+drug and alcohol awareness courses.
+</p>
+
+<div class="modules-grid">
+
+<!-- MODULE A -->
+<div class="module-card" id="fmcsaModACard">
+  <h3>Module A – Reasonable Suspicion</h3>
+  <p>Supervisor observation and documentation training.</p>
+
+  <button id="fmcsaModABtn" class="btn-primary">
+    Locked — Purchase Required
+  </button>
+</div>
+
+<!-- MODULE B -->
+<div class="module-card" id="fmcsaModBCard">
+  <h3>Module B – Drug & Alcohol Awareness</h3>
+  <p>Substance abuse education and testing compliance.</p>
+
+  <button id="fmcsaModBBtn" class="btn-primary" disabled>
+    Locked — Complete Module A
+  </button>
+</div>
+
+<!-- CERTIFICATE -->
+<div class="module-card hidden" id="fmcsaCertCard">
+  <h3>FMCSA Training Certificate</h3>
+  <p>Download your FMCSA supervisor training certificate.</p>
+
+  <button id="fmcsaCertBtn" class="btn-primary">
+    View Certificate
+  </button>
+</div>
+
+</div>
+
+</div>
+
+<div id="fmcsaTimer" class="fmcsa-timer"></div>
+  
+<!-- FMCSA DER SINGLE MODULE (MATCHES BUNDLE UI) -->
+  
+<div class="fmcsa-section">
+  <h2>FMCSA-DER Drug & Alcohol Testing Program Training</h2>
+
+  <p>
+    Designated Employer Representative (DER) Certification<br>
+    DOT 49 CFR Part 382 Compliance
+  </p>
+
+  <div class="bundle-modules bundle-modules-single">
+
+    <div class="module-card">
+      <h3>DER Certification Training</h3>
+      <p>Required DOT training for Designated Employer Representatives.</p>
+
+      <button id="derFmcsaBtn" class="btn-primary">
+        Start DER Training
+      </button>
+    </div>
+
+  </div>
+
+</div>
+  
+  <div class="training-card">
+
+<h3>FMCSA Employee Awareness Training</h3>
+
+<p>
+DOT Drug & Alcohol Awareness Training for safety-sensitive employees.
+</p>
+
+<button id="employeeTrainingBtn" class="btn-primary">
+Loading...
 </button>
 
 </div>
@@ -197,36 +388,93 @@ Start Training
 
   <script>
 
+<script>
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* =====================================
+     DER TRAINING BUTTON
+  ===================================== */
 
   const derBtn = document.getElementById("derTrainingBtn");
 
-  if (!derBtn) return;
+  if (derBtn) {
 
-  const paidDER = localStorage.getItem("paid_der_fmcsa") === "true";
+    const paidDER = localStorage.getItem("paid_der_fmcsa") === "true";
 
-  if (paidDER) {
+    if (paidDER) {
 
-    derBtn.textContent = "Start DER Training";
+      derBtn.textContent = "Start DER Training";
 
-    derBtn.onclick = () => {
-      window.location.href = "fmcsa-der.html";
-    };
+      derBtn.onclick = () => {
+        window.location.href = "fmcsa-der.html";
+      };
 
-  } else {
+    } else {
 
-    derBtn.textContent = "🔒 Locked — Purchase Required";
+      derBtn.textContent = "🔒 Locked — Purchase Required";
 
-    derBtn.onclick = () => {
-      window.location.href =
+      derBtn.onclick = () => {
+        window.location.href =
         "payment.html?module=fmcsa-der&type=der_fmcsa";
-    };
+      };
+
+    }
+
+  }
+
+  /* =====================================
+     EMPLOYEE TRAINING BUTTON
+  ===================================== */
+
+  const employeeBtn = document.getElementById("employeeTrainingBtn");
+
+  if (employeeBtn) {
+
+    const employeeCompleted =
+      localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+
+    const employeeContentDone =
+      localStorage.getItem("fmcsaEmployeeContentCompleted") === "true";
+
+    if (employeeCompleted) {
+
+      employeeBtn.textContent = "View Certificate";
+
+      employeeBtn.onclick = () => {
+        window.location.href = "fmcsa-certificates.html";
+      };
+
+    }
+
+    else if (employeeContentDone) {
+
+      employeeBtn.textContent = "Resume Quiz";
+
+      employeeBtn.onclick = () => {
+        window.location.href = "fmcsa-employee-training.html";
+      };
+
+    }
+
+    else {
+
+      employeeBtn.textContent = "Start Training";
+
+      employeeBtn.onclick = () => {
+        window.location.href = "fmcsa-employee-training.html";
+      };
+
+    }
 
   }
 
 });
 
 </script>
+  
+</body>
+</html>
   
 </body>
 </html>
