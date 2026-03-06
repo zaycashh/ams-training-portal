@@ -26,7 +26,7 @@ const COOLDOWN_MINUTES = 15;
    PDF CONFIG
 ========================================================= */
 
-const url = "../assets/fmcsa/fmcsa-employee-drug-alcohol-regulations.pdf";
+const url = "../assets/FMCSA - fmcsa-employee-drug-alcohol-regulations.pdf";
 
 const pdfContainer = document.getElementById("pdfContainer");
 const completeBtn = document.getElementById("completeContentBtn");
