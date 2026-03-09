@@ -102,33 +102,33 @@ completeBtn.disabled = num !== totalPages;
    PDF NAVIGATION
 ========================================================= */
 
-if(prevPageBtn){
+if (prevPageBtn) {
 
-prevPageBtn.addEventListener("click",()=>{
+  prevPageBtn.addEventListener("click", () => {
 
-if(currentPage > 1){
+    if (currentPage > 1) {
 
-currentPage--;
-renderPage(currentPage);
+      currentPage--;
+      renderPage(currentPage);
 
-}
+    }
 
-});
-
-}
-
-if(nextPageBtn){
-
-nextPageBtn.addEventListener("click",()=>{
-
-if(currentPage < totalPages){
-
-currentPage++;
-renderPage(currentPage);
+  });
 
 }
 
-});
+if (nextPageBtn) {
+
+  nextPageBtn.addEventListener("click", () => {
+
+    if (currentPage < totalPages) {
+
+      currentPage++;
+      renderPage(currentPage);
+
+    }
+
+  });
 
 }
 
