@@ -79,6 +79,20 @@ if (module === "supervisor") {
       window.location.href = "dashboard.html";
       return;
     }
+    
+    /* ================================
+   EMPLOYEE TRAINING
+================================ */
+
+if (module === "employee") {
+
+  localStorage.setItem("paid_employee", "true");
+
+  alert("Purchase successful!");
+
+  window.location.href = "dashboard.html";
+  return;
+}
 
     /* ================================
        DEFAULT
