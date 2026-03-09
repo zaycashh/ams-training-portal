@@ -393,12 +393,25 @@ ${key}. ${value}
 
 if(currentQuestionEl) currentQuestionEl.textContent=currentQuestionIndex+1;
 
-if(prevQuestionBtn) prevQuestionBtn.disabled=currentQuestionIndex===0;
-if(nextQuestionBtn) nextQuestionBtn.disabled=currentQuestionIndex===questions.length-1;
+if(prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
 
-document.querySelectorAll("input[name='answer']").forEach(input=>{
+/* LAST QUESTION HANDLING */
 
-input.addEventListener("change",e=>{
+if(currentQuestionIndex === questions.length - 1){
+
+if(nextQuestionBtn) nextQuestionBtn.classList.add("hidden");
+if(submitBtn) submitBtn.classList.remove("hidden");
+
+}else{
+
+if(nextQuestionBtn) nextQuestionBtn.classList.remove("hidden");
+if(submitBtn) submitBtn.classList.add("hidden");
+
+}
+
+document.querySelectorAll("input[name='answer']").forEach(input => {
+
+input.addEventListener("change", e => {
 
 selectedAnswers[currentQuestionIndex] = e.target.value;
 
@@ -406,13 +419,18 @@ localStorage.setItem(
 "fmcsaEmployeeAnswers",
 JSON.stringify(selectedAnswers)
 );
+
 updateSubmitState();
 
 });
 
 });
 
-}
+/* =========================================================
+   UPDATE SUBMIT BUTTON STATE
+========================================================= */
+
+updateSubmitState();
 
 /* =========================================================
    QUIZ NAV
