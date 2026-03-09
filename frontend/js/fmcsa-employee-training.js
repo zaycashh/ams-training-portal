@@ -196,7 +196,7 @@ correct:"A"
 },
 
 {
-q:"Under the DOT, the required number of drug panels is",
+q:"Under the DOT, the required number of drug panels is?",
 a:{
 A:"5",
 B:"3",
@@ -207,7 +207,7 @@ correct:"A"
 },
 
 {
-q:"The individual who makes the final determination of a drug test result is the:",
+q:"The individual who makes the final determination of a drug test result is the?:",
 a:{
 A:"Designated Employer Representative (DER)",
 B:"Medical Review Officer (MRO)",
@@ -313,7 +313,7 @@ correct:"B"
 },
 
 {
-q:"You are involved in an accident where another driver is killed but was at fault. You are NOT required to take a DOT drug and alcohol test.",
+q:"You are involved in an accident where another driver is killed but was at fault. You are NOT required to take a DOT drug and alcohol test. TRUE or FALSE?",
 a:{
 A:"True",
 B:"False"
