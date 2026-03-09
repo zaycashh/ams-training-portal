@@ -147,15 +147,28 @@ I Have Completed the Training Content
 
 <div id="quizContainer" class="quiz-container"></div>
 
-<br>
-
 <div class="quiz-nav">
 
-<button id="submitQuizBtn" class="btn-primary" disabled>
-Submit Quiz
+<button id="prevQuestionBtn" class="btn-secondary">
+← Back
+</button>
+
+<span class="quiz-progress">
+Question <span id="currentQuestion">1</span> of
+<span id="totalQuestions">0</span>
+</span>
+
+<button id="nextQuestionBtn" class="btn-primary">
+Next →
 </button>
 
 </div>
+
+<br>
+
+<button id="submitQuizBtn" class="btn-primary hidden">
+Submit Quiz
+</button>
 
 <div id="quizResult"></div>
 
