@@ -794,3 +794,14 @@ cursor:pointer;
 .answers input{
 margin-right:8px;
 }
+.quiz-nav{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-top:20px;
+}
+
+.quiz-progress{
+font-weight:600;
+color:#444;
+}
