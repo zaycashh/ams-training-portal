@@ -228,15 +228,35 @@ window.location.href =
 
 /* FMCSA EMPLOYEE TRAINING BUTTON */
 
+/* FMCSA EMPLOYEE TRAINING BUTTON */
+
 const employeeBtn = document.getElementById("employeeTrainingBtn");
 
 if(employeeBtn){
+
+const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
 
 const employeeCompleted =
 localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 
 const employeeContentDone =
 localStorage.getItem("fmcsaEmployeeContentCompleted") === "true";
+
+/* NOT PURCHASED */
+
+if(!paid){
+
+employeeBtn.textContent = "🔒 Locked — Purchase Required";
+
+employeeBtn.onclick = () => {
+window.location.href = "payment.html?module=fmcsa_employee";
+};
+
+return;
+
+}
+
+/* COMPLETED */
 
 if(employeeCompleted){
 
@@ -248,6 +268,8 @@ window.location.href = "fmcsa-certificates.html";
 
 }
 
+/* CONTENT DONE BUT QUIZ LEFT */
+
 else if(employeeContentDone){
 
 employeeBtn.textContent = "Resume Quiz";
@@ -257,6 +279,8 @@ window.location.href = "fmcsa-employee-training.html";
 };
 
 }
+
+/* NOT STARTED */
 
 else{
 
@@ -269,8 +293,6 @@ window.location.href = "fmcsa-employee-training.html";
 }
 
 }
-
-});
   
 /* ================================
    SHOW COMPLETION DATES
