@@ -372,52 +372,6 @@ height:128
 }
 
 }
-
-});
-  
-/* ===============================
-MODULE FMCSA EMPL
-=============================== */  
-if(employeeCompleted){
-
-document.getElementById("employeeCert").classList.remove("hidden");
-
-document.getElementById("empName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
-const storedDate =
-localStorage.getItem("fmcsaEmployeeDate");
-
-document.getElementById("empDate").textContent =
-storedDate
-? new Date(Number(storedDate)).toLocaleDateString("en-US")
-: "N/A";
-
-const certId =
-localStorage.getItem("fmcsaEmployeeCertificateId");
-
-document.getElementById("empCertId").textContent =
-certId || "N/A";
-
-if(certId){
-
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certId;
-
-new QRCode(document.getElementById("empQR"),{
-text: verifyUrl,
-width:128,
-height:128
-});
-
-}
-
-}
   
 /* RETURN BUTTON */
 
