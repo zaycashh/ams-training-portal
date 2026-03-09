@@ -378,6 +378,7 @@ if (user?.role === "employee") {
  updateFMCSATimer();
  updateFMCSAModuleButtons();
  updateFMCSDERButtonState();
+ updateFMCSAEmployeeButton();  
  updateFMCSAStatus();  
  updateFMCSAProgress();
 
@@ -581,5 +582,33 @@ if (modA && modB) {
     window.location.href = "fmcsa-certificates.html";
   };
 }
+
+}
+/* =========================
+   FMCSA EMPLOYEE AWARENESS LOCK
+========================= */
+
+function updateFMCSAEmployeeButton() {
+
+  const btn = document.getElementById("fmcsaEmployeeBtn");
+  if (!btn) return;
+
+  const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
+
+  if (!paid) {
+
+    btn.textContent = "🔒 Locked — Purchase Required";
+    btn.onclick = () => {
+      window.location.href = "payment.html?module=fmcsa_employee";
+    };
+
+    return;
+  }
+
+  btn.textContent = "Start Training";
+
+  btn.onclick = () => {
+    window.location.href = "fmcsa-employee-training.html";
+  };
 
 }
