@@ -376,6 +376,8 @@ const question = questions[currentQuestionIndex];
 quizContainer.innerHTML = `
 <p><strong>${question.q}</strong></p>
 
+<div class="answers">
+
 ${Object.entries(question.a).map(([key,value])=>`
 
 <label>
@@ -386,6 +388,7 @@ ${key}. ${value}
 
 `).join("")}
 
+</div>
 `;
 
 if(currentQuestionEl) currentQuestionEl.textContent=currentQuestionIndex+1;
