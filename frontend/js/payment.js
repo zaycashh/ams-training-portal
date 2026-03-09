@@ -67,21 +67,7 @@ if (module === "supervisor") {
 }
 
     /* ================================
-       EMPLOYEE TRAINING
-    ================================= */
-
-    if (module === "employee") {
-
-      localStorage.setItem("paid_employee", "true");
-
-      alert("Purchase successful!");
-
-      window.location.href = "dashboard.html";
-      return;
-    }
-    
-    /* ================================
-   EMPLOYEE TRAINING
+   EMPLOYEE TRAINING (FAA)
 ================================ */
 
 if (module === "employee") {
@@ -94,6 +80,20 @@ if (module === "employee") {
   return;
 }
 
+/* ================================
+   FMCSA EMPLOYEE TRAINING
+================================ */
+
+if (module === "fmcsa_employee") {
+
+  localStorage.setItem("paid_employee_fmcsa", "true");
+  localStorage.setItem("paid_employee_fmcsa_date", Date.now());
+
+  alert("Purchase successful!");
+
+  window.location.href = "dashboard.html";
+  return;
+}
     /* ================================
        DEFAULT
     ================================= */
