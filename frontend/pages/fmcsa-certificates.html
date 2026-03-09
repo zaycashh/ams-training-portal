@@ -55,13 +55,6 @@ window.location.replace("login.html");
 return;
 }
 
-/* BLOCK EMPLOYEES */
-if(user.role === "employee"){
-alert("Unauthorized access.");
-window.location.replace("dashboard.html");
-return;
-}
-
 /* CHECK PURCHASE ACCESS */
 
 const supervisorPurchased =
