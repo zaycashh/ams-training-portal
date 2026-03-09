@@ -590,7 +590,7 @@ if (modA && modB) {
 
 function updateFMCSAEmployeeButton() {
 
-  const btn = document.getElementById("fmcsaEmployeeBtn");
+  const btn = document.getElementById("employeeTrainingBtn");
   if (!btn) return;
 
   const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
