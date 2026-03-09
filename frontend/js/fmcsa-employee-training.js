@@ -163,7 +163,7 @@ document.getElementById("quizSection").classList.remove("hidden");
 const questions = [
 
 {
-q:"Who is subject to DOT drug testing?
+q:"Who is subject to DOT drug testing?",
 a:{
 A:"All transit personnel",
 B:"An employee position classified as a safety-sensitive function",
