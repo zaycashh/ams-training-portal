@@ -378,7 +378,7 @@ quizContainer.innerHTML = `
 
 <div class="answers">
 
-${Object.entries(question.a).map(([key,value])=>`
+${Object.entries(question.a).map(([key,value]) => `
 
 <label>
 <input type="radio" name="answer" value="${key}"
@@ -391,23 +391,12 @@ ${key}. ${value}
 </div>
 `;
 
-if(currentQuestionEl) currentQuestionEl.textContent=currentQuestionIndex+1;
+if(currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
 
 if(prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
+if(nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === questions.length - 1;
 
-/* LAST QUESTION HANDLING */
-
-if(currentQuestionIndex === questions.length - 1){
-
-if(nextQuestionBtn) nextQuestionBtn.classList.add("hidden");
-if(submitBtn) submitBtn.classList.remove("hidden");
-
-}else{
-
-if(nextQuestionBtn) nextQuestionBtn.classList.remove("hidden");
-if(submitBtn) submitBtn.classList.add("hidden");
-
-}
+/* LISTEN FOR ANSWERS */
 
 document.querySelectorAll("input[name='answer']").forEach(input => {
 
@@ -426,11 +415,11 @@ updateSubmitState();
 
 });
 
-/* =========================================================
-   UPDATE SUBMIT BUTTON STATE
-========================================================= */
+/* CHECK IF SUBMIT SHOULD ENABLE */
 
 updateSubmitState();
+
+}
 
 /* =========================================================
    QUIZ NAV
