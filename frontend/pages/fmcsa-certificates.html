@@ -63,7 +63,14 @@ localStorage.getItem("paid_fmcsa") === "true";
 const derPurchased =
 localStorage.getItem("paid_der_fmcsa") === "true";
 
-if(!supervisorPurchased && !derPurchased){
+const employeeCompleted =
+localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+
+/*
+Allow certificate page if ANY valid FMCSA path exists
+*/
+
+if(!supervisorPurchased && !derPurchased && !employeeCompleted){
 alert("FMCSA Training requires purchase.");
 window.location.replace("dashboard.html");
 return;
