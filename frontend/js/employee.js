@@ -19,6 +19,8 @@ const EMPLOYEE_CERT_CODE_KEY = "employeeCertificateCode";
    PAGE LOAD — HYBRID ACCESS CONTROL
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
   if (document.body.dataset.module !== "employee") return;
 
