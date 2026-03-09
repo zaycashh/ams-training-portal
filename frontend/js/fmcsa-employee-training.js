@@ -487,8 +487,6 @@ if(scorePercent>=PASS_PERCENT){
 localStorage.setItem(COMPLETED_KEY,"true");
 localStorage.setItem(QUIZ_KEY,"true");
 
-localStorage.setItem("paid_employee_fmcsa","true");
-
 let certId = localStorage.getItem(CERT_ID_KEY);
 
 if(!certId){
