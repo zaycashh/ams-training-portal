@@ -16,7 +16,7 @@ margin:auto;
 
 .quiz-nav{
 display:flex;
-justify-content:space-between;
+justify-content:center;
 margin-top:20px;
 }
 
@@ -40,10 +40,19 @@ background:#fdecea;
 color:#c0392b;
 }
 
+/* FIXED BUTTON LAYOUT */
+
 .pdf-controls{
-display:flex;
-justify-content:space-between;
+display:grid;
+grid-template-columns:auto 1fr auto;
+align-items:center;
+gap:12px;
 margin-top:15px;
+}
+
+.pdf-controls span{
+text-align:center;
+font-weight:600;
 }
 
 </style>
@@ -60,17 +69,11 @@ margin-top:15px;
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
 if(!user){
-
 window.location.replace("login.html");
 return;
-
 }
 
-/* BLOCK EMPLOYEES IF NEEDED */
-
-if(user.role === "employee"){
-// allowed
-}
+/* Employees allowed */
 
 })();
 
@@ -95,14 +98,11 @@ Back to Dashboard
 <section class="module-section">
 
 <p>
-
 This training provides safety-sensitive employees awareness of
 DOT Drug and Alcohol testing regulations and responsibilities.
-
 </p>
 
 </section>
-
 
 
 <!-- CONTENT SECTION -->
@@ -138,6 +138,7 @@ I Have Completed the Training Content
 
 </section>
 
+
 <!-- QUIZ SECTION -->
 
 <section class="module-section hidden" id="quizSection">
@@ -148,13 +149,18 @@ I Have Completed the Training Content
 
 <br>
 
+<div class="quiz-nav">
+
 <button id="submitQuizBtn" class="btn-primary" disabled>
 Submit Quiz
 </button>
 
+</div>
+
 <div id="quizResult"></div>
 
 </section>
+
 
 </main>
 
@@ -172,9 +178,7 @@ Submit Quiz
 <script>
 
 function goBack(){
-
 window.location.href="dashboard.html";
-
 }
 
 </script>
