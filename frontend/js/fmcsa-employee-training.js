@@ -454,19 +454,3 @@ initQuiz();
 
 }
 
-if(pdfContainer){
-
-pdfjsLib.getDocument(url).promise.then(pdf => {
-
-pdfDoc = pdf;
-totalPages = pdf.numPages;
-
-if(totalPagesEl) totalPagesEl.textContent = totalPages;
-
-renderPage(currentPage);
-
-});
-
-}
-
-});
