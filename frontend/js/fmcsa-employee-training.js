@@ -163,32 +163,161 @@ document.getElementById("quizSection").classList.remove("hidden");
 const questions = [
 
 {
-q:"DOT drug and alcohol testing regulations apply to safety-sensitive transportation employees.",
-a:{A:"True",B:"False"},
-correct:"A"
+q:"Who is subject to DOT drug testing?
+a:{
+A:"All transit personnel",
+B:"An employee position classified as a safety-sensitive function",
+C:"All warehouse personnel",
+D:"A driver of farm equipment"
 },
-
-{
-q:"Employees are allowed to refuse a DOT drug test without consequence.",
-a:{A:"True",B:"False"},
 correct:"B"
 },
 
 {
-q:"Alcohol misuse can impact job safety and performance.",
-a:{A:"True",B:"False"},
+q:"Which drug is NOT tested under DOT regulations?",
+a:{
+A:"Marijuana",
+B:"Phencyclidine (PCP)",
+C:"Opiates",
+D:"Barbiturates"
+},
+correct:"D"
+},
+
+{
+q:"Drug testing is NOT required for which type of occasion?",
+a:{
+A:"Periodic",
+B:"Post-Accident",
+C:"Pre-Employment",
+D:"Random"
+},
 correct:"A"
 },
 
 {
-q:"A positive drug test may lead to removal from safety-sensitive duties.",
-a:{A:"True",B:"False"},
+q:"Under the DOT, the required number of drug panels is",
+a:{
+A:"5",
+B:"3",
+C:"7",
+D:"9"
+},
 correct:"A"
 },
 
 {
-q:"DOT regulations are optional for transportation employers.",
-a:{A:"True",B:"False"},
+q:"The individual who makes the final determination of a drug test result is the:",
+a:{
+A:"Designated Employer Representative (DER)",
+B:"Medical Review Officer (MRO)",
+C:"Substance Abuse Professional (SAP)",
+D:"Company official in charge of the drug and alcohol testing program"
+},
+correct:"B"
+},
+
+{
+q:"Which conduct is prohibited under the DOT regulations?",
+a:{
+A:"You must not use or possess alcohol or any illicit drug while assigned to perform safety-sensitive functions or actually performing safety-sensitive functions ",
+B:"Reporting for service or remaining on duty while under the influence of alcohol",
+C:"Having a blood alcohol concentration of 0.04 or greater",
+D:"All of the above"
+},
+correct:"D"
+},
+
+{
+q:"A DOT driver has been selected for a random test. The driver reports to the collection site on time and cannot provide a urine specimen. Which of the following is True?",
+a:{
+A:"The driver will sign the Custody and Control Form and state that that he/she cannot provide a specimen and will leave.",
+B:"The collector will inform the driver to go back to his employer and inform them that he has to be re-scheduled for another test.",
+C:"The collector will inform the company’s DER and advise them of the situation. The DER will instruct the collector to have a blood test as a substitute test in order to comply with the DOT regulations.",
+D:"The driver will stay in the collection area, drink up to 40 oz. of fluid over a three hour period, and attempt to provide the required urine specimen. "
+},
+correct:"D"
+},
+
+{
+q:"Which of the following is considered a refusal to test?",
+a:{
+A:"Failing to appear for a random drug test when instructed",
+B:"Failing to provide a urine specimen when required",
+C:"Leaving the collection site before the test process is completed",
+D:"All of the above"
+},
+correct:"D"
+},
+
+{
+q:"How many unannounced drug tests is a DOT covered employee required to take in the first 12 months after having returned to service?",
+a:{
+A:"5",
+B:"8",
+C:"3",
+D:"6"
+},
+correct:"D"
+},
+
+{
+q:"A driver tests positive for a controlled substance. The driver completes all regulatory requirements concerning Return-to-duty. Upon returning to a safety-sensitive job, the driver will be subject to unannounced testing for drugs and/or alcohol no less than 6 times during the first 12 months of active service with the possibility unannounced tests up to how many months (as prescribed by the SAP)?",
+a:{
+A:"20",
+B:"40",
+C:"60",
+D:"30"
+},
+correct:"C"
+},
+
+{
+q:"From the time you were hired, you feel that your supervisor does not like you. Your supervisor informs you that you have been selected for a DOT Random drug test but you feel you have been selected unfairly. Which of the following statements is TRUE?",
+a:{
+A:"Don’t go for the test because you feel that he is trying to create a hostile situation.",
+B:"You can immediately go to your human resource department and submit a grievance and wait for a decision concerning your grievance. If it is deemed valid, you do not have to be tested",
+C:"A fellow employee will state for the record that your boss does not like you. Because of this fact, you can refuse to take the test. ",
+D:"You cannot interfere with the testing process, you must take the test."
+},
+correct:"D"
+},
+
+{
+q:"You were selected for a Random drug test, have gone for the collection, and were advised by the MRO that your test result was positive for a drug. As a result of the phone interview with the MRO, he has informed you that the test will be reported as a verified positive. The MRO has explained to you that you have how many hours in which you can request a re-testing of the split-specimen (Bottle B)?",
+a:{
+A:"24",
+B:"36",
+C:"72",
+D:"48"
+},
+correct:"C"
+},
+
+{
+q:"If an employee has a medical marijuana card and tests positive on a DOT test, the result will NOT be considered positive.",
+a:{
+A:"True",
+B:"False"
+},
+correct:"B"
+},
+
+{
+q:"Recently, some states passed initiatives to permit use of marijuana for so-called “recreational” purposes. A driver tests Positive and due to the State’s new legislation, the driver would NOT be subject the DOT Drug testing regulations as they apply to marijuana. TRUE or FALSE?",
+a:{
+A:"True",
+B:"False"
+},
+correct:"B"
+},
+
+{
+q:"You are involved in an accident where another driver is killed but was at fault. You are NOT required to take a DOT drug and alcohol test.",
+a:{
+A:"True",
+B:"False"
+},
 correct:"B"
 }
 
