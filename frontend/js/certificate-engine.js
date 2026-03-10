@@ -16,25 +16,25 @@ function generateCertificateId(prefix = "AMS") {
 /* =========================================================
    STORE CERTIFICATE (PER USER)
 ========================================================= */
-
 function registerCertificate(data) {
 
-  const user =
-    JSON.parse(localStorage.getItem("amsUser") || "null");
+  let registry =
+    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
 
-  if(!user) return;
+  // prevent duplicates
+  const exists = registry.find(c => c.id === data.id);
 
-  const key = `amsCertificates_${user.email}`;
+  if (!exists) {
 
-  const registry =
-    JSON.parse(localStorage.getItem(key) || "[]");
+    registry.push(data);
 
-  registry.push(data);
+    localStorage.setItem(
+      "amsCertificates",
+      JSON.stringify(registry)
+    );
 
-  localStorage.setItem(
-    key,
-    JSON.stringify(registry)
-  );
+  }
+
 }
 
 /* =========================================================
