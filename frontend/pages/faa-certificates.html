@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Certificates | AMS Training Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="../css/main.css">
+
+<style>
+.cert-container{
+max-width:900px;
+margin:auto;
+}
+
+.cert-card{
+background:#fff;
+border:1px solid #dce3ef;
+padding:20px;
+margin-bottom:20px;
+border-radius:8px;
+}
+
+.cert-card h3{
+margin-top:0;
+}
+</style>
+</head>
+
+<body>
+
+<main class="cert-container">
+
+<h1>My Certificates</h1>
+
+<div id="certList"></div>
+
+<button onclick="goDashboard()" class="btn-secondary">
+Back to Dashboard
+</button>
+
+</main>
+
+<script>
+
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
+
+function loadCertificates(){
+
+const registry =
+JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+
+const list = document.getElementById("certList");
+
+if(registry.length === 0){
+
+list.innerHTML = "<p>No certificates found.</p>";
+return;
+
+}
+
+registry.forEach(cert => {
+
+const card = document.createElement("div");
+
+card.className = "cert-card";
+
+card.innerHTML = `
+<h3>${cert.course}</h3>
+<p><strong>Name:</strong> ${cert.name}</p>
+<p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
+<p><strong>Certificate ID:</strong> ${cert.id}</p>
+
+<a href="verify.html?id=${cert.id}" class="btn-primary">
+Verify Certificate
+</a>
+`;
+
+list.appendChild(card);
+
+});
+
+}
+
+document.addEventListener("DOMContentLoaded", loadCertificates);
+
+</script>
+
+</body>
+</html>
