@@ -218,6 +218,9 @@ function lockToDerCertificate() {
 function populateDerCertificate() {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  const USER_EMAIL = user.email;
 
   let code = localStorage.getItem(DER_CERT_CODE_KEY);
 
@@ -230,30 +233,34 @@ function populateDerCertificate() {
 
   /* REGISTER CERTIFICATE ONLY ON FIRST GENERATION */
 
-if (!localStorage.getItem(`derCertRegistered_${USER_EMAIL}`)) {
+  if (!localStorage.getItem(`derCertRegistered_${USER_EMAIL}`)) {
 
-  if (user && typeof registerCertificate === "function") {
+    if (typeof registerCertificate === "function") {
 
-    registerCertificate({
-      id: code,
-      name: user.fullName || (user.firstName + " " + user.lastName),
-      course: "FAA DER Training",
-      date: Date.now()
-    });
+      registerCertificate({
+        id: code,
+        name: user.fullName || (user.firstName + " " + user.lastName),
+        course: "FAA DER Training",
+        date: Date.now()
+      });
 
-    localStorage.setItem(`derCertRegistered_${USER_EMAIL}`, "true");
+      localStorage.setItem(`derCertRegistered_${USER_EMAIL}`, "true");
+
+    }
 
   }
 
-}
+  /* Populate certificate fields */
 
   document.getElementById("certName").textContent =
-    user?.fullName || (user?.firstName + " " + user?.lastName);
+    user.fullName || (user.firstName + " " + user.lastName);
 
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
 
   document.getElementById("certVerify").textContent = code;
+
+  /* Generate QR */
 
   const qrBox = document.getElementById("certQR");
 
@@ -261,8 +268,13 @@ if (!localStorage.getItem(`derCertRegistered_${USER_EMAIL}`)) {
 
     qrBox.innerHTML = "";
 
+    const verifyURL =
+      window.location.origin +
+      "/ams-training-portal/frontend/pages/verify.html?id=" +
+      code;
+
     new QRCode(qrBox, {
-      text: code,
+      text: verifyURL,
       width: 128,
       height: 128
     });
