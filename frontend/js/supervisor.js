@@ -1,23 +1,36 @@
 /* =========================================================
    SUPERVISOR TRAINING LOGIC
-   COMPLIANCE-GRADE (MIRRORS EMPLOYEE & DER)
+   COMPLIANCE-GRADE (MULTI-USER SAFE)
 ========================================================= */
 
 const SUPERVISOR_MAX_ATTEMPTS = 3;
 const SUPERVISOR_PASS_PERCENTAGE = 80;
 const SUPERVISOR_COOLDOWN_MINUTES = 15;
 
-const SUPERVISOR_CONTENT_DONE_KEY = "supervisorContentCompleted";
-const SUPERVISOR_PASSED_KEY = "supervisorQuizPassed";
-const SUPERVISOR_COMPLETED_KEY = "supervisorTrainingCompleted";
-const SUPERVISOR_ATTEMPTS_KEY = "supervisorQuizAttempts";
-const SUPERVISOR_COOLDOWN_KEY = "supervisorQuizCooldownUntil";
-const SUPERVISOR_CERT_CODE_KEY = "supervisorCertificateCode";
+/* =========================
+   USER CONTEXT
+========================= */
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const USER_EMAIL = user?.email || "guest";
+
+/* =========================
+   USER-SCOPED STORAGE KEYS
+========================= */
+
+const SUPERVISOR_CONTENT_DONE_KEY = `supervisorContentCompleted_${USER_EMAIL}`;
+const SUPERVISOR_PASSED_KEY = `supervisorQuizPassed_${USER_EMAIL}`;
+const SUPERVISOR_COMPLETED_KEY = `supervisorTrainingCompleted_${USER_EMAIL}`;
+const SUPERVISOR_ATTEMPTS_KEY = `supervisorQuizAttempts_${USER_EMAIL}`;
+const SUPERVISOR_COOLDOWN_KEY = `supervisorQuizCooldownUntil_${USER_EMAIL}`;
+const SUPERVISOR_CERT_CODE_KEY = `supervisorCertificateCode_${USER_EMAIL}`;
 
 /* =========================
    TAB STATES
 ========================= */
+
 function setActiveTab(tab) {
+
   document.querySelectorAll(".module-nav button").forEach(btn => {
     btn.classList.remove("active", "completed");
   });
@@ -36,13 +49,15 @@ function setActiveTab(tab) {
     document.getElementById("btnQuiz")?.classList.add("completed");
     document.getElementById("btnCertificate")?.classList.add("active");
   }
+
 }
 
 /* =========================
-   SECTION NAVIGATION (GUARDED)
+   SECTION NAVIGATION
 ========================= */
 
 function showSection(section) {
+
   if (localStorage.getItem(SUPERVISOR_COMPLETED_KEY) === "true") {
     lockToSupervisorCertificate();
     return;
@@ -76,47 +91,62 @@ function showSection(section) {
     setActiveTab("certificate");
     populateSupervisorCertificate();
   }
+
 }
 
 /* =========================
    PAGE LOAD
 ========================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
   if (document.body.dataset.module !== "supervisor") return;
 
   if (localStorage.getItem("paid_supervisor") !== "true") {
+
     alert("Supervisor Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
     return;
+
   }
 
   if (localStorage.getItem(SUPERVISOR_COMPLETED_KEY) === "true") {
+
     lockToSupervisorCertificate();
     return;
+
   }
 
   showSection("content");
+
 });
 
 /* =========================
    CONTENT COMPLETION
 ========================= */
+
 function completeSupervisorContent() {
+
   localStorage.setItem(SUPERVISOR_CONTENT_DONE_KEY, "true");
   showSection("quiz");
+
 }
 
 /* =========================
    QUIZ RESULT HANDLER
 ========================= */
+
 function handleSupervisorQuizResult(score, total) {
+
   const percent = Math.round((score / total) * 100);
+
   const attempts =
     parseInt(localStorage.getItem(SUPERVISOR_ATTEMPTS_KEY) || "0", 10) + 1;
 
   localStorage.setItem(SUPERVISOR_ATTEMPTS_KEY, attempts);
 
   if (percent >= SUPERVISOR_PASS_PERCENTAGE) {
+
     localStorage.setItem(SUPERVISOR_PASSED_KEY, "true");
     localStorage.removeItem(SUPERVISOR_ATTEMPTS_KEY);
     localStorage.removeItem(SUPERVISOR_COOLDOWN_KEY);
@@ -128,10 +158,13 @@ function handleSupervisorQuizResult(score, total) {
         Finish Training
       </button>
     `;
+
     return;
+
   }
 
   if (attempts >= SUPERVISOR_MAX_ATTEMPTS) {
+
     localStorage.setItem(
       SUPERVISOR_COOLDOWN_KEY,
       Date.now() + SUPERVISOR_COOLDOWN_MINUTES * 60000
@@ -141,7 +174,9 @@ function handleSupervisorQuizResult(score, total) {
       <h2>Too Many Attempts</h2>
       <p>Please wait ${SUPERVISOR_COOLDOWN_MINUTES} minutes.</p>
     `;
+
     return;
+
   }
 
   document.getElementById("quizSection").innerHTML = `
@@ -152,6 +187,7 @@ function handleSupervisorQuizResult(score, total) {
       Retry Quiz
     </button>
   `;
+
 }
 
 /* =========================
@@ -159,21 +195,28 @@ function handleSupervisorQuizResult(score, total) {
 ========================= */
 
 function finishSupervisorTraining() {
+
   if (!localStorage.getItem(SUPERVISOR_CERT_CODE_KEY)) {
+
     localStorage.setItem(
       SUPERVISOR_CERT_CODE_KEY,
       "AMS-SUP-" + Date.now()
     );
+
   }
 
   localStorage.setItem(SUPERVISOR_COMPLETED_KEY, "true");
+
   lockToSupervisorCertificate();
+
 }
 
 /* =========================
-   CERTIFICATE LOCK + QR
+   CERTIFICATE LOCK
 ========================= */
+
 function lockToSupervisorCertificate() {
+
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
   document.getElementById("certificateSection")?.classList.remove("hidden");
@@ -183,35 +226,52 @@ function lockToSupervisorCertificate() {
   });
 
   setActiveTab("certificate");
+
   populateSupervisorCertificate();
+
 }
 
+/* =========================
+   CERTIFICATE GENERATION
+========================= */
+
 function populateSupervisorCertificate() {
+
   let code = localStorage.getItem(SUPERVISOR_CERT_CODE_KEY);
 
   if (!code) {
+
     code = "AMS-SUP-" + Date.now();
     localStorage.setItem(SUPERVISOR_CERT_CODE_KEY, code);
+
   }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if (user) {
-  document.getElementById("certName").textContent =
-    user.fullName || (user.firstName + " " + user.lastName);
-}
-   
+  if (user) {
+
+    document.getElementById("certName").textContent =
+      user.fullName || (user.firstName + " " + user.lastName);
+
+  }
+
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
+
   document.getElementById("certVerify").textContent = code;
 
   const qrBox = document.getElementById("certQR");
+
   if (qrBox && typeof QRCode !== "undefined") {
+
     qrBox.innerHTML = "";
+
     new QRCode(qrBox, {
       text: code,
       width: 128,
       height: 128
     });
+
   }
+
 }
