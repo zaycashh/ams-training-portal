@@ -56,8 +56,8 @@ function loadCertificates(){
 
   const registry =
   JSON.parse(
-  localStorage.getItem(`amsCertificates_${user.email}`) || "[]"
-  );
+  localStorage.getItem("amsCertificates") || "[]"
+);
 
   const list = document.getElementById("certList");
 
