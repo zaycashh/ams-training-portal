@@ -7,6 +7,86 @@ const COURSE_KEYS = {
   employee: "paid_employee",
   fmcsa: "paid_fmcsa"
 };
+/* =========================
+   FAA MODULE REGISTRY
+========================= */
+
+const FAA_MODULES = {
+
+  employee: {
+    btn: "employeeBtn",
+    paidKey: "paid_employee",
+    completedKey: (email) => `employeeTrainingCompleted_${email}`,
+    start: "employee-training.html"
+  },
+
+  supervisor: {
+    btn: "supervisorBtn",
+    paidKey: "paid_supervisor",
+    completedKey: (email) => `supervisorTrainingCompleted_${email}`,
+    start: "supervisor-training.html"
+  },
+
+  der: {
+    btn: "derBtn",
+    paidKey: "paid_der",
+    completedKey: (email) => `derTrainingCompleted_${email}`,
+    start: "der-training.html"
+  }
+
+};
+/* =========================
+   FAA BUTTON ENGINE
+========================= */
+
+function updateFAAModuleButtons() {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  Object.keys(FAA_MODULES).forEach(module => {
+
+    const config = FAA_MODULES[module];
+    const btn = document.getElementById(config.btn);
+
+    if (!btn) return;
+
+    const completed =
+      localStorage.getItem(config.completedKey(user.email)) === "true";
+
+    if (completed) {
+
+      btn.textContent = "View Certificate";
+
+      btn.onclick = () => {
+        window.location.href = "faa-certificates.html";
+      };
+
+      btn.disabled = false;
+      return;
+    }
+
+    if (localStorage.getItem(config.paidKey) === "true") {
+
+      btn.textContent = "Start Training";
+
+      btn.onclick = () => {
+        window.location.href = config.start;
+      };
+
+      btn.disabled = false;
+      return;
+    }
+
+    btn.textContent = "Locked — Purchase Required";
+
+    btn.onclick = () => {
+      window.location.href = `payment.html?module=${module}`;
+    };
+
+  });
+
+}
 
 /* =========================
    LOGOUT
@@ -416,9 +496,7 @@ if (user?.role === "employee") {
     }
   }
 
- updateEmployeeButtonState();
- updateDERButtonState();
- updateSupervisorButtonState();
+ updateFAAModuleButtons();
  updateFMCSATimer();
  updateFMCSAModuleButtons();
  updateFMCSDERButtonState();
