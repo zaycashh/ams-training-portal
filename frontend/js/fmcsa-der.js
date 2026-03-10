@@ -325,14 +325,22 @@ if (submitBtn) {
 }
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if (user && typeof registerCertificate === "function") {
+/* PREVENT DUPLICATE REGISTRATION */
 
-  registerCertificate({
-    id: certId,
-    name: user.fullName || (user.firstName + " " + user.lastName),
-    course: "FMCSA DER Training",
-    date: Date.now()
-  });
+if (!localStorage.getItem(`derCertRegistered_${user?.email}`)) {
+
+  if (user && typeof registerCertificate === "function") {
+
+    registerCertificate({
+      id: certId,
+      name: user.fullName || (user.firstName + " " + user.lastName),
+      course: "FMCSA DER Training",
+      date: Date.now()
+    });
+
+    localStorage.setItem(`derCertRegistered_${user.email}`, "true");
+
+  }
 
 }
   localStorage.setItem("fmcsaDERDate", Date.now());
