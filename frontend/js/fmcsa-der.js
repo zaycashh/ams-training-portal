@@ -315,19 +315,26 @@ if (submitBtn) {
 
   localStorage.setItem("fmcsaDERCompleted", "true");
 
-  // REQUIRED FOR ROUTE GUARD
-  localStorage.setItem("paid_der_fmcsa", "true");
-  localStorage.setItem("paid_der_fmcsa_date", Date.now());
-
   localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
   let certId = localStorage.getItem("fmcsaDERCertificateId");
 
   if (!certId) {
-    certId = "AMS-D-" + Date.now().toString().slice(-8);
-    localStorage.setItem("fmcsaDERCertificateId", certId);
-  }
+  certId = generateCertificateId("AMS-DER");
+  localStorage.setItem("fmcsaDERCertificateId", certId);
+}
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
+if (user && typeof registerCertificate === "function") {
+
+  registerCertificate({
+    id: certId,
+    name: user.fullName || (user.firstName + " " + user.lastName),
+    course: "FMCSA DER Training",
+    date: Date.now()
+  });
+
+}
   localStorage.setItem("fmcsaDERDate", Date.now());
 
       localStorage.removeItem(DER_ATTEMPTS_KEY);
