@@ -116,11 +116,10 @@ if (role === "employee") {
     };
 
     const dateMap = {
-      "fmcsa-module-a": "fmcsaPurchaseDate",
-      "fmcsa-drug-alcohol": "fmcsaPurchaseDate",
-      "fmcsa-der": "paid_der_fmcsa_date"
-    };;
-
+  "fmcsa-module-a": "fmcsa_start_date",
+  "fmcsa-drug-alcohol": "fmcsa_start_date",
+  "fmcsa-der": "paid_der_fmcsa_date"
+};
     const paidKey = paymentMap[module];
     const dateKey = dateMap[module];
 
