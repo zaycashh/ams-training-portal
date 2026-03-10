@@ -1,6 +1,5 @@
 /* ========================================================
    AMS CERTIFICATE ENGINE
-   Generates secure certificate IDs and registry
 ========================================================= */
 
 function generateCertificateId(prefix = "AMS") {
@@ -11,11 +10,14 @@ function generateCertificateId(prefix = "AMS") {
     .toUpperCase();
 
   return `${prefix}-CERT-${random}`;
+
 }
+
 
 /* =========================================================
    STORE CERTIFICATE (PER USER)
 ========================================================= */
+
 function registerCertificate(data) {
 
   const user =
@@ -43,8 +45,9 @@ function registerCertificate(data) {
 
 }
 
+
 /* =========================================================
-   GET CERTIFICATE (PER USER)
+   GET CERTIFICATE
 ========================================================= */
 
 function getCertificate(certId) {
@@ -60,4 +63,5 @@ function getCertificate(certId) {
     JSON.parse(localStorage.getItem(key) || "[]");
 
   return registry.find(c => c.id === certId);
+
 }
