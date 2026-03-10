@@ -251,12 +251,18 @@ function populateSupervisorCertificate() {
 
     if (typeof registerCertificate === "function") {
 
-      registerCertificate({
-        id: code,
-        name: user.fullName || (user.firstName + " " + user.lastName),
-        course: "Supervisor Reasonable Suspicion Training",
-        date: Date.now()
-      });
+      const fullName =
+  user?.fullName ||
+  `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+  user?.email ||
+  "Participant";
+
+registerCertificate({
+  id: code,
+  name: fullName,
+  course: "Supervisor Reasonable Suspicion Training",
+  date: Date.now()
+});
 
       localStorage.setItem(`supervisorCertRegistered_${USER_EMAIL}`, "true");
 
@@ -268,10 +274,13 @@ function populateSupervisorCertificate() {
 
   if (user) {
 
-    document.getElementById("certName").textContent =
-      user.fullName || (user.firstName + " " + user.lastName);
+     const displayName =
+  user?.fullName ||
+  `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+  user?.email ||
+  "Participant";
 
-  }
+document.getElementById("certName").textContent = displayName;
 
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
