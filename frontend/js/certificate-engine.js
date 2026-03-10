@@ -18,10 +18,16 @@ function generateCertificateId(prefix = "AMS") {
 ========================================================= */
 function registerCertificate(data) {
 
-  let registry =
-    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+  const user =
+    JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  // prevent duplicates
+  if(!user) return;
+
+  const key = `amsCertificates_${user.email}`;
+
+  let registry =
+    JSON.parse(localStorage.getItem(key) || "[]");
+
   const exists = registry.find(c => c.id === data.id);
 
   if (!exists) {
@@ -29,7 +35,7 @@ function registerCertificate(data) {
     registry.push(data);
 
     localStorage.setItem(
-      "amsCertificates",
+      key,
       JSON.stringify(registry)
     );
 
