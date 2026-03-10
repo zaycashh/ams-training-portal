@@ -21,7 +21,7 @@ return;
 
 /* CHECK CERTIFICATE REGISTRY */
 
-fetch("../data/certificates.json")
+fetch("/ams-training-portal/data/certificates.json")
 .then(res => res.json())
 .then(certificates => {
 
@@ -65,6 +65,22 @@ result.innerHTML = "Error loading certificate registry";
 });
 
 }
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+
+  if(certId){
+
+    document.getElementById("certInput").value = certId;
+
+    verifyCert();
+
+  }
+
+});
 
 </script>
 
