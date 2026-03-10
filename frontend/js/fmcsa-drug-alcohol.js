@@ -675,32 +675,48 @@ function gradeAlcoholQuiz() {
 
   if (score >= PASS_SCORE_ALCOHOL) {
 
-    // mark module completed
-    localStorage.setItem("fmcsaModuleBCompleted", "true");
+  localStorage.setItem("fmcsaModuleBCompleted", "true");
 
-    let certId = localStorage.getItem("fmcsaModuleBCertificateId");
+  let certId = localStorage.getItem("fmcsaModuleBCertificateId");
 
-    if (!certId) {
+  if (!certId) {
 
-      certId = generateCertificateId("AMS-B");
-      localStorage.setItem("fmcsaModuleBCertificateId", certId);
+    certId = generateCertificateId("AMS-FMCSA");
+    localStorage.setItem("fmcsaModuleBCertificateId", certId);
 
-      const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-      const certificate = {
+    if (user && typeof registerCertificate === "function") {
+
+      registerCertificate({
         id: certId,
-        name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
+        name: user.fullName || (user.firstName + " " + user.lastName),
         course: "FMCSA Drug & Alcohol Substance Abuse Training",
-        date: new Date().toLocaleDateString()
-      };
+        date: Date.now()
+      });
 
-      const certs =
-        JSON.parse(localStorage.getItem("amsCertificates") || "[]");
-
-      certs.push(certificate);
-
-      localStorage.setItem("amsCertificates", JSON.stringify(certs));
     }
+
+  }
+
+  localStorage.setItem("fmcsaModuleBDate", Date.now());
+
+  localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
+  localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+
+  resultBox.innerHTML = `
+    <div class="result-box pass">
+      You passed Drug & Alcohol Training!
+      Generating certificate...
+    </div>
+  `;
+
+  setTimeout(() => {
+    window.location.href = "fmcsa-certificates.html";
+  }, 1500);
+
+  return;
+}
 
     // store completion date
     localStorage.setItem("fmcsaModuleBDate", Date.now());
