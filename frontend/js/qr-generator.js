@@ -5,12 +5,16 @@ function generateQR(certId) {
     "/ams-training-portal/frontend/pages/verify.html?id=" +
     certId;
 
-  const qr = new QRCode(
-    document.getElementById("qrCode"),
-    {
-      text: url,
-      width: 120,
-      height: 120
-    }
-  );
+  const container = document.getElementById("certQR");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  new QRCode(container, {
+    text: url,
+    width: 120,
+    height: 120
+  });
+
 }
