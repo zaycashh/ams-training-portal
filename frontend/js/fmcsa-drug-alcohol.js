@@ -30,22 +30,6 @@ const DRUG_COOLDOWN_KEY = "fmcsaDrugCooldown";
 const ALCOHOL_ATTEMPT_KEY = "fmcsaAlcoholAttempts";
 const ALCOHOL_COOLDOWN_KEY = "fmcsaAlcoholCooldown";
 /* =========================================================
-   CERTIFICATE ID GENERATOR
-========================================================= */
-
-function generateCertificateId(prefix = "AMS") {
-
-  const random = Math.random()
-    .toString(36)
-    .substring(2, 10)
-    .toUpperCase();
-
-  const timestamp = Date.now().toString().slice(-4);
-
-  return `${prefix}-${random}${timestamp}`;
-}
-
-/* =========================================================
    INIT
 ========================================================= */
 function isFMCSAExpired() {
