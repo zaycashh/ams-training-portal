@@ -75,7 +75,7 @@ function updateFAAModuleButtons() {
       return;
     }
 
-    btn.textContent = "Locked — Purchase Required";
+    btn.textContent = "🔒 Locked — Purchase Required";
 
     btn.onclick = () => {
       window.location.href = `payment.html?module=${module}`;
