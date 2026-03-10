@@ -38,7 +38,6 @@ const FAA_MODULES = {
 /* =========================
    FAA BUTTON ENGINE
 ========================= */
-
 function updateFAAModuleButtons() {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -70,9 +69,7 @@ function updateFAAModuleButtons() {
 
       btn.textContent = "Start Training";
 
-      btn.onclick = () => {
-        window.location.href = config.start;
-      };
+      btn.onclick = () => startFAA(module);
 
       btn.disabled = false;
       return;
@@ -136,34 +133,6 @@ function getEmployeeSeatStatus() {
   }
 
   return { type: "locked", label: "🔒 No Seats Available" };
-}
-
-  /* COMPANY FLOW */
-
-  btn.onclick = handleEmployeeClick;
-
-  if (company?.usedSeats?.[user?.email]) {
-
-    btn.disabled = false;
-    btn.textContent = "Continue Training";
-    return;
-
-  }
-
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
-  const remaining = total - used;
-
-  if (remaining > 0) {
-
-    btn.disabled = false;
-    btn.textContent = "Use Company Seat";
-    return;
-
-  }
-
-  btn.disabled = true;
-  btn.textContent = "No Seats Available";
 }
 
 function handleEmployeeClick() {
