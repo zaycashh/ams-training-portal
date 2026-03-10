@@ -79,15 +79,13 @@ function loadCertificates(){
     card.className = "cert-card";
 
     card.innerHTML = `
-      <h3>${cert.course}</h3>
-      <p><strong>Name:</strong> ${cert.name}</p>
-      <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
-      <p><strong>Certificate ID:</strong> ${cert.id}</p>
+  <h3>${cert.course}</h3>
+  <p><strong>Name:</strong> ${cert.name}</p>
+  <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
+  <p><strong>Certificate ID:</strong> ${cert.id}</p>
 
-      <a href="verify.html?id=${cert.id}" class="btn-primary">
-        Verify Certificate
-      </a>
-    `;
+  <div id="qr-${cert.id}" style="margin-top:15px;"></div>
+`;
 
     list.appendChild(card);
 
