@@ -189,7 +189,7 @@ function populateDerCertificate() {
     localStorage.setItem(DER_CERT_CODE_KEY, code);
   }
 
-  dconst user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
 if (user) {
   document.getElementById("certName").textContent =
