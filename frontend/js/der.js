@@ -217,41 +217,32 @@ function lockToDerCertificate() {
 
 function populateDerCertificate() {
 
-  let code = localStorage.getItem(DER_CERT_CODE_KEY);
-
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  /* CREATE CERTIFICATE IF IT DOESN'T EXIST */
+  let code = localStorage.getItem(DER_CERT_CODE_KEY);
 
   if (!code) {
 
     code = "AMS-DER-" + Date.now();
-
     localStorage.setItem(DER_CERT_CODE_KEY, code);
 
-    /* REGISTER CERTIFICATE */
+  }
 
-    if (user) {
+  /* REGISTER CERTIFICATE ALWAYS */
 
-      registerCertificate({
-        id: code,
-        name: user.fullName || (user.firstName + " " + user.lastName),
-        course: "DER Training",
-        date: Date.now()
-      });
+  if (user && typeof registerCertificate === "function") {
 
-    }
+    registerCertificate({
+      id: code,
+      name: user.fullName || (user.firstName + " " + user.lastName),
+      course: "DER Training",
+      date: Date.now()
+    });
 
   }
 
-  /* DISPLAY CERTIFICATE */
-
-  if (user) {
-
-    document.getElementById("certName").textContent =
-      user.fullName || (user.firstName + " " + user.lastName);
-
-  }
+  document.getElementById("certName").textContent =
+    user?.fullName || (user?.firstName + " " + user?.lastName);
 
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
