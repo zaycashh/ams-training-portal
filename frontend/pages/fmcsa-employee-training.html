@@ -58,27 +58,7 @@ font-weight:600;
 </style>
 </head>
 
-
 <body data-module="fmcsa-employee">
-
-<!-- ROUTE GUARD -->
-<script>
-
-(function(){
-
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-if(!user){
-window.location.replace("login.html");
-return;
-}
-
-/* Employees allowed */
-
-})();
-
-</script>
-
 
 <main class="module-container">
 
@@ -178,22 +158,31 @@ Submit Quiz
 </main>
 
 
-<!-- PDF JS -->
+<!-- 🔐 GLOBAL ROUTE GUARD -->
+<script src="../js/route-guard.js"></script>
 
+<!-- PROGRESS SYSTEM -->
+<script src="../js/progress.js"></script>
+
+<!-- CORE ENGINE -->
+<script src="../js/core.js"></script>
+
+<!-- CERTIFICATE ENGINE -->
+<script src="../js/certificate-engine.js"></script>
+
+<!-- QR CODE LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+<!-- PDF ENGINE -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-
-<!-- MODULE ENGINE -->
-
+<!-- MODULE SCRIPT -->
 <script src="../js/fmcsa-employee-training.js"></script>
 
-
 <script>
-
 function goBack(){
-window.location.href="dashboard.html";
+  window.location.href="dashboard.html";
 }
-
 </script>
 
 
