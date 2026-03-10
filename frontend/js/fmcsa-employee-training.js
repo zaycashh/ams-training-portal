@@ -470,106 +470,91 @@ submitBtn.disabled = Object.keys(selectedAnswers).length !== questions.length;
 /* =========================================================
    QUIZ SUBMIT
 ========================================================= */
-
 if(submitBtn){
 
 submitBtn.addEventListener("click",()=>{
 
-let correct=0;
+let correct = 0;
 
 questions.forEach((q,i)=>{
-
-if(selectedAnswers[i]===q.correct){
-correct++;
-}
-
+  if(selectedAnswers[i] === q.correct){
+    correct++;
+  }
 });
 
 const scorePercent = Math.round((correct/questions.length)*100);
 
-if(scorePercent>=PASS_PERCENT){
+/* =========================
+   PASS
+========================= */
 
-/* PASS */
+if(scorePercent >= PASS_PERCENT){
 
-localStorage.setItem(COMPLETED_KEY,"true");
-localStorage.setItem(QUIZ_KEY,"true");
+  localStorage.setItem(COMPLETED_KEY,"true");
+  localStorage.setItem(QUIZ_KEY,"true");
 
-let certId = localStorage.getItem(CERT_ID_KEY);
+  let certId = localStorage.getItem(CERT_ID_KEY);
 
-if(!certId){
+  if(!certId){
 
-certId = generateCertificateId("AMS-FMCSA");
-localStorage.setItem(CERT_ID_KEY, certId);
+    certId = generateCertificateId("AMS-FMCSA");
+    localStorage.setItem(CERT_ID_KEY, certId);
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-/* REGISTER CERTIFICATE IN GLOBAL REGISTRY */
+    if(user && typeof registerCertificate === "function"){
 
-if(user && typeof registerCertificate === "function"){
+      const fullName =
+        user.fullName ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+        user.email;
 
-registerCertificate({
-id: certId,
-name: user.fullName || (user.firstName + " " + user.lastName),
-course: "FMCSA Employee Drug & Alcohol Awareness",
-date: Date.now()
-});
+      registerCertificate({
+        id: certId,
+        name: fullName,
+        course: "FMCSA Employee Drug & Alcohol Awareness",
+        date: Date.now()
+      });
+
+    }
+
+  }
+
+  localStorage.setItem(CERT_DATE_KEY, Date.now());
+
+  localStorage.removeItem(ATTEMPTS_KEY);
+  localStorage.removeItem(COOLDOWN_KEY);
+  localStorage.removeItem("fmcsaEmployeeAnswers");
+
+  resultBox.innerHTML = `
+  <div class="result-box pass">
+  You passed! Generating certificate...
+  </div>
+  `;
+
+  setTimeout(()=>{
+    window.location.href="fmcsa-certificates.html";
+  },2000);
+
+  return;
 
 }
 
-}
-
-localStorage.setItem(CERT_DATE_KEY, Date.now());
-
-localStorage.removeItem(ATTEMPTS_KEY);
-localStorage.removeItem(COOLDOWN_KEY);
-localStorage.removeItem("fmcsaEmployeeAnswers");
-
-resultBox.innerHTML = `
-<div class="result-box pass">
-You passed! Generating certificate...
-</div>
-`;
-
-setTimeout(()=>{
-window.location.href="fmcsa-certificates.html";
-},2000);
-
-}
-
-localStorage.removeItem(ATTEMPTS_KEY);
-localStorage.removeItem(COOLDOWN_KEY);
-localStorage.removeItem("fmcsaEmployeeAnswers");   
-
-resultBox.innerHTML=`
-<div class="result-box pass">
-You passed! Generating certificate...
-</div>
-`;
-
-setTimeout(()=>{
-
-window.location.href="fmcsa-certificates.html";
-
-},2000);
-
-}else{
-
-/* FAIL */
+/* =========================
+   FAIL
+========================= */
 
 attempts++;
-localStorage.setItem(ATTEMPTS_KEY,attempts);
+localStorage.setItem(ATTEMPTS_KEY, attempts);
 
-if(attempts>=MAX_ATTEMPTS){
+if(attempts >= MAX_ATTEMPTS){
 
-const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
+  const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
+  localStorage.setItem(COOLDOWN_KEY, cooldownUntil);
 
-localStorage.setItem(COOLDOWN_KEY,cooldownUntil);
-
-alert("Maximum attempts reached. 15 minute cooldown.");
-
-window.location.reload();
-
-return;
+  alert("Maximum attempts reached. 15 minute cooldown.");
+  window.location.reload();
+  return;
 
 }
 
@@ -580,12 +565,9 @@ Attempt ${attempts} of ${MAX_ATTEMPTS}
 </div>
 `;
 
-}
-
 });
 
 }
-
 /* =========================================================
    COOLDOWN CHECK
 ========================================================= */
