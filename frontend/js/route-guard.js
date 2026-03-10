@@ -262,8 +262,8 @@ if (role === "employee") {
   /* =========================================================
      HELPER – ROLE DASHBOARD REDIRECT
   ========================================================= */
-
-  function redirectToRoleDashboard(user) {
+   
+function redirectToRoleDashboard(user) {
     if (
       user.type === "company" &&
       (user.role === "company_admin" || user.role === "owner")
@@ -274,7 +274,7 @@ if (role === "employee") {
     }
   }
 
-})();
+});
 
 /* =========================================================
    GLOBAL LOGOUT
