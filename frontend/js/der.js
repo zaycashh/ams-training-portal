@@ -119,13 +119,26 @@ document.addEventListener("DOMContentLoaded", () => {
 /* =========================
    CONTENT COMPLETION
 ========================= */
+document.addEventListener("DOMContentLoaded", () => {
 
-function completeDerContent() {
+  const completeBtn = document.getElementById("completeDerContentBtn");
 
-  localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
-  showSection("quiz");
+  if (!completeBtn) return;
 
-}
+  completeBtn.addEventListener("click", () => {
+
+    // mark content complete
+    localStorage.setItem("derContentCompleted", "true");
+
+    // hide content
+    document.getElementById("contentSection").classList.add("hidden");
+
+    // show quiz
+    document.getElementById("quizSection").classList.remove("hidden");
+
+  });
+
+});
 /* =========================
    QUIZ RESULT HANDLER
 ========================= */
