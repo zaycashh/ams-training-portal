@@ -141,6 +141,7 @@ if(completeBtn){
 completeBtn.addEventListener("click",()=>{
 
 localStorage.setItem(CONTENT_KEY,"true");
+localStorage.removeItem("fmcsaEmployeeAnswers");   
 
 document.getElementById("contentSection").classList.add("hidden");
 document.getElementById("quizSection").classList.remove("hidden");
@@ -502,23 +503,27 @@ if(scorePercent >= PASS_PERCENT){
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-    if(user && typeof registerCertificate === "function"){
+    if(!localStorage.getItem(`employeeCertRegistered_${user?.email}`)){
 
-      const fullName =
-        user.fullName ||
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-        user.email;
+  if(user && typeof registerCertificate === "function"){
 
-      registerCertificate({
-        id: certId,
-        name: fullName,
-        course: "FMCSA Employee Drug & Alcohol Awareness",
-        date: Date.now()
-      });
+    const fullName =
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email;
 
-    }
+    registerCertificate({
+      id: certId,
+      name: fullName,
+      course: "FMCSA Employee Drug & Alcohol Awareness",
+      date: Date.now()
+    });
+
+    localStorage.setItem(`employeeCertRegistered_${user.email}`, "true");
 
   }
+
+}
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
 
