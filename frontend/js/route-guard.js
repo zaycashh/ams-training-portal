@@ -126,7 +126,7 @@ if (role === "employee") {
     const paid = localStorage.getItem(paidKey);
     const purchaseDate = parseInt(localStorage.getItem(dateKey) || "0", 10);
 
-    if (paid !== "true" || !purchaseDate) {
+    if (paid !== "true" || purchaseDate === 0) {
 
   // Redirect DER to payment simulation
   if (module === "fmcsa-der") {
