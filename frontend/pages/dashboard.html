@@ -212,34 +212,30 @@ localStorage.getItem("faaEmployeeCompleted") === "true";
 
 /* DER */
 
-const derBtn = document.getElementById("derBtn");
-
-if(derBtn){
+const faaDerBtn = document.getElementById("derBtn");
+if(faaDerBtn){
 
 if(faaDERCompleted){
 
-derBtn.textContent = "View Certificate";
+faaDerBtn.textContent = "View Certificate";
+faaDerBtn.disabled = false;
 
-derBtn.disabled = false;
-
-derBtn.onclick = () => {
+faaDerBtn.onclick = () => {
 window.location.href = "faa-certificates.html";
 };
 
 }else{
 
-derBtn.textContent = "Start Training";
+faaDerBtn.textContent = "Start Training";
+faaDerBtn.disabled = false;
 
-derBtn.disabled = false;
-
-derBtn.onclick = () => {
+faaDerBtn.onclick = () => {
 window.location.href = "der-training.html";
 };
 
 }
-
 }
-
+  
 /* SUPERVISOR */
 
 const supervisorBtn = document.getElementById("supervisorBtn");
