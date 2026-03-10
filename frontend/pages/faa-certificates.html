@@ -44,47 +44,54 @@ Back to Dashboard
 <script>
 
 function goDashboard(){
-window.location.href = "dashboard.html";
+  window.location.href = "dashboard.html";
 }
 
 function loadCertificates(){
 
-const registry =
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user =
+  JSON.parse(localStorage.getItem("amsUser") || "null");
 
-const registry =
-JSON.parse(
+  if(!user) return;
+
+  const registry =
+  JSON.parse(
   localStorage.getItem(`amsCertificates_${user.email}`) || "[]"
-);
-const list = document.getElementById("certList");
+  );
 
-if(registry.length === 0){
+  const list = document.getElementById("certList");
 
-list.innerHTML = "<p>No certificates found.</p>";
-return;
+  if(!list) return;
 
-}
+  list.innerHTML = "";
 
-registry.forEach(cert => {
+  if(registry.length === 0){
 
-const card = document.createElement("div");
+    list.innerHTML = "<p>No certificates found.</p>";
+    return;
 
-card.className = "cert-card";
+  }
 
-card.innerHTML = `
-<h3>${cert.course}</h3>
-<p><strong>Name:</strong> ${cert.name}</p>
-<p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
-<p><strong>Certificate ID:</strong> ${cert.id}</p>
+  registry.forEach(cert => {
 
-<a href="verify.html?id=${cert.id}" class="btn-primary">
-Verify Certificate
-</a>
-`;
+    const card = document.createElement("div");
 
-list.appendChild(card);
+    card.className = "cert-card";
 
-});
+    card.innerHTML = `
+      <h3>${cert.course}</h3>
+      <p><strong>Name:</strong> ${cert.name}</p>
+      <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
+      <p><strong>Certificate ID:</strong> ${cert.id}</p>
+
+      <a href="verify.html?id=${cert.id}" class="btn-primary">
+        Verify Certificate
+      </a>
+    `;
+
+    list.appendChild(card);
+
+  });
 
 }
 
