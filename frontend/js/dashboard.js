@@ -69,8 +69,9 @@ function updateEmployeeButtonState() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   const completed =
-  localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
+    localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
 
+  /* TRAINING COMPLETED */
   if (completed) {
 
     btn.textContent = "View Certificate";
@@ -84,30 +85,38 @@ function updateEmployeeButtonState() {
   }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-}
 
-  // INDIVIDUAL
+  /* INDIVIDUAL */
   if (user?.role === "individual") {
+
     if (localStorage.getItem("paid_employee") === "true") {
+
       btn.disabled = false;
       btn.textContent = "Start Training";
       btn.onclick = () => startFAA("employee");
+
     } else {
+
       btn.disabled = false;
       btn.textContent = "Locked — Purchase Required";
       btn.onclick = () =>
         (window.location.href = "../pages/payment.html?module=employee");
+
     }
+
     return;
   }
 
-  // COMPANY FLOW
-  btn.onclick = handleEmployeeClick;  // 🔥 ADD THIS LINE
+  /* COMPANY FLOW */
+
+  btn.onclick = handleEmployeeClick;
 
   if (company?.usedSeats?.[user?.email]) {
+
     btn.disabled = false;
     btn.textContent = "Continue Training";
     return;
+
   }
 
   const total = company?.seats?.employee?.total ?? 0;
@@ -115,11 +124,11 @@ function updateEmployeeButtonState() {
   const remaining = total - used;
 
   if (remaining > 0) {
+
     btn.disabled = false;
     btn.textContent = "Use Company Seat";
-    btn.title =
-      "Uses 1 company seat. This seat will be permanently assigned once training starts.";
     return;
+
   }
 
   btn.disabled = true;
