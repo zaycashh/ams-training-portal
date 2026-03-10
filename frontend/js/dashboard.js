@@ -66,10 +66,11 @@ function updateEmployeeButtonState() {
   const btn = document.getElementById("employeeBtn");
   if (!btn) return;
 
-  const completed =
-  localStorage.getItem("employeeTrainingCompleted") === "true";
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  /* TRAINING COMPLETED */
+  const completed =
+  localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
+
   if (completed) {
 
     btn.textContent = "View Certificate";
@@ -80,11 +81,10 @@ function updateEmployeeButtonState() {
 
     btn.disabled = false;
     return;
-
   }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+}
 
   // INDIVIDUAL
   if (user?.role === "individual") {
