@@ -95,6 +95,24 @@ function loadCertificates(){
 }
 
 document.addEventListener("DOMContentLoaded", loadCertificates);
+  
+  function generateQR(certId, elementId) {
+
+  const url =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    certId;
+
+  const container = document.getElementById(elementId);
+  if (!container) return;
+
+  new QRCode(container, {
+    text: url,
+    width: 120,
+    height: 120
+  });
+
+}
 
 </script>
   
