@@ -6,16 +6,9 @@ const certId = document.getElementById("certInput").value.trim();
 const result = document.getElementById("result");
 
 /* CHECK EMPTY */
+
 if(!certId){
 result.innerHTML = "Enter a certificate ID.";
-return;
-}
-
-/* VALIDATE FORMAT */
-const certPattern = /^AMS-[EDSB]-\d{8}$/;
-
-if(!certPattern.test(certId)){
-result.innerHTML = "Invalid certificate format.";
 return;
 }
 
@@ -54,7 +47,6 @@ year:"numeric"
 
 result.innerHTML = `
 <h3>Certificate Verified ✔</h3>
-
 <p><strong>Name:</strong> ${cert.name}</p>
 <p><strong>Course:</strong> ${moduleType}</p>
 <p><strong>Date Completed:</strong> ${formattedDate}</p>
@@ -73,20 +65,21 @@ result.innerHTML = "Error loading certificate registry";
 });
 
 }
-<script>
+
+/* AUTO VERIFY FROM QR */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const params = new URLSearchParams(window.location.search);
-  const certId = params.get("id");
+const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
 
-  if(certId){
+if(certId){
 
-    document.getElementById("certInput").value = certId;
+document.getElementById("certInput").value = certId;
 
-    verifyCert();
+verifyCert();
 
-  }
+}
 
 });
 
