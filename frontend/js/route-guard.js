@@ -197,6 +197,17 @@ if (role === "employee") {
     redirectToRoleDashboard(user);
     return;
   }
+   
+   /* =========================================================
+   ALLOW CERTIFICATE PAGES
+========================================================= */
+
+if (
+  path.includes("fmcsa-certificates.html") ||
+  path.includes("verify.html")
+) {
+  return;
+}
 
   /* =========================================================
      ROLE ACCESS CONTROL
