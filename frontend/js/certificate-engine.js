@@ -14,30 +14,44 @@ function generateCertificateId(prefix = "AMS") {
 }
 
 /* =========================================================
-   STORE CERTIFICATE
+   STORE CERTIFICATE (PER USER)
 ========================================================= */
 
 function registerCertificate(data) {
 
+  const user =
+    JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if(!user) return;
+
+  const key = `amsCertificates_${user.email}`;
+
   const registry =
-    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+    JSON.parse(localStorage.getItem(key) || "[]");
 
   registry.push(data);
 
   localStorage.setItem(
-    "amsCertificates",
+    key,
     JSON.stringify(registry)
   );
 }
 
 /* =========================================================
-   GET CERTIFICATE
+   GET CERTIFICATE (PER USER)
 ========================================================= */
 
 function getCertificate(certId) {
 
+  const user =
+    JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if(!user) return null;
+
+  const key = `amsCertificates_${user.email}`;
+
   const registry =
-    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+    JSON.parse(localStorage.getItem(key) || "[]");
 
   return registry.find(c => c.id === certId);
 }
