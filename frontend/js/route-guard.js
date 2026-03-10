@@ -4,7 +4,7 @@
    TYPE-AWARE STABLE VERSION
 ========================================================= */
 
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body?.dataset?.module || "";
