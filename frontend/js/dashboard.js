@@ -138,56 +138,6 @@ function getEmployeeSeatStatus() {
   return { type: "locked", label: "🔒 No Seats Available" };
 }
 
-/* =========================
-   EMPLOYEE BUTTON STATE
-========================= */
-function updateEmployeeButtonState() {
-   
-const btn = document.getElementById("employeeBtn");
-if (!btn) return;
-
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-if (!user) return;
-
-const completed =
-  localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
-
-  /* TRAINING COMPLETED */
-  if (completed) {
-
-    btn.textContent = "View Certificate";
-
-    btn.onclick = () => {
-      window.location.href = "faa-certificates.html";
-    };
-
-    btn.disabled = false;
-    return;
-  }
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-
-  /* INDIVIDUAL */
-  if (user?.role === "individual") {
-
-    if (localStorage.getItem("paid_employee") === "true") {
-
-      btn.disabled = false;
-      btn.textContent = "Start Training";
-      btn.onclick = () => startFAA("employee");
-
-    } else {
-
-      btn.disabled = false;
-      btn.textContent = "Locked — Purchase Required";
-      btn.onclick = () =>
-        (window.location.href = "../pages/payment.html?module=employee");
-
-    }
-
-    return;
-  }
-
   /* COMPANY FLOW */
 
   btn.onclick = handleEmployeeClick;
@@ -386,74 +336,6 @@ function updateFMCSATimer() {
       daysLeft > 1 ? "s" : ""
     }`;
   }
-}
-/* =========================
-   DER BUTTON STATE
-========================= */
-function updateDERButtonState() {
-
-  const btn = document.getElementById("derBtn");
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!btn || !user) return;
-
-  const completed =
-  localStorage.getItem(`derTrainingCompleted_${user.email}`) === "true";
-
-  if (completed) {
-
-    btn.textContent = "View Certificate";
-    btn.onclick = () => {
-      window.location.href = "faa-certificates.html";
-    };
-
-    btn.disabled = false;
-    return;
-  }
-
-  if (localStorage.getItem("paid_der") === "true") {
-
-    btn.textContent = "Start Training";
-    btn.onclick = () => startFAA("der");
-    btn.disabled = false;
-    return;
-  }
-
-  btn.textContent = "Locked — Purchase Required";
-  btn.onclick = () => window.location.href = "payment.html?module=der";
-}
-/* =========================
-   SUPERVISOR BUTTON STATE
-========================= */
-function updateSupervisorButtonState() {
-
-  const btn = document.getElementById("supervisorBtn");
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!btn || !user) return;
-
-  const completed =
-  localStorage.getItem(`supervisorTrainingCompleted_${user.email}`) === "true";
-
-  if (completed) {
-
-    btn.textContent = "View Certificate";
-    btn.onclick = () => {
-      window.location.href = "faa-certificates.html";
-    };
-
-    btn.disabled = false;
-    return;
-  }
-
-  if (localStorage.getItem("paid_supervisor") === "true") {
-
-    btn.textContent = "Start Training";
-    btn.onclick = () => startFAA("supervisor");
-    btn.disabled = false;
-    return;
-  }
-
-  btn.textContent = "Locked — Purchase Required";
-  btn.onclick = () => window.location.href = "payment.html?module=supervisor";
 }
 /* =========================
    INIT
