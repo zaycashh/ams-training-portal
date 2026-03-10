@@ -234,7 +234,6 @@ function lockToSupervisorCertificate() {
 /* =========================
    CERTIFICATE GENERATION
 ========================= */
-
 function populateSupervisorCertificate() {
 
   let code = localStorage.getItem(SUPERVISOR_CERT_CODE_KEY);
@@ -246,7 +245,26 @@ function populateSupervisorCertificate() {
 
   }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  /* REGISTER CERTIFICATE ONLY ON FIRST GENERATION */
+
+  if (!localStorage.getItem(`supervisorCertRegistered_${USER_EMAIL}`)) {
+
+    if (typeof registerCertificate === "function") {
+
+      registerCertificate({
+        id: code,
+        name: user.fullName || (user.firstName + " " + user.lastName),
+        course: "Supervisor Reasonable Suspicion Training",
+        date: Date.now()
+      });
+
+      localStorage.setItem(`supervisorCertRegistered_${USER_EMAIL}`, "true");
+
+    }
+
+  }
+
+  /* Populate certificate fields */
 
   if (user) {
 
@@ -260,14 +278,21 @@ function populateSupervisorCertificate() {
 
   document.getElementById("certVerify").textContent = code;
 
+  /* Generate verification QR */
+
   const qrBox = document.getElementById("certQR");
 
   if (qrBox && typeof QRCode !== "undefined") {
 
     qrBox.innerHTML = "";
 
+    const verifyURL =
+      window.location.origin +
+      "/ams-training-portal/frontend/pages/verify.html?id=" +
+      code;
+
     new QRCode(qrBox, {
-      text: code,
+      text: verifyURL,
       width: 128,
       height: 128
     });
