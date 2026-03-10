@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   payBtn.addEventListener("click", () => {
 
+  payBtn.disabled = true;
+
     /* ================================
        FMCSA DER PURCHASE
     ================================= */
@@ -31,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (module === "fmcsa-module-a" || type === "fmcsa") {
 
       localStorage.setItem("paid_fmcsa", "true");
-      localStorage.setItem("fmcsaPurchaseDate", Date.now());
+      localStorage.setItem("fmcsa_start_date", Date.now());
 
       alert("Purchase successful!");
 
