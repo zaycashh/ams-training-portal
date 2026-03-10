@@ -331,7 +331,7 @@ function updateSupervisorButtonState() {
   if (!btn || !user) return;
 
   const completed =
-    localStorage.getItem("supervisorTrainingCompleted") === "true";
+  localStorage.getItem("supervisorContentCompleted") === "true";
 
   /* COMPLETED */
   if (completed) {
