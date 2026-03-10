@@ -73,12 +73,12 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================================================= */
 
   const roleAccess = {
-    individual: ["der", "supervisor", "employee"],
-    der: ["der"],
-    supervisor: ["supervisor"],
-    employee: ["employee"],
-    owner: []
-  };
+  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol"],
+  der: ["der", "fmcsa-der"],
+  supervisor: ["supervisor", "fmcsa-module-a", "fmcsa-drug-alcohol"],
+  employee: ["employee"],
+  owner: []
+};;
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
 
