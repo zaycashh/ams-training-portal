@@ -65,7 +65,14 @@ function updateFAAModuleButtons() {
       return;
     }
 
-    if (localStorage.getItem(config.paidKey) === "true") {
+    const paidFAA =
+  localStorage.getItem(config.paidKey) === "true";
+
+const paidFMCSA =
+  module === "der" &&
+  localStorage.getItem("paid_der_fmcsa") === "true";
+
+if (paidFAA || paidFMCSA) {
 
       btn.textContent = "Start Training";
 
