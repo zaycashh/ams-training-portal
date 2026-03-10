@@ -75,7 +75,23 @@ alert("FMCSA Training requires purchase.");
 window.location.replace("dashboard.html");
 return;
 }
+  
+/* CHECK CERTIFICATE COMPLETION */
 
+const modACompleted =
+localStorage.getItem("fmcsaModuleACompleted") === "true";
+
+const modBCompleted =
+localStorage.getItem("fmcsaModuleBCompleted") === "true";
+
+const derCompleted =
+localStorage.getItem("fmcsaDERCompleted") === "true";
+
+if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
+window.location.replace("dashboard.html");
+return;
+}
+  
 /* OPTIONAL 30 DAY EXPIRATION */
 
 const start = localStorage.getItem("fmcsa_start_date");
