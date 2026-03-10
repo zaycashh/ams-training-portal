@@ -197,6 +197,109 @@ Start Training
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  /* =========================
+FAA MODULE STATUS
+========================= */
+
+const faaDERCompleted =
+localStorage.getItem("faaDERCompleted") === "true";
+
+const faaSupervisorCompleted =
+localStorage.getItem("faaSupervisorCompleted") === "true";
+
+const faaEmployeeCompleted =
+localStorage.getItem("faaEmployeeCompleted") === "true";
+
+/* DER */
+
+const derBtn = document.getElementById("derBtn");
+
+if(derBtn){
+
+if(faaDERCompleted){
+
+derBtn.textContent = "View Certificate";
+
+derBtn.disabled = false;
+
+derBtn.onclick = () => {
+window.location.href = "faa-certificates.html";
+};
+
+}else{
+
+derBtn.textContent = "Start Training";
+
+derBtn.disabled = false;
+
+derBtn.onclick = () => {
+window.location.href = "der-training.html";
+};
+
+}
+
+}
+
+/* SUPERVISOR */
+
+const supervisorBtn = document.getElementById("supervisorBtn");
+
+if(supervisorBtn){
+
+if(faaSupervisorCompleted){
+
+supervisorBtn.textContent = "View Certificate";
+
+supervisorBtn.disabled = false;
+
+supervisorBtn.onclick = () => {
+window.location.href = "faa-certificates.html";
+};
+
+}else{
+
+supervisorBtn.textContent = "Start Training";
+
+supervisorBtn.disabled = false;
+
+supervisorBtn.onclick = () => {
+window.location.href = "supervisor-training.html";
+};
+
+}
+
+}
+
+/* EMPLOYEE */
+
+const employeeFAAButton = document.getElementById("employeeBtn");
+
+if(employeeFAAButton){
+
+if(faaEmployeeCompleted){
+
+employeeFAAButton.textContent = "View Certificate";
+
+employeeFAAButton.disabled = false;
+
+employeeFAAButton.onclick = () => {
+window.location.href = "faa-certificates.html";
+};
+
+}else{
+
+employeeFAAButton.textContent = "Start Training";
+
+employeeFAAButton.disabled = false;
+
+employeeFAAButton.onclick = () => {
+window.location.href = "employee-training.html";
+};
+
+}
+
+}
+
 /* DER FMCSA BUTTON */
 
 const derBtn = document.getElementById("derFmcsaBtn");
