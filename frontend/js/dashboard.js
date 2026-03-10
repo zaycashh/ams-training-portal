@@ -62,8 +62,26 @@ function getEmployeeSeatStatus() {
    EMPLOYEE BUTTON STATE
 ========================= */
 function updateEmployeeButtonState() {
+
   const btn = document.getElementById("employeeBtn");
   if (!btn) return;
+
+  const completed =
+  localStorage.getItem("employeeTrainingCompleted") === "true";
+
+  /* TRAINING COMPLETED */
+  if (completed) {
+
+    btn.textContent = "View Certificate";
+
+    btn.onclick = () => {
+      window.location.href = "faa-certificates.html";
+    };
+
+    btn.disabled = false;
+    return;
+
+  }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
@@ -291,7 +309,6 @@ function updateDERButtonState() {
   const completed =
     localStorage.getItem("derTrainingCompleted") === "true";
 
-  /* COMPLETED */
   if (completed) {
 
     btn.textContent = "View Certificate";
@@ -303,23 +320,16 @@ function updateDERButtonState() {
     return;
   }
 
-  /* PURCHASED */
   if (localStorage.getItem("paid_der") === "true") {
 
     btn.textContent = "Start Training";
     btn.onclick = () => startFAA("der");
     btn.disabled = false;
-
     return;
   }
 
-  /* LOCKED */
-
   btn.textContent = "Locked — Purchase Required";
-  btn.onclick = () =>
-    (window.location.href = "payment.html?module=der");
-
-  btn.disabled = false;
+  btn.onclick = () => window.location.href = "payment.html?module=der";
 }
 /* =========================
    SUPERVISOR BUTTON STATE
@@ -331,9 +341,8 @@ function updateSupervisorButtonState() {
   if (!btn || !user) return;
 
   const completed =
-  localStorage.getItem("supervisorContentCompleted") === "true";
+    localStorage.getItem("supervisorTrainingCompleted") === "true";
 
-  /* COMPLETED */
   if (completed) {
 
     btn.textContent = "View Certificate";
@@ -345,23 +354,16 @@ function updateSupervisorButtonState() {
     return;
   }
 
-  /* PURCHASED */
   if (localStorage.getItem("paid_supervisor") === "true") {
 
     btn.textContent = "Start Training";
     btn.onclick = () => startFAA("supervisor");
     btn.disabled = false;
-
     return;
   }
 
-  /* LOCKED */
-
   btn.textContent = "Locked — Purchase Required";
-  btn.onclick = () =>
-    (window.location.href = "payment.html?module=supervisor");
-
-  btn.disabled = false;
+  btn.onclick = () => window.location.href = "payment.html?module=supervisor";
 }
 /* =========================
    INIT
