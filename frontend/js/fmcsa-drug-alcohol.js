@@ -670,18 +670,22 @@ function gradeAlcoholQuiz() {
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-    if (user && typeof registerCertificate === "function") {
+    if (!localStorage.getItem(`moduleBCertRegistered_${user?.email}`)) {
 
-      registerCertificate({
-        id: certId,
-        name: user.fullName || (user.firstName + " " + user.lastName),
-        course: "FMCSA Drug & Alcohol Substance Abuse Training",
-        date: Date.now()
-      });
+  if (user && typeof registerCertificate === "function") {
 
-    }
+    registerCertificate({
+      id: certId,
+      name: user.fullName || (user.firstName + " " + user.lastName),
+      course: "FMCSA Drug & Alcohol Substance Abuse Training",
+      date: Date.now()
+    });
+
+    localStorage.setItem(`moduleBCertRegistered_${user.email}`, "true");
 
   }
+
+}
 
   localStorage.setItem("fmcsaModuleBDate", Date.now());
 
@@ -701,28 +705,6 @@ function gradeAlcoholQuiz() {
 
   return;
 }
-
-    // store completion date
-    localStorage.setItem("fmcsaModuleBDate", Date.now());
-
-    // reset attempts
-    localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
-    localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
-
-    resultBox.innerHTML = `
-      <div class="result-box pass">
-        You passed Drug & Alcohol Training!
-        Generating certificate...
-      </div>
-    `;
-
-    setTimeout(() => {
-      window.location.href = "fmcsa-certificates.html";
-    }, 1500);
-
-    return;
-  }
-
   /* =========================
      FAIL LOGIC
   ========================= */
