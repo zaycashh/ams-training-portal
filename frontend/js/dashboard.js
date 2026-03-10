@@ -62,14 +62,15 @@ function getEmployeeSeatStatus() {
    EMPLOYEE BUTTON STATE
 ========================= */
 function updateEmployeeButtonState() {
+   
+const btn = document.getElementById("employeeBtn");
+if (!btn) return;
 
-  const btn = document.getElementById("employeeBtn");
-  if (!btn) return;
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+if (!user) return;
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  const completed =
-    localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
+const completed =
+  localStorage.getItem(`employeeTrainingCompleted_${user.email}`) === "true";
 
   /* TRAINING COMPLETED */
   if (completed) {
