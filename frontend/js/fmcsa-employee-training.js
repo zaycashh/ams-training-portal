@@ -498,13 +498,43 @@ let certId = localStorage.getItem(CERT_ID_KEY);
 
 if(!certId){
 
-certId = "AMS-E-" + Date.now().toString().slice(-8);
+certId = generateCertificateId("AMS-FMCSA");
+localStorage.setItem(CERT_ID_KEY, certId);
 
-localStorage.setItem(CERT_ID_KEY,certId);
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+/* REGISTER CERTIFICATE IN GLOBAL REGISTRY */
+
+if(user && typeof registerCertificate === "function"){
+
+registerCertificate({
+id: certId,
+name: user.fullName || (user.firstName + " " + user.lastName),
+course: "FMCSA Employee Drug & Alcohol Awareness",
+date: Date.now()
+});
 
 }
 
-localStorage.setItem(CERT_DATE_KEY,Date.now());
+}
+
+localStorage.setItem(CERT_DATE_KEY, Date.now());
+
+localStorage.removeItem(ATTEMPTS_KEY);
+localStorage.removeItem(COOLDOWN_KEY);
+localStorage.removeItem("fmcsaEmployeeAnswers");
+
+resultBox.innerHTML = `
+<div class="result-box pass">
+You passed! Generating certificate...
+</div>
+`;
+
+setTimeout(()=>{
+window.location.href="fmcsa-certificates.html";
+},2000);
+
+}
 
 localStorage.removeItem(ATTEMPTS_KEY);
 localStorage.removeItem(COOLDOWN_KEY);
