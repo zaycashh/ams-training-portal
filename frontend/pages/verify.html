@@ -1,93 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Certificate Verification | AMS Training Portal</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="../css/main.css">
-
-<style>
-.verify-box{
-max-width:700px;
-margin:auto;
-background:#fff;
-padding:30px;
-border-radius:8px;
-border:1px solid #dce3ef;
-}
-
-.verify-result{
-margin-top:20px;
-padding:15px;
-border-radius:6px;
-}
-
-.valid{
-background:#e6f4ea;
-color:#1e7e34;
-}
-
-.invalid{
-background:#fdecea;
-color:#c82333;
-}
-</style>
-
-</head>
-
-<body>
-
-<main class="module-container">
-
-<h1>Certificate Verification</h1>
-
-<div class="verify-box">
-
-<p>Enter Certificate ID:</p>
-
-<input type="text" id="certInput" placeholder="AMS-X-XXXXXXXX">
-
-<button onclick="verifyCert()" class="btn-primary">
-Verify Certificate
-</button>
-
-<div id="result"></div>
-
-</div>
-
-</main>
-
-<script>
-/* ===================================
-AUTO VERIFY FROM URL
-Example:
-verify.html?id=AMS-A-48392144
-=================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
-
-if(certId){
-
-document.getElementById("certInput").value = certId;
-
-setTimeout(() => {
-verifyCert();
-}, 200);
-
-}
-
-});
-
 function verifyCert(){
 
 const certId =
 document.getElementById("certInput").value.trim();
-  
-  /* VALIDATE CERTIFICATE FORMAT */
+
+const result =
+document.getElementById("result");
+
+/* CHECK EMPTY */
+
+if(!certId){
+result.innerHTML =
+"<div class='verify-result invalid'>Enter a certificate ID.</div>";
+return;
+}
+
+/* VALIDATE FORMAT */
 
 const certPattern = /^AMS-[EDSB]-\d{8}$/;
 
@@ -100,16 +27,6 @@ Invalid certificate format.
 `;
 
 return;
-
-}
-
-const result =
-document.getElementById("result");
-
-if(!certId){
-result.innerHTML =
-"<div class='verify-result invalid'>Enter a certificate ID.</div>";
-return;
 }
 
 /* CHECK CERTIFICATE REGISTRY */
@@ -121,21 +38,20 @@ fetch("../data/certificates.json")
 const cert = certificates.find(c => c.id === certId);
 
 if(cert){
-  
+
 let moduleType = "AMS Training Module";
+
 if(cert.id.includes("-E-")) moduleType = "FMCSA Employee Awareness";
 if(cert.id.includes("-D-")) moduleType = "FMCSA DER Training";
 if(cert.id.includes("-S-")) moduleType = "FMCSA Supervisor Training";
 if(cert.id.includes("-B-")) moduleType = "FMCSA Drug & Alcohol Training";
 
-/* FORCE US DATE FORMAT */
-
 const dateObj = new Date(cert.date);
 
-const formattedDate = dateObj.toLocaleDateString("en-US", {
-month: "2-digit",
-day: "2-digit",
-year: "numeric"
+const formattedDate = dateObj.toLocaleDateString("en-US",{
+month:"2-digit",
+day:"2-digit",
+year:"numeric"
 });
 
 result.innerHTML = `
@@ -152,8 +68,7 @@ Certificate ID: ${cert.id}
 </div>
 `;
 
-}
-else{
+}else{
 
 result.innerHTML = `
 <div class="verify-result invalid">
@@ -164,7 +79,7 @@ Certificate NOT FOUND
 }
 
 })
-.catch(() => {
+.catch(()=>{
 
 result.innerHTML = `
 <div class="verify-result invalid">
