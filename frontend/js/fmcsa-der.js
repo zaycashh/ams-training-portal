@@ -404,7 +404,7 @@ function checkCooldown() {
 
     alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
 
-    window.location.href = "../dashboard.html";
+    window.location.href = "dashboard.html";
 
   }
 
