@@ -219,14 +219,32 @@ function populateDerCertificate() {
 
   let code = localStorage.getItem(DER_CERT_CODE_KEY);
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  /* CREATE CERTIFICATE IF IT DOESN'T EXIST */
+
   if (!code) {
 
     code = "AMS-DER-" + Date.now();
+
     localStorage.setItem(DER_CERT_CODE_KEY, code);
+
+    /* REGISTER CERTIFICATE */
+
+    if (user) {
+
+      registerCertificate({
+        id: code,
+        name: user.fullName || (user.firstName + " " + user.lastName),
+        course: "DER Training",
+        date: Date.now()
+      });
+
+    }
 
   }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  /* DISPLAY CERTIFICATE */
 
   if (user) {
 
