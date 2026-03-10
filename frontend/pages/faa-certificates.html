@@ -50,8 +50,12 @@ window.location.href = "dashboard.html";
 function loadCertificates(){
 
 const registry =
-JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
+const registry =
+JSON.parse(
+  localStorage.getItem(`amsCertificates_${user.email}`) || "[]"
+);
 const list = document.getElementById("certList");
 
 if(registry.length === 0){
