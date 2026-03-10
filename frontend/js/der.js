@@ -228,18 +228,24 @@ function populateDerCertificate() {
 
   }
 
-  /* REGISTER CERTIFICATE ALWAYS */
+  /* REGISTER CERTIFICATE ONLY ON FIRST GENERATION */
+
+if (!localStorage.getItem(`derCertRegistered_${USER_EMAIL}`)) {
 
   if (user && typeof registerCertificate === "function") {
 
     registerCertificate({
       id: code,
       name: user.fullName || (user.firstName + " " + user.lastName),
-      course: "DER Training",
+      course: "FAA DER Training",
       date: Date.now()
     });
 
+    localStorage.setItem(`derCertRegistered_${USER_EMAIL}`, "true");
+
   }
+
+}
 
   document.getElementById("certName").textContent =
     user?.fullName || (user?.firstName + " " + user?.lastName);
