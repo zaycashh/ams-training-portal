@@ -1,23 +1,35 @@
 /* =========================================================
    DER TRAINING LOGIC
-   COMPLIANCE-GRADE (MIRRORS EMPLOYEE EXACTLY)
+   COMPLIANCE-GRADE (MULTI-USER SAFE)
 ========================================================= */
 
 const DER_MAX_ATTEMPTS = 3;
 const DER_PASS_PERCENTAGE = 80;
 const DER_COOLDOWN_MINUTES = 15;
 
-const DER_CONTENT_DONE_KEY = "derContentCompleted";
-const DER_PASSED_KEY = "derQuizPassed";
-const DER_COMPLETED_KEY = "derTrainingCompleted";
-const DER_ATTEMPTS_KEY = "derQuizAttempts";
-const DER_COOLDOWN_KEY = "derQuizCooldownUntil";
-const DER_CERT_CODE_KEY = "derCertificateCode";
+/* =========================
+   USER CONTEXT
+========================= */
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const USER_EMAIL = user?.email || "guest";
 
 /* =========================
-   TAB STATES (IDENTICAL)
+   USER-SCOPED STORAGE KEYS
 ========================= */
+
+const DER_CONTENT_DONE_KEY = `derContentCompleted_${USER_EMAIL}`;
+const DER_PASSED_KEY = `derQuizPassed_${USER_EMAIL}`;
+const DER_COMPLETED_KEY = `derTrainingCompleted_${USER_EMAIL}`;
+const DER_ATTEMPTS_KEY = `derQuizAttempts_${USER_EMAIL}`;
+const DER_COOLDOWN_KEY = `derQuizCooldownUntil_${USER_EMAIL}`;
+const DER_CERT_CODE_KEY = `derCertificateCode_${USER_EMAIL}`;
+/* =========================
+   TAB STATES
+========================= */
+
 function setActiveTab(tab) {
+
   document.querySelectorAll(".module-nav button").forEach(btn => {
     btn.classList.remove("active", "completed");
   });
@@ -36,25 +48,23 @@ function setActiveTab(tab) {
     document.getElementById("btnQuiz")?.classList.add("completed");
     document.getElementById("btnCertificate")?.classList.add("active");
   }
-}
 
+}
 /* =========================
-   SECTION NAVIGATION (HARD GUARDED)
+   SECTION NAVIGATION
 ========================= */
+
 function showSection(section) {
 
-  // 🔒 HARD LOCK AFTER COMPLETION
   if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
     lockToDerCertificate();
     return;
   }
 
-  // 🚫 QUIZ BLOCKED UNTIL CONTENT DONE
   if (section === "quiz") {
     if (localStorage.getItem(DER_CONTENT_DONE_KEY) !== "true") return;
   }
 
-  // 🚫 CERT BLOCKED UNTIL QUIZ PASSED
   if (section === "certificate") {
     if (localStorage.getItem(DER_PASSED_KEY) !== "true") return;
   }
@@ -79,47 +89,58 @@ function showSection(section) {
     setActiveTab("certificate");
     populateDerCertificate();
   }
-}
 
-/* =========================
+}/* =========================
    PAGE LOAD
 ========================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
   if (document.body.dataset.module !== "der") return;
 
   if (localStorage.getItem("paid_der") !== "true") {
+
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
     return;
+
   }
 
   if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
+
     lockToDerCertificate();
     return;
+
   }
 
   showSection("content");
-});
 
+});
 /* =========================
    CONTENT COMPLETION
 ========================= */
+
 function completeDerContent() {
+
   localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
   showSection("quiz");
-}
 
+}
 /* =========================
    QUIZ RESULT HANDLER
 ========================= */
+
 function handleDerQuizResult(score, total) {
+
   const percent = Math.round((score / total) * 100);
+
   const attempts =
     parseInt(localStorage.getItem(DER_ATTEMPTS_KEY) || "0", 10) + 1;
 
   localStorage.setItem(DER_ATTEMPTS_KEY, attempts);
 
   if (percent >= DER_PASS_PERCENTAGE) {
+
     localStorage.setItem(DER_PASSED_KEY, "true");
     localStorage.removeItem(DER_ATTEMPTS_KEY);
     localStorage.removeItem(DER_COOLDOWN_KEY);
@@ -131,10 +152,13 @@ function handleDerQuizResult(score, total) {
         Finish Training
       </button>
     `;
+
     return;
+
   }
 
   if (attempts >= DER_MAX_ATTEMPTS) {
+
     localStorage.setItem(
       DER_COOLDOWN_KEY,
       Date.now() + DER_COOLDOWN_MINUTES * 60000
@@ -144,7 +168,9 @@ function handleDerQuizResult(score, total) {
       <h2>Too Many Attempts</h2>
       <p>Please wait ${DER_COOLDOWN_MINUTES} minutes.</p>
     `;
+
     return;
+
   }
 
   document.getElementById("quizSection").innerHTML = `
@@ -155,20 +181,24 @@ function handleDerQuizResult(score, total) {
       Retry Quiz
     </button>
   `;
-}
 
+}
 /* =========================
    FINALIZE TRAINING
 ========================= */
+
 function finishDerTraining() {
+
   localStorage.setItem(DER_COMPLETED_KEY, "true");
   lockToDerCertificate();
-}
 
+}
 /* =========================
-   CERTIFICATE LOCK + QR
+   CERTIFICATE LOCK
 ========================= */
+
 function lockToDerCertificate() {
+
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
   document.getElementById("certificateSection")?.classList.remove("hidden");
@@ -179,34 +209,49 @@ function lockToDerCertificate() {
 
   setActiveTab("certificate");
   populateDerCertificate();
+
 }
+/* =========================
+   CERTIFICATE GENERATION
+========================= */
 
 function populateDerCertificate() {
+
   let code = localStorage.getItem(DER_CERT_CODE_KEY);
 
   if (!code) {
+
     code = "AMS-DER-" + Date.now();
     localStorage.setItem(DER_CERT_CODE_KEY, code);
+
   }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if (user) {
-  document.getElementById("certName").textContent =
-    user.fullName || (user.firstName + " " + user.lastName);
-}
-   
+  if (user) {
+
+    document.getElementById("certName").textContent =
+      user.fullName || (user.firstName + " " + user.lastName);
+
+  }
+
   document.getElementById("certDate").textContent =
     new Date().toLocaleDateString();
+
   document.getElementById("certVerify").textContent = code;
 
   const qrBox = document.getElementById("certQR");
+
   if (qrBox && typeof QRCode !== "undefined") {
+
     qrBox.innerHTML = "";
+
     new QRCode(qrBox, {
       text: code,
       width: 128,
       height: 128
     });
+
   }
+
 }
