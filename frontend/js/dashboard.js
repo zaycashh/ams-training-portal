@@ -316,7 +316,7 @@ function updateDERButtonState() {
   if (!btn || !user) return;
 
   const completed =
-    localStorage.getItem("derTrainingCompleted") === "true";
+  localStorage.getItem(`derTrainingCompleted_${user.email}`) === "true";
 
   if (completed) {
 
@@ -350,7 +350,7 @@ function updateSupervisorButtonState() {
   if (!btn || !user) return;
 
   const completed =
-    localStorage.getItem("supervisorTrainingCompleted") === "true";
+  localStorage.getItem(`supervisorTrainingCompleted_${user.email}`) === "true";
 
   if (completed) {
 
