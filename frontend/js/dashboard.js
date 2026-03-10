@@ -58,8 +58,8 @@ function updateFAAModuleButtons() {
       btn.textContent = "View Certificate";
 
       btn.onclick = () => {
-        window.location.href = "faa-certificates.html";
-      };
+  window.location.href = "faa-certificates.html#"+module;
+};
 
       btn.disabled = false;
       return;
@@ -181,17 +181,12 @@ if (user.role === "employee" && user.type === "company") {
 
   return;
 }
+   
+const total = company?.seats?.employee?.total ?? 0;
+const used = Object.keys(company?.usedSeats || {}).length;
+const remaining = total - used;
 
-    const total = company?.seats?.employee?.total ?? 0;
-    const used = Object.keys(company.usedSeats).length;
-    const remaining = total - used;
-
-    if (remaining <= 0) {
-      showToast("No seats available.", "error");
-      return;
-    }
-
-    if (remaining <= 0) {
+if (remaining <= 0) {
   showToast("No seats available.", "error");
   return;
 }
@@ -211,6 +206,7 @@ return;
    START FAA COURSES
 ========================= */
 function startFAA(course) {
+   
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
