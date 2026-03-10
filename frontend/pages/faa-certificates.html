@@ -88,6 +88,7 @@ function loadCertificates(){
 `;
 
     list.appendChild(card);
+    generateQR(cert.id, `qr-${cert.id}`);
 
   });
 
