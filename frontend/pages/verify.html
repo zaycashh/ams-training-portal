@@ -31,10 +31,18 @@ if(cert){
 
 let moduleType = "AMS Training Module";
 
-if(cert.id.includes("-E-")) moduleType = "FMCSA Employee Awareness";
-if(cert.id.includes("-D-")) moduleType = "FMCSA DER Training";
-if(cert.id.includes("-S-")) moduleType = "FMCSA Supervisor Training";
-if(cert.id.includes("-B-")) moduleType = "FMCSA Drug & Alcohol Training";
+/* FMCSA */
+
+if(cert.id.includes("FMCSA-DER")) moduleType = "FMCSA DER Training";
+if(cert.id.includes("FMCSA-SUP")) moduleType = "FMCSA Supervisor Training";
+if(cert.id.includes("FMCSA-EMP")) moduleType = "FMCSA Employee Awareness";
+if(cert.id.includes("FMCSA-DRUG")) moduleType = "FMCSA Drug & Alcohol Training";
+
+/* FAA */
+
+if(cert.id.includes("FAA-DER")) moduleType = "FAA DER Training";
+if(cert.id.includes("FAA-SUP")) moduleType = "FAA Supervisor Training";
+if(cert.id.includes("FAA-EMP")) moduleType = "FAA Employee Awareness";
 
 const dateObj = new Date(cert.date);
 
