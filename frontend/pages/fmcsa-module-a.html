@@ -362,9 +362,11 @@ if (score >= PASS_SCORE) {
   let certId = localStorage.getItem("fmcsaModuleACertificateId");
 
   if (!certId) {
-    certId = "AMS-A-" + Date.now().toString().slice(-8);
+
+    certId = generateCertificateId("AMS-FMCSA");
     localStorage.setItem("fmcsaModuleACertificateId", certId);
-  }
+
+}
 
   // 🔥 Store Completion Date (IMPORTANT)
   localStorage.setItem("fmcsaModuleADate", Date.now());
