@@ -806,3 +806,30 @@ gap:10px;
 .quiz-progress{
 font-weight:600;
 }
+/* =========================
+   TRAINING STATUS BADGES
+========================= */
+
+.status-badge{
+display:inline-block;
+padding:4px 10px;
+font-size:12px;
+border-radius:12px;
+font-weight:600;
+margin-right:8px;
+}
+
+.status-completed{
+background:#e6f4ea;
+color:#1e7e34;
+}
+
+.status-inprogress{
+background:#fff4e5;
+color:#c77d00;
+}
+
+.status-locked{
+background:#fdecea;
+color:#c0392b;
+}
