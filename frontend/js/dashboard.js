@@ -357,7 +357,39 @@ if (user?.role === "employee") {
  updateFMCSAEmployeeButton();  
  updateFMCSAStatus();  
  updateFMCSAProgress();
+/* =========================
+   SHOW COMPLETION DATES
+========================= */
 
+const derDate = localStorage.getItem("fmcsaDERDate");
+
+if (derDate) {
+
+  const el = document.getElementById("derCompletionDate");
+
+  if (el) {
+    const date = new Date(parseInt(derDate));
+
+    el.textContent =
+      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+  }
+
+}
+
+const empDate = localStorage.getItem("fmcsaEmployeeDate");
+
+if (empDate) {
+
+  const el = document.getElementById("employeeCompletionDate");
+
+  if (el) {
+    const date = new Date(parseInt(empDate));
+
+    el.textContent =
+      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+  }
+
+}
 });
 /* =========================
    TOAST
@@ -570,16 +602,33 @@ function updateFMCSAEmployeeButton() {
   if (!btn) return;
 
   const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
+  const completed = localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 
+  /* COMPLETED */
+  if (completed) {
+
+    btn.textContent = "View Certificate";
+
+    btn.onclick = () => {
+      window.location.href = "fmcsa-certificates.html";
+    };
+
+    return;
+  }
+
+  /* NOT PURCHASED */
   if (!paid) {
 
     btn.textContent = "🔒 Locked — Purchase Required";
+
     btn.onclick = () => {
       window.location.href = "payment.html?module=fmcsa_employee";
     };
 
     return;
   }
+
+  /* PURCHASED BUT NOT DONE */
 
   btn.textContent = "Start Training";
 
