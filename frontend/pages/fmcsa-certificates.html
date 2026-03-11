@@ -41,6 +41,28 @@ font-size:15px;
 }
   
 </style>
+  /* ===================================
+CERTIFICATE REGISTRY
+=================================== */
+
+function registerCertificate(cert){
+
+let registry =
+JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+
+const exists =
+registry.find(c => c.id === cert.id);
+
+if(!exists){
+registry.push(cert);
+}
+
+localStorage.setItem(
+"amsCertificates",
+JSON.stringify(registry)
+);
+
+}
 </head>
 
 <body>
@@ -233,6 +255,16 @@ storedADate
 
 const certIdA =
 localStorage.getItem("fmcsaModuleACertificateId");
+  if(certIdA){
+
+registerCertificate({
+id: certIdA,
+name: user.fullName || user.email,
+course: "FMCSA Reasonable Suspicion Training",
+date: storedADate
+});
+
+}
 
 document.getElementById("aCertId").textContent =
 certIdA || "N/A";
@@ -278,6 +310,16 @@ storedBDate
 
 const certIdB =
 localStorage.getItem("fmcsaModuleBCertificateId");
+  if(certIdB){
+
+registerCertificate({
+id: certIdB,
+name: user.fullName || user.email,
+course: "FMCSA Drug & Alcohol Substance Abuse Training",
+date: storedBDate
+});
+
+}
 
 document.getElementById("bCertId").textContent =
 certIdB || "N/A";
