@@ -71,14 +71,13 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================================================
    5️⃣ ROLE ACCESS CONTROL
   ========================================================= */
-
-  const roleAccess = {
-  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol"],
+   const roleAccess = {
+  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol", "fmcsa-employee-training"],
   der: ["der", "fmcsa-der"],
   supervisor: ["supervisor", "fmcsa-module-a", "fmcsa-drug-alcohol"],
-  employee: ["employee"],
+  employee: ["employee", "fmcsa-employee-training"],
   owner: []
-};;
+};
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
 
