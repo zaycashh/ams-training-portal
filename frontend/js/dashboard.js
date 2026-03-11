@@ -357,11 +357,13 @@ if (user?.role === "employee") {
  updateFMCSAEmployeeButton();  
  updateFMCSAStatus();  
  updateFMCSAProgress();
+   
 /* =========================
    SHOW COMPLETION DATES + STATUS
 ========================= */
 
 const derDate = localStorage.getItem("fmcsaDERDate");
+   
 
 if (derDate) {
 
@@ -380,6 +382,28 @@ if (derDate) {
   }
 
 }
+   
+/* =========================
+MODULE A COMPLETION DATE
+========================= */
+
+const modADate = localStorage.getItem("fmcsaModuleADate");
+
+if (modADate) {
+
+  const el = document.getElementById("moduleACompletionDate");
+
+  if (el) {
+
+    const date = new Date(parseInt(modADate));
+
+    el.textContent =
+      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+
+  }
+
+}
+   
 
 const empDate = localStorage.getItem("fmcsaEmployeeDate");
 
@@ -421,6 +445,7 @@ function showToast(message, type = "info") {
 /* =========================
    FMCSA COMPLETION STATUS
 ========================= */
+
 function updateFMCSAStatus() {
 
   const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
