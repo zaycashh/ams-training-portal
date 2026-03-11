@@ -21,7 +21,7 @@ return;
 
 try{
 
-fetch("/ams-training-portal/frontend/data/certificates.json")
+const res = await fetch("../data/certificates.json");
 const certificates = await res.json();
 
 const cert = certificates.find(c => c.id === certId);
