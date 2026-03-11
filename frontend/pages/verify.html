@@ -1,41 +1,22 @@
 <script>
 
-function verifyCert(certIdFromQR){
+async function verifyCert(certId){
 
-const certId = certIdFromQR || document.getElementById("certInput")?.value?.trim();
 const result = document.getElementById("result");
 
-/* CHECK EMPTY */
-
-if(!certId){
-result.innerHTML = "Enter a certificate ID.";
+if(!result){
+console.error("Result container missing");
 return;
 }
 
-/* CHECK CERTIFICATE REGISTRY */
+try{
 
-fetch("../data/certificates.json")
-.then(res => res.json())
-.then(certificates => {
+const res = await fetch("../data/certificates.json");
+const certificates = await res.json();
 
 const cert = certificates.find(c => c.id === certId);
 
 if(cert){
-
-let moduleType = "AMS Training Module";
-
-/* FMCSA */
-
-if(cert.id.includes("FMCSA-DER")) moduleType = "FMCSA DER Training";
-if(cert.id.includes("FMCSA-SUP")) moduleType = "FMCSA Supervisor Training";
-if(cert.id.includes("FMCSA-EMP")) moduleType = "FMCSA Employee Awareness";
-if(cert.id.includes("FMCSA-DRUG")) moduleType = "FMCSA Drug & Alcohol Training";
-
-/* FAA */
-
-if(cert.id.includes("FAA-DER")) moduleType = "FAA DER Training";
-if(cert.id.includes("FAA-SUP")) moduleType = "FAA Supervisor Training";
-if(cert.id.includes("FAA-EMP")) moduleType = "FAA Employee Awareness";
 
 const dateObj = new Date(cert.date);
 
@@ -46,40 +27,39 @@ year:"numeric"
 });
 
 result.innerHTML = `
-<h3>Certificate Verified ✔</h3>
+<h2>Certificate Verified ✔</h2>
+
 <p><strong>Name:</strong> ${cert.name}</p>
-<p><strong>Course:</strong> ${moduleType}</p>
 <p><strong>Date Completed:</strong> ${formattedDate}</p>
 <p><strong>Certificate ID:</strong> ${cert.id}</p>
 `;
 
 }else{
 
-result.innerHTML = "<h3>Certificate NOT FOUND</h3>";
+result.innerHTML = `
+<h2>Certificate NOT FOUND</h2>
+`;
 
 }
 
-})
-.catch(()=>{
-result.innerHTML = "Error loading certificate registry";
-});
+}catch(err){
+
+result.innerHTML = `
+<h2>Error loading certificate registry</h2>
+`;
+
+console.error(err);
 
 }
 
-/* AUTO VERIFY FROM QR */
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", ()=>{
 
 const params = new URLSearchParams(window.location.search);
 const certId = params.get("id");
 
 if(certId){
-
-const input = document.getElementById("certInput");
-
-if(input){
-  input.value = certId;
-}
 
 verifyCert(certId);
 
@@ -88,6 +68,3 @@ verifyCert(certId);
 });
 
 </script>
-
-</body>
-</html>
