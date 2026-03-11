@@ -389,8 +389,16 @@ localStorage.setItem(ATTEMPT_KEY,attempts);
 const remaining=MAX_ATTEMPTS-attempts;
 
 if(remaining<=0){
+
 localStorage.setItem(COOLDOWN_KEY,Date.now()+COOLDOWN_MINUTES*60000);
 localStorage.setItem(ATTEMPT_KEY,0);
+
+alert("Maximum attempts reached. Quiz locked for 15 minutes.");
+
+window.location.href="dashboard.html";
+
+return;
+
 }
 
 document.getElementById("quizResult").innerHTML=
