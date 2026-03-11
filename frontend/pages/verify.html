@@ -31,10 +31,11 @@ if(cert){
 const dateObj = new Date(cert.date);
 
 const formattedDate = dateObj.toLocaleDateString("en-US",{
+timeZone: "America/New_York",
 month:"2-digit",
 day:"2-digit",
 year:"numeric"
-});
+});;
 
 result.innerHTML = `
 <h2>Certificate Verified ✔</h2>
