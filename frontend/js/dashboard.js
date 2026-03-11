@@ -403,7 +403,26 @@ if (modADate) {
   }
 
 }
-   
+   /* =========================
+MODULE B COMPLETION DATE
+========================= */
+
+const modBDate = localStorage.getItem("fmcsaModuleBDate");
+
+if (modBDate) {
+
+  const el = document.getElementById("moduleBCompletionDate");
+
+  if (el) {
+
+    const date = new Date(parseInt(modBDate));
+
+    el.textContent =
+      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+
+  }
+
+}
 
 const empDate = localStorage.getItem("fmcsaEmployeeDate");
 
