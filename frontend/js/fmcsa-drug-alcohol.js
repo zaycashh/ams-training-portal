@@ -97,30 +97,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let drugTotalPages = 0;
 
   const drugCanvas = document.getElementById("drugPdfCanvas");
-
-const drugCanvas = document.getElementById("drugPdfCanvas");
-const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
+  const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
 
 if (!drugCanvas) {
   console.error("Drug PDF canvas not found");
 }
 
   pdfjsLib.getDocument(DRUG_PDF_URL).promise
-.then(pdf => {
-  drugPdfDoc = pdf;
-  drugTotalPages = pdf.numPages;
+  .then(pdf => {
 
-  document.getElementById("drugTotalPages").textContent = drugTotalPages;
-
-  renderDrugPage(drugCurrentPage);
-})
-.catch(err => {
-  console.error("Drug PDF failed to load:", err);
-});
     drugPdfDoc = pdf;
     drugTotalPages = pdf.numPages;
+
     document.getElementById("drugTotalPages").textContent = drugTotalPages;
+
     renderDrugPage(drugCurrentPage);
+
+  })
+  .catch(err => {
+
+    console.error("Drug PDF failed to load:", err);
+
   });
 
   function renderDrugPage(pageNum) {
@@ -177,12 +174,11 @@ if (!drugCanvas) {
   let alcoholRenderTask = null;
 
   const alcoholCanvas = document.getElementById("alcoholPdfCanvas");
+  const alcoholCtx = alcoholCanvas ? alcoholCanvas.getContext("2d") : null;
 
-if (!alcoholCanvas) {
+  if (!alcoholCanvas) {
   console.error("Alcohol PDF canvas not found");
 }
-
-const alcoholCtx = alcoholCanvas.getContext("2d");
 
   pdfjsLib.getDocument(ALCOHOL_PDF_URL).promise.then(pdf => {
     alcoholPdfDoc = pdf;
