@@ -47,27 +47,24 @@ Checking certificate...
 
 <script>
 
-async function verifyCert(certId){
+document.addEventListener("DOMContentLoaded", () => {
 
 const result = document.getElementById("result");
 
-if(!result){
-console.error("Result container missing");
-return;
-}
+const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
 
-try{
+const registry =
+JSON.parse(localStorage.getItem("amsCertificates") || "[]");
 
-const res = await fetch("https://zaycashh.github.io/ams-training-portal/frontend/data/certificates.json");
-const certificates = await res.json();
-
-const cert = certificates.find(c => c.id === certId);
+const cert = registry.find(c => c.id === certId);
 
 if(cert){
 
-const dateObj = new Date(cert.date);
-
-const formattedDate = new Date(cert.date + "T00:00:00").toLocaleDateString("en-US");;
+const formattedDate =
+cert.date
+? new Date(Number(cert.date)).toLocaleDateString("en-US")
+: "N/A";
 
 result.innerHTML = `
 <h2>✔ Certificate Verified</h2>
@@ -82,24 +79,6 @@ result.innerHTML = `
 
 result.innerHTML = `<h2>❌ Certificate NOT FOUND</h2>`;
 
-}
-
-}catch(err){
-
-result.innerHTML = `<h2>Error loading certificate registry</h2>`;
-console.error(err);
-
-}
-
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
-
-if(certId){
-verifyCert(certId);
 }
 
 });
