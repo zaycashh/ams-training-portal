@@ -683,8 +683,7 @@ function gradeAlcoholQuiz() {
   /* =========================
      PASS LOGIC (CERTIFICATE)
   ========================= */
-
-  if (score >= PASS_SCORE_ALCOHOL) {
+if (score >= PASS_SCORE_ALCOHOL) {
 
   localStorage.setItem("fmcsaModuleBCompleted", "true");
 
@@ -699,20 +698,20 @@ function gradeAlcoholQuiz() {
 
     if (!localStorage.getItem(`moduleBCertRegistered_${user?.email}`)) {
 
-  if (user && typeof registerCertificate === "function") {
+      if (user && typeof registerCertificate === "function") {
 
-    registerCertificate({
-      id: certId,
-      name: user.fullName || (user.firstName + " " + user.lastName),
-      course: "FMCSA Drug & Alcohol Substance Abuse Training",
-      date: Date.now()
-    });
+        registerCertificate({
+          id: certId,
+          name: user.fullName || (user.firstName + " " + user.lastName),
+          course: "FMCSA Drug & Alcohol Substance Abuse Training",
+          date: Date.now()
+        });
 
-    localStorage.setItem(`moduleBCertRegistered_${user.email}`, "true");
+        localStorage.setItem(`moduleBCertRegistered_${user.email}`, "true");
 
+      }
+    }
   }
-
-}
 
   localStorage.setItem("fmcsaModuleBDate", Date.now());
 
