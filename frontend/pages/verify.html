@@ -1,8 +1,8 @@
 <script>
 
-function verifyCert(){
+function verifyCert(certIdFromQR){
 
-const certId = document.getElementById("certInput").value.trim();
+const certId = certIdFromQR || document.getElementById("certInput")?.value?.trim();
 const result = document.getElementById("result");
 
 /* CHECK EMPTY */
@@ -75,9 +75,13 @@ const certId = params.get("id");
 
 if(certId){
 
-document.getElementById("certInput").value = certId;
+const input = document.getElementById("certInput");
 
-verifyCert();
+if(input){
+  input.value = certId;
+}
+
+verifyCert(certId);
 
 }
 
