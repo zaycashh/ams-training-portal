@@ -67,7 +67,7 @@ if(cert){
 
 const dateObj = new Date(cert.date);
 
-const formattedDate = cert.date.split("-").reverse().join("/");
+const formattedDate = new Date(cert.date + "T00:00:00").toLocaleDateString("en-US");;
 
 result.innerHTML = `
 <h2>✔ Certificate Verified</h2>
