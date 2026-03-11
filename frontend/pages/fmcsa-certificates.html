@@ -39,9 +39,11 @@ margin:8px 0;
 cursor:pointer;
 font-size:15px;
 }
-  
 </style>
-  /* ===================================
+
+<script>
+
+/* ===================================
 CERTIFICATE REGISTRY
 =================================== */
 
@@ -63,6 +65,9 @@ JSON.stringify(registry)
 );
 
 }
+
+</script>
+
 </head>
 
 <body>
@@ -76,7 +81,6 @@ if(!user){
 window.location.replace("login.html");
 return;
 }
-
 /* CHECK PURCHASE ACCESS */
 
 const supervisorPurchased =
@@ -365,6 +369,16 @@ storedDate
 
 const certIdDER =
 localStorage.getItem("fmcsaDERCertificateId");
+  if(certIdDER){
+
+registerCertificate({
+id: certIdDER,
+name: user.fullName || user.email,
+course: "FMCSA DER Training",
+date: storedDate
+});
+
+}
 
 document.getElementById("derCertId").textContent =
 certIdDER || "N/A";
@@ -410,6 +424,16 @@ storedDate
 
 const certId =
 localStorage.getItem("fmcsaEmployeeCertificateId");
+  if(certId){
+
+registerCertificate({
+id: certId,
+name: user.fullName || user.email,
+course: "FMCSA Employee Awareness Training",
+date: storedDate
+});
+
+}
 
 document.getElementById("empCertId").textContent =
 certId || "N/A";
