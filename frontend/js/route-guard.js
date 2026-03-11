@@ -136,14 +136,14 @@ if (["der","supervisor","employee"].includes(module)) {
   "fmcsa-module-a": "paid_fmcsa",
   "fmcsa-drug-alcohol": "paid_fmcsa",
   "fmcsa-der": "paid_der_fmcsa",
-  "fmcsa-employee": "paid_employee"
+  "fmcsa-employee": "paid_employee_fmcsa"
 };
 
     const dateMap = {
   "fmcsa-module-a": "fmcsa_start_date",
   "fmcsa-drug-alcohol": "fmcsa_start_date",
   "fmcsa-der": "paid_der_fmcsa_date",
-  "fmcsa-employee": "paid_employee_date"
+  "fmcsa-employee": "paid_employee_fmcsa_date"
 };
 
     const paidKey = paymentMap[module];
