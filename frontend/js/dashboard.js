@@ -430,12 +430,43 @@ function updateFMCSAStatus() {
   const modBBadge = document.getElementById("modBBadge");
   const certBadge = document.getElementById("certBadge");
 
-  if (modA && modABadge) modABadge.classList.remove("hidden");
+  if (modABadge) {
 
-  if (modB && modBBadge) modBBadge.classList.remove("hidden");
+    if (modA) {
+      modABadge.textContent = "✔ Completed";
+      modABadge.className = "status-badge status-completed";
+    } else {
+      modABadge.textContent = "⏳ Not Started";
+      modABadge.className = "status-badge status-inprogress";
+    }
 
-  if (modA && modB && certBadge) {
-    certBadge.classList.remove("hidden");
+  }
+
+  if (modBBadge) {
+
+    if (modB) {
+      modBBadge.textContent = "✔ Completed";
+      modBBadge.className = "status-badge status-completed";
+    } else if (modA) {
+      modBBadge.textContent = "⏳ Ready to Start";
+      modBBadge.className = "status-badge status-inprogress";
+    } else {
+      modBBadge.textContent = "🔒 Locked";
+      modBBadge.className = "status-badge status-locked";
+    }
+
+  }
+
+  if (certBadge) {
+
+    if (modA && modB) {
+      certBadge.textContent = "✔ Certificate Available";
+      certBadge.className = "status-badge status-completed";
+    } else {
+      certBadge.textContent = "🔒 Locked";
+      certBadge.className = "status-badge status-locked";
+    }
+
   }
 
 }
