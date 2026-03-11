@@ -91,18 +91,20 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
-   6️⃣ PAYMENT ENFORCEMENT
-  ========================================================= */
+   6️⃣ PAYMENT ENFORCEMENT (FAA MODULES ONLY)
+========================================================= */
 
-  const paymentFlags = {
-    der: "paid_der",
-    supervisor: "paid_supervisor",
-    employee: "paid_employee"
-  };
+const paymentFlags = {
+  der: "paid_der",
+  supervisor: "paid_supervisor",
+  employee: "paid_employee"
+};
+
+if (["der","supervisor","employee"].includes(module)) {
 
   const payKey = paymentFlags[module];
 
-  if (type === "individual" && payKey) {
+  if (type === "individual") {
 
     const paid = localStorage.getItem(payKey) === "true";
 
@@ -117,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
   }
+}
 
   /* =========================================================
    7️⃣ FMCSA MODULE PAYMENT + EXPIRATION
