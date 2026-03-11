@@ -547,7 +547,7 @@ if(scorePercent >= PASS_PERCENT){
 
 }
 
-/* =========================
+/* ========================= 
    FAIL
 ========================= */
 
@@ -559,8 +559,9 @@ if(attempts >= MAX_ATTEMPTS){
   const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
   localStorage.setItem(COOLDOWN_KEY, cooldownUntil);
 
-  alert("Maximum attempts reached. 15 minute cooldown.");
-  window.location.reload();
+  alert("Maximum attempts reached. Quiz locked for 15 minutes.");
+
+  window.location.href = "dashboard.html";
   return;
 
 }
