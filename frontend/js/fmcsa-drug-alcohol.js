@@ -180,7 +180,6 @@ if (!drugCanvas) {
 
 if (!alcoholCanvas) {
   console.error("Alcohol PDF canvas not found");
-  return;
 }
 
 const alcoholCtx = alcoholCanvas.getContext("2d");
