@@ -72,10 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
    5️⃣ ROLE ACCESS CONTROL
   ========================================================= */
    const roleAccess = {
-  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol", "fmcsa-employee-training"],
+  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol", "fmcsa-employee"],
   der: ["der", "fmcsa-der"],
   supervisor: ["supervisor", "fmcsa-module-a", "fmcsa-drug-alcohol"],
-  employee: ["employee", "fmcsa-employee-training"],
+  employee: ["employee", "fmcsa-employee"],
   owner: []
 };
 
@@ -123,22 +123,25 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================================================= */
 
   if (
-    module === "fmcsa-module-a" ||
-    module === "fmcsa-drug-alcohol" ||
-    module === "fmcsa-der"
-  ) {
+  module === "fmcsa-module-a" ||
+  module === "fmcsa-drug-alcohol" ||
+  module === "fmcsa-der" ||
+  module === "fmcsa-employee"
+) {
 
     const paymentMap = {
-      "fmcsa-module-a": "paid_fmcsa",
-      "fmcsa-drug-alcohol": "paid_fmcsa",
-      "fmcsa-der": "paid_der_fmcsa"
-    };
+  "fmcsa-module-a": "paid_fmcsa",
+  "fmcsa-drug-alcohol": "paid_fmcsa",
+  "fmcsa-der": "paid_der_fmcsa",
+  "fmcsa-employee": "paid_employee"
+};
 
     const dateMap = {
-      "fmcsa-module-a": "fmcsa_start_date",
-      "fmcsa-drug-alcohol": "fmcsa_start_date",
-      "fmcsa-der": "paid_der_fmcsa_date"
-    };
+  "fmcsa-module-a": "fmcsa_start_date",
+  "fmcsa-drug-alcohol": "fmcsa_start_date",
+  "fmcsa-der": "paid_der_fmcsa_date",
+  "fmcsa-employee": "paid_employee_date"
+};
 
     const paidKey = paymentMap[module];
     const dateKey = dateMap[module];
