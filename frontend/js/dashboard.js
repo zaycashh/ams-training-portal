@@ -358,7 +358,7 @@ if (user?.role === "employee") {
  updateFMCSAStatus();  
  updateFMCSAProgress();
 /* =========================
-   SHOW COMPLETION DATES
+   SHOW COMPLETION DATES + STATUS
 ========================= */
 
 const derDate = localStorage.getItem("fmcsaDERDate");
@@ -368,10 +368,15 @@ if (derDate) {
   const el = document.getElementById("derCompletionDate");
 
   if (el) {
+
     const date = new Date(parseInt(derDate));
 
-    el.textContent =
-      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    const formatted =
+      date.toLocaleDateString("en-US",{ timeZone:"America/New_York" });
+
+    el.innerHTML =
+      `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
+
   }
 
 }
@@ -383,10 +388,15 @@ if (empDate) {
   const el = document.getElementById("employeeCompletionDate");
 
   if (el) {
+
     const date = new Date(parseInt(empDate));
 
-    el.textContent =
-      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    const formatted =
+      date.toLocaleDateString("en-US",{ timeZone:"America/New_York" });
+
+    el.innerHTML =
+      `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
+
   }
 
 }
