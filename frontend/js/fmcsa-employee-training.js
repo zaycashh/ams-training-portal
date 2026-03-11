@@ -505,25 +505,27 @@ if(scorePercent >= PASS_PERCENT){
 
     if(!localStorage.getItem(`employeeCertRegistered_${user?.email}`)){
 
-  if(user && typeof registerCertificate === "function"){
+      if(user && typeof registerCertificate === "function"){
 
-    const fullName =
-      user.fullName ||
-      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email;
+        const fullName =
+          user.fullName ||
+          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+          user.email;
 
-    registerCertificate({
-      id: certId,
-      name: fullName,
-      course: "FMCSA Employee Drug & Alcohol Awareness",
-      date: Date.now()
-    });
+        registerCertificate({
+          id: certId,
+          name: fullName,
+          course: "FMCSA Employee Drug & Alcohol Awareness",
+          date: Date.now()
+        });
 
-    localStorage.setItem(`employeeCertRegistered_${user.email}`, "true");
+        localStorage.setItem(`employeeCertRegistered_${user.email}`, "true");
+
+      }
+
+    }
 
   }
-
-}
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
 
