@@ -101,6 +101,7 @@ const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
 
 if (!drugCanvas) {
   console.error("Drug PDF canvas not found");
+  return;
 }
 
   pdfjsLib.getDocument(DRUG_PDF_URL).promise
@@ -178,6 +179,7 @@ if (!drugCanvas) {
 
   if (!alcoholCanvas) {
   console.error("Alcohol PDF canvas not found");
+  return;
 }
 
   pdfjsLib.getDocument(ALCOHOL_PDF_URL).promise.then(pdf => {
@@ -277,9 +279,16 @@ function restoreProgress() {
   const alcoholPassed = localStorage.getItem(ALCOHOL_QUIZ_KEY) === "true";
 
   if (!drugPassed) {
+
+  if (localStorage.getItem(DRUG_CONTENT_KEY) === "true") {
+    showSection("drugQuizSection");
+    initDrugQuiz();
+  } else {
     showSection("drugContentSection");
-    return;
   }
+
+  return;
+}
 
   if (drugPassed && !alcoholPassed) {
     showSection("alcoholContentSection");
