@@ -98,12 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const drugCanvas = document.getElementById("drugPdfCanvas");
 
+const drugCanvas = document.getElementById("drugPdfCanvas");
+const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
+
 if (!drugCanvas) {
   console.error("Drug PDF canvas not found");
-  return;
 }
-
-const drugCtx = drugCanvas.getContext("2d");
 
   pdfjsLib.getDocument(DRUG_PDF_URL).promise
 .then(pdf => {
