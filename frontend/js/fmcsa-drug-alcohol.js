@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let drugTotalPages = 0;
 
   const drugCanvas = document.getElementById("drugPdfCanvas");
-  const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
+const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
 
 if (!drugCanvas) {
   console.error("Drug PDF canvas not found");
