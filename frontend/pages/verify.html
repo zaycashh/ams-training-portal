@@ -1,10 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>AMS Certificate Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#f5f7fb;
+text-align:center;
+padding:60px;
+}
+
+.verify-container{
+max-width:700px;
+margin:auto;
+}
+
+.verify-card{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 4px 20px rgba(0,0,0,0.08);
+margin-top:25px;
+}
+
+</style>
+
+</head>
+
 <body>
 
-<div style="max-width:700px;margin:auto;text-align:center;padding:40px">
+<div class="verify-container">
 
-<h1>AMS Certificate Verification</h1>
+<h1>AMS Training Portal</h1>
+<h2>Certificate Verification</h2>
 
-<div id="result">Checking certificate...</div>
+<div id="result" class="verify-card">
+Checking certificate...
+</div>
 
 </div>
 
@@ -31,23 +68,24 @@ if(cert){
 const dateObj = new Date(cert.date);
 
 const formattedDate = dateObj.toLocaleDateString("en-US",{
-timeZone: "America/New_York",
+timeZone:"America/New_York",
 month:"2-digit",
 day:"2-digit",
 year:"numeric"
-});;
+});
 
 result.innerHTML = `
-<h2>Certificate Verified ✔</h2>
+<h2>✔ Certificate Verified</h2>
 
 <p><strong>Name:</strong> ${cert.name}</p>
+<p><strong>Course:</strong> ${cert.course}</p>
 <p><strong>Date Completed:</strong> ${formattedDate}</p>
 <p><strong>Certificate ID:</strong> ${cert.id}</p>
 `;
 
 }else{
 
-result.innerHTML = `<h2>Certificate NOT FOUND</h2>`;
+result.innerHTML = `<h2>❌ Certificate NOT FOUND</h2>`;
 
 }
 
@@ -66,13 +104,14 @@ const params = new URLSearchParams(window.location.search);
 const certId = params.get("id");
 
 if(certId){
-
 verifyCert(certId);
-
 }
 
 });
 
 </script>
+
+</body>
+</html>
 
 </body>
