@@ -388,6 +388,7 @@ let attempts=parseInt(localStorage.getItem(ATTEMPT_KEY))||0;
 if (score >= PASS_SCORE) {
 
   localStorage.setItem("fmcsaModuleACompleted", "true");
+  localStorage.setItem("fmcsaModuleADate", Date.now());
 
   // 🔥 Generate Certificate ID
   let certId = localStorage.getItem("fmcsaModuleACertificateId");
