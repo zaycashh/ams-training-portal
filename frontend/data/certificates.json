@@ -1,7 +1,14 @@
 [
-  {
-    "id": "AMS-DER-CERT-E10F6EFB",
-    "name": "Jose DeJesus",
-    "date": "2026-03-10"
-  }
+{
+"id":"AMS-DER-CERT-E10F6EFB",
+"name":"Jose DeJesus",
+"course":"FMCSA DER Training",
+"date":"2026-03-10"
+},
+{
+"id":"AMS-FMCSA-CERT-2B6B298B",
+"name":"Jose DeJesus",
+"course":"FMCSA Employee Drug & Alcohol Awareness",
+"date":"2026-03-11"
+}
 ]
