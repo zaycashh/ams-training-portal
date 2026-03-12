@@ -204,6 +204,30 @@ Return to Dashboard
 <div id="empQR" style="margin-top:10px;"></div>
 
 </section>
+  
+  <!-- SUPERVISOR CERTIFICATE TEMPLATE -->
+<div id="supervisorCertTemplate" class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+
+<img src="../assets/certificates/fmcsa-supervisor-template.png"
+style="width:100%;">
+
+<div id="certStudentName"
+style="position:absolute; top:330px; width:100%; text-align:center; font-size:34px; font-weight:bold;">
+</div>
+
+<div id="certCompletionDate"
+style="position:absolute; top:520px; width:100%; text-align:center; font-size:18px;">
+</div>
+
+<div id="certCertificateId"
+style="position:absolute; bottom:70px; left:140px; font-size:14px;">
+</div>
+
+<div id="certQR"
+style="position:absolute; bottom:60px; right:120px;"></div>
+
+</div>
 </main>
 
 <script>
@@ -287,7 +311,30 @@ height:128
 });
 
 }
+  
+/* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
 
+document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+
+document.getElementById("certStudentName").textContent =
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
+"User";
+
+document.getElementById("certCompletionDate").textContent =
+"Completed on " +
+new Date(Number(storedADate)).toLocaleDateString("en-US");
+
+document.getElementById("certCertificateId").textContent =
+"Certificate ID: " + certIdA;
+
+new QRCode(document.getElementById("certQR"),{
+text: verifyUrl,
+width:120,
+height:120
+});
+  
 }
 
 /* ===============================
