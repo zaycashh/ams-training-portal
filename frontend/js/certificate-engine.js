@@ -65,3 +65,39 @@ function getCertificate(certId) {
   return registry.find(c => c.id === certId);
 
 }
+/* ========================================================
+   GENERATE SUPERVISOR CERTIFICATE
+======================================================== */
+
+function generateSupervisorCertificate(){
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if(!user){
+alert("User not found");
+return;
+}
+
+const name = user.name || "Student";
+
+const date = new Date().toLocaleDateString("en-US",{
+year:"numeric",
+month:"long",
+day:"numeric"
+});
+
+let certId = localStorage.getItem("fmcsaModuleACertificateId");
+
+if(!certId){
+certId = generateCertificateId("AMS-FMCSA");
+localStorage.setItem("fmcsaModuleACertificateId",certId);
+}
+
+registerCertificate({
+id: certId,
+name: name,
+course: "FMCSA Supervisor Reasonable Suspicion Training",
+date: Date.now()
+});
+
+}
