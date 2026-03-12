@@ -213,7 +213,7 @@ style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
 style="width:100%;">
 
 <div id="certStudentName"
-style="position:absolute; top:330px; width:100%; text-align:center; font-size:34px; font-weight:bold;">
+style="position:absolute; top:250px; width:100%; text-align:center; font-size:34px; font-weight:bold;">
 </div>
 
 <div id="certCompletionDate"
@@ -331,8 +331,13 @@ new Date(Number(storedADate)).toLocaleDateString("en-US");
 document.getElementById("certCertificateId").textContent =
 "Certificate ID: " + certIdA;
 
+const verifyUrlTemplate =
+window.location.origin +
+"/ams-training-portal/frontend/pages/verify.html?id=" +
+certIdA;
+
 new QRCode(document.getElementById("certQR"),{
-text: verifyUrl,
+text: verifyUrlTemplate,
 width:120,
 height:120
 });
