@@ -213,11 +213,11 @@ style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
 style="width:100%;">
 
 <div id="certStudentName"
-style="position:absolute; top:250px; width:100%; text-align:center; font-size:34px; font-weight:bold;">
+style="position:absolute; top:230px; width:100%; text-align:center; font-size:34px; font-weight:bold;">
 </div>
 
 <div id="certCompletionDate"
-style="position:absolute; top:520px; width:100%; text-align:center; font-size:18px;">
+style="position:absolute; top:520px; left:420px; font-size:18px;">
 </div>
 
 <div id="certCertificateId"
@@ -225,7 +225,7 @@ style="position:absolute; bottom:70px; left:140px; font-size:14px;">
 </div>
 
 <div id="certQR"
-style="position:absolute; bottom:60px; right:120px;"></div>
+style="position:absolute; bottom:90px; right:150px;"></div>
 
 </div>
 </main>
@@ -321,7 +321,6 @@ user.email ||
 "User";
 
 document.getElementById("certCompletionDate").textContent =
-"Completed on " +
 new Date(Number(storedADate)).toLocaleDateString("en-US");
 
 document.getElementById("certCertificateId").textContent =
@@ -334,8 +333,8 @@ certIdA;
 
 new QRCode(document.getElementById("certQR"),{
 text: verifyUrlTemplate,
-width:120,
-height:120
+width:90,
+height:90
 });
 
 }
