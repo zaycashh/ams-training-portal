@@ -314,11 +314,6 @@ certIdA || "N/A";
 
 if(certIdA){
 
-const verifyUrlTemplate =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdA;
-
 new QRCode(document.getElementById("certQR"),{
 text: verifyUrlTemplate,
 width:90,
