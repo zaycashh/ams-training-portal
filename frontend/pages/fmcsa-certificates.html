@@ -314,8 +314,13 @@ certIdA || "N/A";
 
 if(certIdA){
 
+const verifyUrl =
+window.location.origin +
+"/ams-training-portal/frontend/pages/verify.html?id=" +
+certIdA;
+
 new QRCode(document.getElementById("certQR"),{
-text: verifyUrlTemplate,
+text: verifyUrl,
 width:90,
 height:90
 });
