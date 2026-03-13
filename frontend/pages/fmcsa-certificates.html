@@ -336,7 +336,7 @@ date: storedADate
 document.getElementById("aCertId").textContent =
 certIdA || "N/A";
 
-if(certIdA){
+  if(certIdA){
 
 const verifyUrl =
 window.location.origin +
@@ -367,18 +367,22 @@ new Date(Number(storedADate)).toLocaleDateString("en-US");
 document.getElementById("certCertificateId").textContent =
 "Certificate ID: " + certIdA;
 
+/* TEMPLATE QR */
+
 const verifyUrlTemplate =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdA;
 
-new QRCode(document.getElementById("aQR"),{
+const qrContainer = document.getElementById("certQR");
+
+qrContainer.innerHTML = "";
+
+new QRCode(qrContainer,{
 text: verifyUrlTemplate,
 width:90,
 height:90
 });
-
-}
 
 }
   
