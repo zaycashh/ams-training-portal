@@ -343,12 +343,10 @@ window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdA;
 
-const qrContainer = document.getElementById("certQR");
+/* MODULE A CARD QR */
 
-qrContainer.innerHTML = "";
-
-new QRCode(qrContainer,{
-text: verifyUrlTemplate,
+new QRCode(document.getElementById("aQR"),{
+text: verifyUrl,
 width:90,
 height:90
 });
