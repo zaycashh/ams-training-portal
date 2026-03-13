@@ -322,7 +322,11 @@ storedADate
 
 const certIdA =
 localStorage.getItem("fmcsaModuleACertificateId");
-  if(certIdA){
+
+document.getElementById("aCertId").textContent =
+certIdA || "N/A";
+
+if(certIdA){
 
 registerCertificate({
 id: certIdA,
@@ -330,13 +334,6 @@ name: user.fullName || user.email,
 course: "FMCSA Reasonable Suspicion Training",
 date: storedADate
 });
-
-}
-
-document.getElementById("aCertId").textContent =
-certIdA || "N/A";
-
-  if(certIdA){
 
 const verifyUrl =
 window.location.origin +
@@ -369,23 +366,19 @@ document.getElementById("certCertificateId").textContent =
 
 /* TEMPLATE QR */
 
-const verifyUrlTemplate =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdA;
-
 const qrContainer = document.getElementById("certQR");
 
 qrContainer.innerHTML = "";
 
 new QRCode(qrContainer,{
-text: verifyUrlTemplate,
+text: verifyUrl,
 width:90,
 height:90
 });
 
 }
-  
+
+}
 /* ===============================
 MODULE B
 =============================== */
