@@ -101,3 +101,47 @@ date: Date.now()
 });
 
 }
+
+/* ========================================================
+   GENERATE DER CERTIFICATE
+======================================================== */
+
+function generateDerCertificate(){
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if(!user){
+alert("User not found");
+return;
+}
+
+const name =
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
+"User";
+
+const date = new Date().toLocaleDateString("en-US",{
+year:"numeric",
+month:"long",
+day:"numeric"
+});
+
+let certId = localStorage.getItem("derFmcsaCertificateId");
+
+if(!certId){
+
+certId = generateCertificateId("AMS-FMCSA-DER");
+
+localStorage.setItem("derFmcsaCertificateId", certId);
+
+}
+
+registerCertificate({
+id: certId,
+name: name,
+course: "FMCSA Designated Employer Representative Training",
+date: Date.now()
+});
+
+}
