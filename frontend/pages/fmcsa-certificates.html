@@ -534,10 +534,46 @@ window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdDER;
 
+/* SMALL CARD QR */
+
 new QRCode(document.getElementById("derQR"),{
 text: verifyUrl,
-width:128,
-height:128
+width:90,
+height:90
+});
+
+/* SHOW DER CERTIFICATE TEMPLATE */
+
+document.getElementById("derCertTemplate").classList.remove("hidden");
+
+/* NAME */
+
+document.getElementById("derCertStudentName").textContent =
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
+"User";
+
+/* DATE */
+
+document.getElementById("derCertCompletionDate").textContent =
+new Date(Number(storedDate)).toLocaleDateString("en-US");
+
+/* CERT ID */
+
+document.getElementById("derCertCertificateId").textContent =
+"Certificate ID: " + certIdDER;
+
+/* TEMPLATE QR */
+
+const qrContainer = document.getElementById("derCertQR");
+
+qrContainer.innerHTML = "";
+
+new QRCode(qrContainer,{
+text: verifyUrl,
+width:90,
+height:90
 });
 
 }
