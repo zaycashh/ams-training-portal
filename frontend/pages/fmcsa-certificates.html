@@ -317,6 +317,15 @@ left:350px;
 font-size:10px;
 ">
 </div>
+  
+<div id="certCertificateIdB"
+style="
+position:absolute;
+top:485px;
+left:350px;
+font-size:10px;
+">
+</div>
 
 <!-- QR -->
 <div id="certQR"
@@ -425,6 +434,16 @@ new Date(Number(storedADate)).toLocaleDateString("en-US");
 
 document.getElementById("certCertificateId").textContent =
 "Certificate ID: " + certIdA;
+  
+const certIdB =
+localStorage.getItem("fmcsaModuleBCertificateId");
+
+if(certIdB){
+
+document.getElementById("certCertificateIdB").textContent =
+"Drug & Alcohol ID: " + certIdB;
+
+}
 
 /* TEMPLATE QR */
 
