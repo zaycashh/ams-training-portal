@@ -386,27 +386,11 @@ MODULE A
 
 if(modACompleted){
 
-document.getElementById("moduleACert").classList.remove("hidden");
-
-document.getElementById("aName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
 const storedADate =
 localStorage.getItem("fmcsaModuleADate");
 
-document.getElementById("aDate").textContent =
-storedADate
-? new Date(Number(storedADate)).toLocaleDateString("en-US")
-: "N/A";
-
 const certIdA =
 localStorage.getItem("fmcsaModuleACertificateId");
-
-document.getElementById("aCertId").textContent =
-certIdA || "N/A";
 
 if(certIdA){
 
@@ -421,14 +405,6 @@ const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdA;
-
-/* MODULE A CARD QR */
-
-new QRCode(document.getElementById("aQR"),{
-text: verifyUrl,
-width:75,
-height:75
-});
 
 /* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
 
@@ -477,25 +453,13 @@ MODULE B
 
 if(modBCompleted){
 
-document.getElementById("moduleBCert").classList.remove("hidden");
-
-document.getElementById("bName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
 const storedBDate =
 localStorage.getItem("fmcsaModuleBDate");
 
-document.getElementById("bDate").textContent =
-storedBDate
-? new Date(Number(storedBDate)).toLocaleDateString("en-US")
-: new Date().toLocaleDateString();
-
 const certIdB =
 localStorage.getItem("fmcsaModuleBCertificateId");
-  if(certIdB){
+
+if(certIdB){
 
 registerCertificate({
 id: certIdB,
@@ -505,9 +469,6 @@ date: storedBDate
 });
 
 }
-
-document.getElementById("bCertId").textContent =
-certIdB || "N/A";
 
 if(certIdB){
 
@@ -526,21 +487,9 @@ DER CERTIFICATE
 
 if(derCompleted){
 
-document.getElementById("derCert").classList.remove("hidden");
-
-document.getElementById("derName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
 const storedDate =
 localStorage.getItem("fmcsaDERDate");
 
-document.getElementById("derDate").textContent =
-storedDate
-? new Date(Number(storedDate)).toLocaleDateString("en-US")
-: "N/A";
 
 const certIdDER =
 localStorage.getItem("fmcsaDERCertificateId");
@@ -555,23 +504,12 @@ date: storedDate
 
 }
 
-document.getElementById("derCertId").textContent =
-certIdDER || "N/A";
-
 if(certIdDER){
 
 const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdDER;
-
-/* SMALL CARD QR */
-
-new QRCode(document.getElementById("derQR"),{
-text: verifyUrl,
-width:90,
-height:90
-});
 
 /* SHOW DER CERTIFICATE TEMPLATE */
 
@@ -617,27 +555,10 @@ FMCSA EMPLOYEE CERTIFICATE
 
 if(employeeCompleted){
 
-// ===============================
-// EXISTING CODE (KEEP ALL THIS)
-// ===============================
-
-document.getElementById("employeeCert").classList.remove("hidden");
-
-/* NAME */
-document.getElementById("empName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
 /* DATE */
 const storedDate =
 localStorage.getItem("fmcsaEmployeeDate");
 
-document.getElementById("empDate").textContent =
-storedDate
-? new Date(Number(storedDate)).toLocaleDateString("en-US")
-: "N/A";
 
 /* CERT ID */
 let certId =
@@ -659,24 +580,11 @@ course: "FMCSA Employee Awareness Training",
 date: storedDate
 });
 
-/* DISPLAY */
-document.getElementById("empCertId").textContent = certId;
-
 /* QR (CARD) */
 const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certId;
-
-const qrContainer = document.getElementById("empQR");
-qrContainer.innerHTML = "";
-
-new QRCode(qrContainer,{
-text: verifyUrl,
-width:120,
-height:120
-});
-
 
 // ===============================
 // 👉 ADD YOUR TEMPLATE CODE HERE
