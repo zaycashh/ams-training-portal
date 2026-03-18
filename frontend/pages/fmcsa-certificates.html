@@ -409,14 +409,16 @@ window.location.replace("dashboard.html");
 return;
 }
 // AUTO SELECT BEST CERT
-if(employeeCompleted){
-showCert("employee");
+if(modACompleted){
+showCert("supervisor");
 }
-else if(derCompleted){
+
+if(derCompleted){
 showCert("der");
 }
-else if(modACompleted){
-showCert("supervisor");
+
+if(employeeCompleted){
+showCert("employee");
 }
   
 /* ===============================
