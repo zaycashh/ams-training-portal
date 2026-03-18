@@ -734,9 +734,34 @@ width:120,
 height:120
 });
 
-}
+document.getElementById("employeeCertTemplate").classList.remove("hidden");
 
-}); 
+/* NAME */
+document.getElementById("empCertStudentName").textContent =
+user.fullName ||
+((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+user.email ||
+"User";
+
+/* DATE */
+document.getElementById("empCertCompletionDate").textContent =
+new Date(Number(storedDate)).toLocaleDateString("en-US");
+
+/* CERT ID */
+document.getElementById("empCertCertificateId").textContent =
+"Certificate ID: " + certId;
+
+/* QR (TEMPLATE) */
+const qrTemplate = document.getElementById("empCertQR");
+qrTemplate.innerHTML = "";
+
+new QRCode(qrTemplate,{
+text: verifyUrl,
+width:90,
+height:90
+});
+
+}
   
 /* RETURN BUTTON */
 
