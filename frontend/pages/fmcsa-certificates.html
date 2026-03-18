@@ -669,10 +669,13 @@ FMCSA EMPLOYEE CERTIFICATE
 
 if(employeeCompleted){
 
+// ===============================
+// EXISTING CODE (KEEP ALL THIS)
+// ===============================
+
 document.getElementById("employeeCert").classList.remove("hidden");
 
 /* NAME */
-
 document.getElementById("empName").textContent =
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
@@ -680,7 +683,6 @@ user.email ||
 "User";
 
 /* DATE */
-
 const storedDate =
 localStorage.getItem("fmcsaEmployeeDate");
 
@@ -690,23 +692,18 @@ storedDate
 : "N/A";
 
 /* CERT ID */
-
 let certId =
 localStorage.getItem("fmcsaEmployeeCertificateId");
 
 /* GENERATE IF MISSING */
-
 if(!certId){
-
 certId = "AMS-FMCSA-EMP-CERT-" +
 Math.random().toString(16).substring(2,10).toUpperCase();
 
 localStorage.setItem("fmcsaEmployeeCertificateId", certId);
-
 }
 
 /* REGISTER */
-
 registerCertificate({
 id: certId,
 name: user.fullName || user.email,
@@ -715,11 +712,9 @@ date: storedDate
 });
 
 /* DISPLAY */
-
 document.getElementById("empCertId").textContent = certId;
 
-/* QR */
-
+/* QR (CARD) */
 const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
@@ -733,6 +728,11 @@ text: verifyUrl,
 width:120,
 height:120
 });
+
+
+// ===============================
+// 👉 ADD YOUR TEMPLATE CODE HERE
+// ===============================
 
 document.getElementById("employeeCertTemplate").classList.remove("hidden");
 
@@ -761,7 +761,7 @@ width:90,
 height:90
 });
 
-}
+} // ← VERY IMPORTANT this closes employeeCompleted
   
 /* RETURN BUTTON */
 
