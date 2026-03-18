@@ -600,7 +600,7 @@ height:90
 
 }
   
-  /* ===============================
+ /* ===============================
 FMCSA EMPLOYEE CERTIFICATE
 =============================== */
 
@@ -608,11 +608,15 @@ if(employeeCompleted){
 
 document.getElementById("employeeCert").classList.remove("hidden");
 
+/* NAME */
+
 document.getElementById("empName").textContent =
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
 user.email ||
 "User";
+
+/* DATE */
 
 const storedDate =
 localStorage.getItem("fmcsaEmployeeDate");
@@ -622,9 +626,23 @@ storedDate
 ? new Date(Number(storedDate)).toLocaleDateString("en-US")
 : "N/A";
 
-const certId =
+/* CERT ID */
+
+let certId =
 localStorage.getItem("fmcsaEmployeeCertificateId");
-  if(certId){
+
+/* GENERATE IF MISSING */
+
+if(!certId){
+
+certId = "AMS-FMCSA-EMP-CERT-" +
+Math.random().toString(16).substring(2,10).toUpperCase();
+
+localStorage.setItem("fmcsaEmployeeCertificateId", certId);
+
+}
+
+/* REGISTER */
 
 registerCertificate({
 id: certId,
@@ -633,25 +651,25 @@ course: "FMCSA Employee Awareness Training",
 date: storedDate
 });
 
-}
+/* DISPLAY */
 
-document.getElementById("empCertId").textContent =
-certId || "N/A";
+document.getElementById("empCertId").textContent = certId;
 
-if(certId){
+/* QR */
 
 const verifyUrl =
 window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certId;
 
-new QRCode(document.getElementById("empQR"),{
-text: verifyUrl,
-width:128,
-height:128
-});
+const qrContainer = document.getElementById("empQR");
+qrContainer.innerHTML = "";
 
-}
+new QRCode(qrContainer,{
+text: verifyUrl,
+width:120,
+height:120
+});
 
 }
 
