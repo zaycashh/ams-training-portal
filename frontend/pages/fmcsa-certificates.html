@@ -629,8 +629,6 @@ certId;
 // 👉 EMPLOYEE CERT TEMPLATE
 // ===============================
 
-document.getElementById("employeeCertTemplate").classList.remove("hidden");
-
 /* NAME */
 document.getElementById("empCertStudentName").textContent =
 user.fullName ||
@@ -689,12 +687,10 @@ document.getElementById("tab-employee").classList.add("active");
 }
 
 if(type === "supervisor"){
-document.getElementById("supervisorCertTemplate").classList.remove("hidden");
 document.getElementById("tab-supervisor").classList.add("active");
 }
 
 if(type === "der"){
-document.getElementById("derCertTemplate").classList.remove("hidden");
 document.getElementById("tab-der").classList.add("active");
 }
 
