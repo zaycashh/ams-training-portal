@@ -54,6 +54,9 @@ font-weight:500;
 .tab-btn:hover{
 background:#142a52;
 }
+.tab-btn.active{
+background:#1e3a8a;
+}
 </style>
 
 <script>
@@ -164,11 +167,11 @@ return;
   
 <div class="cert-tabs" style="margin:20px 0; text-align:center;">
 
-<button onclick="showCert('employee')" class="tab-btn">Employee</button>
+<button onclick="showCert('employee')" id="tab-employee" class="tab-btn">Employee</button>
 
-<button onclick="showCert('supervisor')" class="tab-btn">Supervisor</button>
+<button onclick="showCert('supervisor')" id="tab-supervisor" class="tab-btn">Supervisor</button>
 
-<button onclick="showCert('der')" class="tab-btn">DER</button>
+<button onclick="showCert('der')" id="tab-der" class="tab-btn">DER</button>
 
 </div>
   
@@ -405,7 +408,18 @@ if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
 window.location.replace("dashboard.html");
 return;
 }
+// AUTO SELECT BEST CERT
+if(employeeCompleted){
+showCert("employee");
+}
+else if(derCompleted){
+showCert("der");
+}
+else if(modACompleted){
+showCert("supervisor");
+}
 
+});  
 /* ===============================
 MODULE A
 =============================== */
@@ -654,22 +668,30 @@ window.location.href="dashboard.html";
 
 function showCert(type){
 
-// hide all
+// hide all certs
 document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
 
-// show selected
+// remove active from all tabs
+document.getElementById("tab-employee").classList.remove("active");
+document.getElementById("tab-supervisor").classList.remove("active");
+document.getElementById("tab-der").classList.remove("active");
+
+// show selected + activate tab
 if(type === "employee"){
 document.getElementById("employeeCertTemplate").classList.remove("hidden");
+document.getElementById("tab-employee").classList.add("active");
 }
 
 if(type === "supervisor"){
 document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+document.getElementById("tab-supervisor").classList.add("active");
 }
 
 if(type === "der"){
 document.getElementById("derCertTemplate").classList.remove("hidden");
+document.getElementById("tab-der").classList.add("active");
 }
 
 }
