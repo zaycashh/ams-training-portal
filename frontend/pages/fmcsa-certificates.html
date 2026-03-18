@@ -39,6 +39,21 @@ margin:8px 0;
 cursor:pointer;
 font-size:15px;
 }
+
+.tab-btn{
+background:#0b1d3a;
+color:white;
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:6px;
+cursor:pointer;
+font-weight:500;
+}
+
+.tab-btn:hover{
+background:#142a52;
+}
 </style>
 
 <script>
@@ -146,6 +161,17 @@ return;
 <main class="module-container cert-container">
 
 <header class="module-header">
+  
+<div class="cert-tabs" style="margin:20px 0; text-align:center;">
+
+<button onclick="showCert('employee')" class="tab-btn">Employee</button>
+
+<button onclick="showCert('supervisor')" class="tab-btn">Supervisor</button>
+
+<button onclick="showCert('der')" class="tab-btn">DER</button>
+
+</div>
+  
 <h1>FMCSA Training Certificates</h1>
 
 <button class="btn-secondary" onclick="returnToDashboard()">
@@ -626,6 +652,27 @@ function returnToDashboard(){
 window.location.href="dashboard.html";
 }
 
+function showCert(type){
+
+// hide all
+document.getElementById("employeeCertTemplate").classList.add("hidden");
+document.getElementById("supervisorCertTemplate").classList.add("hidden");
+document.getElementById("derCertTemplate").classList.add("hidden");
+
+// show selected
+if(type === "employee"){
+document.getElementById("employeeCertTemplate").classList.remove("hidden");
+}
+
+if(type === "supervisor"){
+document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+}
+
+if(type === "der"){
+document.getElementById("derCertTemplate").classList.remove("hidden");
+}
+
+}
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
