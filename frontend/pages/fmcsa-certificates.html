@@ -662,23 +662,21 @@ height:90
 });
 /* RETURN BUTTON */
 
-function returnToDashboard(){
-window.location.href="dashboard.html";
-}
+</script>
 
 function showCert(type){
 
-// hide all certs
+// hide all
 document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
 
-// remove active from all tabs
+// remove active
 document.getElementById("tab-employee").classList.remove("active");
 document.getElementById("tab-supervisor").classList.remove("active");
 document.getElementById("tab-der").classList.remove("active");
 
-// show selected + activate tab
+// show selected
 if(type === "employee"){
 document.getElementById("employeeCertTemplate").classList.remove("hidden");
 document.getElementById("tab-employee").classList.add("active");
@@ -695,8 +693,9 @@ document.getElementById("tab-der").classList.add("active");
 }
 
 }
-</script>
 
+</script>
+  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 </body>
