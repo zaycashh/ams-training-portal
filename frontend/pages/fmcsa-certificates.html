@@ -672,7 +672,7 @@ window.location.href = "dashboard.html";
 /* TAB SWITCHER */
 function showCert(type){
 
-// hide all
+// hide all FIRST
 document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
@@ -682,17 +682,25 @@ document.getElementById("tab-employee").classList.remove("active");
 document.getElementById("tab-supervisor").classList.remove("active");
 document.getElementById("tab-der").classList.remove("active");
 
-// show selected
+// 👇 FORCE SHOW SELECTED
 if(type === "employee"){
+if(localStorage.getItem("fmcsaEmployeeCompleted") === "true"){
 document.getElementById("employeeCertTemplate").classList.remove("hidden");
+}
 document.getElementById("tab-employee").classList.add("active");
 }
 
 if(type === "supervisor"){
+if(localStorage.getItem("fmcsaModuleACompleted") === "true"){
+document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+}
 document.getElementById("tab-supervisor").classList.add("active");
 }
 
 if(type === "der"){
+if(localStorage.getItem("fmcsaDERCompleted") === "true"){
+document.getElementById("derCertTemplate").classList.remove("hidden");
+}
 document.getElementById("tab-der").classList.add("active");
 }
 
