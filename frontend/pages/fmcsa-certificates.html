@@ -411,17 +411,21 @@ if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
 window.location.replace("dashboard.html");
 return;
 }
-// AUTO SELECT BEST CERT
-if(modACompleted){
-showCert("supervisor");
-}
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
 
-if(derCompleted){
-showCert("der");
-}
-
-if(employeeCompleted){
-showCert("employee");
+if(type){
+  showCert(type);
+}else{
+  if(employeeCompleted){
+    showCert("employee");
+  }
+  else if(derCompleted){
+    showCert("der");
+  }
+  else if(modACompleted){
+    showCert("supervisor");
+  }
 }
   
 /* ===============================
