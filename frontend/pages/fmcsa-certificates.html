@@ -242,6 +242,16 @@ right:150px;
 ">
 </div>
 
+ <div style="text-align:center; margin-top:20px;">
+  <button class="btn-primary" onclick="downloadCert()">
+    Download PDF
+  </button>
+
+  <button class="btn-secondary" onclick="printCert()" style="margin-left:10px;">
+    Print
+  </button>
+</div> 
+
 </div>
   
 <!-- EMPLOYEE CERTIFICATE TEMPLATE -->
@@ -307,6 +317,16 @@ bottom:90px;
 right:150px;
 ">
 </div>
+
+ <div style="text-align:center; margin-top:20px;">
+  <button class="btn-primary" onclick="downloadCert()">
+    Download PDF
+  </button>
+
+  <button class="btn-secondary" onclick="printCert()" style="margin-left:10px;">
+    Print
+  </button>
+</div> 
 
 </div>
   
@@ -378,6 +398,16 @@ bottom:90px;
 right:150px;
 ">
 </div>
+
+ <div style="text-align:center; margin-top:20px;">
+  <button class="btn-primary" onclick="downloadCert()">
+    Download PDF
+  </button>
+
+  <button class="btn-secondary" onclick="printCert()" style="margin-left:10px;">
+    Print
+  </button>
+</div> 
 
 </div>
   
@@ -703,9 +733,44 @@ if(type === "der"){
 }
 
 }
+  
+function printCert(){
 
+  const cert = document.querySelector(
+    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
+  );
+
+  if(!cert){
+    alert("No certificate found.");
+    return;
+  }
+
+  const printWindow = window.open('', '', 'width=900,height=650');
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Print Certificate</title>
+        <style>
+          body{ margin:0; text-align:center; }
+          img{ width:100%; }
+        </style>
+      </head>
+      <body>
+        ${cert.outerHTML}
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+
+}
 </script>
+  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
 </body>
 </html>
