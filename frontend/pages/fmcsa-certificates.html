@@ -57,6 +57,21 @@ background:#142a52;
 .tab-btn.active{
 background:#1e3a8a;
 }
+  
+.cert-wrapper{
+display:flex;
+justify-content:center;
+align-items:center;
+background:white;
+padding:0;
+}
+
+.cert-wrapper img{
+width:100%;
+height:auto;
+display:block;
+}
+  
 </style>
 
 <script>
@@ -183,8 +198,9 @@ Return to Dashboard
 </header>
   
   <!-- DER CERTIFICATE TEMPLATE -->
-<div id="derCertTemplate" class="hidden"
-style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+<div id="derCertTemplate"
+class="hidden cert-wrapper"
+style="position:relative; width:100%; max-width:1000px; margin:auto;">
 
 <img src="../assets/certificates/fmcsa-der-template.png"
 style="width:100%;">
@@ -256,8 +272,8 @@ right:150px;
   
 <!-- EMPLOYEE CERTIFICATE TEMPLATE -->
 <div id="employeeCertTemplate"
-class="hidden"
-style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+class="hidden cert-wrapper"
+style="position:relative; width:100%; max-width:1000px; margin:auto;">
 
 <img src="../assets/certificates/fmcsa-employee-template.png"
 style="width:100%;">
@@ -332,9 +348,9 @@ right:150px;
   
 <!-- SUPERVISOR CERTIFICATE TEMPLATE -->
 <div id="supervisorCertTemplate"
-class="hidden"
-style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
-
+class="hidden cert-wrapper"
+style="position:relative; width:100%; max-width:1000px; margin:auto;">
+  
 <img src="../assets/certificates/fmcsa-supervisor-template.png"
 style="width:100%;">
 
@@ -785,11 +801,12 @@ function downloadCert(){
     image: { type: 'jpeg', quality: 1 },
     html2canvas: {
       scale: 4,
-      useCORS: true
+      useCORS: true,
+      scrollY: 0
     },
     jsPDF: {
-      unit: 'px',
-      format: [900, 650], // EXACT SIZE OF YOUR CERT
+      unit: 'pt',
+      format: 'letter',
       orientation: 'landscape'
     }
   };
