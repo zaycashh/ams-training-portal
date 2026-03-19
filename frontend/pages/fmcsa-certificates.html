@@ -408,9 +408,14 @@ localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 /* IF NOTHING COMPLETED RETURN */
 
 if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
-window.location.replace("dashboard.html");
-return;
+  window.location.replace("dashboard.html");
+  return;
 }
+
+/* ===============================
+URL CONTROL (FINAL)
+=============================== */
+
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type");
 
@@ -455,8 +460,6 @@ window.location.origin +
 certIdA;
 
 /* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
-
-document.getElementById("supervisorCertTemplate").classList.remove("hidden");
 
 document.getElementById("certStudentName").textContent =
 user.fullName ||
@@ -688,30 +691,6 @@ document.getElementById("derCertTemplate").classList.add("hidden");
 document.getElementById("tab-employee").classList.remove("active");
 document.getElementById("tab-supervisor").classList.remove("active");
 document.getElementById("tab-der").classList.remove("active");
-
-// 👇 FORCE SHOW SELECTED
-if(type === "employee"){
-if(localStorage.getItem("fmcsaEmployeeCompleted") === "true"){
-document.getElementById("employeeCertTemplate").classList.remove("hidden");
-}
-document.getElementById("tab-employee").classList.add("active");
-}
-
-if(type === "supervisor"){
-if(localStorage.getItem("fmcsaModuleACompleted") === "true"){
-document.getElementById("supervisorCertTemplate").classList.remove("hidden");
-}
-document.getElementById("tab-supervisor").classList.add("active");
-}
-
-if(type === "der"){
-if(localStorage.getItem("fmcsaDERCompleted") === "true"){
-document.getElementById("derCertTemplate").classList.remove("hidden");
-}
-document.getElementById("tab-der").classList.add("active");
-}
-
-}
 
 </script>
 
