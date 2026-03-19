@@ -768,7 +768,7 @@ function printCert(){
 
 }
 
- function downloadCert(){
+function downloadCert(){
 
   const cert = document.querySelector(
     "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
@@ -783,8 +783,15 @@ function printCert(){
     margin: 0,
     filename: 'AMS-Certificate.pdf',
     image: { type: 'jpeg', quality: 1 },
-    html2canvas: { scale: 3 },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+    html2canvas: {
+      scale: 4,
+      useCORS: true
+    },
+    jsPDF: {
+      unit: 'px',
+      format: [900, 650], // EXACT SIZE OF YOUR CERT
+      orientation: 'landscape'
+    }
   };
 
   html2pdf().set(opt).from(cert).save();
