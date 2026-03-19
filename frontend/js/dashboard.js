@@ -566,7 +566,7 @@ function updateFMCSDERButtonState() {
 
     derFmcsaBtn.textContent = "View DER Certificate";
     derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html";
+      window.location.href = "fmcsa-certificates.html?type=der";
     };
 
     return;
@@ -672,7 +672,7 @@ if (modA && modB) {
   certBtn.textContent = "View / Download Certificate";
 
   certBtn.onclick = () => {
-    window.location.href = "fmcsa-certificates.html";
+    window.location.href = "fmcsa-certificates.html?type=supervisor";
   };
 }
 
@@ -695,7 +695,7 @@ function updateFMCSAEmployeeButton() {
     btn.textContent = "View Certificate";
 
     btn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html";
+      window.location.href = "fmcsa-certificates.html?type=employee";
     };
 
     return;
