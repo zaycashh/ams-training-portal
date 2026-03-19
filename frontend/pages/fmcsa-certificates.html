@@ -767,6 +767,29 @@ function printCert(){
   printWindow.print();
 
 }
+
+ function downloadCert(){
+
+  const cert = document.querySelector(
+    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
+  );
+
+  if(!cert){
+    alert("No certificate found.");
+    return;
+  }
+
+  const opt = {
+    margin: 0,
+    filename: 'AMS-Certificate.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 3 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+  };
+
+  html2pdf().set(opt).from(cert).save();
+}
+  
 </script>
   
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
