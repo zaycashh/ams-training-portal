@@ -674,15 +674,13 @@ height:90
 <!-- SECOND SCRIPT (BUTTONS / TABS) -->
 <script>
 
-/* RETURN BUTTON */
 function returnToDashboard(){
-window.location.href = "dashboard.html";
+  window.location.href = "dashboard.html";
 }
 
-/* TAB SWITCHER */
 function showCert(type){
 
-// hide all FIRST
+// hide all
 document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
@@ -692,8 +690,25 @@ document.getElementById("tab-employee").classList.remove("active");
 document.getElementById("tab-supervisor").classList.remove("active");
 document.getElementById("tab-der").classList.remove("active");
 
-</script>
+// show selected
+if(type === "employee"){
+  document.getElementById("employeeCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-employee").classList.add("active");
+}
 
+if(type === "supervisor"){
+  document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-supervisor").classList.add("active");
+}
+
+if(type === "der"){
+  document.getElementById("derCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-der").classList.add("active");
+}
+
+}
+
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 </body>
