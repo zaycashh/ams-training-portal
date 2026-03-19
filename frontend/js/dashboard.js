@@ -520,7 +520,7 @@ function handleDerFmcsa() {
   const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
 
   if (completed) {
-    window.location.href = "fmcsa-certificates.html";
+    window.location.href = "fmcsa-certificates.html?type=der";
     return;
   }
 
