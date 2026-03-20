@@ -75,10 +75,21 @@ margin:15px 0 25px 0;
 }
   
 @media print {
-  .hidden {
-    display: none !important;
+  body * {
+    visibility: hidden;
   }
-} 
+
+  .cert-wrapper, .cert-wrapper * {
+    visibility: visible;
+  }
+
+  .cert-wrapper {
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+  }
+}
 </style>
 
 <script>
