@@ -757,7 +757,6 @@ function printCert(){
   const printWindow = window.open('', '', 'width=1200,height=800');
 
   printWindow.document.write(`
-  printWindow.document.write(`
   <html>
     <head>
       <title>Print Certificate</title>
@@ -795,7 +794,7 @@ function printCert(){
     </head>
     <body></body>
   </html>
-`);
+  `);
 
   printWindow.document.body.appendChild(clone);
 
@@ -806,7 +805,7 @@ function printCert(){
     printWindow.print();
   }, 500);
 }
-
+  
 function downloadCert(){
 
   const cert = document.querySelector(
