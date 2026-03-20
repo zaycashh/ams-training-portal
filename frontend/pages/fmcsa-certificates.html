@@ -218,7 +218,7 @@ Return to Dashboard
   <!-- DER CERTIFICATE TEMPLATE -->
 <div id="derCertTemplate"
 class="hidden cert-wrapper"
-style="position:relative; width:100%; max-width:1000px; margin:auto;">
+style="position:relative; width:100%; margin:0;"
 
 <img src="../assets/certificates/fmcsa-der-template.png"
 style="width:100%;">
@@ -290,8 +290,7 @@ right:150px;
 <!-- EMPLOYEE CERTIFICATE TEMPLATE -->
 <div id="employeeCertTemplate"
 class="hidden cert-wrapper"
-style="position:relative; width:100%; max-width:1000px; margin:auto;">
-
+style="position:relative; width:100%; margin:0;"
 <img src="../assets/certificates/fmcsa-employee-template.png"
 style="width:100%;">
 
@@ -359,8 +358,7 @@ right:150px;
 <!-- SUPERVISOR CERTIFICATE TEMPLATE -->
 <div id="supervisorCertTemplate"
 class="hidden cert-wrapper"
-style="position:relative; width:100%; max-width:1000px; margin:auto;">
-  
+style="position:relative; width:100%; margin:0;"  
 <img src="../assets/certificates/fmcsa-supervisor-template.png"
 style="width:100%;">
 
@@ -792,7 +790,6 @@ function printCert(){
   .cert-wrapper{
     position:relative;
     width:100%;
-    max-width:100%;
   }
 
   .cert-wrapper div{
@@ -807,13 +804,6 @@ function printCert(){
 
 </head>
 <body></body>
-
-html, body{
-  width:100%;
-  height:100%;
-  margin:0;
-  padding:0;
-}
 </html>
 `);
 
@@ -841,17 +831,18 @@ function downloadCert(){
     return;
   }
 
-  // CLONE so we don't mess UI
+  // CLONE
   const clone = cert.cloneNode(true);
   clone.classList.remove("hidden");
 
-  // TEMP container
+  // CONTAINER (IMPORTANT)
   const container = document.createElement("div");
   container.style.position = "fixed";
-  container.style.top = "-9999px";
+  container.style.top = "0";
   container.style.left = "0";
-  container.style.width = "1056px";
+  container.style.width = "1056px"; // LANDSCAPE WIDTH
   container.style.background = "white";
+  container.style.zIndex = "9999";
 
   container.appendChild(clone);
   document.body.appendChild(container);
@@ -867,14 +858,17 @@ function downloadCert(){
     },
     jsPDF: {
       unit: 'px',
-      format: [1056, 816], // EXACT LANDSCAPE SIZE
+      format: [1056, 816],
       orientation: 'landscape'
     }
   };
 
-  html2pdf().set(opt).from(clone).save().then(() => {
-    document.body.removeChild(container);
-  });
+  // WAIT FOR RENDER (KEY FIX)
+  setTimeout(() => {
+    html2pdf().set(opt).from(container).save().then(() => {
+      document.body.removeChild(container);
+    });
+  }, 500);
 }
   
 </script>
