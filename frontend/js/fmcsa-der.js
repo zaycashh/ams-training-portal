@@ -314,6 +314,7 @@ if (submitBtn) {
     if (scorePercent >= DER_PASS_PERCENT) {
 
   localStorage.setItem("fmcsaDERCompleted", "true");
+  localStorage.setItem("fmcsaDERDate", Date.now());     
 
   localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
