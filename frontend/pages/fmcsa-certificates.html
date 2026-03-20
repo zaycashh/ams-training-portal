@@ -57,6 +57,27 @@ background:#142a52;
 .tab-btn.active{
 background:#1e3a8a;
 }
+  .print-mode * {
+  visibility: hidden;
+}
+
+.print-mode #employeeCertTemplate,
+.print-mode #employeeCertTemplate *,
+.print-mode #supervisorCertTemplate,
+.print-mode #supervisorCertTemplate *,
+.print-mode #derCertTemplate,
+.print-mode #derCertTemplate * {
+  visibility: visible;
+}
+
+.print-mode #employeeCertTemplate,
+.print-mode #supervisorCertTemplate,
+.print-mode #derCertTemplate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
 </style>
 
 <script>
@@ -166,6 +187,10 @@ return;
 <header class="module-header">
   
 <h1>FMCSA Training Certificates</h1>
+  
+<button class="btn-primary" onclick="printCert()">
+🖨 Print
+</button>
 
 <button class="btn-secondary" onclick="returnToDashboard()">
 Return to Dashboard
@@ -686,6 +711,25 @@ if(type === "der"){
 
 }
 
+function printCert(){
+
+  const cert = document.querySelector(
+    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
+  );
+
+  if(!cert){
+    alert("No certificate found.");
+    return;
+  }
+
+  document.body.classList.add("print-mode");
+
+  setTimeout(() => {
+    window.print();
+    document.body.classList.remove("print-mode");
+  }, 100);
+}  
+  
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
