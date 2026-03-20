@@ -40,53 +40,22 @@ cursor:pointer;
 font-size:15px;
 }
 
+.tab-btn{
+background:#0b1d3a;
+color:white;
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:6px;
+cursor:pointer;
+font-weight:500;
+}
+
 .tab-btn:hover{
 background:#142a52;
 }
 .tab-btn.active{
 background:#1e3a8a;
-}
-  
-.cert-wrapper{
-position:relative;
-background:white;
-padding:0;
-}
-
-.cert-wrapper img{
-width:100%;
-height:auto;
-display:block;
-}
-  
-.cert-actions{
-text-align:center;
-margin-top:20px;
-width:100%;
-}
-  
-.cert-toolbar{
-display:flex;
-justify-content:flex-end;
-gap:10px;
-margin:15px 0 25px 0;
-}
-  
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .cert-wrapper, .cert-wrapper * {
-    visibility: visible;
-  }
-
-  .cert-wrapper {
-    position:absolute;
-    left:0;
-    top:0;
-    width:100%;
-  }
 }
 </style>
 
@@ -196,19 +165,17 @@ return;
 
 <header class="module-header">
   
-<h1>FMCSA Training Certificates</h1>
-  
-<div class="cert-toolbar">
+<div class="cert-tabs" style="margin:20px 0; text-align:center;">
 
-  <button class="btn-primary" onclick="downloadCert()">
-    ⬇ Download
-  </button>
+<button onclick="showCert('employee')" id="tab-employee" class="tab-btn">Employee</button>
 
-  <button class="btn-secondary" onclick="printCert()">
-    🖨 Print
-  </button>
+<button onclick="showCert('supervisor')" id="tab-supervisor" class="tab-btn">Supervisor</button>
+
+<button onclick="showCert('der')" id="tab-der" class="tab-btn">DER</button>
 
 </div>
+  
+<h1>FMCSA Training Certificates</h1>
 
 <button class="btn-secondary" onclick="returnToDashboard()">
 Return to Dashboard
@@ -216,9 +183,8 @@ Return to Dashboard
 </header>
   
   <!-- DER CERTIFICATE TEMPLATE -->
-<div id="derCertTemplate"
-class="hidden cert-wrapper"
-style="position:relative; width:100%; margin:0;"
+<div id="derCertTemplate" class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
 
 <img src="../assets/certificates/fmcsa-der-template.png"
 style="width:100%;">
@@ -239,10 +205,8 @@ filter:drop-shadow(0px 3px 4px rgba(0,0,0,0.35));
 style="
 position:absolute;
 top:184px;
-left:50%;
-transform:translateX(-50%);
+width:100%;
 text-align:center;
-white-space:nowrap;
 font-size:32px;
 font-weight:bold;
 ">
@@ -253,8 +217,7 @@ font-weight:bold;
 style="
 position:absolute;
 top:306px;
-left:50%;
-transform:translateX(105px);
+left:535px;
 font-size:16px;
 white-space:nowrap;
 ">
@@ -265,10 +228,7 @@ white-space:nowrap;
 style="
 position:absolute;
 top:470px;
-left:50%;
-transform:translateX(-50%);
-text-align:center;
-width:100%;
+left:350px;
 font-size:10px;
 ">
 </div>
@@ -282,15 +242,13 @@ right:150px;
 ">
 </div>
 
-<div style="text-align:center; margin-top:20px;">
-</div>
-  
 </div>
   
 <!-- EMPLOYEE CERTIFICATE TEMPLATE -->
 <div id="employeeCertTemplate"
-class="hidden cert-wrapper"
-style="position:relative; width:100%; margin:0;"
+class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+
 <img src="../assets/certificates/fmcsa-employee-template.png"
 style="width:100%;">
 
@@ -350,15 +308,13 @@ right:150px;
 ">
 </div>
 
-<div style="text-align:center; margin-top:20px;">
-</div>
-  
 </div>
   
 <!-- SUPERVISOR CERTIFICATE TEMPLATE -->
 <div id="supervisorCertTemplate"
-class="hidden cert-wrapper"
-style="position:relative; width:100%; margin:0;"  
+class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+
 <img src="../assets/certificates/fmcsa-supervisor-template.png"
 style="width:100%;">
 
@@ -421,9 +377,6 @@ position:absolute;
 bottom:90px;
 right:150px;
 ">
-</div>
-
-<div style="text-align:center; margin-top:20px;"> 
 </div>
 
 </div>
@@ -728,153 +681,31 @@ document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
 
+// remove active
+document.getElementById("tab-employee").classList.remove("active");
+document.getElementById("tab-supervisor").classList.remove("active");
+document.getElementById("tab-der").classList.remove("active");
+
 // show selected
 if(type === "employee"){
   document.getElementById("employeeCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-employee").classList.add("active");
 }
 
 if(type === "supervisor"){
   document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-supervisor").classList.add("active");
 }
 
 if(type === "der"){
   document.getElementById("derCertTemplate").classList.remove("hidden");
+  document.getElementById("tab-der").classList.add("active");
 }
 
 }
-  
-function printCert(){
 
-  const cert = document.querySelector(
-    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
-  );
-
-  if(!cert){
-    alert("No certificate found.");
-    return;
-  }
-
-  // clone ONLY active cert
-  const clone = cert.cloneNode(true);
-  clone.classList.remove("hidden");
-
-  const printWindow = window.open('', '', 'width=1200,height=800');
-
-  printWindow.document.open();
-
-  printWindow.document.write(`
-<html>
-<head>
-<title>Print Certificate</title>
-
-<style>
-  @page {
-    size: landscape;
-    margin: 0;
-  }
-
-  html, body{
-    width:100%;
-    height:100%;
-    margin:0;
-    padding:0;
-  }
-
-  body{
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
-
-  .cert-wrapper{
-    position:relative;
-    width:100%;
-  }
-
-  .cert-wrapper div{
-    position:absolute;
-  }
-
-  img{
-    width:100%;
-    display:block;
-  }
-</style>
-
-</head>
-<body></body>
-</html>
-`);
-
-  // inject ONLY the cert
-  printWindow.document.body.innerHTML = "";
-  printWindow.document.body.appendChild(clone);
-
-  printWindow.document.close();
-
-  // wait for QR + images
-  setTimeout(() => {
-    printWindow.focus();
-    printWindow.print();
-  }, 600);
-}
-  
-function downloadCert(){
-
-  const cert = document.querySelector(
-    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
-  );
-
-  if(!cert){
-    alert("No certificate found.");
-    return;
-  }
-
-  // CLONE
-  const clone = cert.cloneNode(true);
-  clone.classList.remove("hidden");
-
-  // CONTAINER (IMPORTANT)
-  const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.top = "0";
-  container.style.left = "0";
-  container.style.width = "1056px"; // LANDSCAPE WIDTH
-  container.style.background = "white";
-  container.style.zIndex = "9999";
-
-  container.appendChild(clone);
-  document.body.appendChild(container);
-
-  const opt = {
-    margin: 0,
-    filename: 'AMS-Certificate.pdf',
-    image: { type: 'jpeg', quality: 1 },
-    html2canvas: {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: "#ffffff"
-    },
-    jsPDF: {
-      unit: 'px',
-      format: [1056, 816],
-      orientation: 'landscape'
-    }
-  };
-
-  // WAIT FOR RENDER (KEY FIX)
-  setTimeout(() => {
-    html2pdf().set(opt).from(container).save().then(() => {
-      document.body.removeChild(container);
-    });
-  }, 500);
-}
-  
 </script>
-  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
+
 </body>
 </html>
