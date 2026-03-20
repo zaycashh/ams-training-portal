@@ -757,42 +757,40 @@ function printCert(){
 
   const printWindow = window.open('', '', 'width=1200,height=800');
 
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Print Certificate</title>
+printWindow.document.write(`
+  <html>
+    <head>
+      <title>Print Certificate</title>
 
-        <style>
-          body{
-            margin:0;
-            background:white;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-          }
+      <style>
+        body{
+          margin:0;
+          background:white;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+        }
 
-          .cert-wrapper{
-            position:relative;
-            width:1000px;
-          }
+        .cert-wrapper{
+          position:relative;
+          width:1000px;
+        }
 
-          img{
-            width:100%;
-            display:block;
-          }
+        .cert-wrapper *{
+          position:absolute;
+        }
 
-          /* IMPORTANT: preserve absolute elements */
-          div{
-            position:absolute;
-          }
-        </style>
+        img{
+          width:100%;
+          display:block;
+        }
+      </style>
 
-      </head>
-      <body>
-      </body>
-    </html>
-  `);
+    </head>
+    <body>
+    </body>
+  </html>
+`);
 
   printWindow.document.body.appendChild(clone);
 
