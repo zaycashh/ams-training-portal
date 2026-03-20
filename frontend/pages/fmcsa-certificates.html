@@ -735,19 +735,32 @@ function printCert(){
     return;
   }
 
-  const printWindow = window.open('', '', 'width=900,height=650');
+  const printWindow = window.open('', '', 'width=1000,height=700');
 
   printWindow.document.write(`
     <html>
       <head>
         <title>Print Certificate</title>
         <style>
-          body{ margin:0; text-align:center; }
-          img{ width:100%; }
+          body{
+            margin:0;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            background:white;
+          }
+          .cert-wrapper{
+            position:relative;
+            width:1000px;
+          }
+          img{
+            width:100%;
+          }
         </style>
       </head>
       <body>
-        ${cert.outerHTML}
+        ${cert.innerHTML}
       </body>
     </html>
   `);
@@ -755,7 +768,6 @@ function printCert(){
   printWindow.document.close();
   printWindow.focus();
   printWindow.print();
-
 }
 
 function downloadCert(){
