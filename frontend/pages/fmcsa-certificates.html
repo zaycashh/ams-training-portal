@@ -741,35 +741,49 @@ function printCert(){
     return;
   }
 
-  const printWindow = window.open('', '', 'width=1000,height=700');
+  // CLONE FULL NODE (keeps QR + seal + positions)
+  const clone = cert.cloneNode(true);
+
+  const printWindow = window.open('', '', 'width=1200,height=800');
 
   printWindow.document.write(`
     <html>
       <head>
         <title>Print Certificate</title>
+
         <style>
           body{
             margin:0;
+            background:white;
             display:flex;
             justify-content:center;
             align-items:center;
             height:100vh;
-            background:white;
           }
+
           .cert-wrapper{
             position:relative;
             width:1000px;
           }
+
           img{
             width:100%;
+            display:block;
+          }
+
+          /* IMPORTANT: preserve absolute elements */
+          div{
+            position:absolute;
           }
         </style>
+
       </head>
       <body>
-        ${cert.innerHTML}
       </body>
     </html>
   `);
+
+  printWindow.document.body.appendChild(clone);
 
   printWindow.document.close();
   printWindow.focus();
