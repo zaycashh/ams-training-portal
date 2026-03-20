@@ -165,16 +165,6 @@ return;
 
 <header class="module-header">
   
-<div class="cert-tabs" style="margin:20px 0; text-align:center;">
-
-<button onclick="showCert('employee')" id="tab-employee" class="tab-btn">Employee</button>
-
-<button onclick="showCert('supervisor')" id="tab-supervisor" class="tab-btn">Supervisor</button>
-
-<button onclick="showCert('der')" id="tab-der" class="tab-btn">DER</button>
-
-</div>
-  
 <h1>FMCSA Training Certificates</h1>
 
 <button class="btn-secondary" onclick="returnToDashboard()">
@@ -681,25 +671,17 @@ document.getElementById("employeeCertTemplate").classList.add("hidden");
 document.getElementById("supervisorCertTemplate").classList.add("hidden");
 document.getElementById("derCertTemplate").classList.add("hidden");
 
-// remove active
-document.getElementById("tab-employee").classList.remove("active");
-document.getElementById("tab-supervisor").classList.remove("active");
-document.getElementById("tab-der").classList.remove("active");
-
 // show selected
 if(type === "employee"){
   document.getElementById("employeeCertTemplate").classList.remove("hidden");
-  document.getElementById("tab-employee").classList.add("active");
 }
 
 if(type === "supervisor"){
   document.getElementById("supervisorCertTemplate").classList.remove("hidden");
-  document.getElementById("tab-supervisor").classList.add("active");
 }
 
 if(type === "der"){
   document.getElementById("derCertTemplate").classList.remove("hidden");
-  document.getElementById("tab-der").classList.add("active");
 }
 
 }
