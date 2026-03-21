@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "der") return;
 
-  if (localStorage.getItem("paid_der") !== "true") {
+  if (localStorage.getItem(`paid_der_${USER_EMAIL}`) !== "true") {
 
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
