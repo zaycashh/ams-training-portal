@@ -20,8 +20,33 @@
   // If no module defined, nothing to guard
   if (!module) return;
 
-  const paidKey = `paid_${module}`;
-  const isPaid = localStorage.getItem(paidKey) === "true";
+  let isPaid = false;
+
+// FAA MODULES
+if (module === "der") {
+  isPaid = localStorage.getItem("paid_der") === "true";
+}
+
+if (module === "supervisor") {
+  isPaid = localStorage.getItem("paid_supervisor") === "true";
+}
+
+if (module === "employee") {
+  isPaid = localStorage.getItem("paid_employee") === "true";
+}
+
+// FMCSA MODULES
+if (module === "fmcsa-der") {
+  isPaid = localStorage.getItem("paid_der_fmcsa") === "true";
+}
+
+if (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") {
+  isPaid = localStorage.getItem("paid_fmcsa") === "true";
+}
+
+if (module === "fmcsa-employee") {
+  isPaid = localStorage.getItem("paid_employee_fmcsa") === "true";
+}
 
   // 🔥 COMPANY SEAT SUPPORT (EMPLOYEE ONLY)
   let seatAssigned = false;
