@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   completeBtn.addEventListener("click", () => {
 
     // mark content complete
-    localStorage.setItem("derContentCompleted", "true");
+    localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
 
     // hide content
     document.getElementById("contentSection").classList.add("hidden");
@@ -265,13 +265,23 @@ function populateDerCertificate() {
 
   /* Populate certificate fields */
 
-  document.getElementById("certName").textContent =
-    user.fullName || (user.firstName + " " + user.lastName);
+// NAME
+document.getElementById("certName").textContent =
+  user.fullName || (user.firstName + " " + user.lastName);
 
-  document.getElementById("certDate").textContent =
-    new Date().toLocaleDateString();
+// DATE (FIXED + SAVED ONCE)
+let storedDate = localStorage.getItem(`derDate_${USER_EMAIL}`);
 
-  document.getElementById("certVerify").textContent = code;
+if (!storedDate) {
+  storedDate = Date.now();
+  localStorage.setItem(`derDate_${USER_EMAIL}`, storedDate);
+}
+
+document.getElementById("certDate").textContent =
+  new Date(Number(storedDate)).toLocaleDateString("en-US");
+
+// CERT ID
+document.getElementById("certVerify").textContent = code;
 
   /* Generate QR */
 
