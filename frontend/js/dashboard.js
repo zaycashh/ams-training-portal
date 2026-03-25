@@ -119,8 +119,10 @@ function updateFAACompletionDates() {
   if (derDate) {
     const el = document.getElementById("derCompletionDate");
     if (el) {
-      el.textContent =
-        new Date(Number(derDate)).toLocaleDateString("en-US");
+      el.innerHTML = `
+        <span class="status-badge status-completed">✔ Completed</span>
+        ${new Date(Number(derDate)).toLocaleDateString("en-US")}
+      `;
     }
   }
 
@@ -129,8 +131,10 @@ function updateFAACompletionDates() {
   if (supDate) {
     const el = document.getElementById("supervisorCompletionDate");
     if (el) {
-      el.textContent =
-        new Date(Number(supDate)).toLocaleDateString("en-US");
+      el.innerHTML = `
+        <span class="status-badge status-completed">✔ Completed</span>
+        ${new Date(Number(supDate)).toLocaleDateString("en-US")}
+      `;
     }
   }
 
@@ -139,8 +143,10 @@ function updateFAACompletionDates() {
   if (empDate) {
     const el = document.getElementById("employeeCompletionDate");
     if (el) {
-      el.textContent =
-        new Date(Number(empDate)).toLocaleDateString("en-US");
+      el.innerHTML = `
+        <span class="status-badge status-completed">✔ Completed</span>
+        ${new Date(Number(empDate)).toLocaleDateString("en-US")}
+      `;
     }
   }
 
