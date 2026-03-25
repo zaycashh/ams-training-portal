@@ -151,7 +151,6 @@ function updateFAACompletionDates() {
   }
 
 }
-
 /* =========================
    EMPLOYEE SEAT STATUS
 ========================= */
