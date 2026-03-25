@@ -55,7 +55,7 @@ function updateFAAModuleButtons() {
 
     if (completed) {
 
-      btn.textContent = "View Certificate";
+      btn.textContent = "🎓 View Certificate";
 
       btn.onclick = () => {
   window.location.href = "faa-certificates.html#"+module;
@@ -694,7 +694,7 @@ function updateFMCSAEmployeeButton() {
   /* COMPLETED */
   if (completed) {
 
-    btn.textContent = "View Certificate";
+    btn.textContent = "🎓 View Certificate";
 
     btn.onclick = () => {
       window.location.href = "fmcsa-certificates.html?type=employee";
