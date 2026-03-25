@@ -68,11 +68,10 @@ function updateFAAModuleButtons() {
     const paidFAA =
   localStorage.getItem(config.paidKey) === "true";
 
-const paidFMCSA =
-  module === "der" &&
-  localStorage.getItem("paid_der_fmcsa") === "true";
+const paidFAA =
+  localStorage.getItem(config.paidKey) === "true";
 
-if (paidFAA || paidFMCSA) {
+if (paidFAA) {
 
   btn.textContent = "Start Training";
 
