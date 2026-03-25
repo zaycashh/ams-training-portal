@@ -64,10 +64,7 @@ function updateFAAModuleButtons() {
       btn.disabled = false;
       return;
     }
-
-    const paidFAA =
-  localStorage.getItem(config.paidKey) === "true";
-
+     
 const paidFAA =
   localStorage.getItem(config.paidKey) === "true";
 
