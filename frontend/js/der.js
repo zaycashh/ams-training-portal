@@ -107,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
+     localStorage.setItem(`derTrainingDate_${USER_EMAIL}`, Date.now());
 
     lockToDerCertificate();
     return;
