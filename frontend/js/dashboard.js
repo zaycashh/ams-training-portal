@@ -74,13 +74,15 @@ const paidFMCSA =
 
 if (paidFAA || paidFMCSA) {
 
-      btn.textContent = "Start Training";
+  btn.textContent = "Start Training";
 
-      btn.onclick = () => startFAA(module);
+  btn.onclick = () => {
+    window.location.href = config.start;
+  };
 
-      btn.disabled = false;
-      return;
-    }
+  btn.disabled = false;
+  return;
+}
 
     btn.textContent = "🔒 Locked — Purchase Required";
 
