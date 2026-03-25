@@ -107,6 +107,46 @@ function hasAccess(course) {
 }
 
 /* =========================
+   COMPLETION DATES
+========================= */
+function updateFAACompletionDates() {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  /* DER */
+  const derDate = localStorage.getItem(`derTrainingDate_${user.email}`);
+  if (derDate) {
+    const el = document.getElementById("derCompletionDate");
+    if (el) {
+      el.textContent =
+        new Date(Number(derDate)).toLocaleDateString("en-US");
+    }
+  }
+
+  /* SUPERVISOR */
+  const supDate = localStorage.getItem(`supervisorTrainingDate_${user.email}`);
+  if (supDate) {
+    const el = document.getElementById("supervisorCompletionDate");
+    if (el) {
+      el.textContent =
+        new Date(Number(supDate)).toLocaleDateString("en-US");
+    }
+  }
+
+  /* EMPLOYEE */
+  const empDate = localStorage.getItem(`employeeTrainingDate_${user.email}`);
+  if (empDate) {
+    const el = document.getElementById("employeeCompletionDate");
+    if (el) {
+      el.textContent =
+        new Date(Number(empDate)).toLocaleDateString("en-US");
+    }
+  }
+
+}
+
+/* =========================
    EMPLOYEE SEAT STATUS
 ========================= */
 function getEmployeeSeatStatus() {
@@ -349,6 +389,7 @@ if (user?.role === "employee") {
   }
 
  updateFAAModuleButtons();
+ updateFAACompletionDates();  
  updateFMCSATimer();
  updateFMCSAModuleButtons();
  updateFMCSDERButtonState();
