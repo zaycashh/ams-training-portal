@@ -300,7 +300,7 @@ document.getElementById("certName").textContent = displayName;
       "/ams-training-portal/frontend/pages/verify.html?id=" +
       code;
 
-    new QRCode(qrBox, {
+       new QRCode(qrBox, {
       text: verifyURL,
       width: 128,
       height: 128
@@ -308,4 +308,5 @@ document.getElementById("certName").textContent = displayName;
 
   }
 
+}
 }
