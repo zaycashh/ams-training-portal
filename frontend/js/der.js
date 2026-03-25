@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (localStorage.getItem(DER_COMPLETED_KEY) === "true") {
-     localStorage.setItem(`derTrainingDate_${USER_EMAIL}`, Date.now());
 
     lockToDerCertificate();
     return;
@@ -204,6 +203,10 @@ function handleDerQuizResult(score, total) {
 function finishDerTraining() {
 
   localStorage.setItem(DER_COMPLETED_KEY, "true");
+
+  // ✅ SAVE DATE HERE (CORRECT PLACE)
+  localStorage.setItem(`derTrainingDate_${USER_EMAIL}`, Date.now());
+
   lockToDerCertificate();
 
 }
