@@ -86,8 +86,6 @@ return;
 ========================= */
 
 if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
-   localStorage.setItem(`employeeTrainingDate_${USER_EMAIL}`, Date.now());
-
 lockToCertificate();
 return;
 
@@ -241,9 +239,11 @@ Retry Quiz
 
 function finishEmployeeTraining(){
 
-localStorage.setItem(EMPLOYEE_COMPLETED_KEY,"true");
+  localStorage.setItem(EMPLOYEE_COMPLETED_KEY,"true");
 
-lockToCertificate();
+  localStorage.setItem(`employeeTrainingDate_${USER_EMAIL}`, Date.now());
+
+  lockToCertificate();
 
 }
 
