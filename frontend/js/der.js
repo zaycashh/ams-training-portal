@@ -127,16 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   completeBtn.addEventListener("click", () => {
 
-    // mark content complete
-    localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
+  // mark content complete
+  localStorage.setItem(DER_CONTENT_DONE_KEY, "true");
 
-    // hide content
-    document.getElementById("contentSection").classList.add("hidden");
+  // go through your main navigation system
+  showSection("quiz");
 
-    // show quiz
-    document.getElementById("quizSection").classList.remove("hidden");
-
-  });
+});
 
 });
 /* =========================
