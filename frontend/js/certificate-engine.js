@@ -34,6 +34,9 @@ function registerCertificate(data) {
 
   if (!exists) {
 
+    // ✅ attach email (needed for unified system)
+    data.email = user.email;
+
     registry.push(data);
 
     localStorage.setItem(
@@ -44,7 +47,6 @@ function registerCertificate(data) {
   }
 
 }
-
 
 /* =========================================================
    GET CERTIFICATE
