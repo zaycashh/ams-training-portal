@@ -206,6 +206,10 @@ function finishSupervisorTraining() {
   }
 
   localStorage.setItem(SUPERVISOR_COMPLETED_KEY, "true");
+   localStorage.setItem(
+  `supervisorTrainingDate_${USER_EMAIL}`,
+  Date.now()
+);
 
   lockToSupervisorCertificate();
 
