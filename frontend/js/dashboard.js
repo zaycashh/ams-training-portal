@@ -442,8 +442,10 @@ if (modADate) {
 
     const date = new Date(parseInt(modADate));
 
-    el.textContent =
-      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    el.innerHTML = `
+  <span class="status-badge status-completed">✔ Completed</span>
+  ${date.toLocaleDateString("en-US")}
+`;
 
   }
 
@@ -462,8 +464,10 @@ if (modBDate) {
 
     const date = new Date(parseInt(modBDate));
 
-    el.textContent =
-      date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    el.innerHTML = `
+  <span class="status-badge status-completed">✔ Completed</span>
+  ${date.toLocaleDateString("en-US")}
+`;
 
   }
 
