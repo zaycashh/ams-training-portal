@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>My Certificates | AMS Training Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="../css/main.css" />
+</head>
 
+<body>
+
+<header class="portal-header">
+  <h1>My Certificates</h1>
+</header>
+
+<main class="dashboard-container">
+
+  <div id="certList" class="modules-grid"></div>
+
+</main>
+
+<script src="../js/certificate-engine.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  if(!user) return;
+
+  const certs = JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+
+  const container = document.getElementById("certList");
+
+  const myCerts = certs.filter(c => c.email === user.email);
+
+  if(myCerts.length === 0){
+    container.innerHTML = "<p>No certificates yet.</p>";
+    return;
+  }
+
+  myCerts.forEach(cert => {
+
+    const div = document.createElement("div");
+    div.className = "module-card";
+
+    div.innerHTML = `
+      <h3>${cert.course}</h3>
+      <p><strong>Name:</strong> ${cert.name}</p>
+      <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString("en-US")}</p>
+      <p><strong>ID:</strong> ${cert.id}</p>
+
+      <button class="btn-primary" onclick="verifyCert('${cert.id}')">
+        Verify Certificate
+      </button>
+    `;
+
+    container.appendChild(div);
+
+  });
+
+});
+
+function verifyCert(id){
+  window.location.href = "verify.html?id=" + id;
+}
+</script>
+
+</body>
+</html>
