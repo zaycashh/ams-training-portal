@@ -412,7 +412,7 @@ const derDate = localStorage.getItem("fmcsaDERDate");
 
 if (derDate) {
 
-  const el = document.getElementById("derCompletionDate");
+  const el = document.getElementById("derFmcsaCompletionDate")
 
   if (el) {
 
@@ -477,7 +477,7 @@ const empDate = localStorage.getItem("fmcsaEmployeeDate");
 
 if (empDate) {
 
-  const el = document.getElementById("employeeCompletionDate");
+  const el = document.getElementById("employeeFmcsaCompletionDate")
 
   if (el) {
 
