@@ -57,8 +57,8 @@ function updateFAAModuleButtons() {
 
       btn.textContent = "🎓 View Certificate";
 
-      btn.onclick = () => {
-  window.location.href = "faa-certificates.html#"+module;
+   btn.onclick = () => {
+  window.location.href = "certificates.html#"+module;
 };
 
       btn.disabled = false;
@@ -568,7 +568,7 @@ function handleDerFmcsa() {
   const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
 
   if (completed) {
-    window.location.href = "fmcsa-certificates.html?type=der";
+    window.location.href = "certificates.html#der";
     return;
   }
 
@@ -577,6 +577,7 @@ function handleDerFmcsa() {
   } else {
     window.location.href = "payment.html?module=der_fmcsa";
   }
+
 }
 
 function updateFMCSAProgress() {
@@ -614,8 +615,8 @@ function updateFMCSDERButtonState() {
 
     derFmcsaBtn.textContent = "View DER Certificate";
     derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=der";
-    };
+      window.location.href = "certificates.html#der";
+};
 
     return;
   }
@@ -720,8 +721,8 @@ if (modA && modB) {
   certBtn.textContent = "View / Download Certificate";
 
   certBtn.onclick = () => {
-    window.location.href = "fmcsa-certificates.html?type=supervisor";
-  };
+  window.location.href = "certificates.html#supervisor";
+};
 }
 
 }
@@ -743,8 +744,8 @@ function updateFMCSAEmployeeButton() {
     btn.textContent = "🎓 View Certificate";
 
     btn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=employee";
-    };
+    window.location.href = "certificates.html#employee";
+};
 
     return;
   }
