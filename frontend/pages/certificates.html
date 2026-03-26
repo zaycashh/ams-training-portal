@@ -10,31 +10,23 @@
 <body>
 
 <header class="portal-header">
-
   <div class="header-inner">
-
     <h1>My Certificates</h1>
-
     <div class="module-controls">
       <button class="btn-secondary" onclick="goDashboard()">
         Return to Dashboard
       </button>
     </div>
-
   </div>
-
 </header>
 
 <main class="dashboard-container">
-
   <div id="certList" class="modules-grid"></div>
-
 </main>
 
 <script src="../js/certificate-engine.js"></script>
 
 <script>
-  
 document.addEventListener("DOMContentLoaded", () => {
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
@@ -46,27 +38,57 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("certList");
 
   // detect user access
-const hasFMCSA = localStorage.getItem("paid_fmcsa") === "true";
-const hasFAA = localStorage.getItem("paid_der") === "true"
-            || localStorage.getItem("paid_supervisor") === "true"
-            || localStorage.getItem("paid_employee") === "true";
+  const hasFMCSA = localStorage.getItem("paid_fmcsa") === "true";
+  const hasFAA =
+    localStorage.getItem("paid_der") === "true" ||
+    localStorage.getItem("paid_supervisor") === "true" ||
+    localStorage.getItem("paid_employee") === "true";
 
-// filter certificates
-const myCerts = certs.filter(cert => {
-
-  if (hasFMCSA && cert.course.includes("FMCSA")) return true;
-  if (hasFAA && !cert.course.includes("FMCSA")) return true;
-
-  return false;
-
-});
+  // filter certificates
+  const myCerts = certs.filter(cert => {
+    if (hasFMCSA && cert.course.includes("FMCSA")) return true;
+    if (hasFAA && !cert.course.includes("FMCSA")) return true;
+    return false;
+  });
 
   if(myCerts.length === 0){
     container.innerHTML = "<p>No certificates yet.</p>";
     return;
   }
 
+  /* ===============================
+     COMBINE MODULE A + B
+  =============================== */
+
+  const combined = [];
+  let hasSupervisor = false;
+
   myCerts.forEach(cert => {
+
+    if (
+      cert.course.includes("FMCSA") &&
+      (cert.course.includes("Reasonable") || cert.course.includes("Drug"))
+    ) {
+
+      if (!hasSupervisor) {
+        combined.push({
+          ...cert,
+          course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training"
+        });
+        hasSupervisor = true;
+      }
+
+    } else {
+      combined.push(cert);
+    }
+
+  });
+
+  /* ===============================
+     RENDER CARDS
+  =============================== */
+
+  combined.forEach(cert => {
 
     const div = document.createElement("div");
     div.className = "module-card";
@@ -91,11 +113,11 @@ const myCerts = certs.filter(cert => {
 function verifyCert(id){
   window.location.href = "verify.html?id=" + id;
 }
-  
+
 function goDashboard(){
   window.location.href = "dashboard.html";
 }
-  
+
 function openCertificate(id){
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
@@ -109,7 +131,7 @@ function openCertificate(id){
     return;
   }
 
-  // ✅ ROUTE BASED ON TYPE
+  // route correctly
   if(cert.course.includes("FMCSA")){
     window.location.href = "fmcsa-certificates.html?id=" + id;
   } else {
