@@ -458,24 +458,56 @@ if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
 }
 
 /* ===============================
-URL CONTROL (FINAL)
+URL CONTROL (STEP 1 FIX)
 =============================== */
 
 const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
 const type = params.get("type");
 
-if(type){
-  showCert(type);
-}else{
-  if(employeeCompleted){
+let selectedCert = null;
+
+/* LOAD FROM REGISTRY IF ID EXISTS */
+if(certId){
+
+  const registry =
+    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+
+  selectedCert = registry.find(c => c.id === certId);
+
+  if(!selectedCert){
+    alert("Certificate not found");
+    return;
+  }
+
+  /* FORCE TEMPLATE BASED ON CERT */
+  if(selectedCert.course.includes("Employee")){
     showCert("employee");
   }
-  else if(derCompleted){
+  else if(selectedCert.course.includes("DER")){
     showCert("der");
   }
-  else if(modACompleted){
+  else{
     showCert("supervisor");
   }
+
+}else{
+
+  /* OLD FALLBACK (KEEP FOR NOW) */
+  if(type){
+    showCert(type);
+  }else{
+    if(employeeCompleted){
+      showCert("employee");
+    }
+    else if(derCompleted){
+      showCert("der");
+    }
+    else if(modACompleted){
+      showCert("supervisor");
+    }
+  }
+
 }
   
 /* ===============================
