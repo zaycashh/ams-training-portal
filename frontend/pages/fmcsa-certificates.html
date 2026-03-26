@@ -507,13 +507,10 @@ if(selectedCert){
 MODULE A
 =============================== */
 
-if(modACompleted && (!selectedCert || selectedCert.course.includes("Reasonable"))){
-
-const storedADate =
-selectedCert ? selectedCert.date : localStorage.getItem("fmcsaModuleADate");
-
-const certIdA =
-selectedCert ? selectedCert.id : localStorage.getItem("fmcsaModuleACertificateId");
+if(selectedCert && selectedCert.course.includes("Reasonable")){
+  
+const storedADate = selectedCert.date;
+const certIdA = selectedCert.id;
 
 if(certIdA){
 
@@ -532,7 +529,7 @@ certIdA;
 /* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
 
 document.getElementById("certStudentName").textContent =
-selectedCert?.name ||
+selectedCert.name
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
 user.email ||
