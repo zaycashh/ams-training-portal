@@ -77,8 +77,8 @@ const myCerts = certs.filter(cert => {
       <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString("en-US")}</p>
       <p><strong>ID:</strong> ${cert.id}</p>
 
-      <button class="btn-primary" onclick="verifyCert('${cert.id}')">
-        Verify Certificate
+      <button class="btn-primary" onclick="openCertificate('${cert.id}')">
+        View Certificate
       </button>
     `;
 
@@ -95,7 +95,10 @@ function verifyCert(id){
 function goDashboard(){
   window.location.href = "dashboard.html";
 }
-
+  
+function openCertificate(id){
+  window.location.href = "fmcsa-certificates.html?id=" + id;
+}
 </script>
 
 </body>
