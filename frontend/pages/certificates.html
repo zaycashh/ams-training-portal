@@ -22,16 +22,18 @@
 <script src="../js/certificate-engine.js"></script>
 
 <script>
+  
 document.addEventListener("DOMContentLoaded", () => {
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if(!user) return;
 
-  const certs = JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+  const key = `amsCertificates_${user.email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
   const container = document.getElementById("certList");
 
-  const myCerts = certs.filter(c => c.email === user.email);
+  const myCerts = certs;
 
   if(myCerts.length === 0){
     container.innerHTML = "<p>No certificates yet.</p>";
