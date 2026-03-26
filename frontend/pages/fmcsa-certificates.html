@@ -520,7 +520,7 @@ if(certIdA){
 registerCertificate({
 id: certIdA,
 name: user.fullName || user.email,
-course: "FMCSA Reasonable Suspicion Training",
+course: "FMCSA Supervisor Reasonable Suspicion Training",
 date: storedADate
 });
 
@@ -544,8 +544,7 @@ new Date(Number(storedADate)).toLocaleDateString("en-US");
 document.getElementById("certCertificateId").textContent =
 "Certificate ID: " + certIdA;
   
-const certIdB =
-selectedCert ? selectedCert.id : localStorage.getItem("fmcsaModuleBCertificateId");
+const certIdB = localStorage.getItem("fmcsaModuleBCertificateId");
 
 if(certIdB){
 
