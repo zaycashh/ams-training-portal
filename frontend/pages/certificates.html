@@ -10,7 +10,19 @@
 <body>
 
 <header class="portal-header">
-  <h1>My Certificates</h1>
+
+  <div class="header-inner">
+
+    <h1>My Certificates</h1>
+
+    <div class="module-controls">
+      <button class="btn-secondary" onclick="goDashboard()">
+        Back to Dashboard
+      </button>
+    </div>
+
+  </div>
+
 </header>
 
 <main class="dashboard-container">
@@ -79,6 +91,11 @@ const myCerts = certs.filter(cert => {
 function verifyCert(id){
   window.location.href = "verify.html?id=" + id;
 }
+  
+function goDashboard(){
+  window.location.href = "dashboard.html";
+}
+
 </script>
 
 </body>
