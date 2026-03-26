@@ -97,7 +97,25 @@ function goDashboard(){
 }
   
 function openCertificate(id){
-  window.location.href = "fmcsa-certificates.html?id=" + id;
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  const key = `amsCertificates_${user.email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const cert = certs.find(c => c.id === id);
+
+  if(!cert){
+    alert("Certificate not found");
+    return;
+  }
+
+  // ✅ ROUTE BASED ON TYPE
+  if(cert.course.includes("FMCSA")){
+    window.location.href = "fmcsa-certificates.html?id=" + id;
+  } else {
+    window.location.href = "faa-certificates.html?id=" + id;
+  }
+
 }
 </script>
 
