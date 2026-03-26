@@ -119,8 +119,24 @@ CERTIFICATE REGISTRY
 function registerCertificate(cert){
 
 let registry =
-JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+function registerCertificate(cert){
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if(!user) return;
+
+  const key = `amsCertificates_${user.email}`;
+
+  let registry = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const exists = registry.find(c => c.id === cert.id);
+
+  if(!exists){
+    registry.push(cert);
+  }
+
+  localStorage.setItem(key, JSON.stringify(registry));
+}
+  
 const exists =
 registry.find(c => c.id === cert.id);
 
@@ -551,7 +567,7 @@ document.getElementById("certCertificateId").textContent =
 "Certificate ID: " + certIdA;
   
 const certIdB =
-localStorage.getItem("fmcsaModuleBCertificateId");
+selectedCert ? selectedCert.id : localStorage.getItem("fmcsaModuleBCertificateId");
 
 if(certIdB){
 
