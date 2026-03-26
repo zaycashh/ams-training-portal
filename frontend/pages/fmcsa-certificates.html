@@ -462,11 +462,41 @@ URL CONTROL (FINAL)
 =============================== */
 
 const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
 const type = params.get("type");
+  let selectedCert = null;
 
-if(type){
+if(certId){
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const key = `amsCertificates_${user.email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+  selectedCert = certs.find(c => c.id === certId);
+
+  if(!selectedCert){
+    alert("Certificate not found");
+    return;
+  }
+}
+
+if(selectedCert){
+
+  if(selectedCert.course.includes("Employee")){
+    showCert("employee");
+  }
+  else if(selectedCert.course.includes("DER")){
+    showCert("der");
+  }
+  else{
+    showCert("supervisor");
+  }
+
+}else if(type){
+
   showCert(type);
+
 }else{
+
   if(employeeCompleted){
     showCert("employee");
   }
@@ -476,19 +506,20 @@ if(type){
   else if(modACompleted){
     showCert("supervisor");
   }
+
 }
   
 /* ===============================
 MODULE A
 =============================== */
 
-if(modACompleted){
+if(modACompleted && (!selectedCert || selectedCert.course.includes("Reasonable"))){
 
 const storedADate =
-localStorage.getItem("fmcsaModuleADate");
+selectedCert ? selectedCert.date : localStorage.getItem("fmcsaModuleADate");
 
 const certIdA =
-localStorage.getItem("fmcsaModuleACertificateId");
+selectedCert ? selectedCert.id : localStorage.getItem("fmcsaModuleACertificateId");
 
 if(certIdA){
 
@@ -507,6 +538,7 @@ certIdA;
 /* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
 
 document.getElementById("certStudentName").textContent =
+selectedCert?.name ||
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
 user.email ||
@@ -547,13 +579,13 @@ height:90
 MODULE B
 =============================== */
 
-if(modBCompleted){
-
+if(modBCompleted && (!selectedCert || selectedCert.course.includes("Drug"))){
+  
 const storedBDate =
-localStorage.getItem("fmcsaModuleBDate");
+selectedCert ? selectedCert.date : localStorage.getItem("fmcsaModuleBDate");
 
 const certIdB =
-localStorage.getItem("fmcsaModuleBCertificateId");
+selectedCert ? selectedCert.id : localStorage.getItem("fmcsaModuleBCertificateId");
 
 if(certIdB){
 
@@ -581,14 +613,14 @@ certIdB;
 DER CERTIFICATE
 =============================== */
 
-if(derCompleted){
-
+if(derCompleted && (!selectedCert || selectedCert.course.includes("DER"))){
+  
 const storedDate =
-localStorage.getItem("fmcsaDERDate");
-
+selectedCert ? selectedCert.date : localStorage.getItem("fmcsaDERDate");
 
 const certIdDER =
-localStorage.getItem("fmcsaDERCertificateId");
+selectedCert ? selectedCert.id : localStorage.getItem("fmcsaDERCertificateId");
+  
   if(certIdDER){
 
 registerCertificate({
@@ -610,6 +642,7 @@ certIdDER;
 /* NAME */
 
 document.getElementById("derCertStudentName").textContent =
+selectedCert?.name ||
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
 user.email ||
@@ -645,16 +678,11 @@ height:90
 FMCSA EMPLOYEE CERTIFICATE
 =============================== */
 
-if(employeeCompleted){
+if(employeeCompleted && (!selectedCert || selectedCert.course.includes("Employee"))){
+  
+const storedDate = selectedCert ? selectedCert.date : localStorage.getItem("fmcsaEmployeeDate");
 
-/* DATE */
-const storedDate =
-localStorage.getItem("fmcsaEmployeeDate");
-
-
-/* CERT ID */
-let certId =
-localStorage.getItem("fmcsaEmployeeCertificateId");
+let certId = selectedCert ? selectedCert.id : localStorage.getItem("fmcsaEmployeeCertificateId");
 
 /* GENERATE IF MISSING */
 if(!certId){
@@ -684,6 +712,7 @@ certId;
 
 /* NAME */
 document.getElementById("empCertStudentName").textContent =
+selectedCert?.name ||
 user.fullName ||
 ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
 user.email ||
