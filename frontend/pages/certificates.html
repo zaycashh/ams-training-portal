@@ -33,7 +33,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const container = document.getElementById("certList");
 
-  const myCerts = certs;
+  // detect user access
+const hasFMCSA = localStorage.getItem("paid_fmcsa") === "true";
+const hasFAA = localStorage.getItem("paid_der") === "true"
+            || localStorage.getItem("paid_supervisor") === "true"
+            || localStorage.getItem("paid_employee") === "true";
+
+// filter certificates
+const myCerts = certs.filter(cert => {
+
+  if (hasFMCSA && cert.course.includes("FMCSA")) return true;
+  if (hasFAA && !cert.course.includes("FMCSA")) return true;
+
+  return false;
+
+});
 
   if(myCerts.length === 0){
     container.innerHTML = "<p>No certificates yet.</p>";
