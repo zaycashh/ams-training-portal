@@ -113,7 +113,13 @@ myCerts.forEach(cert => {
     div.className = "module-card";
 
     div.innerHTML = `
-      <h3>${cert.course}</h3>
+      <h3>
+${
+  cert.course.includes("Employee")
+    ? "FMCSA Employee Drug & Alcohol Awareness Training"
+    : cert.course
+}
+</h3>
       <p><strong>Name:</strong> ${cert.name}</p>
       <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString("en-US")}</p>
       <p><strong>ID:</strong> ${cert.id}</p>
