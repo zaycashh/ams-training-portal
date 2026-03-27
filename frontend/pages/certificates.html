@@ -60,29 +60,48 @@ document.addEventListener("DOMContentLoaded", () => {
      COMBINE MODULE A + B
   =============================== */
 
-  const combined = [];
-  let hasSupervisor = false;
+const combined = [];
+let hasSupervisor = false;
 
-  myCerts.forEach(cert => {
+myCerts.forEach(cert => {
 
-    if (
-      cert.course.includes("FMCSA") &&
-      (cert.course.includes("Reasonable") || cert.course.includes("Drug"))
-    ) {
+  const isFMCSA = cert.course.includes("FMCSA");
 
-      if (!hasSupervisor) {
-        combined.push({
-          ...cert,
-          course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training"
-        });
-        hasSupervisor = true;
-      }
+  const isModuleA = cert.course.includes("Reasonable Suspicion");
+  const isModuleB = cert.course.includes("Substance Abuse"); // 👈 IMPORTANT
 
-    } else {
-      combined.push(cert);
+  const isEmployee = cert.course.includes("Employee");
+  const isDER = cert.course.includes("DER");
+
+  // 🔥 ONLY combine TRUE Module A + B
+  if (isFMCSA && (isModuleA || isModuleB)) {
+
+    if (!hasSupervisor) {
+      combined.push({
+        ...cert,
+        course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training"
+      });
+      hasSupervisor = true;
     }
 
-  });
+  }
+
+  // ✅ KEEP EMPLOYEE SAFE (THIS FIXES YOUR ISSUE)
+  else if (isEmployee) {
+    combined.push(cert);
+  }
+
+  // ✅ KEEP DER SAFE
+  else if (isDER) {
+    combined.push(cert);
+  }
+
+  // ✅ EVERYTHING ELSE (FAA etc.)
+  else {
+    combined.push(cert);
+  }
+
+});
 
   /* ===============================
      RENDER CARDS
