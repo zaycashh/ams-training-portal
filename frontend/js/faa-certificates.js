@@ -1,5 +1,5 @@
 /* =========================================================
-   AMS CERTIFICATE PAGE LOADER
+   FAA CERTIFICATE PAGE LOADER (CLEAN)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,20 +19,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const registry =
     JSON.parse(localStorage.getItem(key) || "[]");
 
-  if (!registry.length) {
+  /* 🔥 FILTER FAA ONLY */
+  const faaCerts = registry.filter(cert =>
+    cert.course && cert.course.includes("FAA")
+  );
 
-    container.innerHTML = "<p>No certificates found.</p>";
+  if (!faaCerts.length) {
+    container.innerHTML = "<p>No FAA certificates found.</p>";
     return;
-
   }
 
-  registry.forEach(cert => {
+  faaCerts.forEach(cert => {
 
     const card = document.createElement("div");
     card.className = "certificate-card";
 
     card.innerHTML = `
-      <h3>${cert.course || "AMS Training Certificate"}</h3>
+      <h3>${cert.course}</h3>
       <p><strong>Name:</strong> ${cert.name || user.email}</p>
       <p><strong>Certificate ID:</strong> ${cert.id}</p>
       <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
