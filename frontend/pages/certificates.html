@@ -61,9 +61,82 @@ document.addEventListener("DOMContentLoaded", () => {
   =============================== */
 
 const combined = [];
-let hasSupervisor = false;
+let hasSupervisorFMCSA = false;
+let hasFAADER = false;
 
 myCerts.forEach(cert => {
+
+  const isFMCSA = cert.course.includes("FMCSA");
+  const isFAA = cert.course.includes("FAA");
+
+  const isModuleA = cert.course.includes("Reasonable Suspicion");
+  const isModuleB = cert.course.includes("Substance Abuse");
+
+  const isEmployee = cert.course.includes("Employee");
+  const isDER = cert.course.includes("DER");
+
+  /* ===============================
+     FMCSA (LEAVE WORKING)
+  =============================== */
+  if (isFMCSA && (isModuleA || isModuleB)) {
+
+    if (!hasSupervisorFMCSA) {
+      combined.push({
+        ...cert,
+        course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training"
+      });
+      hasSupervisorFMCSA = true;
+    }
+
+  }
+
+  /* ===============================
+     FAA DER (REMOVE DUPLICATES)
+  =============================== */
+  else if (isFAA && isDER) {
+
+    if (!hasFAADER) {
+      combined.push({
+        ...cert,
+        course: "FAA DER Training"
+      });
+      hasFAADER = true;
+    }
+
+  }
+
+  /* ===============================
+     FAA SUPERVISOR
+  =============================== */
+  else if (isFAA && isModuleA) {
+
+    combined.push({
+      ...cert,
+      course: "FAA Supervisor Training"
+    });
+
+  }
+
+  /* ===============================
+     FAA EMPLOYEE
+  =============================== */
+  else if (isFAA && isEmployee) {
+
+    combined.push({
+      ...cert,
+      course: "FAA Employee Training"
+    });
+
+  }
+
+  /* ===============================
+     EVERYTHING ELSE SAFE
+  =============================== */
+  else {
+    combined.push(cert);
+  }
+
+});
 
   const isFMCSA = cert.course.includes("FMCSA");
 
