@@ -1,5 +1,5 @@
 /* =========================================================
-   FAA CERTIFICATE PAGE LOADER (CLEAN)
+   FAA CERTIFICATE PAGE LOADER (FIXED)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,9 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const registry =
     JSON.parse(localStorage.getItem(key) || "[]");
 
-  /* 🔥 FILTER FAA ONLY */
+  /* 🔥 FAA ONLY */
   const faaCerts = registry.filter(cert =>
-    cert.course && cert.course.includes("FAA")
+    cert.course && !cert.course.includes("FMCSA")
   );
 
   if (!faaCerts.length) {
@@ -31,15 +31,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   faaCerts.forEach(cert => {
 
+    let title = "FAA Training";
+
+    /* ===============================
+       DETECT TYPE
+    =============================== */
+
+    if (cert.course.includes("DER")) {
+      title = "FAA DER Training";
+    }
+    else if (cert.course.includes("Reasonable")) {
+      title = "FAA Supervisor Training";
+    }
+    else if (cert.course.includes("Employee")) {
+      title = "FAA Employee Training";
+    }
+
     const card = document.createElement("div");
     card.className = "certificate-card";
 
     card.innerHTML = `
-      <h3>${cert.course}</h3>
+      <h3>${title}</h3>
       <p><strong>Name:</strong> ${cert.name || user.email}</p>
-      <p><strong>Certificate ID:</strong> ${cert.id}</p>
       <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
-      <div id="qr-${cert.id}"></div>
+      <p><strong>ID:</strong> ${cert.id}</p>
+
+      <button class="btn-primary" onclick="openFAACert('${cert.id}')">
+        View Certificate
+      </button>
+
+      <div id="qr-${cert.id}" style="margin-top:10px;"></div>
     `;
 
     container.appendChild(card);
@@ -49,3 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+/* =========================================================
+   OPEN FAA CERT (FIXED ROUTING)
+========================================================= */
+
+function openFAACert(id){
+  window.location.href = "faa-certificates.html?id=" + id;
+}
