@@ -138,44 +138,6 @@ myCerts.forEach(cert => {
 
 });
 
-  const isFMCSA = cert.course.includes("FMCSA");
-
-  const isModuleA = cert.course.includes("Reasonable Suspicion");
-  const isModuleB = cert.course.includes("Substance Abuse"); // 👈 IMPORTANT
-
-  const isEmployee = cert.course.includes("Employee");
-  const isDER = cert.course.includes("DER");
-
-  // 🔥 ONLY combine TRUE Module A + B
-  if (isFMCSA && (isModuleA || isModuleB)) {
-
-    if (!hasSupervisor) {
-      combined.push({
-        ...cert,
-        course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training"
-      });
-      hasSupervisor = true;
-    }
-
-  }
-
-  // ✅ KEEP EMPLOYEE SAFE (THIS FIXES YOUR ISSUE)
-  else if (isEmployee) {
-    combined.push(cert);
-  }
-
-  // ✅ KEEP DER SAFE
-  else if (isDER) {
-    combined.push(cert);
-  }
-
-  // ✅ EVERYTHING ELSE (FAA etc.)
-  else {
-    combined.push(cert);
-  }
-
-});
-
   /* ===============================
      RENDER CARDS
   =============================== */
