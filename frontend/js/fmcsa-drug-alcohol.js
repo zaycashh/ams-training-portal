@@ -2,8 +2,7 @@
    FMCSA DRUG & ALCOHOL MODULE (ENTERPRISE VERSION)
    Mirrors Supervisor Architecture
 ========================================================= */
-const MODULE_B_CERT_ID_KEY = "fmcsaModuleBCertificateId";
-
+const MODULE_B_CERT_ID_KEY = `fmcsaModuleBCertificateId_${email}`;
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 const email = user?.email || "guest";
 
@@ -697,14 +696,14 @@ function gradeAlcoholQuiz() {
   ========================= */
 if (score >= PASS_SCORE_ALCOHOL) {
 
-  localStorage.setItem("fmcsaModuleBCompleted", "true");
+  localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
 
-  let certId = localStorage.getItem("fmcsaModuleBCertificateId");
+  let certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
   if (!certId) {
 
     certId = generateCertificateId("AMS-FMCSA");
-    localStorage.setItem("fmcsaModuleBCertificateId", certId);
+    localStorage.setItem(`fmcsaModuleBCertificateId_${email}`, certId);
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
