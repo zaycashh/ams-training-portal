@@ -1,3 +1,6 @@
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const email = user?.email || "guest";
+
 const program = localStorage.getItem("amsProgram") || "faa";
 /* =========================
    COURSE KEYS
@@ -532,7 +535,7 @@ function showToast(message, type = "info") {
 
 function updateFMCSAStatus() {
 
-  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
+  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
   const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
 
   const modABadge = document.getElementById("modABadge");
