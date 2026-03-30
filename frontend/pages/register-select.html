@@ -188,6 +188,16 @@ btnFMCSA.onclick = () => {
 
 function goRegister(type){
 
+  const program = selectedProgram === "FAA" ? "faa" : "fmcsa";
+
+  // 🔥 SAVE PROGRAM
+  localStorage.setItem("amsProgram", program);
+
+  // 🚀 REDIRECT
+  window.location.href = "register-" + type + ".html?program=" + program;
+
+}
+
 </script>
   
 </body>
