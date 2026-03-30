@@ -77,7 +77,7 @@
 
     <button class="btn-primary"
       style="padding:12px 22px; font-size:14px;"
-      onclick="window.location.href='register-company.html'">
+      onclick="goRegister('company')">
       Register as Company Owner
     </button>
   </div>
@@ -107,7 +107,7 @@
 
       <button class="btn-primary"
         style="padding:12px 20px; font-size:14px;"
-        onclick="window.location.href='register-employee.html'">
+        onclick="goRegister('employee')">
         Register as Employee
       </button>
     </div>
@@ -134,7 +134,7 @@
 
       <button class="btn-primary"
         style="padding:12px 20px; font-size:14px;"
-        onclick="window.location.href='register-individual.html'">
+        onclick="goRegister('individual')">
         Register as Individual
       </button>
     </div>
@@ -166,6 +166,37 @@
   </div>
 
 </section>
+  
+<script>
 
+let selectedProgram = "FAA";
+
+const btnFAA = document.getElementById("btnFAA");
+const btnFMCSA = document.getElementById("btnFMCSA");
+
+btnFAA.onclick = () => {
+  selectedProgram = "FAA";
+  btnFAA.classList.add("active");
+  btnFMCSA.classList.remove("active");
+};
+
+btnFMCSA.onclick = () => {
+  selectedProgram = "FMCSA";
+  btnFMCSA.classList.add("active");
+  btnFAA.classList.remove("active");
+};
+
+function goRegister(type){
+
+  if(selectedProgram === "FAA"){
+    window.location.href = "register-" + type + ".html?program=faa";
+  } else {
+    window.location.href = "register-" + type + ".html?program=fmcsa";
+  }
+
+}
+
+</script>
+  
 </body>
 </html>
