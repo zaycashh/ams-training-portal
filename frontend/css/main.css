@@ -833,3 +833,23 @@ color:#c77d00;
 background:#fdecea;
 color:#c0392b;
 }
+.reg-type-toggle{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:20px 0;
+}
+
+.reg-toggle{
+  padding:10px 18px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#dce3ef;
+  font-weight:600;
+}
+
+.reg-toggle.active{
+  background:#0b1d3a;
+  color:#fff;
+}
