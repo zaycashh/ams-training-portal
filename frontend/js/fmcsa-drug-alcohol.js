@@ -53,20 +53,24 @@ document.addEventListener("DOMContentLoaded", () => {
    /* =========================
      FMCSA EXPIRATION CHECK
   ========================= */
-  if (isFMCSAExpired()) {
+if (isFMCSAExpired()) {
 
   // 🔥 Clear module progress per user
-localStorage.removeItem(`fmcsaModuleACompleted_${email}`);
-localStorage.removeItem(`fmcsaModuleBCompleted_${email}`);
+  localStorage.removeItem(`fmcsaModuleACompleted_${email}`);
+  localStorage.removeItem(`fmcsaModuleBCompleted_${email}`);
 
-localStorage.removeItem(`fmcsaDrugQuizPassed_${email}`);
-localStorage.removeItem(`fmcsaAlcoholQuizPassed_${email}`);
+  localStorage.removeItem(`fmcsaDrugQuizPassed_${email}`);
+  localStorage.removeItem(`fmcsaAlcoholQuizPassed_${email}`);
 
-localStorage.removeItem(`fmcsaDrugContentCompleted_${email}`);
-localStorage.removeItem(`fmcsaAlcoholContentCompleted_${email}`);
+  localStorage.removeItem(`fmcsaDrugContentCompleted_${email}`);
+  localStorage.removeItem(`fmcsaAlcoholContentCompleted_${email}`);
 
-localStorage.removeItem(`fmcsaModuleADate_${email}`);
-localStorage.removeItem(`fmcsaModuleBDate_${email}`);
+  localStorage.removeItem(`fmcsaModuleADate_${email}`);
+  localStorage.removeItem(`fmcsaModuleBDate_${email}`);
+
+  // 🔥 STEP 3 (ADD THIS)
+  localStorage.removeItem(`fmcsaModuleACertificateId_${email}`);
+  localStorage.removeItem(`fmcsaModuleBCertificateId_${email}`);
 
   sessionStorage.setItem(
     "ams_notice",
