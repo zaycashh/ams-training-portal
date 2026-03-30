@@ -1,3 +1,4 @@
+const program = localStorage.getItem("amsProgram") || "faa";
 /* =========================
    COURSE KEYS
 ========================= */
@@ -358,6 +359,22 @@ function updateFMCSATimer() {
 document.addEventListener("DOMContentLoaded", () => {
   
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+   
+   /* =========================
+   PROGRAM LOCK (FAA vs FMCSA)
+========================= */
+
+// hide FMCSA if FAA
+if(program !== "fmcsa"){
+  const fmcsaSections = document.querySelectorAll(".fmcsa-section");
+  fmcsaSections.forEach(el => el.style.display = "none");
+}
+
+// hide FAA if FMCSA
+if(program === "fmcsa"){
+  const faaSections = document.querySelectorAll(".faa-section");
+  faaSections.forEach(el => el.style.display = "none");
+}
 
   updateFMCSAStatus();
 
