@@ -536,7 +536,7 @@ function showToast(message, type = "info") {
 function updateFMCSAStatus() {
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
   const modABadge = document.getElementById("modABadge");
   const modBBadge = document.getElementById("modBBadge");
@@ -585,7 +585,7 @@ function updateFMCSAStatus() {
 
 function handleDerFmcsa() {
 
-  const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
+  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
     window.location.href = "certificates.html#der";
@@ -602,8 +602,8 @@ function handleDerFmcsa() {
 
 function updateFMCSAProgress() {
 
-  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
-  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
   const fill = document.getElementById("fmcsaProgressFill");
   const text = document.getElementById("fmcsaProgressText");
@@ -628,7 +628,7 @@ function updateFMCSDERButtonState() {
   if (!derFmcsaBtn) return;
 
   const paid = localStorage.getItem("paid_der_fmcsa") === "true";
-  const completed = localStorage.getItem("fmcsaDERCompleted") === "true";
+  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   /* COMPLETED */
   if (completed) {
@@ -668,8 +668,8 @@ function updateFMCSAModuleButtons() {
 
   const paid = localStorage.getItem("paid_fmcsa") === "true";
 
-  const modA = localStorage.getItem("fmcsaModuleACompleted") === "true";
-  const modB = localStorage.getItem("fmcsaModuleBCompleted") === "true";
+  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
   const modABtn = document.getElementById("fmcsaModABtn");
   const modBBtn = document.getElementById("fmcsaModBBtn");
@@ -756,8 +756,7 @@ function updateFMCSAEmployeeButton() {
   if (!btn) return;
 
   const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
-  const completed = localStorage.getItem("fmcsaEmployeeCompleted") === "true";
-
+  const completed = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
   /* COMPLETED */
   if (completed) {
 
