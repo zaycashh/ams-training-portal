@@ -4,18 +4,21 @@
 ========================================================= */
 const MODULE_B_CERT_ID_KEY = "fmcsaModuleBCertificateId";
 
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const email = user?.email || "guest";
+
 // ✅ Fix PDF.js worker warning
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-const MODULE_B_COMPLETED_KEY = "fmcsaModuleBCompleted";
-const MODULE_A_COMPLETED_KEY = "fmcsaModuleACompleted";
+const MODULE_B_COMPLETED_KEY = `fmcsaModuleBCompleted_${email}`;
+const MODULE_A_COMPLETED_KEY = `fmcsaModuleACompleted_${email}`;
 
-const DRUG_CONTENT_KEY = "fmcsaDrugContentCompleted";
-const DRUG_QUIZ_KEY = "fmcsaDrugQuizPassed";
+const DRUG_CONTENT_KEY = `fmcsaDrugContentCompleted_${email}`;
+const DRUG_QUIZ_KEY = `fmcsaDrugQuizPassed_${email}`;
 
-const ALCOHOL_CONTENT_KEY = "fmcsaAlcoholContentCompleted";
-const ALCOHOL_QUIZ_KEY = "fmcsaAlcoholQuizPassed";
+const ALCOHOL_CONTENT_KEY = `fmcsaAlcoholContentCompleted_${email}`;
+const ALCOHOL_QUIZ_KEY = `fmcsaAlcoholQuizPassed_${email}`;
 
 /* =========================
    ATTEMPTS + COOLDOWN CONFIG
@@ -52,13 +55,18 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
   if (isFMCSAExpired()) {
 
-  // 🔥 Clear module progress on expiration
-  localStorage.removeItem("fmcsaModuleACompleted");
-  localStorage.removeItem("fmcsaModuleBCompleted");
-  localStorage.removeItem("fmcsaDrugQuizPassed");
-  localStorage.removeItem("fmcsaAlcoholQuizPassed");
-  localStorage.removeItem("fmcsaDrugContentCompleted");
-  localStorage.removeItem("fmcsaAlcoholContentCompleted");
+  // 🔥 Clear module progress per user
+localStorage.removeItem(`fmcsaModuleACompleted_${email}`);
+localStorage.removeItem(`fmcsaModuleBCompleted_${email}`);
+
+localStorage.removeItem(`fmcsaDrugQuizPassed_${email}`);
+localStorage.removeItem(`fmcsaAlcoholQuizPassed_${email}`);
+
+localStorage.removeItem(`fmcsaDrugContentCompleted_${email}`);
+localStorage.removeItem(`fmcsaAlcoholContentCompleted_${email}`);
+
+localStorage.removeItem(`fmcsaModuleADate_${email}`);
+localStorage.removeItem(`fmcsaModuleBDate_${email}`);
 
   sessionStorage.setItem(
     "ams_notice",
