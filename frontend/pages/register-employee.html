@@ -7,6 +7,18 @@
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
+  
+<script>
+(function(){
+
+  const params = new URLSearchParams(window.location.search);
+  const program = params.get("program") || "faa";
+
+  // 🔥 SAVE PROGRAM
+  localStorage.setItem("amsProgram", program);
+
+})();
+</script>
 
 <script>
 (function () {
