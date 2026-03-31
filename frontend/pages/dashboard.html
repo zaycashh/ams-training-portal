@@ -18,16 +18,6 @@
 </div>
 </header>
 
-<!-- LOGIN GUARD -->
-<script>
-(function(){
-const user = localStorage.getItem("amsUser");
-if(!user){
-window.location.replace("login.html");
-}
-})();
-</script>
-
 <main class="dashboard-container">
 
 <header class="dashboard-header">
@@ -218,6 +208,7 @@ Start Training
 </main>
 
 <!-- DASHBOARD ENGINE -->
+<script src="../js/route-guard.js"></script>
 <script src="../js/dashboard.js"></script>
   
 </body>
