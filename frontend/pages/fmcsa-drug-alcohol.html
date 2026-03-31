@@ -8,7 +8,6 @@
 </head>
 
 <body data-module="fmcsa-drug-alcohol">
-<script src="../js/route-guard.js"></script>
   
 <main class="module-container">
 
@@ -17,7 +16,31 @@
     <button class="btn-secondary" onclick="window.location.href='dashboard.html'">
      Back to Dashboard
     </button>
+    
   </header>
+  <nav class="module-nav">
+
+  <button onclick="showSection('drugContentSection')">
+    Drug Content
+  </button>
+
+  <button class="disabled" disabled>
+    Drug Quiz
+  </button>
+
+  <button class="disabled" disabled>
+    Alcohol Content
+  </button>
+
+  <button class="disabled" disabled>
+    Alcohol Quiz
+  </button>
+
+  <button class="disabled" disabled>
+    Certificate
+  </button>
+
+</nav>
 
   <!-- ========================
        DRUG CONTENT
@@ -122,9 +145,9 @@
     <div class="certificate-card">
       <h2>🎓 FMCSA Drug & Alcohol Substance Abuse Training Certificate</h2>
 
-      <p><strong>Name:</strong> <span id="moduleBCertName"></span></p>
-      <p><strong>Date Completed:</strong> <span id="moduleBCertDate"></span></p>
-      <p><strong>Certificate ID:</strong> <span id="moduleBCertId"></span></p>
+      <p><strong>Name:</strong> <span id="moduleBCertName">—</span></p>
+      <p><strong>Date Completed:</strong> <span id="moduleBCertDate">—</span></p>
+      <p><strong>Certificate ID:</strong> <span id="moduleBCertId">—</span></p>
 
       <button class="btn-primary" onclick="returnToDashboard()">
         Return to Dashboard
@@ -146,6 +169,8 @@
 
 <!-- MODULE B ENGINE -->
 <script src="../js/fmcsa-drug-alcohol.js"></script>
+  
+<script src="../js/route-guard.js"></script>
 
 </body>
 </html>
