@@ -70,7 +70,7 @@ function updateFAAModuleButtons() {
     }
      
 const paidFAA =
-  localStorage.getItem(config.paidKey) === "true";
+  localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
 
 if (paidFAA) {
 
