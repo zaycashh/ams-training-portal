@@ -102,7 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "supervisor") return;
 
-  if (localStorage.getItem("paid_supervisor") !== "true") {
+  if (
+  localStorage.getItem(`paid_supervisor_${USER_EMAIL}`) !== "true"
+) {
 
     alert("Supervisor Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
@@ -264,8 +266,10 @@ function populateSupervisorCertificate() {
 registerCertificate({
   id: code,
   name: fullName,
-  course: "Supervisor Reasonable Suspicion Training",
-  date: Date.now()
+  course: "FMCSA Supervisor Reasonable Suspicion Training",
+  type: "fmcsa_supervisor",
+  date: Date.now(),
+  displayDate: new Date().toLocaleDateString("en-US")
 });
 
       localStorage.setItem(`supervisorCertRegistered_${USER_EMAIL}`, "true");
@@ -286,8 +290,10 @@ registerCertificate({
 
 document.getElementById("certName").textContent = displayName;
 
-  document.getElementById("certDate").textContent =
-    new Date().toLocaleDateString();
+  let storedDate = localStorage.getItem(`supervisorTrainingDate_${USER_EMAIL}`);
+
+document.getElementById("certDate").textContent =
+  new Date(Number(storedDate)).toLocaleDateString("en-US");
 
   document.getElementById("certVerify").textContent = code;
 
