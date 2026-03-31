@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "der") return;
 
-  if (localStorage.getItem("paid_der") !== "true") {
+  localStorage.setItem(`derTrainingDate_${USER_EMAIL}`, Date.now());
 
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
@@ -252,12 +252,16 @@ function populateDerCertificate() {
     if (typeof registerCertificate === "function") {
 
       registerCertificate({
-        id: code,
-        name: user.fullName || (user.firstName + " " + user.lastName),
-        course: "FAA DER Training",
-        date: Date.now()
-      });
-
+  id: code,
+  name:
+    user.fullName ||
+    ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+    user.email,
+  course: "FAA DER Training",
+  type: "faa_der",
+  date: Date.now(),
+  displayDate: new Date().toLocaleDateString("en-US")
+});
       localStorage.setItem(`derCertRegistered_${USER_EMAIL}`, "true");
 
     }
@@ -271,12 +275,7 @@ document.getElementById("certName").textContent =
   user.fullName || (user.firstName + " " + user.lastName);
 
 // DATE (FIXED + SAVED ONCE)
-let storedDate = localStorage.getItem(`derDate_${USER_EMAIL}`);
-
-if (!storedDate) {
-  storedDate = Date.now();
-  localStorage.setItem(`derDate_${USER_EMAIL}`, storedDate);
-}
+let storedDate = localStorage.getItem(`derTrainingDate_${USER_EMAIL}`);
 
 document.getElementById("certDate").textContent =
   new Date(Number(storedDate)).toLocaleDateString("en-US");
