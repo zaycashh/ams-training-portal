@@ -85,9 +85,9 @@ if (isFMCSAExpired()) {
      MODULE B COMPLETED → REDIRECT TO DASHBOARD
   ========================================================= */
   if (localStorage.getItem(MODULE_B_COMPLETED_KEY) === "true") {
-    window.location.replace("dashboard.html");
-    return;
-  }
+  showModuleBCertificate();
+  return;
+}
 
   /* =========================================================
      PREREQUISITE CHECK — MODULE A
