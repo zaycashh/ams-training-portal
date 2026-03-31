@@ -156,10 +156,10 @@ CHECK PURCHASE ACCESS (FIXED)
 =============================== */
 
 const supervisorPurchased =
-  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+  localStorage.getItem(`paid_fmcsa_${email}`) === "true";
 
 const derPurchased =
-  localStorage.getItem(`paid_der_fmcsa_${user.email}`) === "true";
+  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
 
 const employeeCompleted =
   localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
@@ -168,9 +168,8 @@ const employeeCompleted =
 ACCESS CONTROL
 =============================== */
 
-if (
-  (!supervisorPurchased && !derPurchased && !employeeCompleted) ||
-) {
+ if (!supervisorPurchased && !derPurchased && !employeeCompleted) {
+
   alert("FMCSA Training requires purchase.");
   window.location.replace("dashboard.html");
   return;
@@ -178,7 +177,7 @@ if (
 /* ✅ FIXED COMPLETION FLAGS */
 
 const modACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
 const modBCompleted =
   localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
@@ -468,8 +467,6 @@ const employeeCompleted =
 if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
   window.location.replace("dashboard.html");
   return;
-}
-
 }
 
 /* ===============================
