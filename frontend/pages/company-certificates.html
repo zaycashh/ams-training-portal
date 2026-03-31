@@ -1,21 +1,177 @@
-<div class="cert-admin-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Company Certificates | AMS Training Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="../css/main.css" />
+</head>
 
-<h2>Company Certificates</h2>
+<body>
 
-<table class="cert-table">
+<header class="portal-header">
+  <div class="header-inner">
+    <h1>Company Certificates</h1>
+    <div class="module-controls">
+      <button class="btn-secondary" onclick="goDashboard()">
+        Return to Dashboard
+      </button>
+    </div>
+  </div>
+</header>
 
-<thead>
-<tr>
-<th>Employee</th>
-<th>Course</th>
-<th>Date Completed</th>
-<th>Certificate</th>
-</tr>
-</thead>
+<main class="dashboard-container">
 
-<tbody id="certTableBody">
-</tbody>
+  <div class="cert-admin-container">
 
-</table>
+    <h2>Employee Certificates</h2>
 
-</div>
+    <table class="cert-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Course</th>
+          <th>Date Completed</th>
+          <th>Certificate</th>
+        </tr>
+      </thead>
+
+      <tbody id="certTableBody"></tbody>
+    </table>
+
+  </div>
+
+</main>
+
+<script src="../js/certificate-engine.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  const tbody = document.getElementById("certTableBody");
+  if (!tbody) return;
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const employees = company.usedSeats || {};
+
+  let hasData = false;
+
+  Object.keys(employees).forEach(email => {
+
+    const key = `amsCertificates_${email}`;
+    const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+    certs.forEach(cert => {
+
+      hasData = true;
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${email}</td>
+        <td>${formatCourse(cert)}</td>
+        <td>${cert.displayDate || new Date(cert.date).toLocaleDateString("en-US")}</td>
+        <td>
+          <button class="btn-primary" onclick="viewCert('${cert.id}', '${email}')">
+            View
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+
+    });
+
+  });
+
+  if (!hasData) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center;">
+          No certificates found.
+        </td>
+      </tr>
+    `;
+  }
+
+});
+
+
+/* =========================
+   FORMAT COURSE NAME
+========================= */
+
+function formatCourse(cert) {
+
+  if (cert.type === "fmcsa_supervisor") {
+    return "FMCSA Supervisor Training";
+  }
+
+  if (cert.type === "fmcsa_employee") {
+    return "FMCSA Employee Training";
+  }
+
+  if (cert.type === "fmcsa_der") {
+    return "FMCSA DER Training";
+  }
+
+  if (cert.type === "faa_supervisor") {
+    return "FAA Supervisor Training";
+  }
+
+  if (cert.type === "faa_employee") {
+    return "FAA Employee Training";
+  }
+
+  if (cert.type === "faa_der") {
+    return "FAA DER Training";
+  }
+
+  return cert.course;
+}
+
+
+/* =========================
+   VIEW CERTIFICATE
+========================= */
+
+function viewCert(id, email){
+
+  const key = `amsCertificates_${email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const cert = certs.find(c => c.id === id);
+
+  if(!cert){
+    alert("Certificate not found");
+    return;
+  }
+
+  if(cert.type?.startsWith("fmcsa")){
+    window.location.href = "fmcsa-certificates.html?id=" + id;
+  } else {
+    window.location.href = "faa-certificates.html?id=" + id;
+  }
+
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function goDashboard(){
+  window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
