@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* 🔥 FAA ONLY (current logic) */
   const faaCerts = registry.filter(cert =>
-    cert.course && !cert.course.includes("FMCSA")
-  );
+  cert.type?.startsWith("faa")
+);;
 
   if (!faaCerts.length) {
     container.innerHTML = "<p>No FAA certificates found.</p>";
