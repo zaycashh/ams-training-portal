@@ -19,7 +19,11 @@
   if (user.role === "company_admin" || user.role === "owner") {
     window.location.href = "/ams-training-portal/frontend/pages/company-dashboard.html";
   } else {
-    window.location.href = "/ams-training-portal/frontend/pages/dashboard.html";
+    if (user.role === "company_admin" || user.role === "owner") {
+  window.location.href = "company-dashboard.html";
+} else {
+  window.location.href = "dashboard.html";
+}
   }
 })();
 </script>
