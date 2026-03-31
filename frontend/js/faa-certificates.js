@@ -4,7 +4,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const container = document.getElementById("certificateList");
+  const container = document.getElementById("certList");
   if (!container) return;
 
   const user =
