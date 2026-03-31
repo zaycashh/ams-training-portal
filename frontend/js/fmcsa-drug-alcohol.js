@@ -738,7 +738,7 @@ if (score >= PASS_SCORE_ALCOHOL) {
   `;
 
   setTimeout(() => {
-    window.location.href = "fmcsa-certificates.html";
+    window.location.href = "certificates.html#supervisor";
   }, 1500);
 
   return;
