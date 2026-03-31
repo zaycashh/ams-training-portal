@@ -40,7 +40,7 @@ margin-top:25px;
 <h2>Certificate Verification</h2>
 
 <div id="result" class="verify-card">
-Checking certificate...
+  <p>🔎 Checking certificate...</p>
 </div>
 
 </div>
@@ -97,9 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
 
     result.innerHTML = `
-      <h2 style="color:red;">❌ Certificate NOT FOUND</h2>
-      <p>This certificate ID is not in the AMS registry.</p>
-    `;
+  <h2 style="color:red;">❌ Certificate NOT FOUND</h2>
+  <p>This certificate could not be verified on this device.</p>
+  <p>Please ensure the certificate was issued by AMS or contact support.</p>
+`;
 
   }
 
