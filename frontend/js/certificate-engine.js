@@ -1,5 +1,9 @@
 /* ========================================================
-   AMS CERTIFICATE ENGINE
+   AMS CERTIFICATE ENGINE (FINAL CLEAN VERSION)
+========================================================= */
+
+/* ========================================================
+   GENERATE CERTIFICATE ID (SAFE)
 ========================================================= */
 
 function generateCertificateId(prefix = "AMS") {
@@ -9,8 +13,9 @@ function generateCertificateId(prefix = "AMS") {
     .substring(2, 10)
     .toUpperCase();
 
-  return `${prefix}-CERT-${random}`;
+  const ts = Date.now().toString(36).toUpperCase();
 
+  return `${prefix}-CERT-${ts}-${random}`;
 }
 
 
@@ -23,7 +28,7 @@ function registerCertificate(data) {
   const user =
     JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  if(!user) return;
+  if (!user) return;
 
   const key = `amsCertificates_${user.email}`;
 
@@ -34,7 +39,6 @@ function registerCertificate(data) {
 
   if (!exists) {
 
-    // ✅ attach email (needed for unified system)
     data.email = user.email;
 
     registry.push(data);
@@ -43,10 +47,9 @@ function registerCertificate(data) {
       key,
       JSON.stringify(registry)
     );
-
   }
-
 }
+
 
 /* =========================================================
    GET CERTIFICATE
@@ -57,7 +60,7 @@ function getCertificate(certId) {
   const user =
     JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  if(!user) return null;
+  if (!user) return null;
 
   const key = `amsCertificates_${user.email}`;
 
@@ -65,91 +68,95 @@ function getCertificate(certId) {
     JSON.parse(localStorage.getItem(key) || "[]");
 
   return registry.find(c => c.id === certId);
-
 }
+
+
+/* ========================================================
+   HELPER — NAME FORMAT
+========================================================= */
+
+function getUserName(user) {
+  return (
+    user.fullName ||
+    ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+    user.email ||
+    "User"
+  );
+}
+
+
 /* ========================================================
    GENERATE SUPERVISOR CERTIFICATE
 ======================================================== */
 
-function generateSupervisorCertificate(){
+function generateSupervisorCertificate() {
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if(!user){
-alert("User not found");
-return;
+  if (!user) {
+    alert("User not found");
+    return;
+  }
+
+  const name = getUserName(user);
+
+  let certId =
+    localStorage.getItem(`fmcsaModuleACertificateId_${user.email}`);
+
+  if (!certId) {
+    certId = generateCertificateId("AMS-FMCSA");
+
+    localStorage.setItem(
+      `fmcsaModuleACertificateId_${user.email}`,
+      certId
+    );
+  }
+
+  registerCertificate({
+    id: certId,
+    name: name,
+    course: "FMCSA Supervisor Reasonable Suspicion Training",
+    type: "fmcsa_supervisor",
+    date: Date.now(),
+    displayDate: new Date().toLocaleDateString("en-US")
+  });
 }
 
-const name =
-  user.fullName ||
-  ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-  user.email ||
-  "User";
-
-const date = new Date().toLocaleDateString("en-US",{
-year:"numeric",
-month:"long",
-day:"numeric"
-});
-
-let certId = localStorage.getItem(`fmcsaModuleACertificateId_${user.email}`);
-
-if(!certId){
-certId = generateCertificateId("AMS-FMCSA");
-localStorage.setItem(`fmcsaModuleACertificateId_${user.email}`, certId);
-}
-
-registerCertificate({
-id: certId,
-name: name,
-course: "FMCSA Supervisor Reasonable Suspicion Training",
-date: Date.now(),
-displayDate: new Date().toLocaleDateString("en-US")
-});
-
-}
 
 /* ========================================================
    GENERATE DER CERTIFICATE
 ======================================================== */
 
-function generateDerCertificate(){
+function generateDerCertificate() {
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-if(!user){
-alert("User not found");
-return;
-}
+  if (!user) {
+    alert("User not found");
+    return;
+  }
 
-const name =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
+  const name = getUserName(user);
 
-const date = new Date().toLocaleDateString("en-US",{
-year:"numeric",
-month:"long",
-day:"numeric"
-});
+  let certId =
+    localStorage.getItem(`derFmcsaCertificateId_${user.email}`);
 
-let certId = localStorage.getItem(`derFmcsaCertificateId_${user.email}`);
+  if (!certId) {
 
-if(!certId){
+    certId = generateCertificateId("AMS-FMCSA-DER");
 
-certId = generateCertificateId("AMS-FMCSA-DER");
+    localStorage.setItem(
+      `derFmcsaCertificateId_${user.email}`,
+      certId
+    );
+  }
 
-localStorage.setItem(`derFmcsaCertificateId_${user.email}`, certId);
-
-}
-
-registerCertificate({
-id: certId,
-name: name,
-course: "FMCSA Designated Employer Representative Training",
-date: Date.now(),
-displayDate: new Date().toLocaleDateString("en-US")
-});
-
+  registerCertificate({
+    id: certId,
+    name: name,
+    course: "FMCSA Designated Employer Representative Training",
+    type: "fmcsa_der",
+    date: Date.now(),
+    displayDate: new Date().toLocaleDateString("en-US")
+  });
 }
