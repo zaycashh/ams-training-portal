@@ -37,7 +37,7 @@
 
       <div class="form-row">
         <label>Phone Number</label>
-        <input type="tel" id="phone" required />
+        <input type="tel" id="phone" placeholder="(123) 456-7890" required />
       </div>
 
       <div class="form-row">
@@ -90,6 +90,11 @@ document.getElementById("companyRegisterForm")
     return;
   }
 
+  if (password.length < 6) {
+  alert("Password must be at least 6 characters.");
+  return;
+}
+
   if (password !== confirmPassword) {
     alert("Passwords do not match.");
     return;
@@ -131,6 +136,7 @@ document.getElementById("companyRegisterForm")
     company: companyName,
     phone,
     email,
+    password: password,
     role: "company_admin",
     type: "company",
     companyId,
