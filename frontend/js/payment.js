@@ -71,13 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (module === "supervisor") {
 
-      localStorage.setItem(`paid_supervisor_${email}`, "true");
+  localStorage.setItem(`paid_supervisor_${email}`, "true");
 
-      alert("Purchase successful!");
+  alert("Purchase successful!");
 
-      goDashboard();
-      return;
-    }
+  goDashboard();
+  return;
+}
 
     /* ================================
        FAA EMPLOYEE TRAINING
