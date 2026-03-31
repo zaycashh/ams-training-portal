@@ -680,6 +680,7 @@ function updateFMCSDERButtonState() {
 function updateFMCSAModuleButtons() {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const email = user?.email;
 
 const paid =
   user &&
