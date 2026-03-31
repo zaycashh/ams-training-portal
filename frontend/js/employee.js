@@ -70,8 +70,9 @@ return;
 
 else if (user.type === "individual") {
 
-if (localStorage.getItem("paid_employee") !== "true") {
-
+if (
+  localStorage.getItem(`paid_employee_${USER_EMAIL}`) !== "true"
+) {
 alert("You must purchase this training before accessing it.");
 
 window.location.replace("../pages/dashboard.html");
@@ -282,6 +283,31 @@ localStorage.setItem(EMPLOYEE_CERT_CODE_KEY,code);
 
 }
 
+if (!localStorage.getItem(`employeeCertRegistered_${USER_EMAIL}`)) {
+
+  if (typeof registerCertificate === "function") {
+
+    registerCertificate({
+      id: code,
+      name:
+        user.fullName ||
+        ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+        user.email,
+      course: "FMCSA Employee Awareness Training",
+      type: "fmcsa_employee",
+      date: Date.now(),
+      displayDate: new Date().toLocaleDateString("en-US")
+    });
+
+    localStorage.setItem(
+      `employeeCertRegistered_${USER_EMAIL}`,
+      "true"
+    );
+
+  }
+
+}
+   
 if(user){
 
 document.getElementById("certName").textContent=
@@ -289,8 +315,10 @@ user.fullName||(user.firstName+" "+user.lastName);
 
 }
 
-document.getElementById("certDate").textContent=
-new Date().toLocaleDateString();
+let storedDate = localStorage.getItem(`employeeTrainingDate_${USER_EMAIL}`);
+
+document.getElementById("certDate").textContent =
+  new Date(Number(storedDate)).toLocaleDateString("en-US");
 
 document.getElementById("certVerify").textContent=code;
 
