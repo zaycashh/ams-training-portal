@@ -154,7 +154,7 @@ myCerts.forEach(cert => {
     div.innerHTML = `
       <h3>
 ${
-  cert.course.includes("FMCSA") && cert.course.includes("Employee")
+  cert.type === "fmcsa_employee"
     ? "FMCSA Employee Drug & Alcohol Awareness Training"
     : cert.course
 }
