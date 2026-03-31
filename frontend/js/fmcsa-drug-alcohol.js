@@ -706,24 +706,16 @@ if (score >= PASS_SCORE_ALCOHOL) {
     certId = generateCertificateId("AMS-FMCSA");
     localStorage.setItem(`fmcsaModuleBCertificateId_${email}`, certId);
 
-    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+    if (typeof registerCertificate === "function") {
 
-    if (!localStorage.getItem(`moduleBCertRegistered_${user?.email}`)) {
+  registerCertificate({
+    id: certId,
+    name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+    course: "FMCSA Drug & Alcohol Substance Abuse Training",
+    date: Date.now()
+  });
 
-      if (user && typeof registerCertificate === "function") {
-
-        registerCertificate({
-          id: certId,
-          name: user.fullName || (user.firstName + " " + user.lastName),
-          course: "FMCSA Drug & Alcohol Substance Abuse Training",
-          date: Date.now()
-        });
-
-        localStorage.setItem(`moduleBCertRegistered_${user.email}`, "true");
-
-      }
-    }
-  }
+}
 
   localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
 
