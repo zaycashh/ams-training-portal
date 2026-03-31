@@ -27,10 +27,10 @@
   if (!user) return;
 
   if (user.role === "company_admin" || user.role === "owner") {
-    window.location.href = "/ams-training-portal/frontend/pages/company-dashboard.html";
-  } else {
-    window.location.href = "/ams-training-portal/frontend/pages/dashboard.html";
-  }
+  window.location.href = "company-dashboard.html";
+} else {
+  window.location.href = "dashboard.html";
+}
 })();
 </script>
 
@@ -58,7 +58,7 @@
 
       <div class="form-row">
         <label>Phone Number</label>
-        <input type="tel" id="phone" required />
+        <input type="tel" id="phone" placeholder="(123) 456-7890" required />
       </div>
 
       <div class="form-row">
@@ -69,6 +69,11 @@
       <div class="form-row">
         <label>Password</label>
         <input type="password" id="password" required />
+      </div>
+      
+      <div class="form-row">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" required />
       </div>
 
       <div class="form-row">
