@@ -63,24 +63,23 @@ document.addEventListener("DOMContentLoaded", () => {
   /* 🔥 SEARCH ALL LOCALSTORAGE CERT REGISTRIES */
   for (const key of Object.keys(localStorage)) {
 
-  if (key.startsWith("amsCertificates_")) {
+    if (key.startsWith("amsCertificates_")) {
 
-    const registry =
-      JSON.parse(localStorage.getItem(key) || "[]");
+      const registry =
+        JSON.parse(localStorage.getItem(key) || "[]");
 
-    const match = registry.find(c => c.id === certId);
+      const match = registry.find(c => c.id === certId);
 
-    if (match) {
-      foundCert = match;
-      break; // ✅ actually stops loop
+      if (match) {
+        foundCert = match;
+        break;
+      }
+
     }
 
   }
 
-}
-
-  });
-
+  /* ✅ MUST BE INSIDE EVENT */
   if (foundCert) {
 
     const formattedDate =
