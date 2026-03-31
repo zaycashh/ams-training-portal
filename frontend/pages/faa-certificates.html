@@ -29,11 +29,17 @@ margin-top:0;
 
 <body>
 
+<header class="portal-header">
+  <div class="header-inner">
+    <h1>My Certificates</h1>
+  </div>
+</header>
+
 <main class="cert-container">
 
-<h1>My Certificates</h1>
-
-<div id="certificateList"></div>
+<div id="certList">
+  <p style="opacity:.6;">No certificates yet.</p>
+</div>
 
 <button onclick="goDashboard()" class="btn-secondary">
 Back to Dashboard
@@ -41,15 +47,23 @@ Back to Dashboard
 
 </main>
 
+<!-- 🔐 SECURITY -->
+<script src="../js/route-guard.js"></script>
+
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+<!-- CORE -->
+<script src="../js/certificate-engine.js"></script>
+
+<!-- PAGE LOGIC -->
+<script src="../js/faa-certificates.js"></script>
+
 <script>
 function goDashboard(){
   window.location.href = "dashboard.html";
 }
 </script>
-<script src="../js/route-guard.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-<script src="../js/certificate-engine.js"></script>
-<script src="../js/faa-certificates.js"></script>
 
 </body>
 </html>
