@@ -451,6 +451,11 @@ LOAD CERTIFICATES
 document.addEventListener("DOMContentLoaded",()=>{
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+const email = user?.email;
+
+  if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
+  window.location.replace("dashboard.html");
+  return;
 
 const modACompleted =
 localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
@@ -464,11 +469,6 @@ localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
 const employeeCompleted =
 localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";  
 
-/* IF NOTHING COMPLETED RETURN */
-
-if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
-  window.location.replace("dashboard.html");
-  return;
 }
 
 /* ===============================
@@ -615,105 +615,135 @@ if (finalCertId) {
 }
 
 /* ===============================
-DER CERTIFICATE
+DER CERTIFICATE (FIXED - PER USER)
 =============================== */
 
-if(derCompleted){
+if (derCompleted) {
 
-const storedDate =
-localStorage.getItem("fmcsaDERDate");
+  const certIdDER =
+    localStorage.getItem(`fmcsaDERCertificateId_${user.email}`);
 
+  const storedDate =
+    localStorage.getItem(`fmcsaDERDate_${user.email}`);
 
-const certIdDER =
-localStorage.getItem("fmcsaDERCertificateId");
-  if(certIdDER){
+  if (certIdDER) {
 
-registerCertificate({
-id: certIdDER,
-name: user.fullName || user.email,
-course: "FMCSA DER Training",
-date: storedDate
-});
+    registerCertificate({
+      id: certIdDER,
+      name:
+        user.fullName ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+        user.email,
+      course: "FMCSA DER Training",
+      date: storedDate
+    });
 
-}
+    const verifyUrl =
+      window.location.origin +
+      "/ams-training-portal/frontend/pages/verify.html?id=" +
+      certIdDER;
 
-if(certIdDER){
+    /* NAME */
+    document.getElementById("derCertStudentName").textContent =
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email ||
+      "User";
 
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdDER;
+    /* DATE */
+    document.getElementById("derCertCompletionDate").textContent =
+      storedDate
+        ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+        : "";
 
-/* NAME */
+    /* CERT ID */
+    document.getElementById("derCertCertificateId").textContent =
+      "Certificate ID: " + certIdDER;
 
-document.getElementById("derCertStudentName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
+    /* QR */
+    const qrContainer = document.getElementById("derCertQR");
+    qrContainer.innerHTML = "";
 
-/* DATE */
+    new QRCode(qrContainer, {
+      text: verifyUrl,
+      width: 90,
+      height: 90
+    });
 
-document.getElementById("derCertCompletionDate").textContent =
-new Date(Number(storedDate)).toLocaleDateString("en-US");
-
-/* CERT ID */
-
-document.getElementById("derCertCertificateId").textContent =
-"Certificate ID: " + certIdDER;
-
-/* TEMPLATE QR */
-
-const qrContainer = document.getElementById("derCertQR");
-
-qrContainer.innerHTML = "";
-
-new QRCode(qrContainer,{
-text: verifyUrl,
-width:90,
-height:90
-});
-
-}
+  }
 
 }
   
  /* ===============================
-FMCSA EMPLOYEE CERTIFICATE
+FMCSA EMPLOYEE CERTIFICATE (FIXED - PER USER)
 =============================== */
 
-if(employeeCompleted){
+if (employeeCompleted) {
 
-/* DATE */
-const storedDate =
-localStorage.getItem("fmcsaEmployeeDate");
+  const certId =
+    localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
 
+  const storedDate =
+    localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
 
-/* CERT ID */
-let certId =
-localStorage.getItem("fmcsaEmployeeCertificateId");
+  let finalCertId = certId;
 
-/* GENERATE IF MISSING */
-if(!certId){
-certId = "AMS-FMCSA-EMP-CERT-" +
-Math.random().toString(16).substring(2,10).toUpperCase();
+  /* GENERATE IF MISSING */
+  if (!finalCertId) {
+    finalCertId =
+      "AMS-FMCSA-EMP-CERT-" +
+      Math.random().toString(16).substring(2, 10).toUpperCase();
 
-localStorage.setItem("fmcsaEmployeeCertificateId", certId);
+    localStorage.setItem(
+      `fmcsaEmployeeCertificateId_${user.email}`,
+      finalCertId
+    );
+  }
+
+  /* REGISTER */
+  registerCertificate({
+    id: finalCertId,
+    name:
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email,
+    course: "FMCSA Employee Awareness Training",
+    date: storedDate
+  });
+
+  const verifyUrl =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    finalCertId;
+
+  /* NAME */
+  document.getElementById("empCertStudentName").textContent =
+    user.fullName ||
+    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+    user.email ||
+    "User";
+
+  /* DATE */
+  document.getElementById("empCertCompletionDate").textContent =
+    storedDate
+      ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+      : "";
+
+  /* CERT ID */
+  document.getElementById("empCertCertificateId").textContent =
+    "Certificate ID: " + finalCertId;
+
+  /* QR */
+  const qrTemplate = document.getElementById("empCertQR");
+  qrTemplate.innerHTML = "";
+
+  new QRCode(qrTemplate, {
+    text: verifyUrl,
+    width: 90,
+    height: 90
+  });
+
 }
-
-/* REGISTER */
-registerCertificate({
-id: certId,
-name: user.fullName || user.email,
-course: "FMCSA Employee Awareness Training",
-date: storedDate
-});
-
-/* QR (CARD) */
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certId;
 
 // ===============================
 // 👉 EMPLOYEE CERT TEMPLATE
