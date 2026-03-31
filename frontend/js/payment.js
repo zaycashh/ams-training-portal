@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Purchase successful!");
 
       goDashboard();
+      return;
     }
 
     /* ================================
