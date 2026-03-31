@@ -310,8 +310,11 @@ if (!localStorage.getItem(`employeeCertRegistered_${USER_EMAIL}`)) {
    
 if(user){
 
-document.getElementById("certName").textContent=
-user.fullName||(user.firstName+" "+user.lastName);
+document.getElementById("certName").textContent =
+  user.fullName ||
+  ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+  user.email ||
+  "User";
 
 }
 
