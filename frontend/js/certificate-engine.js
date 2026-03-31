@@ -80,7 +80,11 @@ alert("User not found");
 return;
 }
 
-const name = user.name || "Student";
+const name =
+  user.fullName ||
+  ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
+  user.email ||
+  "User";
 
 const date = new Date().toLocaleDateString("en-US",{
 year:"numeric",
@@ -88,18 +92,19 @@ month:"long",
 day:"numeric"
 });
 
-let certId = localStorage.getItem("fmcsaModuleACertificateId");
+let certId = localStorage.getItem(`fmcsaModuleACertificateId_${user.email}`);
 
 if(!certId){
 certId = generateCertificateId("AMS-FMCSA");
-localStorage.setItem("fmcsaModuleACertificateId",certId);
+localStorage.setItem(`fmcsaModuleACertificateId_${user.email}`, certId);
 }
 
 registerCertificate({
 id: certId,
 name: name,
 course: "FMCSA Supervisor Reasonable Suspicion Training",
-date: Date.now()
+date: Date.now(),
+displayDate: new Date().toLocaleDateString("en-US")
 });
 
 }
@@ -129,13 +134,13 @@ month:"long",
 day:"numeric"
 });
 
-let certId = localStorage.getItem("derFmcsaCertificateId");
+let certId = localStorage.getItem(`derFmcsaCertificateId_${user.email}`);
 
 if(!certId){
 
 certId = generateCertificateId("AMS-FMCSA-DER");
 
-localStorage.setItem("derFmcsaCertificateId", certId);
+localStorage.setItem(`derFmcsaCertificateId_${user.email}`, certId);
 
 }
 
@@ -143,7 +148,8 @@ registerCertificate({
 id: certId,
 name: name,
 course: "FMCSA Designated Employer Representative Training",
-date: Date.now()
+date: Date.now(),
+displayDate: new Date().toLocaleDateString("en-US")
 });
 
 }
