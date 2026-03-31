@@ -118,21 +118,21 @@ CERTIFICATE REGISTRY
 
 function registerCertificate(cert){
 
-const key = `amsCertificates_${user.email}`;
-const registry = JSON.parse(localStorage.getItem(key) || "[]");
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+if(!user) return;
 
-const exists =
-registry.find(c => c.id === cert.id);
+const key = `amsCertificates_${user.email}`;
+
+let registry =
+JSON.parse(localStorage.getItem(key) || "[]");
+
+const exists = registry.find(c => c.id === cert.id);
 
 if(!exists){
-registry.push(cert);
+  registry.push(cert);
 }
 
-localStorage.setItem(
-"amsCertificates",
-JSON.stringify(registry)
-);
-
+localStorage.setItem(key, JSON.stringify(registry));
 }
 
 </script>
