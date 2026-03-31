@@ -145,6 +145,7 @@ localStorage.setItem(key, JSON.stringify(registry));
 (function(){
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const email = user?.email;
 
 if(!user){
 window.location.replace("login.html");
@@ -162,7 +163,7 @@ const derPurchased =
   localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
 
 const employeeCompleted =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
 /* ===============================
 ACCESS CONTROL
@@ -180,10 +181,10 @@ const modACompleted =
   localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
 const modBCompleted =
-  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
 const derCompleted =
-  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
 /* ===============================
 FINAL ACCESS CHECK
