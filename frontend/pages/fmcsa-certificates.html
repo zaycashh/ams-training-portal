@@ -446,29 +446,30 @@ right:150px;
 LOAD CERTIFICATES
 =================================== */
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",()=>{  
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 const email = user?.email;
 
 const modACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
 const modBCompleted =
-  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
 const derCompleted =
-  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
 const employeeCompleted =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
 /* IF NOTHING COMPLETED RETURN */
 if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
   window.location.replace("dashboard.html");
   return;
 }
-
+  
+});
 /* ===============================
 URL CONTROL (STEP 1 FIX)
 =============================== */
