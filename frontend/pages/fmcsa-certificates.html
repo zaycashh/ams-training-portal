@@ -441,225 +441,116 @@ right:150px;
 </main>
 
 <script>
-
+  
 /* ===================================
 LOAD CERTIFICATES
 =================================== */
 
-document.addEventListener("DOMContentLoaded",()=>{  
+document.addEventListener("DOMContentLoaded", () => {
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-const email = user?.email;
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user?.email;
 
-const modACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+  const modACompleted =
+    localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
-const modBCompleted =
-  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  const modBCompleted =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-const derCompleted =
-  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const derCompleted =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
-const employeeCompleted =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+  const employeeCompleted =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
-/* IF NOTHING COMPLETED RETURN */
-if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
-  window.location.replace("dashboard.html");
-  return;
-}
-
-/* ===============================
-URL CONTROL (STEP 1 FIX)
-=============================== */
-
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
-const type = params.get("type");
-
-let selectedCert = null;
-
-/* LOAD FROM REGISTRY IF ID EXISTS */
-if(certId){
-
-  const key = `amsCertificates_${user.email}`;
-  const registry = JSON.parse(localStorage.getItem(key) || "[]");
-
-  selectedCert = registry.find(c => c.id === certId);
-
-  if(!selectedCert){
-    alert("Certificate not found");
+  /* IF NOTHING COMPLETED RETURN */
+  if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+    window.location.replace("dashboard.html");
     return;
   }
 
-  /* FORCE TEMPLATE BASED ON CERT */
-  if(selectedCert.course.includes("Employee")){
-    showCert("employee");
-  }
-  else if(selectedCert.course.includes("DER")){
-    showCert("der");
-  }
-  else{
-    showCert("supervisor");
-  }
+  /* ===============================
+  URL CONTROL
+  =============================== */
 
-}else{
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+  const type = params.get("type");
 
-  /* OLD FALLBACK (KEEP FOR NOW) */
-  if(type){
-    showCert(type);
-  }else{
-    if(employeeCompleted){
+  let selectedCert = null;
+
+  if (certId) {
+
+    const key = `amsCertificates_${email}`;
+    const registry = JSON.parse(localStorage.getItem(key) || "[]");
+
+    selectedCert = registry.find(c => c.id === certId);
+
+    if (!selectedCert) {
+      alert("Certificate not found");
+      return;
+    }
+
+    if (selectedCert.course.includes("Employee")) {
       showCert("employee");
-    }
-    else if(derCompleted){
+    } else if (selectedCert.course.includes("DER")) {
       showCert("der");
-    }
-    else if(modACompleted){
+    } else {
       showCert("supervisor");
     }
+
+  } else {
+
+    if (type) {
+      showCert(type);
+    } else {
+      if (employeeCompleted) showCert("employee");
+      else if (derCompleted) showCert("der");
+      else if (modACompleted) showCert("supervisor");
+    }
+
   }
 
-}
-  
-/* ===============================
-MODULE A (FIXED - PER USER)
-=============================== */
+  /* ===============================
+  SUPERVISOR CERTIFICATE
+  =============================== */
 
-if (modACompleted) {
+  const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+  const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
-  const certIdA =
-    localStorage.getItem(`fmcsaModuleACertificateId_${user.email}`);
+  const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
+  const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
 
-  const storedADate =
-    localStorage.getItem(`fmcsaModuleADate_${user.email}`);
+  document.getElementById("certStudentName").textContent =
+    user.fullName ||
+    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+    user.email ||
+    "User";
+
+  const finalDate = storedBDate || storedADate;
+
+  document.getElementById("certCompletionDate").textContent =
+    finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
 
   if (certIdA) {
-
-    registerCertificate({
-      id: certIdA,
-      name:
-        user.fullName ||
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-        user.email,
-      course: "FMCSA Reasonable Suspicion Training",
-      date: storedADate
-    });
-
-    const verifyUrl =
-      window.location.origin +
-      "/ams-training-portal/frontend/pages/verify.html?id=" +
-      certIdA;
-
+    document.getElementById("certCertificateId").textContent =
+      "Certificate ID: " + certIdA;
   }
 
-}
+  if (certIdB) {
+    document.getElementById("certCertificateIdB").textContent =
+      "Drug & Alcohol ID: " + certIdB;
+  }
 
-/* ===============================
-SUPERVISOR CERTIFICATE DISPLAY
-=============================== */
+  const finalCertId = certIdB || certIdA;
 
-/* PER USER KEYS */
-const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
-const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
-
-const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
-const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
-
-/* NAME */
-document.getElementById("certStudentName").textContent =
-  user.fullName ||
-  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-  user.email ||
-  "User";
-
-/* DATE (USE MODULE B DATE IF EXISTS, ELSE A) */
-const finalDate = storedBDate || storedADate;
-
-document.getElementById("certCompletionDate").textContent =
-  finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
-
-/* CERT ID A */
-if (certIdA) {
-  document.getElementById("certCertificateId").textContent =
-    "Certificate ID: " + certIdA;
-}
-
-/* CERT ID B */
-if (certIdB) {
-  document.getElementById("certCertificateIdB").textContent =
-    "Drug & Alcohol ID: " + certIdB;
-}
-
-/* QR CODE (USE MODULE B IF EXISTS ELSE A) */
-const finalCertId = certIdB || certIdA;
-
-if (finalCertId) {
-
-  const verifyUrl =
-    window.location.origin +
-    "/ams-training-portal/frontend/pages/verify.html?id=" +
-    finalCertId;
-
-  const qrContainer = document.getElementById("certQR");
-  qrContainer.innerHTML = "";
-
-  new QRCode(qrContainer, {
-    text: verifyUrl,
-    width: 90,
-    height: 90
-  });
-
-}
-
-/* ===============================
-DER CERTIFICATE (FIXED - PER USER)
-=============================== */
-
-if (derCompleted) {
-
-  const certIdDER =
-    localStorage.getItem(`fmcsaDERCertificateId_${user.email}`);
-
-  const storedDate =
-    localStorage.getItem(`fmcsaDERDate_${user.email}`);
-
-  if (certIdDER) {
-
-    registerCertificate({
-      id: certIdDER,
-      name:
-        user.fullName ||
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-        user.email,
-      course: "FMCSA DER Training",
-      date: storedDate
-    });
-
+  if (finalCertId) {
     const verifyUrl =
       window.location.origin +
       "/ams-training-portal/frontend/pages/verify.html?id=" +
-      certIdDER;
+      finalCertId;
 
-    /* NAME */
-    document.getElementById("derCertStudentName").textContent =
-      user.fullName ||
-      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email ||
-      "User";
-
-    /* DATE */
-    document.getElementById("derCertCompletionDate").textContent =
-      storedDate
-        ? new Date(Number(storedDate)).toLocaleDateString("en-US")
-        : "";
-
-    /* CERT ID */
-    document.getElementById("derCertCertificateId").textContent =
-      "Certificate ID: " + certIdDER;
-
-    /* QR */
-    const qrContainer = document.getElementById("derCertQR");
+    const qrContainer = document.getElementById("certQR");
     qrContainer.innerHTML = "";
 
     new QRCode(qrContainer, {
@@ -667,134 +558,104 @@ if (derCompleted) {
       width: 90,
       height: 90
     });
-
   }
 
-}
-  
- /* ===============================
-FMCSA EMPLOYEE CERTIFICATE (FIXED - PER USER)
-=============================== */
+  /* ===============================
+  DER CERTIFICATE
+  =============================== */
 
-if (employeeCompleted) {
+  if (derCompleted) {
 
-  const certId =
-    localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
+    const certIdDER =
+      localStorage.getItem(`fmcsaDERCertificateId_${email}`);
 
-  const storedDate =
-    localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
+    const storedDate =
+      localStorage.getItem(`fmcsaDERDate_${email}`);
 
-  let finalCertId = certId;
+    if (certIdDER) {
 
-  /* GENERATE IF MISSING */
-  if (!finalCertId) {
-    finalCertId =
-      "AMS-FMCSA-EMP-CERT-" +
-      Math.random().toString(16).substring(2, 10).toUpperCase();
+      const verifyUrl =
+        window.location.origin +
+        "/ams-training-portal/frontend/pages/verify.html?id=" +
+        certIdDER;
 
-    localStorage.setItem(
-      `fmcsaEmployeeCertificateId_${user.email}`,
-      finalCertId
-    );
+      document.getElementById("derCertStudentName").textContent =
+        user.fullName ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+        user.email;
+
+      document.getElementById("derCertCompletionDate").textContent =
+        storedDate
+          ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+          : "";
+
+      document.getElementById("derCertCertificateId").textContent =
+        "Certificate ID: " + certIdDER;
+
+      const qrContainer = document.getElementById("derCertQR");
+      qrContainer.innerHTML = "";
+
+      new QRCode(qrContainer, {
+        text: verifyUrl,
+        width: 90,
+        height: 90
+      });
+    }
   }
 
-  /* REGISTER */
-  registerCertificate({
-    id: finalCertId,
-    name:
+  /* ===============================
+  EMPLOYEE CERTIFICATE
+  =============================== */
+
+  if (employeeCompleted) {
+
+    let certId =
+      localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+
+    const storedDate =
+      localStorage.getItem(`fmcsaEmployeeDate_${email}`);
+
+    if (!certId) {
+      certId =
+        "AMS-FMCSA-EMP-CERT-" +
+        Math.random().toString(16).substring(2, 10).toUpperCase();
+
+      localStorage.setItem(
+        `fmcsaEmployeeCertificateId_${email}`,
+        certId
+      );
+    }
+
+    const verifyUrl =
+      window.location.origin +
+      "/ams-training-portal/frontend/pages/verify.html?id=" +
+      certId;
+
+    document.getElementById("empCertStudentName").textContent =
       user.fullName ||
       `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email,
-    course: "FMCSA Employee Awareness Training",
-    date: storedDate
-  });
+      user.email;
 
-  const verifyUrl =
-    window.location.origin +
-    "/ams-training-portal/frontend/pages/verify.html?id=" +
-    finalCertId;
+    document.getElementById("empCertCompletionDate").textContent =
+      storedDate
+        ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+        : "";
 
-  /* NAME */
-  document.getElementById("empCertStudentName").textContent =
-    user.fullName ||
-    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-    user.email ||
-    "User";
+    document.getElementById("empCertCertificateId").textContent =
+      "Certificate ID: " + certId;
 
-  /* DATE */
-  document.getElementById("empCertCompletionDate").textContent =
-    storedDate
-      ? new Date(Number(storedDate)).toLocaleDateString("en-US")
-      : "";
+    const qrTemplate = document.getElementById("empCertQR");
+    qrTemplate.innerHTML = "";
 
-  /* CERT ID */
-  document.getElementById("empCertCertificateId").textContent =
-    "Certificate ID: " + finalCertId;
-
-  /* QR */
-  const qrTemplate = document.getElementById("empCertQR");
-  qrTemplate.innerHTML = "";
-
-  new QRCode(qrTemplate, {
-    text: verifyUrl,
-    width: 90,
-    height: 90
-  });
-
-}
-
-</script>
-
-<!-- SECOND SCRIPT (BUTTONS / TABS) -->
-<script>
-
-function returnToDashboard(){
-  window.location.href = "dashboard.html";
-}
-
-function showCert(type){
-
-// hide all
-document.getElementById("employeeCertTemplate").classList.add("hidden");
-document.getElementById("supervisorCertTemplate").classList.add("hidden");
-document.getElementById("derCertTemplate").classList.add("hidden");
-
-// show selected
-if(type === "employee"){
-  document.getElementById("employeeCertTemplate").classList.remove("hidden");
-}
-
-if(type === "supervisor"){
-  document.getElementById("supervisorCertTemplate").classList.remove("hidden");
-}
-
-if(type === "der"){
-  document.getElementById("derCertTemplate").classList.remove("hidden");
-}
-
-}
-
-function printCert(){
-
-  const cert = document.querySelector(
-    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
-  );
-
-  if(!cert){
-    alert("No certificate found.");
-    return;
+    new QRCode(qrTemplate, {
+      text: verifyUrl,
+      width: 90,
+      height: 90
+    });
   }
 
-  document.body.classList.add("print-mode");
+}); // ✅ THIS FIXES EVERYTHING
 
-  setTimeout(() => {
-    window.print();
-    document.body.classList.remove("print-mode");
-  }, 100);
-}  
-
-});
-  
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
