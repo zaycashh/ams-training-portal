@@ -170,7 +170,6 @@ ACCESS CONTROL
 
 if (
   (!supervisorPurchased && !derPurchased && !employeeCompleted) ||
-  (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted)
 ) {
   alert("FMCSA Training requires purchase.");
   window.location.replace("dashboard.html");
@@ -453,21 +452,23 @@ document.addEventListener("DOMContentLoaded",()=>{
 const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 const email = user?.email;
 
-  if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
-  window.location.replace("dashboard.html");
-  return;
-
 const modACompleted =
-localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
 
 const modBCompleted =
-localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
 
 const derCompleted =
-localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
+  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
 
 const employeeCompleted =
-localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";  
+  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+
+/* IF NOTHING COMPLETED RETURN */
+if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+  window.location.replace("dashboard.html");
+  return;
+}
 
 }
 
@@ -745,38 +746,6 @@ if (employeeCompleted) {
 
 }
 
-// ===============================
-// 👉 EMPLOYEE CERT TEMPLATE
-// ===============================
-
-/* NAME */
-document.getElementById("empCertStudentName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
-/* DATE */
-document.getElementById("empCertCompletionDate").textContent =
-new Date(Number(storedDate)).toLocaleDateString("en-US");
-
-/* CERT ID */
-document.getElementById("empCertCertificateId").textContent =
-"Certificate ID: " + certId;
-
-/* QR (TEMPLATE) */
-const qrTemplate = document.getElementById("empCertQR");
-qrTemplate.innerHTML = "";
-
-new QRCode(qrTemplate,{
-text: verifyUrl,
-width:90,
-height:90
-});
-
-}
-
-});
 </script>
 
 <!-- SECOND SCRIPT (BUTTONS / TABS) -->
