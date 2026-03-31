@@ -7,7 +7,7 @@ function getUser() {
 }
 
 function getModule() {
-  return document.body.getAttribute("data-module");
+  return document.body.getAttribute("data-module") || null;
 }
 
 function getKey(base) {
@@ -22,12 +22,16 @@ function getKey(base) {
 
 function hasCompletedContent() {
   const module = getModule();
+  if (!module) return false;
+
   const key = getKey(`ams_${module}_content`);
   return key && localStorage.getItem(key) === "complete";
 }
 
 function hasPassedQuiz() {
   const module = getModule();
+  if (!module) return false;
+
   const key = getKey(`ams_${module}_unlocked`);
   return key && localStorage.getItem(key) === "true";
 }
@@ -38,6 +42,8 @@ function hasPassedQuiz() {
 
 function markContentComplete() {
   const module = getModule();
+  if (!module) return;
+
   const key = getKey(`ams_${module}_content`);
   if (!key) return;
 
@@ -47,11 +53,12 @@ function markContentComplete() {
 
 function markQuizPassed() {
   const module = getModule();
+  if (!module) return;
+
   const key = getKey(`ams_${module}_unlocked`);
   if (!key) return;
 
   localStorage.setItem(key, "true");
-
   unlockCertificate();
 }
 
