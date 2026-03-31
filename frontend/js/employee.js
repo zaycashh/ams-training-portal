@@ -31,68 +31,74 @@ const EMPLOYEE_CERT_CODE_KEY = `employeeCertificateCode_${USER_EMAIL}`;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-if (document.body.dataset.module !== "employee") return;
+  if (document.body.dataset.module !== "employee") return;
 
-const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-/* =========================
-   LOGIN REQUIRED
-========================= */
+  /* =========================
+     LOGIN REQUIRED
+  ========================= */
 
-if (!user) {
-window.location.replace("../pages/login.html");
-return;
-}
+  if (!user) {
+    window.location.replace("../pages/login.html");
+    return;
+  }
 
-/* =========================
-   COMPANY SEAT VALIDATION
-========================= */
+  /* =========================
+     COMPANY SEAT VALIDATION
+  ========================= */
 
-if (user.type === "company" && user.role === "employee") {
+  if (user.type === "company" && user.role === "employee") {
 
-if (!company?.usedSeats || !(user.email in company.usedSeats)) {
+    if (!company?.usedSeats || !(user.email in company.usedSeats)) {
 
-sessionStorage.setItem(
-"ams_notice",
-"Your company seat has been revoked."
-);
+      sessionStorage.setItem(
+        "ams_notice",
+        "Your company seat has been revoked."
+      );
 
-window.location.replace("../pages/dashboard.html");
-return;
+      window.location.replace("../pages/dashboard.html");
+      return;
+    }
 
-}
+  }
 
-}
+  /* =========================
+     INDIVIDUAL PURCHASE
+  ========================= */
 
-/* =========================
-   INDIVIDUAL PURCHASE
-========================= */
+  else if (user.type === "individual") {
 
-else if (user.type === "individual") {
+    if (
+      localStorage.getItem(`paid_employee_${USER_EMAIL}`) !== "true"
+    ) {
+      alert("You must purchase this training before accessing it.");
+      window.location.replace("../pages/dashboard.html");
+      return;
+    }
 
-if (
-  localStorage.getItem(`paid_employee_${USER_EMAIL}`) !== "true"
-) {
-alert("You must purchase this training before accessing it.");
+  }
 
-window.location.replace("../pages/dashboard.html");
-return;
+  /* =========================
+     BUTTON HANDLER (MOVE HERE ✅)
+  ========================= */
 
-}
+  const btn = document.getElementById("continueToQuizBtn");
 
-}
+  if (btn) {
+    btn.addEventListener("click", completeEmployeeContent);
+  }
 
-/* =========================
-   HARD LOCK IF COMPLETED
-========================= */
+  /* =========================
+     FINAL FLOW
+  ========================= */
 
-if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
-lockToCertificate();
-return;
+  if (localStorage.getItem(EMPLOYEE_COMPLETED_KEY) === "true") {
+    lockToCertificate();
+    return;
+  }
 
-}
-
-showSection("content");
+  showSection("content");
 
 });
 
@@ -341,14 +347,3 @@ height:128
 
 }
 
-/* =========================================================
-   CONTENT BUTTON
-========================================================= */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-const btn=document.getElementById("continueToQuizBtn");
-
-if(btn) btn.addEventListener("click",completeEmployeeContent);
-
-});
