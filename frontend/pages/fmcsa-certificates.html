@@ -550,76 +550,63 @@ window.location.origin +
 "/ams-training-portal/frontend/pages/verify.html?id=" +
 certIdA;
 
-/* SHOW SUPERVISOR CERTIFICATE TEMPLATE */
-
-document.getElementById("certStudentName").textContent =
-user.fullName ||
-((user.firstName || "") + " " + (user.lastName || "")).trim() ||
-user.email ||
-"User";
-
-document.getElementById("certCompletionDate").textContent =
-new Date(Number(storedADate)).toLocaleDateString("en-US");
-
-document.getElementById("certCertificateId").textContent =
-"Certificate ID: " + certIdA;
-  
-const certIdB =
-localStorage.getItem("fmcsaModuleBCertificateId");
-
-if(certIdB){
-
-document.getElementById("certCertificateIdB").textContent =
-"Drug & Alcohol ID: " + certIdB;
-
-}
-
-/* TEMPLATE QR */
-
-const qrContainer = document.getElementById("certQR");
-
-qrContainer.innerHTML = "";
-
-new QRCode(qrContainer,{
-text: verifyUrl,
-width:90,
-height:90
-});
-
-}
-
-}
 /* ===============================
-MODULE B
+SUPERVISOR CERTIFICATE DISPLAY
 =============================== */
 
-if(modBCompleted){
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const email = user?.email;
 
-const storedBDate =
-localStorage.getItem("fmcsaModuleBDate");
+/* PER USER KEYS */
+const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
-const certIdB =
-localStorage.getItem("fmcsaModuleBCertificateId");
+const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
+const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
 
-if(certIdB){
+/* NAME */
+document.getElementById("certStudentName").textContent =
+  user.fullName ||
+  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+  user.email ||
+  "User";
 
-registerCertificate({
-id: certIdB,
-name: user.fullName || user.email,
-course: "FMCSA Drug & Alcohol Substance Abuse Training",
-date: storedBDate
-});
+/* DATE (USE MODULE B DATE IF EXISTS, ELSE A) */
+const finalDate = storedBDate || storedADate;
 
+document.getElementById("certCompletionDate").textContent =
+  finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
+
+/* CERT ID A */
+if (certIdA) {
+  document.getElementById("certCertificateId").textContent =
+    "Certificate ID: " + certIdA;
 }
 
-if(certIdB){
-
-const verifyUrl =
-window.location.origin +
-"/ams-training-portal/frontend/pages/verify.html?id=" +
-certIdB;
-
+/* CERT ID B */
+if (certIdB) {
+  document.getElementById("certCertificateIdB").textContent =
+    "Drug & Alcohol ID: " + certIdB;
 }
+
+/* QR CODE (USE MODULE B IF EXISTS ELSE A) */
+const finalCertId = certIdB || certIdA;
+
+if (finalCertId) {
+
+  const verifyUrl =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    finalCertId;
+
+  const qrContainer = document.getElementById("certQR");
+  qrContainer.innerHTML = "";
+
+  new QRCode(qrContainer, {
+    text: verifyUrl,
+    width: 90,
+    height: 90
+  });
 
 }
 
