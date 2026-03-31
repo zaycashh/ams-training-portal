@@ -38,18 +38,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("certList");
 
   // detect user access
-  const hasFMCSA = localStorage.getItem("paid_fmcsa") === "true";
-  const hasFAA =
-    localStorage.getItem("paid_der") === "true" ||
-    localStorage.getItem("paid_supervisor") === "true" ||
-    localStorage.getItem("paid_employee") === "true";
+  const email = user.email;
+
+const hasFMCSA =
+  localStorage.getItem(`paid_fmcsa_${email}`) === "true";
+
+const hasFAA =
+  localStorage.getItem(`paid_der_${email}`) === "true" ||
+  localStorage.getItem(`paid_supervisor_${email}`) === "true" ||
+  localStorage.getItem(`paid_employee_${email}`) === "true";
 
   // filter certificates
   const myCerts = certs.filter(cert => {
-    if (hasFMCSA && cert.course.includes("FMCSA")) return true;
-    if (hasFAA && !cert.course.includes("FMCSA")) return true;
-    return false;
-  });
+  if (hasFMCSA && cert.type?.startsWith("fmcsa")) return true;
+  if (hasFAA && cert.type?.startsWith("faa")) return true;
+  return false;
+});
 
   if(myCerts.length === 0){
     container.innerHTML = "<p>No certificates yet.</p>";
@@ -156,7 +160,7 @@ ${
 }
 </h3>
       <p><strong>Name:</strong> ${cert.name}</p>
-      <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString("en-US")}</p>
+      <p><strong>Date:</strong> ${cert.displayDate || new Date(cert.date).toLocaleDateString("en-US")}</p>
       <p><strong>ID:</strong> ${cert.id}</p>
 
       <button class="btn-primary" onclick="openCertificate('${cert.id}')">
@@ -192,7 +196,7 @@ function openCertificate(id){
   }
 
   // route correctly
-  if(cert.course.includes("FMCSA")){
+  if(cert.type?.startsWith("fmcsa")){
     window.location.href = "fmcsa-certificates.html?id=" + id;
   } else {
     window.location.href = "faa-certificates.html?id=" + id;
