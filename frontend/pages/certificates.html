@@ -70,8 +70,8 @@ let hasFAADER = false;
 
 myCerts.forEach(cert => {
 
-  const isFMCSA = cert.course.includes("FMCSA");
-  const isFAA = cert.course.includes("FAA");
+  const isFMCSA = cert.type?.startsWith("fmcsa");
+  const isFAA = cert.type?.startsWith("faa");
 
   const isModuleA = cert.course.includes("Reasonable Suspicion");
   const isModuleB = cert.course.includes("Substance Abuse");
