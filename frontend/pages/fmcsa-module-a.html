@@ -445,8 +445,37 @@ generateSupervisorCertificate();
   </div>`;
 
   setTimeout(()=>{
-    window.location.href="fmcsa-certificates.html";
-  },2000);
+
+  // hide quiz
+  document.getElementById("quizSection").classList.add("hidden");
+
+  // show certificate
+  document.getElementById("certificateSection").classList.remove("hidden");
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  const fullName =
+    user?.fullName ||
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+    user?.email ||
+    "User";
+
+  document.getElementById("certName").textContent = fullName;
+
+  document.getElementById("certDate").textContent =
+    new Date().toLocaleDateString("en-US");
+
+  document.getElementById("certId").textContent =
+    localStorage.getItem("fmcsaModuleACertificateId");
+
+  if(typeof generateQR === "function"){
+    generateQR(
+      localStorage.getItem("fmcsaModuleACertificateId"),
+      "certQR"
+    );
+  }
+
+},1500);
 
 }
   
