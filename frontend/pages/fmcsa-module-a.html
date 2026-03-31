@@ -423,16 +423,19 @@ if (score >= PASS_SCORE) {
 
 generateSupervisorCertificate();
 
-  localStorage.setItem("fmcsaModuleACompleted", "true");
-  localStorage.setItem("fmcsaModuleADate", Date.now());
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+const email = user?.email || "guest";
+
+localStorage.setItem(`fmcsaModuleACompleted_${email}`, "true");
+localStorage.setItem(`fmcsaModuleADate_${email}`, Date.now());
 
   // 🔥 Generate Certificate ID
-  let certId = localStorage.getItem("fmcsaModuleACertificateId");
+  let certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
   if (!certId) {
 
     certId = generateCertificateId("AMS-FMCSA");
-    localStorage.setItem("fmcsaModuleACertificateId", certId);
+    localStorage.setItem(`fmcsaModuleACertificateId_${email}`, certId);
 
 }
 
