@@ -150,41 +150,81 @@ if(!user){
 window.location.replace("login.html");
 return;
 }
-/* CHECK PURCHASE ACCESS */
+/* ===============================
+CHECK PURCHASE ACCESS (FIXED)
+=============================== */
 
 const supervisorPurchased =
-localStorage.getItem("paid_fmcsa") === "true";
+  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
 
 const derPurchased =
-localStorage.getItem("paid_der_fmcsa") === "true";
+  localStorage.getItem(`paid_der_fmcsa_${user.email}`) === "true";
 
 const employeeCompleted =
-localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
 
-/*
-Allow certificate page if ANY valid FMCSA path exists
-*/
-
-if(!supervisorPurchased && !derPurchased && !employeeCompleted){
-alert("FMCSA Training requires purchase.");
-window.location.replace("dashboard.html");
-return;
-}
-  
-/* CHECK CERTIFICATE COMPLETION */
+/* ===============================
+CHECK COMPLETION FLAGS (ADD THIS)
+=============================== */
 
 const modACompleted =
-localStorage.getItem("fmcsaModuleACompleted") === "true";
+  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
 
 const modBCompleted =
-localStorage.getItem("fmcsaModuleBCompleted") === "true";
+  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
 
 const derCompleted =
-localStorage.getItem("fmcsaDERCompleted") === "true";
+  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
 
-if(!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted){
-window.location.replace("dashboard.html");
-return;
+/* ===============================
+FINAL ACCESS RULE
+=============================== */
+
+if (
+  (!supervisorPurchased && !derPurchased && !employeeCompleted) ||
+  (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted)
+) {
+  alert("FMCSA Training requires purchase.");
+  window.location.replace("dashboard.html");
+  return;
+}
+  
+/* ===============================
+CHECK CERTIFICATE COMPLETION
+=============================== */
+
+const supervisorPurchased =
+  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+
+const derPurchased =
+  localStorage.getItem(`paid_der_fmcsa_${user.email}`) === "true";
+
+const employeeCompleted =
+  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+
+/* ✅ FIXED COMPLETION FLAGS */
+
+const modACompleted =
+  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
+
+const modBCompleted =
+  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
+
+const derCompleted =
+  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
+
+/* ===============================
+FINAL ACCESS CHECK
+=============================== */
+
+if (
+  !modACompleted &&
+  !modBCompleted &&
+  !derCompleted &&
+  !employeeCompleted
+) {
+  window.location.replace("dashboard.html");
+  return;
 }
   
 /* OPTIONAL 30 DAY EXPIRATION */
