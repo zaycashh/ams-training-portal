@@ -106,8 +106,12 @@ function logout() {
    ACCESS CHECK
 ========================= */
 function hasAccess(course) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return false;
+
   const paidKey = COURSE_KEYS[course];
-  return localStorage.getItem(paidKey) === "true";
+
+  return localStorage.getItem(`${paidKey}_${user.email}`) === "true";
 }
 
 /* =========================
