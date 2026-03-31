@@ -1,9 +1,19 @@
 /* =========================================================
-   AMS TRAINING FLOW AUTHORITY (STEP 22)
+   AMS TRAINING FLOW AUTHORITY (USER ISOLATED)
 ========================================================= */
+
+function getUser() {
+  return JSON.parse(localStorage.getItem("amsUser") || "null");
+}
 
 function getModule() {
   return document.body.getAttribute("data-module");
+}
+
+function getKey(base) {
+  const user = getUser();
+  if (!user) return null;
+  return `${base}_${user.email}`;
 }
 
 /* -------------------------
@@ -12,14 +22,14 @@ function getModule() {
 
 function hasCompletedContent() {
   const module = getModule();
-  return localStorage.getItem(`ams_${module}_content`) === "complete";
+  const key = getKey(`ams_${module}_content`);
+  return key && localStorage.getItem(key) === "complete";
 }
 
 function hasPassedQuiz() {
   const module = getModule();
-  if (!module) return false;
-
-  return localStorage.getItem(`ams_${module}_unlocked`) === "true";
+  const key = getKey(`ams_${module}_unlocked`);
+  return key && localStorage.getItem(key) === "true";
 }
 
 /* -------------------------
@@ -28,18 +38,20 @@ function hasPassedQuiz() {
 
 function markContentComplete() {
   const module = getModule();
-  localStorage.setItem(`ams_${module}_content`, "complete");
+  const key = getKey(`ams_${module}_content`);
+  if (!key) return;
+
+  localStorage.setItem(key, "complete");
   unlockQuiz();
 }
 
 function markQuizPassed() {
   const module = getModule();
-  if (!module) return;
+  const key = getKey(`ams_${module}_unlocked`);
+  if (!key) return;
 
-  // STEP 23 authority: single unlock flag
-  localStorage.setItem(`ams_${module}_unlocked`, "true");
+  localStorage.setItem(key, "true");
 
-  // UI-only unlock
   unlockCertificate();
 }
 
@@ -74,6 +86,10 @@ function unlockCertificate() {
 ------------------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  const user = getUser();
+  if (!user) return;
+
   if (!hasCompletedContent()) {
     lockTab("tabQuiz");
     lockTab("tabCertificate");
