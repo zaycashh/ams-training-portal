@@ -61,20 +61,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let foundCert = null;
 
   /* 🔥 SEARCH ALL LOCALSTORAGE CERT REGISTRIES */
-  Object.keys(localStorage).forEach(key => {
+  for (const key of Object.keys(localStorage)) {
 
-    if (key.startsWith("amsCertificates_")) {
+  if (key.startsWith("amsCertificates_")) {
 
-      const registry =
-        JSON.parse(localStorage.getItem(key) || "[]");
+    const registry =
+      JSON.parse(localStorage.getItem(key) || "[]");
 
-      const match = registry.find(c => c.id === certId);
+    const match = registry.find(c => c.id === certId);
 
-      if (match) {
-        foundCert = match;
-      }
-
+    if (match) {
+      foundCert = match;
+      break; // ✅ actually stops loop
     }
+
+  }
+
+}
 
   });
 
@@ -85,8 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
       new Date(Number(foundCert.date)).toLocaleDateString("en-US");
 
     result.innerHTML = `
-      <h2 style="color:green;">✔ Certificate Verified</h2>
-
+      <h2 style="color:#0a7d2c;">✔ Certificate Verified</h2>
       <p><strong>Name:</strong> ${foundCert.name}</p>
       <p><strong>Course:</strong> ${foundCert.course}</p>
       <p><strong>Date Completed:</strong> ${formattedDate}</p>
@@ -107,5 +109,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
-</body>
