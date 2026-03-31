@@ -715,6 +715,8 @@ if (score >= PASS_SCORE_ALCOHOL) {
     date: Date.now()
   });
 
+ }      
+
 }
 
   localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
