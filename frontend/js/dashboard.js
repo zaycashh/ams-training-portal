@@ -426,7 +426,7 @@ if (user?.role === "employee") {
    SHOW COMPLETION DATES + STATUS
 ========================= */
 
-const derDate = localStorage.getItem("fmcsaDERDate");
+const derDate = localStorage.getItem(`fmcsaDERDate_${email}`);
    
 
 if (derDate) {
@@ -451,7 +451,7 @@ if (derDate) {
 MODULE A COMPLETION DATE
 ========================= */
 
-const modADate = localStorage.getItem("fmcsaModuleADate");
+const modADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
 
 if (modADate) {
 
@@ -473,7 +473,7 @@ if (modADate) {
 MODULE B COMPLETION DATE
 ========================= */
 
-const modBDate = localStorage.getItem("fmcsaModuleBDate");
+const modBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
 
 if (modBDate) {
 
@@ -492,7 +492,7 @@ if (modBDate) {
 
 }
 
-const empDate = localStorage.getItem("fmcsaEmployeeDate");
+const empDate = localStorage.getItem(`fmcsaEmployeeDate_${email}`);
 
 if (empDate) {
 
