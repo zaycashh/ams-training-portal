@@ -30,11 +30,12 @@ document.getElementById("loginForm")
 
     const user = users.find(u => u.email === email);
 
-    if (!user) {
+    if (!user || !user.email || !user.role) {
       alert("Account not found. Please register first.");
       return;
     }
-
+     
+    localStorage.removeItem("amsUser");
     localStorage.setItem("amsUser", JSON.stringify(user));
 
     redirectByRole(user);
