@@ -176,31 +176,6 @@ window.assignSeat = function (email) {
   if (user) loadCompanyDashboard(user);
 };
 
-
-/* =========================================================
-   REVOKE SEAT
-========================================================= */
-
-window.revokeSeat = function (email) {
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.usedSeats || !company.usedSeats[email]) {
-    alert("Seat not found.");
-    return;
-  }
-
-  if (!confirm("Revoke this seat?")) return;
-
-  delete company.usedSeats[email];
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (user) loadCompanyDashboard(user);
-};
-
-
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
