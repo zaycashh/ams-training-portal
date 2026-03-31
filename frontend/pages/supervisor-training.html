@@ -33,10 +33,11 @@
       <button id="btnContent" onclick="showSection('content')">
         Content
       </button>
-      <button id="btnQuiz" onclick="showSection('quiz')">
+      <button id="btnQuiz" class="disabled" disabled onclick="showSection('quiz')">
         Quiz
       </button>
-      <button id="btnCertificate" onclick="showSection('certificate')">
+
+      <button id="btnCertificate" class="disabled" disabled onclick="showSection('certificate')">
         Certificate
       </button>
     </nav>
@@ -72,18 +73,18 @@
 
       <p>
         This certifies that
-        <strong id="certName">Supervisor Name</strong>
+       <strong id="certName">—</strong>
         has successfully completed Supervisor Training.
       </p>
 
       <p>
         <strong>Date Issued:</strong>
-        <span id="certDate"></span>
+        <span id="certDate">—</span>
       </p>
 
       <p>
         <strong>Verification Code:</strong>
-        <span id="certVerify"></span>
+        <span id="certVerify">—</span>
       </p>
 
       <div id="certQR" style="margin-top:12px;"></div>
@@ -97,9 +98,6 @@
 
   <!-- 🔐 GLOBAL SECURITY -->
 <script src="../js/route-guard.js"></script>
-
-<!-- ACCESS CONTROL -->
-<script src="../js/access-guard.js"></script>
 
 <!-- LANGUAGE -->
 <script src="../js/lang-loader.js"></script>
