@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   payBtn.addEventListener("click", () => {
 
+    if (payBtn.disabled) return;
     payBtn.disabled = true;
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
+      goDashboard();
       return;
     }
 
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
+      goDashboard();
       return;
     }
 
@@ -60,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
+      goDashboard();
       return;
     }
 
@@ -74,8 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
-      return;
+      goDashboard();
     }
 
     /* ================================
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
+      goDashboard();
       return;
     }
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      window.location.href = "dashboard.html";
+      goDashboard();
       return;
     }
 
@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ================================= */
 
     alert("Unknown purchase type.");
+    payBtn.disabled = false;
 
   });
 
