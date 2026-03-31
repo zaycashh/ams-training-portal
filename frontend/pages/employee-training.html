@@ -28,11 +28,19 @@
   </header>
 
   <!-- NAV -->
-  <nav class="module-nav">
-    <button id="btnContent" onclick="showSection('content')">Content</button>
-    <button id="btnQuiz" onclick="showSection('quiz')">Quiz</button>
-    <button id="btnCertificate" onclick="showSection('certificate')">Certificate</button>
-  </nav>
+<nav class="module-nav">
+  <button id="btnContent" onclick="showSection('content')">
+    Content
+  </button>
+
+  <button id="btnQuiz" class="disabled" disabled onclick="showSection('quiz')">
+    Quiz
+  </button>
+
+  <button id="btnCertificate" class="disabled" disabled onclick="showSection('certificate')">
+    Certificate
+  </button>
+</nav>
 
   <!-- CONTENT -->
   <section id="contentSection" class="module-section">
@@ -58,7 +66,7 @@
 
     <p>
       This certifies that
-      <strong id="certName">Employee Name</strong>
+      <strong id="certName">—</strong>
       has successfully completed Employee Training.
     </p>
 
