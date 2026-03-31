@@ -5,31 +5,11 @@
   <title>Company Admin Dashboard | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ✅ Correct path includes /frontend -->
+  <!-- ✅ Correct path -->
   <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
 </head>
 
 <body data-role="company-admin">
-  
-  <script>
-(function () {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  // Not logged in
-  if (!user) {
-    window.location.replace("login.html");
-    return;
-  }
-
-  // Only allow company admin or owner
-  if (user.role !== "company_admin" && user.role !== "owner") {
-    window.location.replace("dashboard.html");
-    return;
-  }
-
-})();
-</script>
 
 <main class="module-container">
 
@@ -46,25 +26,20 @@
   <section class="module-section">
     <h2>Company Overview</h2>
 
-    <p><strong>Company:</strong> <span id="companyName"></span></p>
-    <p><strong>Admin Email:</strong> <span id="companyAdmin"></span></p>
-    <p><strong>Modules:</strong> <span id="companyModules"></span></p>
+    <p><strong>Company:</strong> <span id="companyName">—</span></p>
+    <p><strong>Admin Email:</strong> <span id="companyAdmin">—</span></p>
+    <p><strong>Modules:</strong> <span id="companyModules">—</span></p>
   </section>
 
   <!-- SEAT MANAGEMENT -->
   <section class="module-section">
     <h2>Employee Seat Management</h2>
 
-<div>
-  Seats Total: <strong id="seatTotal">0</strong>
-</div>
-<div>
-  Seats Used: <strong id="seatUsed">0</strong>
-</div>
-<div>
-  Seats Available: <strong id="seatRemaining">0</strong>
-</div>
-    <button id="buySeatsBtn" class="btn-primary">
+    <div>Seats Total: <strong id="seatTotal">0</strong></div>
+    <div>Seats Used: <strong id="seatUsed">0</strong></div>
+    <div>Seats Available: <strong id="seatRemaining">0</strong></div>
+
+    <button id="buySeatsBtn" class="btn-primary" style="margin-top:10px;">
       Buy 5 More Seats
     </button>
 
@@ -94,35 +69,47 @@
         </tr>
       </tbody>
     </table>
-    
+
     <!-- INVITE EMPLOYEE -->
-<div style="margin-top:16px; max-width:420px;">
-  <h3 style="margin-bottom:6px;">Invite Employee</h3>
+    <div style="margin-top:16px; max-width:420px;">
+      <h3 style="margin-bottom:6px;">Invite Employee</h3>
 
-  <div style="display:flex; gap:8px;">
-    <input
-      type="email"
-      id="inviteEmail"
-      placeholder="Employee email"
-      style="flex:1;"
-    />
+      <div style="display:flex; gap:8px;">
+        <input
+          type="email"
+          id="inviteEmail"
+          placeholder="Employee email"
+          style="flex:1;"
+        />
 
-    <button
-      class="btn-primary"
-      onclick="inviteEmployee()"
-    >
-      Invite
-    </button>
-  </div>
+        <button class="btn-primary" onclick="inviteEmployee()">
+          Invite
+        </button>
+      </div>
 
-  <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
-</div>
+      <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
+    </div>
+
   </section>
 
 </main>
 
-<!-- ✅ Correct path includes /frontend -->
+<!-- =========================
+     SCRIPTS
+========================= -->
+
 <script src="/ams-training-portal/frontend/js/route-guard.js"></script>
 <script src="/ams-training-portal/frontend/js/company-dashboard.js"></script>
+
+<script>
+/* =========================
+   LOGOUT (SAFE)
+========================= */
+function logout(){
+  localStorage.removeItem("amsUser");
+  window.location.href = "login.html";
+}
+</script>
+
 </body>
 </html>
