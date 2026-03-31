@@ -1,5 +1,5 @@
 /* =========================================================
-   AMS TRAINING PORTAL – GLOBAL ROUTE GUARD
+   AMS TRAINING PORTAL – GLOBAL ROUTE GUARD (USER ISOLATED)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -39,19 +39,43 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  const email = user.email;
+
   /* =========================================================
-   3️⃣ ALLOW CERTIFICATE + VERIFY PAGES
+   3️⃣ CERTIFICATE ACCESS LOCK (USER ISOLATED)
   ========================================================= */
 
-  if (
-    path.includes("certificates") ||
-    path.includes("verify")
-  ) {
+  if (path.includes("certificates")) {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const certId = urlParams.get("id");
+
+    if (certId) {
+      const key = `amsCertificates_${email}`;
+      const registry = JSON.parse(localStorage.getItem(key) || "[]");
+
+      const match = registry.find(c => c.id === certId);
+
+      if (!match) {
+        document.body.innerHTML =
+          "<h2 style='text-align:center;margin-top:50px;'>Invalid Certificate Access</h2>";
+        return;
+      }
+    }
+
     return;
   }
 
   /* =========================================================
-   4️⃣ NON-MODULE PAGE PROTECTION
+   4️⃣ VERIFY PAGE (PUBLIC SAFE)
+  ========================================================= */
+
+  if (path.includes("verify")) {
+    return;
+  }
+
+  /* =========================================================
+   5️⃣ NON-MODULE PAGE PROTECTION
   ========================================================= */
 
   if (!module) {
@@ -69,15 +93,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
-   5️⃣ ROLE ACCESS CONTROL
+   6️⃣ ROLE ACCESS CONTROL
   ========================================================= */
-   const roleAccess = {
-  individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol", "fmcsa-employee"],
-  der: ["der", "fmcsa-der"],
-  supervisor: ["supervisor", "fmcsa-module-a", "fmcsa-drug-alcohol"],
-  employee: ["employee", "fmcsa-employee"],
-  owner: []
-};
+
+  const roleAccess = {
+    individual: ["der", "supervisor", "employee", "fmcsa-der", "fmcsa-module-a", "fmcsa-drug-alcohol", "fmcsa-employee"],
+    der: ["der", "fmcsa-der"],
+    supervisor: ["supervisor", "fmcsa-module-a", "fmcsa-drug-alcohol"],
+    employee: ["employee", "fmcsa-employee"],
+    owner: []
+  };
 
   if (!roleAccess[role] || !roleAccess[role].includes(module)) {
 
@@ -91,75 +116,78 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
-   6️⃣ PAYMENT ENFORCEMENT (FAA MODULES ONLY)
-========================================================= */
+   7️⃣ FAA PAYMENT ENFORCEMENT (USER ISOLATED)
+  ========================================================= */
 
-const paymentFlags = {
-  der: "paid_der",
-  supervisor: "paid_supervisor",
-  employee: "paid_employee"
-};
+  const FAA_KEYS = {
+    der: "paid_der",
+    supervisor: "paid_supervisor",
+    employee: "paid_employee"
+  };
 
-if (["der","supervisor","employee"].includes(module)) {
+  if (["der", "supervisor", "employee"].includes(module)) {
 
-  const payKey = paymentFlags[module];
+    const key = FAA_KEYS[module];
 
-  if (type === "individual") {
+    if (type === "individual") {
 
-    const paid = localStorage.getItem(payKey) === "true";
+      const paid =
+        localStorage.getItem(`${key}_${email}`) === "true";
 
-    if (!paid) {
+      if (!paid) {
 
-      sessionStorage.setItem(
-        "ams_notice",
-        "You must purchase this training before accessing it."
-      );
+        sessionStorage.setItem(
+          "ams_notice",
+          "You must purchase this training before accessing it."
+        );
 
-      redirectToRoleDashboard(user);
-      return;
+        redirectToRoleDashboard(user);
+        return;
+      }
     }
   }
-}
 
   /* =========================================================
-   7️⃣ FMCSA MODULE PAYMENT + EXPIRATION
+   8️⃣ FMCSA PAYMENT + EXPIRATION (USER ISOLATED)
   ========================================================= */
 
   if (
-  module === "fmcsa-module-a" ||
-  module === "fmcsa-drug-alcohol" ||
-  module === "fmcsa-der" ||
-  module === "fmcsa-employee"
-) {
+    module === "fmcsa-module-a" ||
+    module === "fmcsa-drug-alcohol" ||
+    module === "fmcsa-der" ||
+    module === "fmcsa-employee"
+  ) {
 
     const paymentMap = {
-  "fmcsa-module-a": "paid_fmcsa",
-  "fmcsa-drug-alcohol": "paid_fmcsa",
-  "fmcsa-der": "paid_der_fmcsa",
-  "fmcsa-employee": "paid_employee_fmcsa"
-};
+      "fmcsa-module-a": "paid_fmcsa",
+      "fmcsa-drug-alcohol": "paid_fmcsa",
+      "fmcsa-der": "paid_der_fmcsa",
+      "fmcsa-employee": "paid_employee_fmcsa"
+    };
 
     const dateMap = {
-  "fmcsa-module-a": "fmcsa_start_date",
-  "fmcsa-drug-alcohol": "fmcsa_start_date",
-  "fmcsa-der": "paid_der_fmcsa_date",
-  "fmcsa-employee": "paid_employee_fmcsa_date"
-};
+      "fmcsa-module-a": "fmcsa_start_date",
+      "fmcsa-drug-alcohol": "fmcsa_start_date",
+      "fmcsa-der": "paid_der_fmcsa_date",
+      "fmcsa-employee": "paid_employee_fmcsa_date"
+    };
 
     const paidKey = paymentMap[module];
     const dateKey = dateMap[module];
 
-    const paid = localStorage.getItem(paidKey) === "true";
-    const purchaseDate = parseInt(localStorage.getItem(dateKey) || "0");
+    const paid =
+      localStorage.getItem(`${paidKey}_${email}`) === "true";
+
+    const purchaseDate = parseInt(
+      localStorage.getItem(`${dateKey}_${email}`) || "0"
+    );
 
     if (!paid || purchaseDate === 0) {
 
       if (module === "fmcsa-der") {
-
         window.location.replace(
           BASE + "payment.html?module=fmcsa-der&type=der_fmcsa"
         );
-
         return;
       }
 
@@ -171,8 +199,8 @@ if (["der","supervisor","employee"].includes(module)) {
 
     if (Date.now() - purchaseDate > THIRTY_DAYS) {
 
-      localStorage.removeItem(paidKey);
-      localStorage.removeItem(dateKey);
+      localStorage.removeItem(`${paidKey}_${email}`);
+      localStorage.removeItem(`${dateKey}_${email}`);
 
       sessionStorage.setItem(
         "ams_notice",
