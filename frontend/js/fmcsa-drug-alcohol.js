@@ -2,9 +2,10 @@
    FMCSA DRUG & ALCOHOL MODULE (ENTERPRISE VERSION)
    Mirrors Supervisor Architecture
 ========================================================= */
-const MODULE_B_CERT_ID_KEY = `fmcsaModuleBCertificateId_${email}`;
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-const email = user?.email || "guest";
+const email = user?.email;
+
+const MODULE_B_CERT_ID_KEY = `fmcsaModuleBCertificateId_${email}`;
 
 // ✅ Fix PDF.js worker warning
 pdfjsLib.GlobalWorkerOptions.workerSrc =
