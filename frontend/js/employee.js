@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "employee") return;
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   /* =========================
      LOGIN REQUIRED
