@@ -609,4 +609,26 @@ initQuiz();
 
 }
 
+   /* =========================================================
+   SECTION NAVIGATION
+========================================================= */
+
+function showSection(section){
+
+  const sections = {
+    content: "contentSection",
+    quiz: "quizSection",
+    certificate: "certificateSection"
+  };
+
+  Object.values(sections).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.add("hidden");
+  });
+
+  const active = document.getElementById(sections[section]);
+  if(active) active.classList.remove("hidden");
+
+}
+   
 });
