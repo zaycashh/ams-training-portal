@@ -46,51 +46,63 @@ Checking certificate...
 </div>
 
 <script>
-
 document.addEventListener("DOMContentLoaded", () => {
 
-const result = document.getElementById("result");
+  const result = document.getElementById("result");
 
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
 
-if(!certId){
-result.innerHTML = "<h2>No certificate ID provided</h2>";
-return;
-}
+  if (!certId) {
+    result.innerHTML = "<h2>No certificate ID provided</h2>";
+    return;
+  }
 
-const registry =
-JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+  let foundCert = null;
 
-const cert = registry.find(c => c.id === certId);
+  /* 🔥 SEARCH ALL LOCALSTORAGE CERT REGISTRIES */
+  Object.keys(localStorage).forEach(key => {
 
-if(cert){
+    if (key.startsWith("amsCertificates_")) {
 
-const formattedDate =
-cert.date
-? new Date(Number(cert.date)).toLocaleDateString("en-US")
-: "N/A";
+      const registry =
+        JSON.parse(localStorage.getItem(key) || "[]");
 
-result.innerHTML = `
-<h2 style="color:green;">✔ Certificate Verified</h2>
+      const match = registry.find(c => c.id === certId);
 
-<p><strong>Name:</strong> ${cert.name}</p>
-<p><strong>Course:</strong> ${cert.course}</p>
-<p><strong>Date Completed:</strong> ${formattedDate}</p>
-<p><strong>Certificate ID:</strong> ${cert.id}</p>
-`;
+      if (match) {
+        foundCert = match;
+      }
 
-}else{
+    }
 
-result.innerHTML = `
-<h2 style="color:red;">❌ Certificate NOT FOUND</h2>
-<p>This certificate ID is not in the AMS registry.</p>
-`;
+  });
 
-}
+  if (foundCert) {
+
+    const formattedDate =
+      foundCert.displayDate ||
+      new Date(Number(foundCert.date)).toLocaleDateString("en-US");
+
+    result.innerHTML = `
+      <h2 style="color:green;">✔ Certificate Verified</h2>
+
+      <p><strong>Name:</strong> ${foundCert.name}</p>
+      <p><strong>Course:</strong> ${foundCert.course}</p>
+      <p><strong>Date Completed:</strong> ${formattedDate}</p>
+      <p><strong>Certificate ID:</strong> ${foundCert.id}</p>
+    `;
+
+  } else {
+
+    result.innerHTML = `
+      <h2 style="color:red;">❌ Certificate NOT FOUND</h2>
+      <p>This certificate ID is not in the AMS registry.</p>
+    `;
+
+  }
 
 });
-
 </script>
 
 </body>
