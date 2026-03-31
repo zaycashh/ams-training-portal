@@ -318,8 +318,11 @@ function consumeEmployeeSeatAndStart(startUrl) {
 }
 
 function updateFMCSATimer() {
-  const paid = localStorage.getItem("paid_fmcsa") === "true";
-  if (!paid) return;
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+const paid =
+  user &&
+  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
 
   const purchaseDate = localStorage.getItem("fmcsaPurchaseDate");
   if (!purchaseDate) return;
@@ -666,7 +669,11 @@ function updateFMCSDERButtonState() {
 
 function updateFMCSAModuleButtons() {
 
-  const paid = localStorage.getItem("paid_fmcsa") === "true";
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+const paid =
+  user &&
+  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
   const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
