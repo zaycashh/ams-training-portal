@@ -1,7 +1,9 @@
 /* =========================================================
-   AMS TRAINING ACCESS GUARD (SEAT-AWARE VERSION)
+   AMS TRAINING ACCESS GUARD (FINAL — USER + SEAT SAFE)
 ========================================================= */
+
 (function () {
+
   const DEV_OVERRIDE =
     localStorage.getItem("ams_dev_override") === "true";
 
@@ -9,59 +11,73 @@
     localStorage.getItem("amsUser") || "null"
   );
 
-  const module = document.body.getAttribute("data-module");
+  const module =
+    document.body.getAttribute("data-module") || null;
 
-  // Must be logged in
+  /* =========================
+     REQUIRE LOGIN
+  ========================= */
+
   if (!user && !DEV_OVERRIDE) {
     window.location.replace("login.html");
     return;
   }
 
-  // If no module defined, nothing to guard
   if (!module) return;
+
+  const email = user?.email;
+
+  /* =========================
+     PAYMENT MAP (USER ISOLATED)
+  ========================= */
+
+  const PAYMENT_KEYS = {
+    der: "paid_der",
+    supervisor: "paid_supervisor",
+    employee: "paid_employee",
+    "fmcsa-der": "paid_der_fmcsa",
+    "fmcsa-module-a": "paid_fmcsa",
+    "fmcsa-drug-alcohol": "paid_fmcsa",
+    "fmcsa-employee": "paid_employee_fmcsa"
+  };
 
   let isPaid = false;
 
-// FAA MODULES
-if (module === "der") {
-  isPaid = localStorage.getItem("paid_der") === "true";
-}
+  const baseKey = PAYMENT_KEYS[module];
 
-if (module === "supervisor") {
-  isPaid = localStorage.getItem("paid_supervisor") === "true";
-}
+  if (baseKey && email) {
+    isPaid =
+      localStorage.getItem(`${baseKey}_${email}`) === "true";
+  }
 
-if (module === "employee") {
-  isPaid = localStorage.getItem("paid_employee") === "true";
-}
+  /* =========================
+     COMPANY SEAT CHECK (EMPLOYEE ONLY)
+  ========================= */
 
-// FMCSA MODULES
-if (module === "fmcsa-der") {
-  isPaid = localStorage.getItem("paid_der_fmcsa") === "true";
-}
-
-if (module === "fmcsa-module-a" || module === "fmcsa-drug-alcohol") {
-  isPaid = localStorage.getItem("paid_fmcsa") === "true";
-}
-
-if (module === "fmcsa-employee") {
-  isPaid = localStorage.getItem("paid_employee_fmcsa") === "true";
-}
-
-  // 🔥 COMPANY SEAT SUPPORT (EMPLOYEE ONLY)
   let seatAssigned = false;
 
   if (module === "employee") {
+
     const company = JSON.parse(
       localStorage.getItem("companyProfile") || "null"
     );
 
-    seatAssigned = company?.usedSeats?.[user?.id] === true;
+    // ✅ FIXED: use email (not id)
+    seatAssigned = !!company?.usedSeats?.[email];
   }
 
+  /* =========================
+     FINAL ACCESS CHECK
+  ========================= */
+
   if (!isPaid && !seatAssigned && !DEV_OVERRIDE) {
+
     console.warn(`🔒 ${module} requires purchase or seat`);
+
+    // 🔥 redirect safely
     window.location.replace("dashboard.html");
+
     return;
   }
+
 })();
