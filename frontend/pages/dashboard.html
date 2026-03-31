@@ -8,7 +8,13 @@
 <link rel="stylesheet" href="../css/main.css" />
 <link rel="icon" href="data:,">
 </head>
-
+  
+<script>
+function logout(){
+  localStorage.removeItem("amsUser");
+  window.location.href = "login.html";
+}
+</script>
 <body>
 
 <header class="portal-header">
@@ -109,7 +115,7 @@ This training bundle includes the required DOT FMCSA supervisor drug and alcohol
 <div class="modules-grid">
 
 <!-- MODULE A -->
-<div class="module-card">
+<div class="module-card locked">
 
 <h3 id="moduleATitle">🔒 Module A – Reasonable Suspicion</h3>
 <p>Supervisor observation and documentation training.</p>
