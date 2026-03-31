@@ -1,10 +1,11 @@
 /* =========================================================
-   FAA CERTIFICATE PAGE LOADER (FIXED)
+   FAA CERTIFICATE PAGE LOADER (FINAL)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const container = document.getElementById("certificateList");
+  if (!container) return;
 
   const user =
     JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registry =
     JSON.parse(localStorage.getItem(key) || "[]");
 
-  /* 🔥 FAA ONLY */
+  /* 🔥 FAA ONLY (current logic) */
   const faaCerts = registry.filter(cert =>
     cert.course && !cert.course.includes("FMCSA")
   );
@@ -32,10 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
   faaCerts.forEach(cert => {
 
     let title = "FAA Training";
-
-    /* ===============================
-       DETECT TYPE
-    =============================== */
 
     if (cert.course.includes("DER")) {
       title = "FAA DER Training";
@@ -53,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     card.innerHTML = `
       <h3>${title}</h3>
       <p><strong>Name:</strong> ${cert.name || user.email}</p>
-      <p><strong>Date:</strong> ${new Date(cert.date).toLocaleDateString()}</p>
+      <p><strong>Date:</strong> ${cert.displayDate || new Date(cert.date).toLocaleDateString()}</p>
       <p><strong>ID:</strong> ${cert.id}</p>
 
       <button class="btn-primary" onclick="openFAACert('${cert.id}')">
@@ -72,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
-   OPEN FAA CERT (FIXED ROUTING)
+   OPEN FAA CERT
 ========================================================= */
 
 function openFAACert(id){
