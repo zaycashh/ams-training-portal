@@ -118,8 +118,8 @@ CERTIFICATE REGISTRY
 
 function registerCertificate(cert){
 
-let registry =
-JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+const key = `amsCertificates_${user.email}`;
+const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
 const exists =
 registry.find(c => c.id === cert.id);
@@ -470,8 +470,8 @@ let selectedCert = null;
 /* LOAD FROM REGISTRY IF ID EXISTS */
 if(certId){
 
-  const registry =
-    JSON.parse(localStorage.getItem("amsCertificates") || "[]");
+  const key = `amsCertificates_${user.email}`;
+  const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
   selectedCert = registry.find(c => c.id === certId);
 
