@@ -1,5 +1,5 @@
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-const email = user?.email || "guest";
+const email = user?.email;
 
 const program = localStorage.getItem("amsProgram") || "faa";
 /* =========================
@@ -679,12 +679,9 @@ function updateFMCSDERButtonState() {
 
 function updateFMCSAModuleButtons() {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const email = user?.email;
-
 const paid =
   user &&
-  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+  localStorage.getItem(`paid_fmcsa_${email}`)
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
   const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
