@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      goDashboard();
+      window.location.href = "dashboard.html";;
       return;
     }
 
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      goDashboard();
+      window.location.href = "dashboard.html";;
       return;
     }
 
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      goDashboard();
+      window.location.href = "dashboard.html";;
       return;
     }
 
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   alert("Purchase successful!");
 
-  goDashboard();
+  window.location.href = "dashboard.html";;
   return;
 }
 
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      goDashboard();
+      window.location.href = "dashboard.html";;
       return;
     }
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Purchase successful!");
 
-      goDashboard();
+      window.location.href = "dashboard.html";;
       return;
     }
 
