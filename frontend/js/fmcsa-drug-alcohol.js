@@ -725,7 +725,7 @@ if (score >= PASS_SCORE_ALCOHOL) {
     }
   }
 
-  localStorage.setItem("fmcsaModuleBDate", Date.now());
+  localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
 
   localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
   localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
