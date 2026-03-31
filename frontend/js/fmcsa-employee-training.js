@@ -150,8 +150,6 @@ document.getElementById("quizSection").classList.remove("hidden");
 
 }
 
-if(localStorage.getItem(CONTENT_KEY)==="true"){
-
 document.getElementById("contentSection").classList.add("hidden");
 document.getElementById("quizSection").classList.remove("hidden");
 
@@ -540,8 +538,29 @@ if(scorePercent >= PASS_PERCENT){
   `;
 
   setTimeout(()=>{
-    window.location.href="fmcsa-certificates.html";
-  },2000);
+
+  document.getElementById("quizSection").classList.add("hidden");
+  document.getElementById("certificateSection").classList.remove("hidden");
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  document.getElementById("certName").textContent =
+    user?.fullName ||
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+    user?.email ||
+    "User";
+
+  document.getElementById("certDate").textContent =
+    new Date().toLocaleDateString("en-US");
+
+  document.getElementById("certId").textContent =
+    localStorage.getItem("fmcsaEmployeeCertificateId");
+
+  if(typeof generateQR === "function"){
+    generateQR(localStorage.getItem("fmcsaEmployeeCertificateId"), "certQR");
+  }
+
+},1500);
 
   return;
 
