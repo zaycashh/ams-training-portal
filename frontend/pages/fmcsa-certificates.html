@@ -150,6 +150,7 @@ if(!user){
 window.location.replace("login.html");
 return;
 }
+
 /* ===============================
 CHECK PURCHASE ACCESS (FIXED)
 =============================== */
@@ -164,20 +165,7 @@ const employeeCompleted =
   localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
 
 /* ===============================
-CHECK COMPLETION FLAGS (ADD THIS)
-=============================== */
-
-const modACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${user.email}`) === "true";
-
-const modBCompleted =
-  localStorage.getItem(`fmcsaModuleBCompleted_${user.email}`) === "true";
-
-const derCompleted =
-  localStorage.getItem(`fmcsaDERCompleted_${user.email}`) === "true";
-
-/* ===============================
-FINAL ACCESS RULE
+ACCESS CONTROL
 =============================== */
 
 if (
@@ -188,20 +176,6 @@ if (
   window.location.replace("dashboard.html");
   return;
 }
-  
-/* ===============================
-CHECK CERTIFICATE COMPLETION
-=============================== */
-
-const supervisorPurchased =
-  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
-
-const derPurchased =
-  localStorage.getItem(`paid_der_fmcsa_${user.email}`) === "true";
-
-const employeeCompleted =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
-
 /* ✅ FIXED COMPLETION FLAGS */
 
 const modACompleted =
