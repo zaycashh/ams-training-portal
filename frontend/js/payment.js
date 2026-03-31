@@ -9,7 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   payBtn.addEventListener("click", () => {
 
-  payBtn.disabled = true;
+    payBtn.disabled = true;
+
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+    if (!user) {
+      alert("User not found. Please login again.");
+      return;
+    }
+
+    const email = user.email;
 
     /* ================================
        FMCSA DER PURCHASE
@@ -17,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (module === "fmcsa-der" || type === "der_fmcsa") {
 
-      localStorage.setItem("paid_der_fmcsa", "true");
-      localStorage.setItem("paid_der_fmcsa_date", Date.now());
+      localStorage.setItem(`paid_der_fmcsa_${email}`, "true");
+      localStorage.setItem(`paid_der_fmcsa_date_${email}`, Date.now());
 
       alert("Purchase successful!");
 
@@ -32,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (module === "fmcsa-module-a" || type === "fmcsa") {
 
-      localStorage.setItem("paid_fmcsa", "true");
-      localStorage.setItem("fmcsa_start_date", Date.now());
+      localStorage.setItem(`paid_fmcsa_${email}`, "true");
+      localStorage.setItem(`fmcsa_start_date_${email}`, Date.now());
 
       alert("Purchase successful!");
 
@@ -42,60 +51,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================================
-   FAA DER PURCHASE
-================================ */
+       FAA DER PURCHASE
+    ================================= */
 
-if (module === "der") {
+    if (module === "der") {
 
-  localStorage.setItem("paid_der", "true");
+      localStorage.setItem(`paid_der_${email}`, "true");
 
-  alert("Purchase successful!");
+      alert("Purchase successful!");
 
-  window.location.href = "dashboard.html";
-  return;
-}
-    /* ================================
-   FAA SUPERVISOR PURCHASE
-================================ */
-
-if (module === "supervisor") {
-
-  localStorage.setItem("paid_supervisor", "true");
-
-  alert("Purchase successful!");
-
-  window.location.href = "dashboard.html";
-  return;
-}
+      window.location.href = "dashboard.html";
+      return;
+    }
 
     /* ================================
-   EMPLOYEE TRAINING (FAA)
-================================ */
+       FAA SUPERVISOR PURCHASE
+    ================================= */
 
-if (module === "employee") {
+    if (module === "supervisor") {
 
-  localStorage.setItem("paid_employee", "true");
+      localStorage.setItem(`paid_supervisor_${email}`, "true");
 
-  alert("Purchase successful!");
+      alert("Purchase successful!");
 
-  window.location.href = "dashboard.html";
-  return;
-}
+      window.location.href = "dashboard.html";
+      return;
+    }
 
-/* ================================
-   FMCSA EMPLOYEE TRAINING
-================================ */
+    /* ================================
+       FAA EMPLOYEE TRAINING
+    ================================= */
 
-if (module === "fmcsa_employee") {
+    if (module === "employee") {
 
-  localStorage.setItem("paid_employee_fmcsa", "true");
-  localStorage.setItem("paid_employee_fmcsa_date", Date.now());
+      localStorage.setItem(`paid_employee_${email}`, "true");
 
-  alert("Purchase successful!");
+      alert("Purchase successful!");
 
-  window.location.href = "dashboard.html";
-  return;
-}
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* ================================
+       FMCSA EMPLOYEE TRAINING
+    ================================= */
+
+    if (module === "fmcsa_employee") {
+
+      localStorage.setItem(`paid_employee_fmcsa_${email}`, "true");
+      localStorage.setItem(`paid_employee_fmcsa_date_${email}`, Date.now());
+
+      alert("Purchase successful!");
+
+      window.location.href = "dashboard.html";
+      return;
+    }
+
     /* ================================
        DEFAULT
     ================================= */
