@@ -323,12 +323,15 @@ function consumeEmployeeSeatAndStart(startUrl) {
 
 function updateFMCSATimer() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
 
-const paid =
-  user &&
-  localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+  const paid =
+    localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
 
-  const purchaseDate = localStorage.getItem("fmcsaPurchaseDate");
+  if (!paid) return; // ✅ THIS IS WHAT YOU WERE MISSING
+
+  const purchaseDate =
+    localStorage.getItem(`fmcsa_start_date_${user.email}`);
   if (!purchaseDate) return;
 
   const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
@@ -341,14 +344,14 @@ const paid =
 
   if (remaining <= 0) {
     // Expired
-    localStorage.removeItem("paid_fmcsa");
-    localStorage.removeItem("fmcsaPurchaseDate");
+    localStorage.removeItem(`paid_fmcsa_${user.email}`);
+    localStorage.removeItem(`fmcsa_start_date_${user.email}`);
 
     const btn = fmcsaCard.querySelector("button");
     if (btn) {
       btn.textContent = "Expired — Purchase Required";
       btn.onclick = () =>
-        (window.location.href = "../pages/payment.html?module=fmcsa");
+        (window.location.href = "../pages/payment.html?type=fmcsa");
     }
 
     return;
@@ -599,7 +602,9 @@ function handleDerFmcsa() {
     return;
   }
 
-  if (localStorage.getItem("paid_der_fmcsa") === "true") {
+  if (
+  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true"
+) {
     window.location.href = "fmcsa-der.html";
   } else {
     window.location.href = "payment.html?module=der_fmcsa";
@@ -634,7 +639,8 @@ function updateFMCSDERButtonState() {
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
-  const paid = localStorage.getItem("paid_der_fmcsa") === "true";
+  const paid =
+  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
   const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   /* COMPLETED */
@@ -766,7 +772,8 @@ function updateFMCSAEmployeeButton() {
   const btn = document.getElementById("employeeTrainingBtn");
   if (!btn) return;
 
-  const paid = localStorage.getItem("paid_employee_fmcsa") === "true";
+  const paid =
+  localStorage.getItem(`paid_employee_fmcsa_${email}`) === "true";
   const completed = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
   /* COMPLETED */
   if (completed) {
