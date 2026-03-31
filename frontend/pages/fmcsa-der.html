@@ -6,8 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="../css/main.css" />
 
-<script src="../js/route-guard.js"></script>
-
 <!-- PDF.js Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -25,6 +23,22 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
     <h1>FMCSA Designated Employer Representative (DER)</h1>
     <button class="btn-secondary" onclick="goBack()">Back to Dashboard</button>
   </header>
+  
+  <nav class="module-nav">
+
+  <button id="btnContent" onclick="showSection('content')">
+    Content
+  </button>
+
+  <button id="btnQuiz" class="disabled" disabled onclick="showSection('quiz')">
+    Quiz
+  </button>
+
+  <button id="btnCertificate" class="disabled" disabled onclick="showSection('certificate')">
+    Certificate
+  </button>
+
+</nav>
 
   <!-- INFO -->
   <section class="module-section">
@@ -109,7 +123,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 <div class="cert-card">
 
-<p><strong>Name:</strong> <span id="certName"></span></p>
+<p><strong>Name:</strong> <span id="certName">—</span></p>
 
 <p><strong>Date Completed:</strong> <span id="certDate"></span></p>
 
@@ -130,6 +144,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 <!-- MODULE SCRIPT -->
 <script src="../js/fmcsa-der.js"></script>
+
+<script src="../js/route-guard.js"></script>
 
 <script>
 function goBack() {
