@@ -313,8 +313,6 @@ if (submitBtn) {
 
     if (scorePercent >= DER_PASS_PERCENT) {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
 localStorage.setItem(`fmcsaDERCompleted_${user.email}`, "true");
 localStorage.setItem("fmcsaDERDate", Date.now());     
 
