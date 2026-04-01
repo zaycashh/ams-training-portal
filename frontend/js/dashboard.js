@@ -376,8 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateFMCSAModuleButtons();
   updateFMCSAEmployeeButton();
   updateFMCSDERButtonState();
-
-});
    
    /* =========================
    PROGRAM LOCK (FAA vs FMCSA)
