@@ -326,7 +326,6 @@ let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY)||"0",10);
 const quizContainer = document.getElementById("quizContainer");
 const prevQuestionBtn = document.getElementById("prevQuestionBtn");
 const nextQuestionBtn = document.getElementById("nextQuestionBtn");
-const submitBtn = document.getElementById("submitQuizBtn");
 
 const resultBox = document.getElementById("quizResult");
 
@@ -334,8 +333,6 @@ const currentQuestionEl = document.getElementById("currentQuestion");
 const totalQuestionsEl = document.getElementById("totalQuestions");
 
 if(totalQuestionsEl) totalQuestionsEl.textContent = questions.length;
-
-if(submitBtn) submitBtn.disabled=true;
 
 if(quizContainer) initQuiz();
 
