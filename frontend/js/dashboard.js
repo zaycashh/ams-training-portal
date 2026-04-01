@@ -597,7 +597,7 @@ function handleDerFmcsa() {
   const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
-    window.location.href = "certificates.html#der";
+    window.location.href = "fmcsa-certificates.html?type=der";
     return;
   }
 
@@ -647,7 +647,7 @@ function updateFMCSDERButtonState() {
 
     derFmcsaBtn.textContent = "View DER Certificate";
     derFmcsaBtn.onclick = () => {
-      window.location.href = "certificates.html#der";
+      window.location.href = "fmcsa-certificates.html?type=der";
 };
 
     return;
