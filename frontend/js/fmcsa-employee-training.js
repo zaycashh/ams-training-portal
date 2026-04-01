@@ -91,7 +91,14 @@ if(prevPageBtn) prevPageBtn.disabled = num === 1;
 if(nextPageBtn) nextPageBtn.disabled = num === totalPages;
 
 if(completeBtn){
-completeBtn.disabled = num !== totalPages;
+
+  if(num === totalPages){
+    completeBtn.style.display = "block";   // show on last page
+    completeBtn.disabled = false;
+  } else {
+    completeBtn.style.display = "none";    // hide on all other pages
+  }
+
 }
 
 });
