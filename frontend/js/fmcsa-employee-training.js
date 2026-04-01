@@ -136,25 +136,19 @@ if (nextPageBtn) {
    CONTENT COMPLETE
 ========================================================= */
 
-if(completeBtn){
+if (completeBtn) {
 
-completeBtn.addEventListener("click",()=>{
+  completeBtn.addEventListener("click", () => {
 
-localStorage.setItem(CONTENT_KEY,"true");
-localStorage.removeItem("fmcsaEmployeeAnswers");   
+    localStorage.setItem(CONTENT_KEY, "true");
+    localStorage.removeItem("fmcsaEmployeeAnswers");
 
-document.getElementById("contentSection").classList.add("hidden");
-document.getElementById("quizSection").classList.remove("hidden");
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
 
-});
-
-}
-
-document.getElementById("contentSection").classList.add("hidden");
-document.getElementById("quizSection").classList.remove("hidden");
+  });
 
 }
-
 /* =========================================================
    QUIZ QUESTIONS
 ========================================================= */
