@@ -436,12 +436,11 @@ if (user?.role === "employee") {
    SHOW COMPLETION DATES + STATUS
 ========================= */
 
-const derDate = localStorage.getItem(`fmcsaDERDate_${email}`);
-   
+const derDate = localStorage.getItem("fmcsaDERDate");
 
 if (derDate) {
 
-  const el = document.getElementById("derFmcsaCompletionDate")
+  const el = document.getElementById("derFmcsaCompletionDate");
 
   if (el) {
 
