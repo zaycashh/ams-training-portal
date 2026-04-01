@@ -15,7 +15,7 @@ function generateCertificateId(prefix = "AMS") {
 
   const ts = Date.now().toString(36).toUpperCase();
 
-  return `${prefix}-CERT-${ts}-${random}`;
+  return `${prefix}-${random}`;
 }
 
 
