@@ -545,17 +545,18 @@ document.addEventListener("DOMContentLoaded", () => {
       showCert("supervisor");
     }
 
-  } else {
+ else {
 
-    if (type) {
-      showCert(type);
-    } else {
-      if (employeeCompleted) showCert("employee");
-      else if (derCompleted) showCert("der");
-      else if (modACompleted) showCert("supervisor");
-    }
-
+  /* ✅ ALWAYS TRUST WHAT WAS CLICKED */
+  if (type) {
+    showCert(type);
+    return;
   }
+
+  /* ✅ OPTIONAL FALLBACK (safe default) */
+  showCert("supervisor");
+
+}
 
   /* ===============================
   SUPERVISOR CERTIFICATE
