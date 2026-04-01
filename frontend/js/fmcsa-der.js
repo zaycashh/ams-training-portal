@@ -336,9 +336,9 @@ if (!localStorage.getItem(`derCertRegistered_${user?.email}`)) {
       id: certId,
       name: user.fullName || (user.firstName + " " + user.lastName),
       course: "FMCSA DER Training",
+      type: "fmcsa_der",
       date: Date.now()
-    });
-
+   });
     localStorage.setItem(`derCertRegistered_${user.email}`, "true");
 
   }
