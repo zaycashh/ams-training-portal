@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.getItem(`${dateKey}_${email}`) || "0"
     );
 
-    if (!paid || purchaseDate === 0) {
+    if (!paid) {
 
       if (module === "fmcsa-der") {
         window.location.replace(
