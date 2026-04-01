@@ -1,3 +1,9 @@
+if (window.location.pathname.includes("fmcsa-der.html")) {
+  console.log("🚀 DER FORCE BYPASS");
+}
+if (window.location.pathname.includes("fmcsa-der.html")) {
+  return;
+}
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD (USER ISOLATED)
 ========================================================= */
