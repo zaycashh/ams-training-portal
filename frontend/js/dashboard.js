@@ -433,30 +433,6 @@ if (user?.role === "employee") {
  updateFMCSAProgress();
    
 /* =========================
-   SHOW COMPLETION DATES + STATUS
-========================= */
-
-const derDate = localStorage.getItem("fmcsaDERDate");
-
-if (derDate) {
-
-  const el = document.getElementById("derFmcsaCompletionDate");
-
-  if (el) {
-
-    const date = new Date(parseInt(derDate));
-
-    const formatted =
-      date.toLocaleDateString("en-US",{ timeZone:"America/New_York" });
-
-    el.innerHTML =
-      `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
-
-  }
-
-}
-   
-/* =========================
 MODULE A COMPLETION DATE
 ========================= */
 
