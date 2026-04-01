@@ -1,3 +1,5 @@
+console.log("ROUTE GUARD LOADED");
+
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD (USER ISOLATED)
 ========================================================= */
