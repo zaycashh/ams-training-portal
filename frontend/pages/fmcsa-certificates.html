@@ -145,12 +145,13 @@ localStorage.setItem(key, JSON.stringify(registry));
 (function(){
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-const email = user?.email;
 
 if(!user){
-window.location.replace("login.html");
-return;
+  window.location.replace("login.html");
+  return;
 }
+
+const email = user.email;
 
 /* ===============================
 CHECK PURCHASE ACCESS (FIXED)
