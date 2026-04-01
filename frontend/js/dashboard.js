@@ -594,7 +594,7 @@ function updateFMCSAStatus() {
 
 function handleDerFmcsa() {
 
-  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  
    
    const derDate =
   localStorage.getItem(`fmcsaDERDate_${email}`);
@@ -641,25 +641,45 @@ function updateFMCSDERButtonState() {
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
-  const paid =
-  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
-  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const derDateEl = document.getElementById("derCompletionDate");
 
-  /* COMPLETED */
+  const paid =
+    localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
+
+  const completed =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+  const derDate =
+    localStorage.getItem(`fmcsaDERDate_${email}`);
+
+  /* =========================
+     COMPLETED
+  ========================= */
   if (completed) {
 
     derFmcsaBtn.textContent = "View DER Certificate";
+
     derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-certificates.html?type=der";
-};
+    };
+
+    /* ✅ SHOW COMPLETION DATE */
+    if (derDate && derDateEl) {
+      derDateEl.textContent =
+        "✔ Completed " +
+        new Date(Number(derDate)).toLocaleDateString("en-US");
+    }
 
     return;
   }
 
-  /* PURCHASED */
+  /* =========================
+     PURCHASED
+  ========================= */
   if (paid) {
 
     derFmcsaBtn.textContent = "Start DER Training";
+
     derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-der.html";
     };
@@ -667,9 +687,11 @@ function updateFMCSDERButtonState() {
     return;
   }
 
-  /* LOCKED */
-
+  /* =========================
+     LOCKED
+  ========================= */
   derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+
   derFmcsaBtn.onclick = () => {
     window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
   };
