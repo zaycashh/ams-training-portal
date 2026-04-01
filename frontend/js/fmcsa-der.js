@@ -316,7 +316,7 @@ if (submitBtn) {
     if (scorePercent >= DER_PASS_PERCENT) {
 
 localStorage.setItem(`fmcsaDERCompleted_${user.email}`, "true");
-localStorage.setItem("fmcsaDERDate", Date.now());     
+localStorage.setItem(`fmcsaDERDate_${user.email}`, Date.now());     
 
 localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
@@ -324,7 +324,7 @@ let certId = localStorage.getItem("fmcsaDERCertificateId");
 
 if (!certId) {
   certId = generateCertificateId("AMS-DER");
-  localStorage.setItem("fmcsaDERCertificateId", certId);
+  localStorage.setItem(`fmcsaDERCertificateId_${user.email}`, certId);
 }
 
 /* PREVENT DUPLICATE REGISTRATION */
