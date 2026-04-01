@@ -595,6 +595,9 @@ function updateFMCSAStatus() {
 function handleDerFmcsa() {
 
   const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+   
+   const derDate =
+  localStorage.getItem(`fmcsaDERDate_${email}`);
 
   if (completed) {
     window.location.href = "fmcsa-certificates.html?type=der";
