@@ -516,59 +516,46 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ===============================
-URL CONTROL (FIXED CLEAN VERSION)
-=============================== */
+  URL CONTROL
+  =============================== */
 
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
-const type = params.get("type");
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+  const type = params.get("type");
 
-let selectedCert = null;
+  let selectedCert = null;
 
-/* ===============================
-IF CERT ID (QR SCAN / DIRECT LINK)
-=============================== */
-if (certId) {
+  if (certId) {
 
-  const key = `amsCertificates_${email}`;
-  const registry = JSON.parse(localStorage.getItem(key) || "[]");
+    const key = `amsCertificates_${email}`;
+    const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
-  selectedCert = registry.find(c => c.id === certId);
+    selectedCert = registry.find(c => c.id === certId);
 
-  if (!selectedCert) {
-    alert("Certificate not found");
-    return;
-  }
+    if (!selectedCert) {
+      alert("Certificate not found");
+      return;
+    }
 
-  if (selectedCert.course.includes("Employee")) {
-    showCert("employee");
-  } else if (selectedCert.course.includes("DER")) {
-    showCert("der");
+    if (selectedCert.course.includes("Employee")) {
+      showCert("employee");
+    } else if (selectedCert.course.includes("DER")) {
+      showCert("der");
+    } else {
+      showCert("supervisor");
+    }
+
   } else {
-    showCert("supervisor");
+
+    if (type) {
+      showCert(type);
+    } else {
+      if (employeeCompleted) showCert("employee");
+      else if (derCompleted) showCert("der");
+      else if (modACompleted) showCert("supervisor");
+    }
+
   }
-
-  return; // ✅ STOP here (IMPORTANT)
-}
-
-/* ===============================
-IF BUTTON CLICK (type param)
-=============================== */
-if (type) {
-  showCert(type);
-  return;
-}
-
-/* ===============================
-FALLBACK (if user opens page manually)
-=============================== */
-if (employeeCompleted) {
-  showCert("employee");
-} else if (derCompleted) {
-  showCert("der");
-} else if (modACompleted) {
-  showCert("supervisor");
-}
 
   /* ===============================
   SUPERVISOR CERTIFICATE
