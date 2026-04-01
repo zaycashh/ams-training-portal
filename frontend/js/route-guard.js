@@ -1,9 +1,3 @@
-if (window.location.pathname.includes("fmcsa-der.html")) {
-  console.log("🚀 DER FORCE BYPASS");
-}
-if (window.location.pathname.includes("fmcsa-der.html")) {
-  return;
-}
 /* =========================================================
    AMS TRAINING PORTAL – GLOBAL ROUTE GUARD (USER ISOLATED)
 ========================================================= */
@@ -160,12 +154,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (
     module === "fmcsa-module-a" ||
     module === "fmcsa-drug-alcohol" ||
+    module === "fmcsa-der" ||
     module === "fmcsa-employee"
   ) {
 
     const paymentMap = {
       "fmcsa-module-a": "paid_fmcsa",
       "fmcsa-drug-alcohol": "paid_fmcsa",
+      "fmcsa-der": "paid_der_fmcsa",
       "fmcsa-employee": "paid_employee_fmcsa"
     };
 
