@@ -370,12 +370,8 @@ function updateFMCSATimer() {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-
+  
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  updateFMCSAModuleButtons();
-  updateFMCSAEmployeeButton();
-  updateFMCSDERButtonState();
    
    /* =========================
    PROGRAM LOCK (FAA vs FMCSA)
@@ -601,7 +597,7 @@ function handleDerFmcsa() {
   const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
-    window.location.href = "fmcsa-certificates.html?type=der";
+    window.location.href = "certificates.html#der";
     return;
   }
 
@@ -639,26 +635,20 @@ function updateFMCSAProgress() {
 ========================= */
 function updateFMCSDERButtonState() {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-  const email = user?.email;
-
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
   const paid =
-    localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
-
-  const completed =
-    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
+  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   /* COMPLETED */
   if (completed) {
 
     derFmcsaBtn.textContent = "View DER Certificate";
-
     derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=der";
-    };
+      window.location.href = "certificates.html#der";
+};
 
     return;
   }
@@ -667,7 +657,6 @@ function updateFMCSDERButtonState() {
   if (paid) {
 
     derFmcsaBtn.textContent = "Start DER Training";
-
     derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-der.html";
     };
@@ -678,7 +667,6 @@ function updateFMCSDERButtonState() {
   /* LOCKED */
 
   derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
-
   derFmcsaBtn.onclick = () => {
     window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
   };
