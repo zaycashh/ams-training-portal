@@ -536,14 +536,16 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Certificate not found");
       return;
     }
-
-    if (selectedCert.course.includes("Employee")) {
-      showCert("employee");
-    } else if (selectedCert.course.includes("DER")) {
-      showCert("der");
-    } else {
-      showCert("supervisor");
-    }
+    
+if (selectedCert.type === "fmcsa_employee") {
+  showCert("employee");
+} 
+else if (selectedCert.type === "fmcsa_der") {
+  showCert("der");
+} 
+else {
+  showCert("fmcsa_supervisor");
+}
 
   } else {
 
