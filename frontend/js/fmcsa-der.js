@@ -3,6 +3,8 @@
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+   
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   /* =========================================================
      PDF CONTENT ENGINE
