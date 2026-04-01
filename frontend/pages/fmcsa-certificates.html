@@ -443,7 +443,51 @@ right:150px;
 </main>
 
 <script>
-  
+
+function returnToDashboard(){
+  window.location.href = "dashboard.html";
+}
+
+function showCert(type){
+
+  document.getElementById("employeeCertTemplate").classList.add("hidden");
+  document.getElementById("supervisorCertTemplate").classList.add("hidden");
+  document.getElementById("derCertTemplate").classList.add("hidden");
+
+  if(type === "employee"){
+    document.getElementById("employeeCertTemplate").classList.remove("hidden");
+  }
+
+  if(type === "supervisor"){
+    document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+  }
+
+  if(type === "der"){
+    document.getElementById("derCertTemplate").classList.remove("hidden");
+  }
+
+}
+
+function printCert(){
+
+  const cert = document.querySelector(
+    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
+  );
+
+  if(!cert){
+    alert("No certificate found.");
+    return;
+  }
+
+  document.body.classList.add("print-mode");
+
+  setTimeout(() => {
+    window.print();
+    document.body.classList.remove("print-mode");
+  }, 100);
+
+}
+
 /* ===================================
 LOAD CERTIFICATES
 =================================== */
@@ -660,53 +704,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
   
-<script>
 
-function returnToDashboard(){
-  window.location.href = "dashboard.html";
-}
-
-function showCert(type){
-
-  document.getElementById("employeeCertTemplate").classList.add("hidden");
-  document.getElementById("supervisorCertTemplate").classList.add("hidden");
-  document.getElementById("derCertTemplate").classList.add("hidden");
-
-  if(type === "employee"){
-    document.getElementById("employeeCertTemplate").classList.remove("hidden");
-  }
-
-  if(type === "supervisor"){
-    document.getElementById("supervisorCertTemplate").classList.remove("hidden");
-  }
-
-  if(type === "der"){
-    document.getElementById("derCertTemplate").classList.remove("hidden");
-  }
-
-}
-
-function printCert(){
-
-  const cert = document.querySelector(
-    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
-  );
-
-  if(!cert){
-    alert("No certificate found.");
-    return;
-  }
-
-  document.body.classList.add("print-mode");
-
-  setTimeout(() => {
-    window.print();
-    document.body.classList.remove("print-mode");
-  }, 100);
-
-}
-
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 </body>
