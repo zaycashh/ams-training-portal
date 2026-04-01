@@ -617,7 +617,7 @@ function updateFMCSDERButtonState() {
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
-  const derDateEl = document.getElementById("derCompletionDate");
+  const derDateEl = document.getElementById("derFmcsaCompletionDate");
 
   const paid =
     localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
