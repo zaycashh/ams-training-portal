@@ -370,8 +370,14 @@ function updateFMCSATimer() {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  
+
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  updateFMCSAModuleButtons();
+  updateFMCSAEmployeeButton();
+  updateFMCSDERButtonState();
+
+});
    
    /* =========================
    PROGRAM LOCK (FAA vs FMCSA)
