@@ -154,14 +154,12 @@ document.addEventListener("DOMContentLoaded", function () {
   if (
     module === "fmcsa-module-a" ||
     module === "fmcsa-drug-alcohol" ||
-    module === "fmcsa-der" ||
     module === "fmcsa-employee"
   ) {
 
     const paymentMap = {
       "fmcsa-module-a": "paid_fmcsa",
       "fmcsa-drug-alcohol": "paid_fmcsa",
-      "fmcsa-der": "paid_der_fmcsa",
       "fmcsa-employee": "paid_employee_fmcsa"
     };
 
