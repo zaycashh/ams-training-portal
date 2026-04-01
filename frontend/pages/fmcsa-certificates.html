@@ -615,10 +615,10 @@ else {
   if (derCompleted) {
 
     const certIdDER =
-      localStorage.getItem("fmcsaDERCertificateId");
+      localStorage.getItem(`fmcsaDERCertificateId_${email}`);
 
     const storedDate =
-      localStorage.getItem("fmcsaDERDate");
+      localStorage.getItem(`fmcsaDERDate_${email}`);
     
     if (certIdDER) {
 
