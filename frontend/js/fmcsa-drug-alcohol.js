@@ -699,28 +699,46 @@ if (score >= PASS_SCORE_ALCOHOL) {
 
   localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
 
-  let certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+/* =========================
+   FINAL SUPERVISOR CERT (A + B)
+========================= */
 
-  if (!certId) {
+const moduleACompleted =
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
-    certId = generateCertificateId("AMS-FMCSA");
-    localStorage.setItem(`fmcsaModuleBCertificateId_${email}`, certId);
+if(moduleACompleted){
+
+  let certId =
+    localStorage.getItem(`fmcsaSupervisorCertificateId_${email}`);
+
+  if(!certId){
+
+    certId = generateCertificateId("AMS-FMCSA-SUP");
+
+    localStorage.setItem(
+      `fmcsaSupervisorCertificateId_${email}`,
+      certId
+    );
 
     if (typeof registerCertificate === "function") {
 
-  registerCertificate({
-    id: certId,
-    name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-    course: "FMCSA Drug & Alcohol Substance Abuse Training",
-    date: Date.now()
-  });
+      registerCertificate({
+        id: certId,
+        name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training",
+        date: Date.now()
+      });
 
- }      
+    }
 
-}
+  }
 
-  localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
+  localStorage.setItem(`fmcsaSupervisorDate_${email}`, Date.now());
 
+};
+   
+  sessionStorage.setItem("redirectToCertificates", "true");
+   
   localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
   localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
 
