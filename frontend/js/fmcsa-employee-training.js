@@ -486,14 +486,18 @@ if(scorePercent >= PASS_PERCENT){
   localStorage.setItem(COMPLETED_KEY,"true");
   localStorage.setItem(QUIZ_KEY,"true");
 
-  let certId = localStorage.getItem(CERT_ID_KEY);
+  /* =========================
+   CERT ID FIX (SUPERVISOR A)
+========================= */
 
-  if(!certId){
-    certId = generateCertificateId("AMS-FMCSA-EMP");
-    localStorage.setItem(CERT_ID_KEY, certId);
-  }
+let certId = localStorage.getItem("fmcsaModuleACertificateId");
 
-  localStorage.setItem(CERT_DATE_KEY, Date.now());
+if(!certId){
+  certId = generateCertificateId("AMS-FMCSA-SUP-A");
+  localStorage.setItem("fmcsaModuleACertificateId", certId);
+}
+
+localStorage.setItem("fmcsaModuleADate", Date.now());
 
   // ✅ REGISTER CERTIFICATE (VERY IMPORTANT)
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
