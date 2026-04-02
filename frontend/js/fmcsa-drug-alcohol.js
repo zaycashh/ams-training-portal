@@ -749,10 +749,6 @@ if(moduleACompleted){
     </div>
   `;
 
-  setTimeout(() => {
-    window.location.href = "certificates.html#supervisor";
-  }, 1500);
-
   return;
 }
   /* =========================
@@ -782,8 +778,6 @@ if(moduleACompleted){
 /* =========================================================
    MODULE B CERTIFICATE LOGIC
 ========================================================= */
-
-function showModuleBCertificate() {
 
   // Hide all sections
   document.getElementById("drugContentSection")?.classList.add("hidden");
