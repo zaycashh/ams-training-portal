@@ -699,46 +699,46 @@ if (score >= PASS_SCORE_ALCOHOL) {
 
   localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
 
-/* =========================
-   FINAL SUPERVISOR CERT (A + B)
-========================= */
+  /* =========================
+     FINAL SUPERVISOR CERT (A + B)
+  ========================= */
 
-const moduleACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+  const moduleACompleted =
+    localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
-if(moduleACompleted){
+  if (moduleACompleted) {
 
-  let certId =
-    localStorage.getItem(`fmcsaSupervisorCertificateId_${email}`);
+    let certId =
+      localStorage.getItem(`fmcsaSupervisorCertificateId_${email}`);
 
-  if(!certId){
+    if (!certId) {
 
-    certId = generateCertificateId("AMS-FMCSA-SUP");
+      certId = generateCertificateId("AMS-FMCSA-SUP");
 
-    localStorage.setItem(
-      `fmcsaSupervisorCertificateId_${email}`,
-      certId
-    );
+      localStorage.setItem(
+        `fmcsaSupervisorCertificateId_${email}`,
+        certId
+      );
 
-    if (typeof registerCertificate === "function") {
+      if (typeof registerCertificate === "function") {
 
-      registerCertificate({
-        id: certId,
-        name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-        course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training",
-        date: Date.now()
-      });
+        registerCertificate({
+          id: certId,
+          name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+          course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training",
+          date: Date.now()
+        });
+
+      }
 
     }
 
+    localStorage.setItem(`fmcsaSupervisorDate_${email}`, Date.now());
+
   }
 
-  localStorage.setItem(`fmcsaSupervisorDate_${email}`, Date.now());
-
-};
-   
   sessionStorage.setItem("redirectToCertificates", "true");
-   
+
   localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
   localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
 
@@ -748,6 +748,10 @@ if(moduleACompleted){
       Generating certificate...
     </div>
   `;
+
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 1500);
 
   return;
 }
