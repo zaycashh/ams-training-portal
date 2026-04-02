@@ -48,7 +48,6 @@ let totalPages = 0;
 if(pdfContainer){
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
-
 pdfDoc = pdf;
 totalPages = pdf.numPages;
 
@@ -92,11 +91,13 @@ if(nextPageBtn) nextPageBtn.disabled = num === totalPages;
 
 if(completeBtn){
 
-  if(num === totalPages){
-    completeBtn.style.display = "block";   // show on last page
+  console.log("Page:", num, "Total:", totalPages); // debug
+
+  if(num >= totalPages){
+    completeBtn.style.display = "block";
     completeBtn.disabled = false;
   } else {
-    completeBtn.style.display = "none";    // hide on all other pages
+    completeBtn.style.display = "none";
   }
 
 }
