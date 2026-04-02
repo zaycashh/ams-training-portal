@@ -478,7 +478,7 @@ questions.forEach((q,i)=>{
 const scorePercent = Math.round((correct/questions.length)*100);
 
 /* =========================
-   PASS
+   PASS (FIXED)
 ========================= */
 
 if(scorePercent >= PASS_PERCENT){
@@ -489,36 +489,36 @@ if(scorePercent >= PASS_PERCENT){
   let certId = localStorage.getItem(CERT_ID_KEY);
 
   if(!certId){
-    certId = generateCertificateId("AMS-FMCSA");
+    certId = generateCertificateId("AMS-FMCSA-EMP");
     localStorage.setItem(CERT_ID_KEY, certId);
   }
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
 
-  document.getElementById("quizSection").classList.add("hidden");
-  document.getElementById("certificateSection").classList.remove("hidden");
-
+  // ✅ REGISTER CERTIFICATE (VERY IMPORTANT)
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
-  document.getElementById("certName").textContent =
-    user?.fullName ||
-    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
-    user?.email ||
-    "User";
+  if(user && typeof registerCertificate === "function"){
 
-  document.getElementById("certDate").textContent =
-    new Date().toLocaleDateString("en-US");
+    const fullName =
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email;
 
-  document.getElementById("certId").textContent =
-    localStorage.getItem(CERT_ID_KEY);
+    registerCertificate({
+      id: certId,
+      name: fullName,
+      course: "FMCSA Employee Drug & Alcohol Awareness",
+      date: Date.now()
+    });
 
-  if(typeof generateQR === "function"){
-    generateQR(localStorage.getItem(CERT_ID_KEY), "certQR");
   }
+
+  // ✅ REDIRECT TO CORRECT CERT
+  window.location.href = "fmcsa-certificates.html?type=employee";
 
   return;
 }
-
 /* ========================= 
    FAIL
 ========================= */
