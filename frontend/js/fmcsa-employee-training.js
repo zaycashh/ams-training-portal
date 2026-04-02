@@ -394,6 +394,16 @@ if(currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
 
 if(prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
 if(nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === questions.length - 1;
+   
+   if(submitBtn){
+
+  if(currentQuestionIndex === questions.length - 1){
+    submitBtn.style.display = "block";
+  } else {
+    submitBtn.style.display = "none";
+  }
+
+}
 
 /* LISTEN FOR ANSWERS */
 
