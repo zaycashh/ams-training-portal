@@ -449,25 +449,12 @@ currentQuestionIndex++;
 renderQuestion();
 
 } else {
-
-finishQuiz(); //
-
+  alert("You reached the last question. Click Submit Quiz.");
 }
 
 });
 
 }
-function finishQuiz(){
-
-let correct = 0;
-
-questions.forEach((q,i)=>{
-  if(selectedAnswers[i] === q.correct){
-    correct++;
-  }
-});
-
-const scorePercent = Math.round((correct/questions.length)*100);
 
 /* PASS */
 
@@ -530,9 +517,6 @@ alert(`Score: ${scorePercent}%`);
 /* =========================================================
    QUIZ SUBMIT (FINAL CLEAN VERSION)
 ========================================================= */
-
-const submitBtn = document.getElementById("submitQuizBtn");
-
 if(submitBtn){
 
 submitBtn.addEventListener("click",()=>{
