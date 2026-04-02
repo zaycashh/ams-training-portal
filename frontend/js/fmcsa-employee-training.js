@@ -336,6 +336,7 @@ const prevQuestionBtn = document.getElementById("prevQuestionBtn");
 const nextQuestionBtn = document.getElementById("nextQuestionBtn");
 
 const resultBox = document.getElementById("quizResult");
+const submitBtn = document.getElementById("submitQuizBtn");
 
 const currentQuestionEl = document.getElementById("currentQuestion");
 const totalQuestionsEl = document.getElementById("totalQuestions");
@@ -525,9 +526,13 @@ if(attempts >= MAX_ATTEMPTS){
 alert(`Score: ${scorePercent}%`);
 
 }
+
 /* =========================================================
-   QUIZ SUBMIT
+   QUIZ SUBMIT (FINAL CLEAN VERSION)
 ========================================================= */
+
+const submitBtn = document.getElementById("submitQuizBtn");
+
 if(submitBtn){
 
 submitBtn.addEventListener("click",()=>{
@@ -554,49 +559,11 @@ if(scorePercent >= PASS_PERCENT){
   let certId = localStorage.getItem(CERT_ID_KEY);
 
   if(!certId){
-
     certId = generateCertificateId("AMS-FMCSA");
     localStorage.setItem(CERT_ID_KEY, certId);
-
-    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-    if(!localStorage.getItem(`employeeCertRegistered_${user?.email}`)){
-
-      if(user && typeof registerCertificate === "function"){
-
-        const fullName =
-          user.fullName ||
-          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-          user.email;
-
-        registerCertificate({
-          id: certId,
-          name: fullName,
-          course: "FMCSA Employee Drug & Alcohol Awareness",
-          date: Date.now()
-        });
-
-        localStorage.setItem(`employeeCertRegistered_${user.email}`, "true");
-
-      }
-
-    }
-
   }
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
-
-  localStorage.removeItem(ATTEMPTS_KEY);
-  localStorage.removeItem(COOLDOWN_KEY);
-  localStorage.removeItem("fmcsaEmployeeAnswers");
-
-  resultBox.innerHTML = `
-  <div class="result-box pass">
-  You passed! Generating certificate...
-  </div>
-  `;
-
-  setTimeout(()=>{
 
   document.getElementById("quizSection").classList.add("hidden");
   document.getElementById("certificateSection").classList.remove("hidden");
@@ -613,16 +580,13 @@ if(scorePercent >= PASS_PERCENT){
     new Date().toLocaleDateString("en-US");
 
   document.getElementById("certId").textContent =
-    localStorage.getItem("fmcsaEmployeeCertificateId");
+    localStorage.getItem(CERT_ID_KEY);
 
   if(typeof generateQR === "function"){
-    generateQR(localStorage.getItem("fmcsaEmployeeCertificateId"), "certQR");
+    generateQR(localStorage.getItem(CERT_ID_KEY), "certQR");
   }
 
-},1500);
-
   return;
-
 }
 
 /* ========================= 
@@ -638,18 +602,11 @@ if(attempts >= MAX_ATTEMPTS){
   localStorage.setItem(COOLDOWN_KEY, cooldownUntil);
 
   alert("Maximum attempts reached. Quiz locked for 15 minutes.");
-
   window.location.href = "dashboard.html";
   return;
-
 }
 
-resultBox.innerHTML=`
-<div class="result-box fail">
-Score: ${scorePercent}% <br>
-Attempt ${attempts} of ${MAX_ATTEMPTS}
-</div>
-`;
+alert(`Score: ${scorePercent}%`);
 
 });
 
