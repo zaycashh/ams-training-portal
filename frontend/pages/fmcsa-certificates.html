@@ -652,33 +652,23 @@ else {
   }
 
 /* ===============================
-EMPLOYEE CERTIFICATE (FIXED)
+EMPLOYEE CERTIFICATE (FINAL FIX)
 =============================== */
 
 if (employeeCompleted) {
 
-  // ✅ FIXED KEYS (NO EMAIL)
-  let certId =
+  const certId =
     localStorage.getItem("fmcsaEmployeeCertificateId");
 
   const storedDate =
     localStorage.getItem("fmcsaEmployeeDate");
-
-  // fallback if missing
-  if (!certId) {
-    certId =
-      "AMS-FMCSA-EMP-CERT-" +
-      Math.random().toString(16).substring(2, 10).toUpperCase();
-
-    localStorage.setItem("fmcsaEmployeeCertificateId", certId);
-  }
 
   const verifyUrl =
     window.location.origin +
     "/ams-training-portal/frontend/pages/verify.html?id=" +
     certId;
 
-  // ✅ NAME
+  // ✅ NAME (MATCH YOUR HTML)
   document.getElementById("empCertStudentName").textContent =
     user.fullName ||
     `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
