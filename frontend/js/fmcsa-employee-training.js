@@ -408,15 +408,9 @@ localStorage.setItem(
 JSON.stringify(selectedAnswers)
 );
 
-updateSubmitState();
-
 });
 
 });
-
-/* CHECK IF SUBMIT SHOULD ENABLE */
-
-updateSubmitState();
 
 }
 
