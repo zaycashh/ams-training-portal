@@ -241,12 +241,26 @@ document.getElementById("nextPageBtn").onclick = () => {
 };
 
 completeBtn.onclick = () => {
-  localStorage.setItem("fmcsa_mod1_content_done", "true");
 
-  document.getElementById("contentSection").classList.add("hidden");
-  document.getElementById("quizSection").classList.remove("hidden");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const email = user?.email || "guest";
 
+  // mark content complete
+  localStorage.setItem(`fmcsaModuleAContentDone_${email}`, "true");
+
+  // unlock quiz button
+  const quizBtn = document.getElementById("btnQuiz");
+  if (quizBtn) {
+    quizBtn.disabled = false;
+    quizBtn.classList.remove("disabled");
+  }
+
+  // switch section properly
+  showSection("quiz");
+
+  // start quiz
   initQuiz();
+
 };
   
 /* ==========================
