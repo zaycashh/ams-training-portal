@@ -507,8 +507,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   const employeeCompleted =
-    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-
+    localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+  
   /* IF NOTHING COMPLETED RETURN */
   if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
     window.location.replace("dashboard.html");
