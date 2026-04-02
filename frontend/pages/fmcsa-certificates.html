@@ -651,58 +651,60 @@ else {
     }
   }
 
-  /* ===============================
-  EMPLOYEE CERTIFICATE
-  =============================== */
+/* ===============================
+EMPLOYEE CERTIFICATE (FIXED)
+=============================== */
 
-  if (employeeCompleted) {
+if (employeeCompleted) {
 
-    let certId =
-      localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+  // ✅ FIXED KEYS (NO EMAIL)
+  let certId =
+    localStorage.getItem("fmcsaEmployeeCertificateId");
 
-    const storedDate =
-      localStorage.getItem(`fmcsaEmployeeDate_${email}`);
+  const storedDate =
+    localStorage.getItem("fmcsaEmployeeDate");
 
-    if (!certId) {
-      certId =
-        "AMS-FMCSA-EMP-CERT-" +
-        Math.random().toString(16).substring(2, 10).toUpperCase();
+  // fallback if missing
+  if (!certId) {
+    certId =
+      "AMS-FMCSA-EMP-CERT-" +
+      Math.random().toString(16).substring(2, 10).toUpperCase();
 
-      localStorage.setItem(
-        `fmcsaEmployeeCertificateId_${email}`,
-        certId
-      );
-    }
-
-    const verifyUrl =
-      window.location.origin +
-      "/ams-training-portal/frontend/pages/verify.html?id=" +
-      certId;
-
-    document.getElementById("empCertStudentName").textContent =
-      user.fullName ||
-      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email;
-
-    document.getElementById("empCertCompletionDate").textContent =
-      storedDate
-        ? new Date(Number(storedDate)).toLocaleDateString("en-US")
-        : "";
-
-    document.getElementById("empCertCertificateId").textContent =
-      "Certificate ID: " + certId;
-
-    const qrTemplate = document.getElementById("empCertQR");
-    qrTemplate.innerHTML = "";
-
-    new QRCode(qrTemplate, {
-      text: verifyUrl,
-      width: 90,
-      height: 90
-    });
+    localStorage.setItem("fmcsaEmployeeCertificateId", certId);
   }
 
-});
+  const verifyUrl =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    certId;
+
+  // ✅ NAME
+  document.getElementById("empCertStudentName").textContent =
+    user.fullName ||
+    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+    user.email;
+
+  // ✅ DATE
+  document.getElementById("empCertCompletionDate").textContent =
+    storedDate
+      ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+      : "";
+
+  // ✅ CERT ID
+  document.getElementById("empCertCertificateId").textContent =
+    "Certificate ID: " + certId;
+
+  // ✅ QR
+  const qrTemplate = document.getElementById("empCertQR");
+  qrTemplate.innerHTML = "";
+
+  new QRCode(qrTemplate, {
+    text: verifyUrl,
+    width: 90,
+    height: 90
+  });
+
+}
 
 </script>
   
