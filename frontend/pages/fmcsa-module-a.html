@@ -66,9 +66,11 @@ You must review all content before taking the quiz.
 </div>
 </div>
 
-<button id="completeContentBtn" style="display:none;">
-  TAKE QUIZ
-</button>
+<div style="text-align:center; margin-top:20px;">
+  <button id="completeContentBtn" style="display:none;">
+    TAKE QUIZ
+  </button>
+</div>
 
 </section>
 
@@ -176,7 +178,7 @@ let rendering = false;
 
 const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d");
-const completeBtn = document.getElementById("completeBtn");
+const completeBtn = document.getElementById("completeContentBtn");
 completeBtn.disabled = true;
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
@@ -212,7 +214,13 @@ function renderPage(num) {
     document.getElementById("progressBar").style.width =
       (num / totalPages * 100) + "%";
 
-    completeBtn.disabled = (num !== totalPages);
+    if (completeBtn) {
+  if (num === totalPages) {
+    completeBtn.style.display = "inline-block";
+  } else {
+    completeBtn.style.display = "none";
+  }
+}
 
   });
 
