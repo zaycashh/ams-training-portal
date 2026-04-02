@@ -775,34 +775,6 @@ if(moduleACompleted){
     </div>
   `;
 }
-/* =========================================================
-   MODULE B CERTIFICATE LOGIC
-========================================================= */
-
-  // Hide all sections
-  document.getElementById("drugContentSection")?.classList.add("hidden");
-  document.getElementById("drugQuizSection")?.classList.add("hidden");
-  document.getElementById("alcoholContentSection")?.classList.add("hidden");
-  document.getElementById("alcoholQuizSection")?.classList.add("hidden");
-
-  // Show certificate section
-  document.getElementById("moduleBCertificateSection")
-    ?.classList.remove("hidden");
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-
-  const fullName =
-  `${user.firstName || ""} ${user.lastName || ""}`.trim();
-
-  document.getElementById("moduleBCertName").textContent =
-    fullName || user.email || "Participant";
-
-  document.getElementById("moduleBCertDate").textContent =
-    new Date().toLocaleDateString();
-
-  document.getElementById("moduleBCertId").textContent =
-    localStorage.getItem(MODULE_B_CERT_ID_KEY);
-}
 
 function returnToDashboard() {
   window.location.href = "dashboard.html";
