@@ -456,64 +456,6 @@ renderQuestion();
 
 }
 
-/* PASS */
-
-if(scorePercent >= PASS_PERCENT){
-
-  localStorage.setItem(COMPLETED_KEY,"true");
-  localStorage.setItem(QUIZ_KEY,"true");
-
-  let certId = localStorage.getItem(CERT_ID_KEY);
-
-  if(!certId){
-    certId = generateCertificateId("AMS-FMCSA");
-    localStorage.setItem(CERT_ID_KEY, certId);
-  }
-
-  localStorage.setItem(CERT_DATE_KEY, Date.now());
-
-  document.getElementById("quizSection").classList.add("hidden");
-  document.getElementById("certificateSection").classList.remove("hidden");
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  document.getElementById("certName").textContent =
-    user?.fullName ||
-    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
-    user?.email ||
-    "User";
-
-  document.getElementById("certDate").textContent =
-    new Date().toLocaleDateString("en-US");
-
-  document.getElementById("certId").textContent = certId;
-
-  if(typeof generateQR === "function"){
-    generateQR(certId, "certQR");
-  }
-
-  return;
-}
-
-/* FAIL */
-
-attempts++;
-localStorage.setItem(ATTEMPTS_KEY, attempts);
-
-if(attempts >= MAX_ATTEMPTS){
-
-  const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
-  localStorage.setItem(COOLDOWN_KEY, cooldownUntil);
-
-  alert("Max attempts reached. Try again later.");
-  window.location.href="dashboard.html";
-  return;
-}
-
-alert(`Score: ${scorePercent}%`);
-
-}
-
 /* =========================================================
    QUIZ SUBMIT (FINAL CLEAN VERSION)
 ========================================================= */
