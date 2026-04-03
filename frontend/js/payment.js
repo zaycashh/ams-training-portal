@@ -1,4 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
+  
+  /* =========================
+   EMPLOYEE PAYMENT LOCK
+========================= */
+
+const userCheck =
+JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if (userCheck && userCheck.role === "employee") {
+
+  const params = new URLSearchParams(window.location.search);
+  const moduleParam = params.get("module");
+  const typeParam = params.get("type");
+
+  if (
+    moduleParam === "fmcsa-module-a" ||
+    moduleParam === "fmcsa-drug-alcohol" ||
+    moduleParam === "fmcsa-der" ||
+    moduleParam === "supervisor" ||
+    typeParam === "fmcsa" ||
+    typeParam === "der_fmcsa"
+  ) {
+
+    alert("Employees cannot purchase this training.");
+
+    window.location.href = "dashboard.html";
+    return;
+  }
+}
 
   const payBtn = document.getElementById("payNowBtn");
   if (!payBtn) return;
