@@ -739,7 +739,6 @@ function updateFMCSAModuleButtons() {
 
     certBtn.classList.add("hidden");
 
-    return;
   }
 
   /* =========================
