@@ -702,7 +702,10 @@ if (hasSeat === false) {
   /* =========================
      PURCHASED
   ========================= */
-  if (paid) {
+  if (hasSeat === true) {
+  setAssignedBadge("derSeatBadge");
+}
+   if (paid) {
 
     derFmcsaBtn.textContent = "Start DER Training";
 
@@ -758,7 +761,10 @@ if (hasSeat === false) {
   /* =========================
      PURCHASED
   ========================= */
-  if (paid) {
+  if (hasSeat === true) {
+  setAssignedBadge("supervisorSeatBadge");
+}
+   if (paid) {
 
     btn.textContent = "Start Training";
 
