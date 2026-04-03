@@ -440,7 +440,17 @@ if (program === "faa") {
       el.innerHTML = `<span class="seat-badge ${status.type}">${status.label}</span>`;
     }
   }
+/* =========================
+   SHOW ADMIN PANEL
+========================= */
 
+const currentUser = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+if (currentUser.role === "company_admin" || currentUser.role === "owner") {
+  const panel = document.getElementById("adminPanel");
+  if (panel) panel.style.display = "block";
+}
+   
  updateFAAModuleButtons();
  updateFAACompletionDates();  
  updateFMCSATimer();
@@ -449,6 +459,7 @@ if (program === "faa") {
  updateFMCSASupervisorButton();
  updateFMCSAStatus();  
  updateFMCSAProgress();
+ renderSeatList();  
    
 /* =========================
 MODULE A COMPLETION DATE
@@ -917,4 +928,65 @@ if (user.role === "employee" && user.type === "company") {
     window.location.href = "payment.html?module=fmcsa_employee";
   };
 
+}
+/* =========================
+   ADMIN SEAT CONTROL
+========================= */
+
+function assignSeat() {
+
+  const input = document.getElementById("seatEmailInput");
+  const email = input.value.trim();
+
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) company.usedSeats = {};
+
+  company.usedSeats[email] = true;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  renderSeatList();
+
+  input.value = "";
+}
+
+function removeSeat() {
+
+  const input = document.getElementById("seatEmailInput");
+  const email = input.value.trim();
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (company.usedSeats && company.usedSeats[email]) {
+    delete company.usedSeats[email];
+  }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  renderSeatList();
+
+  input.value = "";
+}
+
+function renderSeatList() {
+
+  const container = document.getElementById("seatList");
+  if (!container) return;
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const seats = company.usedSeats || {};
+
+  if (Object.keys(seats).length === 0) {
+    container.innerHTML = "<p>No assigned seats</p>";
+    return;
+  }
+
+  container.innerHTML = Object.keys(seats).map(email => `
+    <div style="padding:8px; border-bottom:1px solid #eee;">
+      🎟 ${email}
+    </div>
+  `).join("");
 }
