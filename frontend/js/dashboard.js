@@ -886,8 +886,16 @@ if (user.role === "employee" && user.type === "company") {
     btn.style.cursor = "pointer";
 
     btn.onclick = () => {
-      window.location.href = "fmcsa-employee-training.html";
-    };
+
+  const route = getEmployeeTrainingRoute();
+
+  if (!route) {
+    alert("Training program not assigned.");
+    return;
+  }
+
+  window.location.href = route;
+};
 
     return;
   }
@@ -989,4 +997,24 @@ function renderSeatList() {
       🎟 ${email}
     </div>
   `).join("");
+}
+
+function getEmployeeTrainingRoute() {
+
+  const user = JSON.parse(localStorage.getItem("amsUser"));
+  if (!user) return null;
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.program) return null;
+
+  if (company.program === "FMCSA") {
+    return "fmcsa-employee.html";
+  }
+
+  if (company.program === "FAA") {
+    return "employee-training.html";
+  }
+
+  return null;
 }
