@@ -87,13 +87,6 @@ if (user?.role === "employee" && user?.type === "company") {
   }
 }
 
-    // 🚫 Block ALL payments for company employees
-    if (path.includes("payment")) {
-      window.location.replace("dashboard.html");
-      return;
-    }
-  }
-
   /* =========================
      ALLOW NON-MODULE PAGES
   ========================= */
