@@ -9,23 +9,34 @@ document.addEventListener("DOMContentLoaded", function () {
   const path = window.location.pathname;
    
    /* =========================
-   EMPLOYEE HARD LOCK
+   LOAD PERMISSIONS
 ========================= */
 
-const isEmployee = user?.role === "employee";
+const permissions = user
+  ? JSON.parse(localStorage.getItem(`permissions_${user.email}`) || "{}")
+  : {};
+   
+/* =========================
+   EMPLOYEE PERMISSION LOCK
+========================= */
 
-if (isEmployee) {
+if (user?.role === "employee") {
+
+  const blockedSupervisor = !permissions.supervisor;
+  const blockedDER = !permissions.der;
+  const blockedEmployee = !permissions.employee;
 
   if (
-    path.includes("fmcsa-module-a") ||
-    path.includes("fmcsa-drug-alcohol") ||
-    path.includes("fmcsa-der") ||
-    path.includes("payment")
+    (path.includes("fmcsa-module-a") && blockedSupervisor) ||
+    (path.includes("fmcsa-drug-alcohol") && blockedSupervisor) ||
+    (path.includes("fmcsa-der") && blockedDER) ||
+    (path.includes("fmcsa-employee") && blockedEmployee) ||
+    path.includes("payment") // still block all purchases
   ) {
 
     sessionStorage.setItem(
       "ams_notice",
-      "Access restricted: Employee accounts cannot access this module."
+      "This training has not been assigned to you."
     );
 
     window.location.replace("dashboard.html");
