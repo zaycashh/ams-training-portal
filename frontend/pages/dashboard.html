@@ -8,14 +8,15 @@
 <link rel="stylesheet" href="../css/main.css" />
 <link rel="icon" href="data:,">
 </head>
-  
+
+<body>
+
 <script>
 function logout(){
   localStorage.removeItem("amsUser");
   window.location.href = "login.html";
 }
 </script>
-<body>
 
 <header class="portal-header">
 <div class="header-inner">
@@ -38,6 +39,11 @@ style="display:none;padding:12px;margin-bottom:12px;border:1px solid #d7e3ff;bac
 You’ve been invited by your company to complete required training.
 </div>
 
+<!-- =========================
+   FAA SECTION
+========================= -->
+<div class="faa-section">
+
 <h2 class="section-title">
 DOT / FAA Drug & Alcohol Training (Individual Modules)
 </h2>
@@ -46,7 +52,7 @@ DOT / FAA Drug & Alcohol Training (Individual Modules)
 Select the course that matches your role.
 </p>
 
-<section class="modules-grid faa-section">
+<section class="modules-grid">
 
 <!-- DER -->
 <div class="module-card locked">
@@ -70,7 +76,6 @@ Select the course that matches your role.
 </button>
 
 <div id="supervisorCompletionDate" class="training-date"></div>
-
 </div>
 
 <!-- EMPLOYEE -->
@@ -83,29 +88,27 @@ Select the course that matches your role.
 </button>
 
 <div id="employeeCompletionDate" class="training-date"></div> 
-
 <div id="employeeSeatStatus" class="seat-status"></div>
 
 </div>
 
 </section>
+</div>
 
 <hr class="section-divider">
 
-<!--DOT FMCSA SUPERVISOR PROGRAM -->
-
-<div class="fmcsa-section">
+<!-- =========================
+   FMCSA SUPERVISOR (BUNDLE)
+========================= -->
+<div class="fmcsa-section" id="fmcsaSupervisorSection">
 
 <h2>DOT FMCSA Supervisor Training (Bundled Program)</h2>
 
 <div class="fmcsa-progress-wrapper">
-
 <div class="fmcsa-progress-bar">
 <div id="fmcsaProgressFill"></div>
 </div>
-
 <p id="fmcsaProgressText">0% Complete</p>
-
 </div>
 
 <p>
@@ -116,8 +119,7 @@ This training bundle includes the required DOT FMCSA supervisor drug and alcohol
 
 <!-- MODULE A -->
 <div class="module-card locked">
-
-<h3 id="moduleATitle">🔒 Module A – Reasonable Suspicion</h3>
+<h3>🔒 Module A – Reasonable Suspicion</h3>
 <p>Supervisor observation and documentation training.</p>
 
 <button id="fmcsaModABtn" class="btn-primary">
@@ -125,13 +127,11 @@ This training bundle includes the required DOT FMCSA supervisor drug and alcohol
 </button>
 
 <div id="moduleACompletionDate" class="training-date"></div>
-
 </div>
 
 <!-- MODULE B -->
 <div class="module-card">
-
-<h3 id="moduleBTitle">🔒 Module B – Drug & Alcohol Awareness</h3>
+<h3>🔒 Module B – Drug & Alcohol Awareness</h3>
 <p>Substance abuse education and testing compliance.</p>
 
 <button id="fmcsaModBBtn" class="btn-primary" disabled>
@@ -139,30 +139,26 @@ This training bundle includes the required DOT FMCSA supervisor drug and alcohol
 </button>
 
 <div id="moduleBCompletionDate" class="training-date"></div>  
-
 </div>
 
 <!-- CERTIFICATE -->
 <div class="module-card hidden" id="fmcsaCertCard">
-
 <h3>FMCSA Training Certificate</h3>
 <p>Download your FMCSA supervisor training certificate.</p>
 
 <button id="fmcsaCertBtn" class="btn-primary">
 View Certificate
 </button>
-
 </div>
 
 </div>
 
 </div>
 
-<div id="fmcsaTimer" class="fmcsa-timer"></div>
-
-<!-- FMCSA DER + EMPLOYEE -->
-
-<div class="fmcsa-section">
+<!-- =========================
+   FMCSA DER + EMPLOYEE
+========================= -->
+<div class="fmcsa-section" id="fmcsaDerSection">
 
 <h2>DOT FMCSA Drug & Alcohol Training Programs</h2>
 
@@ -172,50 +168,46 @@ DOT 49 CFR Part 382 Compliance Training
 
 <div class="modules-grid">
 
-<!-- DER TRAINING -->
+<!-- DER -->
 <div class="module-card">
-
 <h3>DER Certification Training</h3>
-
-<p>
-Required DOT training for Designated Employer Representatives.
-</p>
+<p>Required DOT training for Designated Employer Representatives.</p>
 
 <button id="derFmcsaBtn" class="btn-primary">
 Start DER Training
 </button>
 
 <div id="derFmcsaCompletionDate" class="training-date"></div>
-
 </div>
 
-<!-- EMPLOYEE TRAINING -->
+</div>
+</div>
 
+<div class="fmcsa-section" id="fmcsaEmployeeSection">
+
+<div class="modules-grid">
+
+<!-- EMPLOYEE -->
 <div class="module-card">
-
 <h3>FMCSA Employee Awareness Training</h3>
-
-<p>
-DOT Drug & Alcohol Awareness Training for safety-sensitive employees.
-</p>
+<p>DOT Drug & Alcohol Awareness Training for safety-sensitive employees.</p>
 
 <button id="employeeTrainingBtn" class="btn-primary">
 Start Training
 </button>
 
 <div id="employeeTrainingDate" class="training-date"></div>
-
 </div>
 
 </div>
-
 </div>
+
+<div id="fmcsaTimer" class="fmcsa-timer"></div>
 
 </main>
 
-<!-- DASHBOARD ENGINE -->
 <script src="../js/route-guard.js"></script>
 <script src="../js/dashboard.js"></script>
-  
+
 </body>
 </html>
