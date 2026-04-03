@@ -2,37 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Register Employee | AMS</title>
+  <title>Create Employee Account | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
+
+  <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
 </head>
+
 <body>
-  
-<script>
-(function(){
-
-  const params = new URLSearchParams(window.location.search);
-  const program = params.get("program") || "faa";
-
-  // 🔥 SAVE PROGRAM
-  localStorage.setItem("amsProgram", program);
-
-})();
-</script>
-
-<script>
-(function () {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!user) return;
-
-  if (user.role === "company_admin" || user.role === "owner") {
-  window.location.href = "company-dashboard.html";
-} else {
-  window.location.href = "dashboard.html";
-}
-})();
-</script>
 
 <main class="auth-container">
   <div class="auth-card">
@@ -70,7 +46,7 @@
         <label>Password</label>
         <input type="password" id="password" required />
       </div>
-      
+
       <div class="form-row">
         <label>Confirm Password</label>
         <input type="password" id="confirmPassword" required />
@@ -98,6 +74,93 @@
 
   </div>
 </main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const form = document.getElementById("employeeRegisterForm");
+
+  form.addEventListener("submit", function (e) {
+
+    e.preventDefault();
+
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const inviteCode = document.getElementById("inviteCode").value.trim();
+
+    const msg = document.getElementById("msg");
+
+    if (!firstName || !lastName || !phone || !email || !password || !confirmPassword || !inviteCode) {
+      msg.textContent = "Please complete all fields.";
+      return;
+    }
+
+    if (password.length < 6) {
+      msg.textContent = "Password must be at least 6 characters.";
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      msg.textContent = "Passwords do not match.";
+      return;
+    }
+
+    const companyProfile = JSON.parse(localStorage.getItem("companyProfile") || "null");
+
+    if (!companyProfile || !companyProfile.invites || !companyProfile.invites[inviteCode]) {
+      msg.textContent = "Invalid or expired invite code.";
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+    if (users.find(u => u.email === email)) {
+      msg.textContent = "An account with this email already exists.";
+      return;
+    }
+
+    const program =
+      new URLSearchParams(window.location.search).get("program") || "faa";
+
+    const user = {
+      id: "emp-" + email,
+      firstName,
+      lastName,
+      phone,
+      email,
+      password,
+      role: "employee",
+      type: "company",
+      program,
+      companyId: companyProfile.id,
+      createdAt: Date.now()
+    };
+
+    users.push(user);
+    localStorage.setItem("ams_users", JSON.stringify(users));
+
+    // 🔥 Assign seat
+    companyProfile.usedSeats[email] = true;
+    delete companyProfile.invites[inviteCode];
+
+    localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+
+    localStorage.setItem("amsUser", JSON.stringify(user));
+    localStorage.setItem("amsProgram", program);
+
+    window.location.href = "dashboard.html";
+
+  });
+
+});
+</script>
+
+</body>
+</html>
 
 <script src="../js/register-employee.js"></script>
 
