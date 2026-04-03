@@ -402,17 +402,6 @@ if (program === "faa") {
    EMPLOYEE LOCK (CORRECT)
 ========================= */
 
-const isEmployee =
-user?.role === "employee" && user?.type === "company";
-
-if (isEmployee) {
-
-  // Hide only supervisor + DER (NOT employee training)
-  document.getElementById("fmcsaSupervisorSection")?.style.setProperty("display","none");
-  document.getElementById("fmcsaDerSection")?.style.setProperty("display","none");
-
-}
-
   /* Global Notice */
   const notice = sessionStorage.getItem("ams_notice");
   if (notice) {
