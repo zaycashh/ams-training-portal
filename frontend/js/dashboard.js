@@ -437,7 +437,8 @@ if (isEmployee) {
  updateFAACompletionDates();  
  updateFMCSATimer();
  updateFMCSDERButtonState();
- updateFMCSAEmployeeButton();  
+ updateFMCSAEmployeeButton();
+ updateFMCSASupervisorButton();
  updateFMCSAStatus();  
  updateFMCSAProgress();
    
@@ -617,14 +618,31 @@ function updateFMCSAProgress() {
 
 }
 /* =========================
+   GENERIC SEAT CHECK
+========================= */
+
+function hasCompanySeat() {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!user || user.role !== "employee" || user.type !== "company") return null;
+
+  return company?.usedSeats?.[user.email] === true;
+
+}
+/* =========================
    DER COMPLETION STATUS
 ========================= */
+
 function updateFMCSDERButtonState() {
 
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
   const derDateEl = document.getElementById("derFmcsaCompletionDate");
+
+  const hasSeat = hasCompanySeat();
 
   const paid =
     localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
@@ -646,12 +664,25 @@ function updateFMCSDERButtonState() {
       window.location.href = "fmcsa-certificates.html?type=der";
     };
 
-    /* ✅ SHOW COMPLETION DATE */
     if (derDate && derDateEl) {
       derDateEl.textContent =
         "✔ Completed " +
         new Date(Number(derDate)).toLocaleDateString("en-US");
     }
+
+    return;
+  }
+
+  /* =========================
+     COMPANY EMPLOYEE (SEAT)
+  ========================= */
+  if (hasSeat === false) {
+
+    derFmcsaBtn.textContent = "🔒 Seat Required";
+
+    derFmcsaBtn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
 
     return;
   }
@@ -677,6 +708,58 @@ function updateFMCSDERButtonState() {
 
   derFmcsaBtn.onclick = () => {
     window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
+  };
+
+}
+/* =========================
+   FMCSA SUPERVISOR BUTTON
+========================= */
+
+function updateFMCSASupervisorButton() {
+
+  const btn = document.getElementById("fmcsaSupervisorBtn");
+  if (!btn) return;
+
+  const hasSeat = hasCompanySeat();
+
+  const paid =
+    localStorage.getItem(`paid_fmcsa_${email}`) === "true";
+
+  /* =========================
+     COMPANY EMPLOYEE (SEAT)
+  ========================= */
+  if (hasSeat === false) {
+
+    btn.textContent = "🔒 Seat Required";
+
+    btn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
+
+    return;
+  }
+
+  /* =========================
+     PURCHASED
+  ========================= */
+  if (paid) {
+
+    btn.textContent = "Start Training";
+
+    btn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+
+    return;
+  }
+
+  /* =========================
+     LOCKED
+  ========================= */
+  btn.textContent = "🔒 Locked — Purchase Required";
+
+  btn.onclick = () => {
+    window.location.href = "payment.html?type=fmcsa";
   };
 
 }
