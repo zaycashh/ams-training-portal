@@ -684,9 +684,24 @@ function updateFMCSDERButtonState() {
   /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (hasSeat !== true) {
+if (user.role === "employee" && user.type === "company") {
 
-  clearBadge("derSeatBadge"); // ✅ correct badge
+  if (hasSeat === true) {
+
+    setAssignedBadge("derSeatBadge");
+
+    derFmcsaBtn.textContent = "Start DER Training";
+    derFmcsaBtn.style.opacity = "1";
+    derFmcsaBtn.style.cursor = "pointer";
+
+    derFmcsaBtn.onclick = () => {
+      window.location.href = "fmcsa-der.html";
+    };
+
+    return; // 🚨 CRITICAL
+  }
+
+  clearBadge("derSeatBadge");
 
   derFmcsaBtn.textContent = "🔒 Seat Required";
   derFmcsaBtn.style.opacity = "0.7";
@@ -743,9 +758,24 @@ function updateFMCSASupervisorButton() {
  /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (hasSeat !== true) {
+if (user.role === "employee" && user.type === "company") {
 
-  clearBadge("supervisorSeatBadge"); // ✅ IMPORTANT
+  if (hasSeat === true) {
+
+    setAssignedBadge("supervisorSeatBadge");
+
+    btn.textContent = "Start Training";
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+
+    btn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+
+    return;
+  }
+
+  clearBadge("supervisorSeatBadge");
 
   btn.textContent = "🔒 Seat Required";
   btn.style.opacity = "0.7";
