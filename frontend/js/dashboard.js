@@ -685,116 +685,7 @@ function updateFMCSDERButtonState() {
    FMCSA MODULE UNLOCK SYSTEM
 ========================= */
 
-function updateFMCSAModuleButtons() {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-  const email = user.email;
-
-  const paid =
-  localStorage.getItem(`paid_fmcsa_supervisor_${email}`) === "true";
-
-  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-  const modABtn = document.getElementById("fmcsaModABtn");
-  const modBBtn = document.getElementById("fmcsaModBBtn");
-  const certBtn = document.getElementById("fmcsaCertBtn");
-
-  if (!modABtn || !modBBtn || !certBtn) return;
-
-  /* =========================
-     NOT PURCHASED
-  ========================= */
-  if (!paid) {
-
-    modABtn.textContent = "Locked — Purchase Required";
-    modABtn.onclick = () => {
-      window.location.href = "payment.html?type=fmcsa";
-    };
-
-    modBBtn.disabled = true;
-    modBBtn.textContent = "Locked — Purchase Required";
-
-    certBtn.classList.add("hidden");
-
-    return;
-  }
-
-  /* =========================
-     MODULE A NOT DONE
-  ========================= */
-  if (!modA) {
-
-    modABtn.textContent = "Start Module A";
-    modABtn.disabled = false;
-    modABtn.onclick = () => window.location.href = "fmcsa-module-a.html";
-
-    modBBtn.textContent = "Locked — Complete Module A";
-    modBBtn.disabled = true;
-
-    certBtn.classList.add("hidden");
-
-    return;
-  }
-
-  /* =========================
-     MODULE B NOT DONE
-  ========================= */
-  if (!modB) {
-
-    modABtn.textContent = "✔ Module A Completed";
-    modABtn.disabled = true;
-
-    modBBtn.textContent = "Start Module B";
-    modBBtn.disabled = false;
-    modBBtn.onclick = () => window.location.href = "fmcsa-drug-alcohol.html";
-
-    certBtn.classList.add("hidden");
-
-    return;
-  }
-
-  /* =========================
-     BOTH COMPLETE
-  ========================= */
-  if (modA && modB) {
-
-  modABtn.textContent = "✔ Module A Completed";
-  modABtn.disabled = true;
-
-  modBBtn.textContent = "✔ Module B Completed";
-  modBBtn.disabled = true;
-
-  certBtn.classList.remove("hidden");
-
-  certBtn.textContent = "View Certificate";
-  certBtn.onclick = () => {
-    window.location.href = "fmcsa-certificates.html?type=supervisor";
-  };
-
-}
-   
-}
-
-/* =========================
-   FMCSA EMPLOYEE AWARENESS FIXED
-========================= */
-
 function updateFMCSAEmployeeButton() {
-
-  const btn = document.getElementById("employeeTrainingBtn");
-  const dateEl = document.getElementById("employeeTrainingDate"); // ✅ ADD THIS
-
-  if (!btn) return;
-
-  const paid =
-  localStorage.getItem(`paid_employee_fmcsa_${email}`) === "true";
-
-  const empCompleted =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-
-  const empDate =
-  localStorage.getItem("fmcsaEmployeeDate");function updateFMCSAEmployeeButton() {
 
   const btn = document.getElementById("employeeTrainingBtn");
   const dateEl = document.getElementById("employeeTrainingDate");
@@ -851,7 +742,6 @@ function updateFMCSAEmployeeButton() {
       return;
     }
 
-    // ❌ NO SEAT
     btn.textContent = "🔒 Seat Required";
 
     btn.onclick = () => {
@@ -876,39 +766,12 @@ function updateFMCSAEmployeeButton() {
   }
 
   /* =========================
-     LOCKED (INDIVIDUAL ONLY)
+     LOCKED
   ========================= */
   btn.textContent = "🔒 Locked — Purchase Required";
 
   btn.onclick = () => {
     window.location.href = "payment.html?module=fmcsa_employee";
-  };
-
-}
-
-  /* =========================
-     NOT PURCHASED
-  ========================= */
-
-  if (!paid) {
-
-    btn.textContent = "🔒 Locked — Purchase Required";
-
-    btn.onclick = () => {
-      window.location.href = "payment.html?module=fmcsa_employee";
-    };
-
-    return;
-  }
-
-  /* =========================
-     PURCHASED BUT NOT DONE
-  ========================= */
-
-  btn.textContent = "Start Training";
-
-  btn.onclick = () => {
-    window.location.href = "fmcsa-employee-training.html";
   };
 
 }
