@@ -1,20 +1,13 @@
 <script>
-
-/* =========================
-   WAIT FOR PAGE TO LOAD
-========================= */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
   /* =========================
-     GET PROGRAM FROM URL
+     SAFE FORM SELECT
   ========================= */
-  const urlParams = new URLSearchParams(window.location.search);
-  const program = urlParams.get("program") || "faa";
-
-  const form = document.getElementById("companyRegisterForm");
+  const form = document.querySelector("form");
 
   if (!form) {
-    console.error("Form not found");
+    alert("Form not found — check HTML");
     return;
   }
 
@@ -22,6 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     e.preventDefault();
 
+    /* =========================
+       GET INPUTS
+    ========================= */
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value.trim();
     const companyName = document.getElementById("companyName").value.trim();
@@ -30,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
+    /* =========================
+       VALIDATION
+    ========================= */
     if (!firstName || !lastName || !companyName || !phone || !email || !password || !confirmPassword) {
       alert("Please complete all fields.");
       return;
@@ -45,14 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    /* =========================
+       USERS DB
+    ========================= */
     const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-    const existingUser = users.find(u => u.email === email);
-    if (existingUser) {
+    if (users.find(u => u.email === email)) {
       alert("An account with this email already exists.");
       return;
     }
 
+    /* =========================
+       COMPANY PROFILE
+    ========================= */
     const companyId = "comp-" + Date.now();
 
     const companyProfile = {
@@ -70,8 +74,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
-    /* 🔥 USER WITH PROGRAM */
-    const companyAdminUser = {
+    /* =========================
+       PROGRAM FROM URL
+    ========================= */
+    const program =
+      new URLSearchParams(window.location.search).get("program") || "faa";
+
+    /* =========================
+       CREATE USER
+    ========================= */
+    const user = {
       id: "admin-" + email,
       firstName,
       lastName,
@@ -82,17 +94,23 @@ document.addEventListener("DOMContentLoaded", () => {
       role: "company_admin",
       type: "company",
       companyId,
-      program, // 🔥 IMPORTANT
+      program,
       createdAt: Date.now()
     };
 
-    users.push(companyAdminUser);
+    users.push(user);
     localStorage.setItem("ams_users", JSON.stringify(users));
 
-    localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
+    /* =========================
+       SESSION START
+    ========================= */
+    localStorage.setItem("amsUser", JSON.stringify(user));
     localStorage.setItem("amsProgram", program);
 
-    window.location.replace("company-dashboard.html");
+    /* =========================
+       REDIRECT
+    ========================= */
+    window.location.href = "company-dashboard.html";
 
   });
 
