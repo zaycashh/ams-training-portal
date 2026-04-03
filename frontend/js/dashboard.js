@@ -750,93 +750,23 @@ function updateFMCSAModuleButtons() {
   ========================= */
   if (modA && modB) {
 
-    modABtn.textContent = "✔ Module A Completed";
-    modABtn.disabled = true;
-
-    modBBtn.textContent = "✔ Module B Completed";
-    modBBtn.disabled = true;
-
-    certBtn.classList.remove("hidden");
-
-    certBtn.textContent = "View Certificate";
-    certBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=supervisor";
-    };
-
-  }
-
-}
-
-  /* =========================
-     ALL COMPLETE
-  ========================= */
   modABtn.textContent = "✔ Module A Completed";
-  modBBtn.textContent = "✔ Module B Completed";
-
   modABtn.disabled = true;
+
+  modBBtn.textContent = "✔ Module B Completed";
   modBBtn.disabled = true;
 
   certBtn.classList.remove("hidden");
-}
 
-  /* MODULE A NOT DONE */
-if (!modA) {
-
-  modABtn.disabled = false; // ✅ ADD THIS
-
-  modABtn.textContent = "Start Module A – Reasonable Suspicion";
-  modABtn.onclick = () => {
-    window.location.href = "fmcsa-module-a.html";
-  };
-
-  modBBtn.disabled = true;
-  modBBtn.textContent = "Locked — Complete Module A";
-
-  certBtn.classList.add("hidden");
-
-  return;
-}
-
-  /* MODULE A COMPLETE */
-if (modA && !modB) {
-
-  modABtn.textContent = "✔ Module A Completed";
-  modABtn.disabled = true;
-  modABtn.onclick = null; // ✅ ADD THIS
-
-  modBBtn.disabled = false;
-  modBBtn.textContent = "Start Module B – Drug & Alcohol";
-
-  modBBtn.onclick = () => {
-    window.location.href = "fmcsa-drug-alcohol.html";
-  };
-
-  certBtn.classList.add("hidden");
-
-  return;
-}
-
-/* BOTH MODULES COMPLETE */
-if (modA && modB) {
-
-  modABtn.textContent = "✔ Module A Completed";
-  modABtn.disabled = true;
-  modABtn.onclick = null; // ✅ add
-
-  modBBtn.textContent = "✔ Module B Completed";
-  modBBtn.disabled = true;
-  modBBtn.onclick = null; // ✅ add
-
-  const certCard = document.getElementById("fmcsaCertCard");
-  if (certCard) certCard.classList.remove("hidden");
-
-  certBtn.textContent = "View / Download Certificate";
-
+  certBtn.textContent = "View Certificate";
   certBtn.onclick = () => {
     window.location.href = "fmcsa-certificates.html?type=supervisor";
   };
 
-  return;
+}
+   
+}
+
 /* =========================
    FMCSA EMPLOYEE AWARENESS FIXED
 ========================= */
