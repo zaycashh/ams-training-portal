@@ -20,7 +20,7 @@ if (isEmployee) {
     path.includes("fmcsa-module-a") ||
     path.includes("fmcsa-drug-alcohol") ||
     path.includes("fmcsa-der") ||
-    path.includes("payment.html")
+    path.includes("payment")
   ) {
 
     sessionStorage.setItem(
