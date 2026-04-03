@@ -682,20 +682,22 @@ function updateFMCSDERButtonState() {
   }
 
   /* =========================
-     COMPANY EMPLOYEE (SEAT)
-  ========================= */
-  if (hasSeat === false) {
-     
-     clearBadge("supervisorSeatBadge");
+   COMPANY EMPLOYEE (SEAT)
+========================= */
+if (hasSeat === false) {
 
-    derFmcsaBtn.textContent = "🔒 Seat Required";
+  clearBadge("derSeatBadge"); // ✅ correct badge
 
-    derFmcsaBtn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
-    };
+  derFmcsaBtn.textContent = "🔒 Seat Required";
+  derFmcsaBtn.style.opacity = "0.7";
+  derFmcsaBtn.style.cursor = "not-allowed";
 
-    return;
-  }
+  derFmcsaBtn.onclick = () => {
+    showToast("No seat assigned. Contact your admin.", "warning");
+  };
+
+  return;
+}
 
   /* =========================
      PURCHASED
@@ -735,21 +737,23 @@ function updateFMCSASupervisorButton() {
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
 
-  /* =========================
-     COMPANY EMPLOYEE (SEAT)
-  ========================= */
-  if (hasSeat === false) {
-     
-     clearBadge("supervisorSeatBadge");
+ /* =========================
+   COMPANY EMPLOYEE (SEAT)
+========================= */
+if (hasSeat === false) {
 
-    btn.textContent = "🔒 Seat Required";
+  clearBadge("supervisorSeatBadge"); // ✅ IMPORTANT
 
-    btn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
-    };
+  btn.textContent = "🔒 Seat Required";
+  btn.style.opacity = "0.7";
+  btn.style.cursor = "not-allowed";
 
-    return;
-  }
+  btn.onclick = () => {
+    showToast("No seat assigned. Contact your admin.", "warning");
+  };
+
+  return;
+}
 
   /* =========================
      PURCHASED
@@ -821,29 +825,38 @@ function updateFMCSAEmployeeButton() {
     return;
   }
 
-  /* =========================
-     COMPANY EMPLOYEE (SEAT)
-  ========================= */
-  if (user.role === "employee" && user.type === "company") {
+/* =========================
+   COMPANY EMPLOYEE (SEAT)
+========================= */
+if (user.role === "employee" && user.type === "company") {
 
-    if (hasSeat) {
-      btn.textContent = "Start Training";
+  if (hasSeat) {
 
-      btn.onclick = () => {
-        window.location.href = "fmcsa-employee-training.html";
-      };
+    setAssignedBadge("employeeSeatBadge"); // ✅ ADD THIS
 
-      return;
-    }
-
-    btn.textContent = "🔒 Seat Required";
+    btn.textContent = "Start Training";
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
 
     btn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
+      window.location.href = "fmcsa-employee-training.html";
     };
 
     return;
   }
+
+  clearBadge("employeeSeatBadge"); // ✅ ADD THIS
+
+  btn.textContent = "🔒 Seat Required";
+  btn.style.opacity = "0.7";
+  btn.style.cursor = "not-allowed";
+
+  btn.onclick = () => {
+    showToast("No seat assigned. Contact your admin.", "warning");
+  };
+
+  return;
+}
 
   /* =========================
      INDIVIDUAL USER
