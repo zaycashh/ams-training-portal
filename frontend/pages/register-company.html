@@ -5,7 +5,6 @@
   <title>Create Company Account | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ✅ SAME CSS -->
   <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
 </head>
 
@@ -14,7 +13,6 @@
 <main class="auth-container">
   <div class="auth-card">
 
-    <!-- 🔥 BACK LINK (MATCHES INDIVIDUAL PAGE) -->
     <div class="back-link">
       <a href="register-select.html">← Back to Registration Options</a>
     </div>
@@ -82,6 +80,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
   const form = document.getElementById("companyRegisterForm");
+  if (!form) return;
 
   form.addEventListener("submit", function (e) {
 
@@ -117,9 +116,21 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    /* =========================
+       PROGRAM FROM URL
+    ========================= */
+    const program =
+      new URLSearchParams(window.location.search).get("program") || "faa";
+
+    /* =========================
+       COMPANY PROFILE
+    ========================= */
     const companyId = "comp-" + Date.now();
+
+    const companyProfile = {
       id: companyId,
       name: companyName,
+      program, // 🔥 FIXED
       createdAt: Date.now(),
       seats: {
         employee: { total: 5, used: 0 }
@@ -132,29 +143,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
-    const program =
-      new URLSearchParams(window.location.search).get("program") || "faa";
-    
-    const companyProfile = {
-      id: companyId,
-      name: companyName,
-      program, // 🔥 REQUIRED
-      createdAt: Date.now(),
-      seats: {
-        employee: { total: 5, used: 0 }
-      },
-      usedSeats: {},
-      invites: {},
-      modules: [],
-      employees: {}
+    /* =========================
+       CREATE ADMIN USER
+    ========================= */
+    const companyAdminUser = {
+      id: "admin-" + email,
+      firstName,
+      lastName,
+      company: companyName,
+      phone,
+      email,
+      password,
+      role: "company_admin",
+      type: "company",
+      companyId,
+      program,
+      createdAt: Date.now()
     };
 
-    users.push(user);
+    users.push(companyAdminUser);
     localStorage.setItem("ams_users", JSON.stringify(users));
 
-    localStorage.setItem("amsUser", JSON.stringify(user));
+    /* =========================
+       START SESSION
+    ========================= */
+    localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
     localStorage.setItem("amsProgram", program);
 
+    /* =========================
+       REDIRECT
+    ========================= */
     window.location.href = "company-dashboard.html";
 
   });
