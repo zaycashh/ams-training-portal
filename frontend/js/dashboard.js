@@ -96,6 +96,24 @@ if (paidFAA) {
 }
 
 /* =========================
+   BADGE HELPERS
+========================= */
+
+function setAssignedBadge(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = "🎟 Assigned";
+  el.style.color = "#0a7d2c";
+  el.style.fontWeight = "600";
+}
+
+function clearBadge(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = "";
+}
+
+/* =========================
    LOGOUT
 ========================= */
 function logout() {
