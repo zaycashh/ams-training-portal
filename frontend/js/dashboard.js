@@ -1,7 +1,8 @@
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 const email = user?.email;
 
-const program = user?.program;
+localStorage.getItem("amsProgram")
+
 /* =========================
    COURSE KEYS
 ========================= */
