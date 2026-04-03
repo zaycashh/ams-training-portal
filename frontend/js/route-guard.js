@@ -1,5 +1,5 @@
 /* =========================================================
-   AMS ROUTE GUARD (CLEAN RESET)
+   AMS ROUTE GUARD (FINAL - PERMISSIONS + PROGRAM LOCK)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -7,42 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body?.dataset?.module || "";
   const path = window.location.pathname;
-   
-   /* =========================
-   LOAD PERMISSIONS
-========================= */
-
-const permissions = user
-  ? JSON.parse(localStorage.getItem(`permissions_${user.email}`) || "{}")
-  : {};
-   
-/* =========================
-   EMPLOYEE PERMISSION LOCK
-========================= */
-
-if (user?.role === "employee") {
-
-  const blockedSupervisor = !permissions.supervisor;
-  const blockedDER = !permissions.der;
-  const blockedEmployee = !permissions.employee;
-
-  if (
-    (path.includes("fmcsa-module-a") && blockedSupervisor) ||
-    (path.includes("fmcsa-drug-alcohol") && blockedSupervisor) ||
-    (path.includes("fmcsa-der") && blockedDER) ||
-    (path.includes("fmcsa-employee") && blockedEmployee) ||
-    path.includes("payment") // still block all purchases
-  ) {
-
-    sessionStorage.setItem(
-      "ams_notice",
-      "This training has not been assigned to you."
-    );
-
-    window.location.replace("dashboard.html");
-    return;
-  }
-}
 
   /* =========================
      REQUIRE LOGIN
@@ -50,6 +14,73 @@ if (user?.role === "employee") {
   if (!user && !path.includes("login")) {
     window.location.replace("login.html");
     return;
+  }
+
+  /* =========================
+     LOAD PROGRAM
+  ========================= */
+  const program = localStorage.getItem("amsProgram");
+
+  /* =========================
+     LOAD PERMISSIONS
+  ========================= */
+  const permissions = user
+    ? JSON.parse(localStorage.getItem(`permissions_${user.email}`) || "{}")
+    : {};
+
+  /* =========================
+     PROGRAM RESTRICTION
+  ========================= */
+  if (user?.role === "employee") {
+
+    if (program === "fmcsa") {
+      // Block FAA pages
+      if (
+        path.includes("der.html") ||
+        path.includes("supervisor.html") ||
+        path.includes("employee.html")
+      ) {
+        window.location.replace("dashboard.html");
+        return;
+      }
+    }
+
+    if (program === "faa") {
+      // Block FMCSA pages
+      if (
+        path.includes("fmcsa")
+      ) {
+        window.location.replace("dashboard.html");
+        return;
+      }
+    }
+  }
+
+  /* =========================
+     EMPLOYEE PERMISSION LOCK
+  ========================= */
+  if (user?.role === "employee") {
+
+    const blockedSupervisor = !permissions.supervisor;
+    const blockedDER = !permissions.der;
+    const blockedEmployee = !permissions.employee;
+
+    if (
+      (path.includes("fmcsa-module-a") && blockedSupervisor) ||
+      (path.includes("fmcsa-drug-alcohol") && blockedSupervisor) ||
+      (path.includes("fmcsa-der") && blockedDER) ||
+      (path.includes("fmcsa-employee") && blockedEmployee) ||
+      path.includes("payment") // block purchases
+    ) {
+
+      sessionStorage.setItem(
+        "ams_notice",
+        "This training has not been assigned to you."
+      );
+
+      window.location.replace("dashboard.html");
+      return;
+    }
   }
 
   /* =========================
@@ -62,7 +93,6 @@ if (user?.role === "employee") {
   /* =========================
      PAYMENT CHECK ONLY
   ========================= */
-
   const paymentMap = {
     "fmcsa-der": "paid_der_fmcsa",
     "fmcsa-module-a": "paid_fmcsa",
