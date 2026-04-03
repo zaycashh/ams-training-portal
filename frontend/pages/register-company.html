@@ -136,21 +136,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const program =
       new URLSearchParams(window.location.search).get("program") || "faa";
-
-    const user = {
-      id: "admin-" + email,
-      firstName,
-      lastName,
-      company: companyName,
-      phone,
-      email,
-      password,
-      role: "company_admin",
-      type: "company",
-      companyId,
-      program,
-      createdAt: Date.now()
-    };
+    
+    const companyProfile = {
+  id: companyId,
+  name: companyName,
+  program, // 🔥 REQUIRED
+  createdAt: Date.now(),
+  seats: {
+    employee: { total: 5, used: 0 }
+  },
+  usedSeats: {},
+  invites: {},
+  modules: [],
+  employees: {}
+};
 
     users.push(user);
     localStorage.setItem("ams_users", JSON.stringify(users));
