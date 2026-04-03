@@ -57,31 +57,42 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================
-     EMPLOYEE PERMISSION LOCK
-  ========================= */
-  if (user?.role === "employee") {
+   EMPLOYEE PERMISSION LOCK
+========================= */
 
-    const blockedSupervisor = !permissions.supervisor;
-    const blockedDER = !permissions.der;
-    const blockedEmployee = !permissions.employee;
+if (user?.role === "employee") {
 
-    if (
-      (path.includes("fmcsa-module-a") && blockedSupervisor) ||
-      (path.includes("fmcsa-drug-alcohol") && blockedSupervisor) ||
-      (path.includes("fmcsa-der") && blockedDER) ||
-      (path.includes("fmcsa-employee") && blockedEmployee) ||
-      path.includes("payment") // block purchases
-    ) {
+  const blockedSupervisor = !permissions.supervisor;
+  const blockedDER = !permissions.der;
+  const blockedEmployee = !permissions.employee;
 
-      sessionStorage.setItem(
-        "ams_notice",
-        "This training has not been assigned to you."
-      );
+  if (
 
-      window.location.replace("dashboard.html");
-      return;
-    }
+    /* ===== FAA ===== */
+    (path.includes("supervisor.html") && blockedSupervisor) ||
+    (path.includes("der.html") && blockedDER) ||
+    (path.includes("employee.html") && blockedEmployee) ||
+
+    /* ===== FMCSA ===== */
+    (path.includes("fmcsa-module-a") && blockedSupervisor) ||
+    (path.includes("fmcsa-drug-alcohol") && blockedSupervisor) ||
+    (path.includes("fmcsa-der") && blockedDER) ||
+    (path.includes("fmcsa-employee") && blockedEmployee) ||
+
+    /* ===== PAYMENT BLOCK ===== */
+    path.includes("payment")
+
+  ) {
+
+    sessionStorage.setItem(
+      "ams_notice",
+      "This training has not been assigned to you."
+    );
+
+    window.location.replace("dashboard.html");
+    return;
   }
+}
 
   /* =========================
      ALLOW NON-MODULE PAGES
