@@ -118,7 +118,29 @@ You’ve been invited by your company to complete required training.
 
 </div>
 </div>
+  
+<!-- =========================
+   ADMIN PANEL
+========================= -->
+<div id="adminPanel" class="admin-panel" style="display:none; margin-top:30px;">
 
+  <h2>Company Admin Panel</h2>
+
+  <div style="display:flex; gap:10px; margin-bottom:15px;">
+    <input 
+      type="email" 
+      id="seatEmailInput" 
+      placeholder="Enter employee email"
+      style="padding:10px; flex:1;"
+    />
+
+    <button class="btn-primary" onclick="assignSeat()">Assign</button>
+    <button class="btn-secondary" onclick="removeSeat()">Remove</button>
+  </div>
+
+  <div id="seatList"></div>
+
+</div>
 </main>
 
 <script src="../js/route-guard.js"></script>
