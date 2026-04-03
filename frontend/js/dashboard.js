@@ -794,12 +794,31 @@ function updateFMCSAEmployeeButton() {
   localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
   const empDate =
-  localStorage.getItem("fmcsaEmployeeDate");
+  localStorage.getItem("fmcsaEmployeeDate");function updateFMCSAEmployeeButton() {
+
+  const btn = document.getElementById("employeeTrainingBtn");
+  const dateEl = document.getElementById("employeeTrainingDate");
+
+  if (!btn) return;
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const paid =
+    localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
+
+  const hasSeat =
+    company?.usedSeats?.[user.email] === true;
+
+  const empCompleted =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+
+  const empDate =
+    localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
 
   /* =========================
      COMPLETED
   ========================= */
-
   if (empCompleted) {
 
     btn.textContent = "🎓 View Certificate";
@@ -808,14 +827,64 @@ function updateFMCSAEmployeeButton() {
       window.location.href = "fmcsa-certificates.html?type=employee";
     };
 
-    // ✅ SHOW COMPLETION DATE
     if (dateEl && empDate) {
       dateEl.textContent =
-        "✔ Completed " + new Date(Number(empDate)).toLocaleDateString("en-US");
+        "✔ Completed " +
+        new Date(Number(empDate)).toLocaleDateString("en-US");
     }
 
     return;
   }
+
+  /* =========================
+     COMPANY EMPLOYEE (SEAT)
+  ========================= */
+  if (user.role === "employee" && user.type === "company") {
+
+    if (hasSeat) {
+      btn.textContent = "Start Training";
+
+      btn.onclick = () => {
+        window.location.href = "fmcsa-employee-training.html";
+      };
+
+      return;
+    }
+
+    // ❌ NO SEAT
+    btn.textContent = "🔒 Seat Required";
+
+    btn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
+
+    return;
+  }
+
+  /* =========================
+     INDIVIDUAL USER
+  ========================= */
+  if (paid) {
+
+    btn.textContent = "Start Training";
+
+    btn.onclick = () => {
+      window.location.href = "fmcsa-employee-training.html";
+    };
+
+    return;
+  }
+
+  /* =========================
+     LOCKED (INDIVIDUAL ONLY)
+  ========================= */
+  btn.textContent = "🔒 Locked — Purchase Required";
+
+  btn.onclick = () => {
+    window.location.href = "payment.html?module=fmcsa_employee";
+  };
+
+}
 
   /* =========================
      NOT PURCHASED
