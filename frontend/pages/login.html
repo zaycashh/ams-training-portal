@@ -1,63 +1,67 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>AMS Training Portal – Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Main CSS -->
   <link rel="stylesheet" href="../css/main.css" />
 </head>
+
 <body>
-  
-  <script>
+
+<!-- 🔥 AUTO REDIRECT IF ALREADY LOGGED IN -->
+<script>
 (function () {
+
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   if (!user) return;
 
   if (user.role === "company_admin" || user.role === "owner") {
-  window.location.href = "company-dashboard.html";
-} else {
-  window.location.href = "dashboard.html";
-}
+    window.location.href = "company-dashboard.html";
+  } else {
+    window.location.href = "dashboard.html";
   }
+
 })();
 </script>
 
-  <main class="auth-container">
-    <h1>Sign In</h1>
+<main class="auth-container">
+  <h1>Sign In</h1>
 
-    <form id="loginForm" class="auth-form">
+  <form id="loginForm" class="auth-form">
 
-      <div class="form-row">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" required />
-      </div>
+    <div class="form-row">
+      <label>Email Address</label>
+      <input type="email" id="email" required />
+    </div>
 
-      <div class="form-row">
-        <label for="password">Password</label>
-        <input type="password" id="password" required />
-      </div>
+    <div class="form-row">
+      <label>Password</label>
+      <input type="password" id="password" required />
+    </div>
 
-      <div class="form-actions">
-  <button type="submit" class="btn-primary">Login</button>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Login</button>
 
-  <button
-    type="button"
-    class="btn-secondary"
-    onclick="window.location.href='register-select.html'">
-    Create Account
-  </button>
-</div>
+      <button
+        type="button"
+        class="btn-secondary"
+        onclick="window.location.href='register-select.html'">
+        Create Account
+      </button>
+    </div>
 
-      <p style="margin-top:14px; text-align:center;">
-        <a href="forgot-password.html">Forgot password?</a>
-      </p>
+    <p style="margin-top:14px; text-align:center;">
+      <a href="forgot-password.html">Forgot password?</a>
+    </p>
 
-    </form>
-  </main>
+  </form>
+</main>
 
-  <!-- Login JS -->
-  <script src="../js/login.js"></script>
+<!-- 🔥 YOUR LOGIN LOGIC -->
+<script src="../js/login.js"></script>
+
 </body>
 </html>
