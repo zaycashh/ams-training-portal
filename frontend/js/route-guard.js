@@ -54,32 +54,38 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================
-     EMPLOYEE ACCESS CONTROL
-  ========================= */
-  if (user?.role === "employee" && user?.type === "company") {
+   EMPLOYEE ACCESS CONTROL
+========================= */
+if (user?.role === "employee" && user?.type === "company") {
 
-    const hasSeat = hasCompanySeat();
+  const hasSeat = hasCompanySeat();
 
-    // 🔒 Block ALL FMCSA modules if no seat
-    if (
-      path.includes("fmcsa-module-a") ||
-      path.includes("fmcsa-drug-alcohol") ||
-      path.includes("fmcsa-der") ||
-      path.includes("fmcsa-employee")
-    ) {
+  // 🔒 Block FMCSA module pages if no seat
+  if (
+    path.includes("fmcsa-module-a.html") ||
+    path.includes("fmcsa-drug-alcohol.html") ||
+    path.includes("fmcsa-der.html") ||
+    path.includes("fmcsa-employee-training.html")
+  ) {
 
-      if (hasSeat !== true) {
+    if (hasSeat !== true) {
 
-        sessionStorage.setItem(
-          "ams_notice",
-          "No seat assigned. Contact your administrator."
-        );
+      sessionStorage.setItem(
+        "ams_notice",
+        "No seat assigned. Contact your administrator."
+      );
 
-        window.location.replace("dashboard.html");
-        return;
-      }
-
+      window.location.replace("dashboard.html");
+      return;
     }
+  }
+
+  // 🚫 Block payment page
+  if (path.includes("payment.html")) {
+    window.location.replace("dashboard.html");
+    return;
+  }
+}
 
     // 🚫 Block ALL payments for company employees
     if (path.includes("payment")) {
