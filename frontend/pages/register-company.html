@@ -1,13 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Company Account | AMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Correct GitHub Pages path -->
+  <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
+</head>
+
+<body>
+
+<main style="max-width:420px;margin:60px auto;text-align:center;">
+
+  <h2>Create Company Account</h2>
+
+  <form id="companyRegisterForm">
+
+    <input id="firstName" placeholder="First Name" required /><br><br>
+    <input id="lastName" placeholder="Last Name" required /><br><br>
+    <input id="companyName" placeholder="Company Name" required /><br><br>
+    <input id="phone" placeholder="Phone Number" required /><br><br>
+    <input id="email" type="email" placeholder="Email" required /><br><br>
+    <input id="password" type="password" placeholder="Password" required /><br><br>
+    <input id="confirmPassword" type="password" placeholder="Confirm Password" required /><br><br>
+
+    <button type="submit">Create Account</button>
+
+  </form>
+
+</main>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  /* =========================
-     SAFE FORM SELECT
-  ========================= */
-  const form = document.querySelector("form");
+  const form = document.getElementById("companyRegisterForm");
 
   if (!form) {
-    alert("Form not found — check HTML");
+    alert("Form not found — HTML broken");
     return;
   }
 
@@ -15,9 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     e.preventDefault();
 
-    /* =========================
-       GET INPUTS
-    ========================= */
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value.trim();
     const companyName = document.getElementById("companyName").value.trim();
@@ -26,9 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    /* =========================
-       VALIDATION
-    ========================= */
     if (!firstName || !lastName || !companyName || !phone || !email || !password || !confirmPassword) {
       alert("Please complete all fields.");
       return;
@@ -44,9 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    /* =========================
-       USERS DB
-    ========================= */
     const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
     if (users.find(u => u.email === email)) {
@@ -54,9 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    /* =========================
-       COMPANY PROFILE
-    ========================= */
     const companyId = "comp-" + Date.now();
 
     const companyProfile = {
@@ -74,15 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
-    /* =========================
-       PROGRAM FROM URL
-    ========================= */
     const program =
       new URLSearchParams(window.location.search).get("program") || "faa";
 
-    /* =========================
-       CREATE USER
-    ========================= */
     const user = {
       id: "admin-" + email,
       firstName,
@@ -101,18 +113,15 @@ document.addEventListener("DOMContentLoaded", function () {
     users.push(user);
     localStorage.setItem("ams_users", JSON.stringify(users));
 
-    /* =========================
-       SESSION START
-    ========================= */
     localStorage.setItem("amsUser", JSON.stringify(user));
     localStorage.setItem("amsProgram", program);
 
-    /* =========================
-       REDIRECT
-    ========================= */
     window.location.href = "company-dashboard.html";
 
   });
 
 });
 </script>
+
+</body>
+</html>
