@@ -1,77 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Create Company Account | AMS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
-</head>
-<body>
-
-<main class="auth-container">
-  <div class="auth-card">
-
-    <div class="back-link">
-      <a href="register-select.html">← Back to Registration Options</a>
-    </div>
-
-    <h2>Create Company Account</h2>
-    <p>This account is for company administrators who manage employee seats.</p>
-
-    <form id="companyRegisterForm" class="auth-form">
-
-      <div class="form-row">
-        <label>First Name</label>
-        <input type="text" id="firstName" required />
-      </div>
-
-      <div class="form-row">
-        <label>Last Name</label>
-        <input type="text" id="lastName" required />
-      </div>
-
-      <div class="form-row">
-        <label>Company Name</label>
-        <input type="text" id="companyName" required />
-      </div>
-
-      <div class="form-row">
-        <label>Phone Number</label>
-        <input type="tel" id="phone" placeholder="(123) 456-7890" required />
-      </div>
-
-      <div class="form-row">
-        <label>Email Address</label>
-        <input type="email" id="email" required />
-      </div>
-
-      <div class="form-row">
-        <label>Password</label>
-        <input type="password" id="password" required />
-      </div>
-
-      <div class="form-row">
-        <label>Confirm Password</label>
-        <input type="password" id="confirmPassword" required />
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">
-          Create Company Account
-        </button>
-      </div>
-
-      <p style="margin-top:14px; text-align:center;">
-        Already have an account?
-        <a href="login.html">Login</a>
-      </p>
-
-    </form>
-
-  </div>
-</main>
-
 <script>
+
+/* =========================
+   GET PROGRAM FROM URL
+========================= */
+const urlParams = new URLSearchParams(window.location.search);
+const program = urlParams.get("program") || "faa";
+
+/* =========================
+   REGISTER COMPANY USER
+========================= */
 document.getElementById("companyRegisterForm")
 .addEventListener("submit", function (e) {
 
@@ -91,9 +28,9 @@ document.getElementById("companyRegisterForm")
   }
 
   if (password.length < 6) {
-  alert("Password must be at least 6 characters.");
-  return;
-}
+    alert("Password must be at least 6 characters.");
+    return;
+  }
 
   if (password !== confirmPassword) {
     alert("Passwords do not match.");
@@ -102,7 +39,7 @@ document.getElementById("companyRegisterForm")
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-  // 🔒 Prevent duplicate email accounts
+  /* 🔒 Prevent duplicate email */
   const existingUser = users.find(u => u.email === email);
   if (existingUser) {
     alert("An account with this email already exists.");
@@ -129,6 +66,9 @@ document.getElementById("companyRegisterForm")
 
   localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
+  /* =========================
+     CREATE USER (WITH PROGRAM 🔥)
+  ========================= */
   const companyAdminUser = {
     id: "admin-" + email,
     firstName,
@@ -140,19 +80,23 @@ document.getElementById("companyRegisterForm")
     role: "company_admin",
     type: "company",
     companyId,
+    program,
     createdAt: Date.now()
   };
 
-  // ✅ Save to user database
+  /* SAVE USER */
   users.push(companyAdminUser);
   localStorage.setItem("ams_users", JSON.stringify(users));
 
-  // ✅ Start session
+  /* START SESSION */
   localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
 
-  window.location.replace("company-dashboard.html");
-});
-</script>
+  /* SET ACTIVE PROGRAM */
+  localStorage.setItem("amsProgram", program);
 
-</body>
-</html>
+  /* REDIRECT */
+  window.location.replace("company-dashboard.html");
+
+});
+
+</script>
