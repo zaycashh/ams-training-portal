@@ -18,11 +18,11 @@
   <header class="module-header" style="display:flex; justify-content:space-between; align-items:center;">
     <h1 style="margin:0;">Company Admin Dashboard</h1>
 
-```
+
 <div class="module-controls">
   <button class="btn-secondary" onclick="logout()">Logout</button>
 </div>
-```
+
 
   </header>
 
@@ -31,11 +31,11 @@
   <section class="module-section">
     <h2>Company Overview</h2>
 
-```
+
 <p><strong>Company:</strong> <span id="companyName">—</span></p>
 <p><strong>Admin Email:</strong> <span id="companyAdmin">—</span></p>
 <p><strong>Modules:</strong> <span id="companyModules">—</span></p>
-```
+
 
   </section>
 
@@ -44,7 +44,7 @@
   <section class="module-section">
     <h2>Training Program</h2>
 
-```
+
 <select id="programSelect" class="input">
   <option value="">Select Program</option>
   <option value="FAA">FAA</option>
@@ -54,7 +54,7 @@
 <button class="btn-primary" onclick="saveProgram()" style="margin-top:10px;">
   Save Program
 </button>
-```
+
 
   </section>
 
@@ -63,7 +63,7 @@
   <section class="module-section">
     <h2>Employee Seat Management</h2>
 
-```
+
 <div>Seats Total: <strong id="seatTotal">0</strong></div>
 <div>Seats Used: <strong id="seatUsed">0</strong></div>
 <div>Seats Available: <strong id="seatRemaining">0</strong></div>
@@ -92,7 +92,7 @@
     Assign Seat
   </button>
 </div>
-```
+
 
   </section>
 
@@ -101,7 +101,7 @@
   <section class="module-section">
     <h2>Employees</h2>
 
-```
+
 <table style="width:100%;border-collapse:collapse;">
   <thead>
     <tr>
@@ -138,7 +138,7 @@
 
   <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
 </div>
-```
+
 
   </section>
 
@@ -151,31 +151,6 @@
 <script src="/ams-training-portal/frontend/js/company-dashboard.js"></script>
 
 <script>
-function logout(){
-  localStorage.removeItem("amsUser");
-  window.location.href = "login.html";
-}
-</script>
-
-</body>
-</html>
-
-
-  </section>
-
-</main>
-
-<!-- =========================
-     SCRIPTS
-========================= -->
-
-<script src="/ams-training-portal/frontend/js/route-guard.js"></script>
-<script src="/ams-training-portal/frontend/js/company-dashboard.js"></script>
-
-<script>
-/* =========================
-   LOGOUT (SAFE)
-========================= */
 function logout(){
   localStorage.removeItem("amsUser");
   window.location.href = "login.html";
