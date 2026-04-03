@@ -118,8 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const companyId = "comp-" + Date.now();
-
-    const companyProfile = {
       id: companyId,
       name: companyName,
       createdAt: Date.now(),
@@ -138,18 +136,18 @@ document.addEventListener("DOMContentLoaded", function () {
       new URLSearchParams(window.location.search).get("program") || "faa";
     
     const companyProfile = {
-  id: companyId,
-  name: companyName,
-  program, // 🔥 REQUIRED
-  createdAt: Date.now(),
-  seats: {
-    employee: { total: 5, used: 0 }
-  },
-  usedSeats: {},
-  invites: {},
-  modules: [],
-  employees: {}
-};
+      id: companyId,
+      name: companyName,
+      program, // 🔥 REQUIRED
+      createdAt: Date.now(),
+      seats: {
+        employee: { total: 5, used: 0 }
+      },
+      usedSeats: {},
+      invites: {},
+      modules: [],
+      employees: {}
+    };
 
     users.push(user);
     localStorage.setItem("ams_users", JSON.stringify(users));
