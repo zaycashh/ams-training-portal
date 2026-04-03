@@ -685,6 +685,8 @@ function updateFMCSDERButtonState() {
      COMPANY EMPLOYEE (SEAT)
   ========================= */
   if (hasSeat === false) {
+     
+     clearBadge("supervisorSeatBadge");
 
     derFmcsaBtn.textContent = "🔒 Seat Required";
 
@@ -737,6 +739,8 @@ function updateFMCSASupervisorButton() {
      COMPANY EMPLOYEE (SEAT)
   ========================= */
   if (hasSeat === false) {
+     
+     clearBadge("supervisorSeatBadge");
 
     btn.textContent = "🔒 Seat Required";
 
