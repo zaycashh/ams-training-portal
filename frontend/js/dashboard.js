@@ -684,7 +684,7 @@ function updateFMCSDERButtonState() {
   /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (hasSeat === false) {
+if (hasSeat !== true) {
 
   clearBadge("derSeatBadge"); // ✅ correct badge
 
@@ -743,7 +743,7 @@ function updateFMCSASupervisorButton() {
  /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (hasSeat === false) {
+if (hasSeat !== true) {
 
   clearBadge("supervisorSeatBadge"); // ✅ IMPORTANT
 
