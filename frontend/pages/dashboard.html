@@ -32,6 +32,7 @@ function logout(){
 <button class="btn-secondary" onclick="logout()">Log Out</button>
 </header>
 
+<!-- EMPLOYEE MESSAGE -->
 <div id="employeeWelcome"
 style="display:none;padding:12px;margin-bottom:12px;border:1px solid #d7e3ff;background:#f5f9ff;border-radius:6px;">
 <strong>Welcome!</strong>
@@ -41,28 +42,37 @@ You’ve been invited by your company to complete required training.
 <!-- =========================
    FAA SECTION
 ========================= -->
-<div class="faa-section">
+<div id="faaSection" class="faa-section">
 
 <h2 class="section-title">FAA Training</h2>
 
 <div class="modules-grid">
 
+<!-- FAA SUPERVISOR -->
 <div class="module-card">
 <h3>FAA Supervisor Training</h3>
 <p>Drug & Alcohol Supervisor Training</p>
+
 <button id="supervisorBtn" class="btn-primary">Start Training</button>
+<div id="faaSupervisorBadge" class="seat-status"></div>
 </div>
 
+<!-- FAA DER -->
 <div class="module-card">
 <h3>FAA DER Training</h3>
 <p>Designated Employer Representative Training</p>
+
 <button id="derBtn" class="btn-primary">Start Training</button>
+<div id="faaDerBadge" class="seat-status"></div>
 </div>
 
+<!-- FAA EMPLOYEE -->
 <div class="module-card">
 <h3>FAA Employee Training</h3>
 <p>Drug & Alcohol Awareness Training</p>
+
 <button id="employeeBtn" class="btn-primary">Start Training</button>
+<div id="faaEmployeeBadge" class="seat-status"></div>
 </div>
 
 </div>
@@ -73,28 +83,37 @@ You’ve been invited by your company to complete required training.
 <!-- =========================
    FMCSA SECTION
 ========================= -->
-<div class="fmcsa-section">
+<div id="fmcsaSection" class="fmcsa-section">
 
 <h2 class="section-title">FMCSA Training</h2>
 
 <div class="modules-grid">
 
+<!-- FMCSA SUPERVISOR -->
 <div class="module-card">
 <h3>FMCSA Supervisor Training</h3>
 <p>Reasonable Suspicion + Drug & Alcohol Awareness</p>
+
 <button id="fmcsaSupervisorBtn" class="btn-primary">Start Training</button>
+<div id="supervisorSeatBadge" class="seat-status"></div>
 </div>
 
+<!-- FMCSA DER -->
 <div class="module-card">
 <h3>FMCSA DER Training</h3>
 <p>DOT DER Certification</p>
+
 <button id="derFmcsaBtn" class="btn-primary">Start Training</button>
+<div id="derSeatBadge" class="seat-status"></div>
 </div>
 
+<!-- FMCSA EMPLOYEE -->
 <div class="module-card">
 <h3>FMCSA Employee Training</h3>
 <p>DOT Employee Awareness Training</p>
+
 <button id="employeeTrainingBtn" class="btn-primary">Start Training</button>
+<div id="employeeSeatBadge" class="seat-status"></div>
 </div>
 
 </div>
