@@ -436,7 +436,6 @@ if (isEmployee) {
  updateFAAModuleButtons();
  updateFAACompletionDates();  
  updateFMCSATimer();
- updateFMCSAModuleButtons();
  updateFMCSDERButtonState();
  updateFMCSAEmployeeButton();  
  updateFMCSAStatus();  
