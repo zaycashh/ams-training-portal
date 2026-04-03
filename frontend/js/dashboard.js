@@ -1009,7 +1009,7 @@ function getEmployeeTrainingRoute() {
   if (!company.program) return null;
 
   if (company.program === "FMCSA") {
-    return "fmcsa-employee.html";
+    return "fmcsa-employee-training.html";
   }
 
   if (company.program === "FAA") {
