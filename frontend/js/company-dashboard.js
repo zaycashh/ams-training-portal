@@ -357,6 +357,36 @@ window.inviteEmployee = function () {
 };
 
 /* =========================================================
+   RENDER ACTIVE SEAT ASSIGNMENTS (FIX)
+========================================================= */
+
+function renderSeatAssignments(company) {
+
+  const list = document.getElementById("seatUserList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const usedSeats = company.usedSeats || {};
+
+  const emails = Object.keys(usedSeats);
+
+  if (!emails.length) {
+    list.innerHTML = "<li style='opacity:.6;'>No active seats</li>";
+    return;
+  }
+
+  emails.forEach(email => {
+
+    const li = document.createElement("li");
+
+    li.textContent = email;
+
+    list.appendChild(li);
+
+  });
+}
+/* =========================================================
    LOGOUT
 ========================================================= */
 
