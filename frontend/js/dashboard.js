@@ -373,32 +373,42 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
    
-   /* =========================
+/* =========================
    PROGRAM LOCK (FAA vs FMCSA)
 ========================= */
 
-// hide FMCSA if FAA
-if(program !== "fmcsa"){
-  const fmcsaSections = document.querySelectorAll(".fmcsa-section");
-  fmcsaSections.forEach(el => el.style.display = "none");
+if (program === "fmcsa") {
+
+  document.querySelectorAll(".faa-section")
+    .forEach(el => el.style.display = "none");
+
+  document.querySelectorAll(".fmcsa-section")
+    .forEach(el => el.style.display = "block");
+
 }
 
-// hide FAA if FMCSA
-if(program === "fmcsa"){
-  const faaSections = document.querySelectorAll(".faa-section");
-  faaSections.forEach(el => el.style.display = "none");
+if (program === "faa") {
+
+  document.querySelectorAll(".fmcsa-section")
+    .forEach(el => el.style.display = "none");
+
+  document.querySelectorAll(".faa-section")
+    .forEach(el => el.style.display = "block");
+
 }
 
-  updateFMCSAStatus();
+/* =========================
+   EMPLOYEE LOCK (CORRECT)
+========================= */
 
-  /* 🔒 Hide FMCSA sections for employees */
-if (user?.role === "employee") {
+const isEmployee =
+user?.role === "employee" && user?.type === "company";
 
-  const fmcsaSections = document.querySelectorAll(".fmcsa-section");
+if (isEmployee) {
 
-  fmcsaSections.forEach(section => {
-    section.style.display = "none";
-  });
+  // Hide only supervisor + DER (NOT employee training)
+  document.getElementById("fmcsaSupervisorSection")?.style.setProperty("display","none");
+  document.getElementById("fmcsaDerSection")?.style.setProperty("display","none");
 
 }
 
@@ -570,10 +580,8 @@ function updateFMCSAStatus() {
 
 function handleDerFmcsa() {
 
-  
-   
-   const derDate =
-  localStorage.getItem(`fmcsaDERDate_${email}`);
+  const completed =
+  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
     window.location.href = "fmcsa-certificates.html?type=der";
@@ -682,7 +690,8 @@ function updateFMCSAModuleButtons() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const email = user.email;
 
-  const paid = localStorage.getItem("paid_fmcsa") === "true";
+  const paid =
+  localStorage.getItem(`paid_fmcsa_supervisor_${email}`) === "true";
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
   const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
@@ -782,7 +791,7 @@ function updateFMCSAEmployeeButton() {
   localStorage.getItem(`paid_employee_fmcsa_${email}`) === "true";
 
   const empCompleted =
-  localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+  localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
   const empDate =
   localStorage.getItem("fmcsaEmployeeDate");
