@@ -97,7 +97,7 @@ if (user?.role === "employee" && user?.type === "company") {
   /* =========================
      PAYMENT CHECK (INDIVIDUAL ONLY)
   ========================= */
-  if (user.type !== "company") {
+  if (user?.type !== "company") {
 
     const paymentMap = {
       "fmcsa-der": "paid_der_fmcsa",
