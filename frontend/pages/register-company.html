@@ -5,41 +5,83 @@
   <title>Create Company Account | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Correct GitHub Pages path -->
+  <!-- ✅ SAME CSS -->
   <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
 </head>
 
 <body>
 
-<main style="max-width:420px;margin:60px auto;text-align:center;">
+<main class="auth-container">
+  <div class="auth-card">
 
-  <h2>Create Company Account</h2>
+    <!-- 🔥 BACK LINK (MATCHES INDIVIDUAL PAGE) -->
+    <div class="back-link">
+      <a href="register-select.html">← Back to Registration Options</a>
+    </div>
 
-  <form id="companyRegisterForm">
+    <h2>Create Company Account</h2>
 
-    <input id="firstName" placeholder="First Name" required /><br><br>
-    <input id="lastName" placeholder="Last Name" required /><br><br>
-    <input id="companyName" placeholder="Company Name" required /><br><br>
-    <input id="phone" placeholder="Phone Number" required /><br><br>
-    <input id="email" type="email" placeholder="Email" required /><br><br>
-    <input id="password" type="password" placeholder="Password" required /><br><br>
-    <input id="confirmPassword" type="password" placeholder="Confirm Password" required /><br><br>
+    <p>
+      This account is for company administrators who manage employee seats.
+    </p>
 
-    <button type="submit">Create Account</button>
+    <form id="companyRegisterForm" class="auth-form">
 
-  </form>
+      <div class="form-row">
+        <label>First Name</label>
+        <input type="text" id="firstName" required />
+      </div>
 
+      <div class="form-row">
+        <label>Last Name</label>
+        <input type="text" id="lastName" required />
+      </div>
+
+      <div class="form-row">
+        <label>Company Name</label>
+        <input type="text" id="companyName" required />
+      </div>
+
+      <div class="form-row">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="(123) 456-7890" required />
+      </div>
+
+      <div class="form-row">
+        <label>Email Address</label>
+        <input type="email" id="email" required />
+      </div>
+
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" id="password" required />
+      </div>
+
+      <div class="form-row">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          Create Company Account
+        </button>
+      </div>
+
+      <p style="margin-top:14px; text-align:center;">
+        Already have an account?
+        <a href="login.html">Login</a>
+      </p>
+
+    </form>
+
+  </div>
 </main>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
   const form = document.getElementById("companyRegisterForm");
-
-  if (!form) {
-    alert("Form not found — HTML broken");
-    return;
-  }
 
   form.addEventListener("submit", function (e) {
 
