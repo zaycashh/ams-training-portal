@@ -679,6 +679,9 @@ function updateFMCSDERButtonState() {
 
 function updateFMCSAModuleButtons() {
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user.email;
+
   const paid = localStorage.getItem("paid_fmcsa") === "true";
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
@@ -739,7 +742,30 @@ function updateFMCSAModuleButtons() {
 
     certBtn.classList.add("hidden");
 
+    return;
   }
+
+  /* =========================
+     BOTH COMPLETE
+  ========================= */
+  if (modA && modB) {
+
+    modABtn.textContent = "✔ Module A Completed";
+    modABtn.disabled = true;
+
+    modBBtn.textContent = "✔ Module B Completed";
+    modBBtn.disabled = true;
+
+    certBtn.classList.remove("hidden");
+
+    certBtn.textContent = "View Certificate";
+    certBtn.onclick = () => {
+      window.location.href = "fmcsa-certificates.html?type=supervisor";
+    };
+
+  }
+
+}
 
   /* =========================
      ALL COMPLETE
