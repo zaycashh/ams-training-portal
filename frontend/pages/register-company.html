@@ -1,102 +1,100 @@
 <script>
 
 /* =========================
-   GET PROGRAM FROM URL
+   WAIT FOR PAGE TO LOAD
 ========================= */
-const urlParams = new URLSearchParams(window.location.search);
-const program = urlParams.get("program") || "faa";
-
-/* =========================
-   REGISTER COMPANY USER
-========================= */
-document.getElementById("companyRegisterForm")
-.addEventListener("submit", function (e) {
-
-  e.preventDefault();
-
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const companyName = document.getElementById("companyName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-
-  if (!firstName || !lastName || !companyName || !phone || !email || !password || !confirmPassword) {
-    alert("Please complete all fields.");
-    return;
-  }
-
-  if (password.length < 6) {
-    alert("Password must be at least 6 characters.");
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
-
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
-  /* 🔒 Prevent duplicate email */
-  const existingUser = users.find(u => u.email === email);
-  if (existingUser) {
-    alert("An account with this email already exists.");
-    return;
-  }
-
-  const companyId = "comp-" + Date.now();
-
-  const companyProfile = {
-    id: companyId,
-    name: companyName,
-    createdAt: Date.now(),
-    seats: {
-      employee: {
-        total: 5,
-        used: 0
-      }
-    },
-    usedSeats: {},
-    invites: {},
-    modules: [],
-    employees: {}
-  };
-
-  localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
-     CREATE USER (WITH PROGRAM 🔥)
+     GET PROGRAM FROM URL
   ========================= */
-  const companyAdminUser = {
-    id: "admin-" + email,
-    firstName,
-    lastName,
-    company: companyName,
-    phone,
-    email,
-    password: password,
-    role: "company_admin",
-    type: "company",
-    companyId,
-    program,
-    createdAt: Date.now()
-  };
+  const urlParams = new URLSearchParams(window.location.search);
+  const program = urlParams.get("program") || "faa";
 
-  /* SAVE USER */
-  users.push(companyAdminUser);
-  localStorage.setItem("ams_users", JSON.stringify(users));
+  const form = document.getElementById("companyRegisterForm");
 
-  /* START SESSION */
-  localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
+  if (!form) {
+    console.error("Form not found");
+    return;
+  }
 
-  /* SET ACTIVE PROGRAM */
-  localStorage.setItem("amsProgram", program);
+  form.addEventListener("submit", function (e) {
 
-  /* REDIRECT */
-  window.location.replace("company-dashboard.html");
+    e.preventDefault();
+
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const companyName = document.getElementById("companyName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!firstName || !lastName || !companyName || !phone || !email || !password || !confirmPassword) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+    const existingUser = users.find(u => u.email === email);
+    if (existingUser) {
+      alert("An account with this email already exists.");
+      return;
+    }
+
+    const companyId = "comp-" + Date.now();
+
+    const companyProfile = {
+      id: companyId,
+      name: companyName,
+      createdAt: Date.now(),
+      seats: {
+        employee: { total: 5, used: 0 }
+      },
+      usedSeats: {},
+      invites: {},
+      modules: [],
+      employees: {}
+    };
+
+    localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+
+    /* 🔥 USER WITH PROGRAM */
+    const companyAdminUser = {
+      id: "admin-" + email,
+      firstName,
+      lastName,
+      company: companyName,
+      phone,
+      email,
+      password,
+      role: "company_admin",
+      type: "company",
+      companyId,
+      program, // 🔥 IMPORTANT
+      createdAt: Date.now()
+    };
+
+    users.push(companyAdminUser);
+    localStorage.setItem("ams_users", JSON.stringify(users));
+
+    localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
+    localStorage.setItem("amsProgram", program);
+
+    window.location.replace("company-dashboard.html");
+
+  });
 
 });
-
 </script>
