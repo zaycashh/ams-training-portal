@@ -24,6 +24,11 @@ function getCompanyProgram() {
 
 function loadCompanyDashboard(user) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const programEl = document.getElementById("companyProgram");
+
+if (programEl) {
+  programEl.textContent = company.program || "—";
+}
 
   if (!company.id) {
     alert("Company profile missing");
