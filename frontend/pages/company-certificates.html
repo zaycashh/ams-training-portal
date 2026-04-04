@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -24,20 +25,22 @@
 
   <div class="cert-admin-container">
 
-    <h2>Employee Certificates</h2>
+```
+<h2>Employee Certificates</h2>
 
-    <table class="cert-table">
-      <thead>
-        <tr>
-          <th>Employee</th>
-          <th>Course</th>
-          <th>Date Completed</th>
-          <th>Certificate</th>
-        </tr>
-      </thead>
+<table class="cert-table">
+  <thead>
+    <tr>
+      <th>Employee</th>
+      <th>Course</th>
+      <th>Date Completed</th>
+      <th>Certificate</th>
+    </tr>
+  </thead>
 
-      <tbody id="certTableBody"></tbody>
-    </table>
+  <tbody id="certTableBody"></tbody>
+</table>
+```
 
   </div>
 
@@ -60,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  const program = company.program || "FAA"; // 🔥 LOCKED PROGRAM
+
   const employees = company.usedSeats || {};
 
   let hasData = false;
@@ -71,6 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     certs.forEach(cert => {
 
+      /* =========================
+         🔥 PROGRAM FILTER (IMPORTANT)
+      ========================= */
+
+      if (program === "FMCSA" && !cert.type?.startsWith("fmcsa")) return;
+      if (program === "FAA" && !cert.type?.startsWith("faa")) return;
+
       hasData = true;
 
       const tr = document.createElement("tr");
@@ -78,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.innerHTML = `
         <td>${email}</td>
         <td>${formatCourse(cert)}</td>
-        <td>${cert.displayDate || new Date(cert.date).toLocaleDateString("en-US")}</td>
+        <td>${formatDate(cert)}</td>
         <td>
           <button class="btn-primary" onclick="viewCert('${cert.id}', '${email}')">
             View
@@ -96,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tbody.innerHTML = `
       <tr>
         <td colspan="4" style="text-align:center;">
-          No certificates found.
+          No certificates found for this program.
         </td>
       </tr>
     `;
@@ -104,40 +116,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
 /* =========================
    FORMAT COURSE NAME
 ========================= */
 
 function formatCourse(cert) {
 
-  if (cert.type === "fmcsa_supervisor") {
-    return "FMCSA Supervisor Training";
-  }
+  const map = {
+    fmcsa_supervisor: "FMCSA Supervisor Training",
+    fmcsa_employee: "FMCSA Employee Training",
+    fmcsa_der: "FMCSA DER Training",
+    faa_supervisor: "FAA Supervisor Training",
+    faa_employee: "FAA Employee Training",
+    faa_der: "FAA DER Training"
+  };
 
-  if (cert.type === "fmcsa_employee") {
-    return "FMCSA Employee Training";
-  }
-
-  if (cert.type === "fmcsa_der") {
-    return "FMCSA DER Training";
-  }
-
-  if (cert.type === "faa_supervisor") {
-    return "FAA Supervisor Training";
-  }
-
-  if (cert.type === "faa_employee") {
-    return "FAA Employee Training";
-  }
-
-  if (cert.type === "faa_der") {
-    return "FAA DER Training";
-  }
-
-  return cert.course;
+  return map[cert.type] || cert.course || "Training";
 }
 
+/* =========================
+   FORMAT DATE (SAFE)
+========================= */
+
+function formatDate(cert) {
+  if (cert.displayDate) return cert.displayDate;
+
+  if (cert.date) {
+    return new Date(cert.date).toLocaleDateString("en-US");
+  }
+
+  return "—";
+}
 
 /* =========================
    VIEW CERTIFICATE
@@ -163,7 +172,6 @@ function viewCert(id, email){
 
 }
 
-
 /* =========================
    NAVIGATION
 ========================= */
@@ -175,3 +183,4 @@ function goDashboard(){
 
 </body>
 </html>
+
