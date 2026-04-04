@@ -14,7 +14,13 @@
 
   <!-- HEADER -->
 
-  <header class="module-header" style="display:flex; justify-content:space-between; align-items:center;">
+  <header class="module-header">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1 style="margin:0;">Company Admin Dashboard</h1>
+
+    <button class="btn-secondary" onclick="logout()">Logout</button>
+  </div>
+</header>
     <h1 style="margin:0;">Company Admin Dashboard</h1>
 
 <div class="module-controls">
@@ -47,7 +53,24 @@
   <!-- SEAT MANAGEMENT -->
   <section class="module-section">
     <h2>Employee Seat Management</h2>
-<div>Seats Total: <strong id="seatTotal">0</strong></div>
+<div style="display:flex; gap:20px; margin-top:10px;">
+
+  <div>
+    <small>Total</small><br>
+    <strong id="seatTotal">0</strong>
+  </div>
+
+  <div>
+    <small>Used</small><br>
+    <strong id="seatUsed">0</strong>
+  </div>
+
+  <div>
+    <small>Available</small><br>
+    <strong id="seatRemaining">0</strong>
+  </div>
+
+</div>
 <div>Seats Used: <strong id="seatUsed">0</strong></div>
 <div>Seats Available: <strong id="seatRemaining">0</strong></div>
 
