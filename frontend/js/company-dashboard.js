@@ -27,7 +27,7 @@ function loadCompanyDashboard(user) {
   const programEl = document.getElementById("companyProgram");
 
 if (programEl) {
-  programEl.textContent = company.program || "—";
+  programEl.textContent = (company.program || "—").toUpperCase();
 }
 
   if (!company.id) {
