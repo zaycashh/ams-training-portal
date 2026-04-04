@@ -18,11 +18,9 @@
   <header class="module-header" style="display:flex; justify-content:space-between; align-items:center;">
     <h1 style="margin:0;">Company Admin Dashboard</h1>
 
-```
 <div class="module-controls">
   <button class="btn-secondary" onclick="logout()">Logout</button>
 </div>
-```
 
   </header>
 
@@ -30,35 +28,26 @@
 
   <section class="module-section">
     <h2>Company Overview</h2>
-
-```
 <p><strong>Company:</strong> <span id="companyName">—</span></p>
 <p><strong>Admin Email:</strong> <span id="companyAdmin">—</span></p>
 <p><strong>Modules:</strong> <span id="companyModules">—</span></p>
-```
 
   </section>
 
-  <!-- 🔥 TRAINING PROGRAM (READ ONLY) -->
+  <!-- TRAINING PROGRAM -->
 
   <section class="module-section">
     <h2>Training Program</h2>
-
-```
 <p>
   <strong>Program:</strong>
   <span id="companyProgram">—</span>
 </p>
-```
 
   </section>
 
   <!-- SEAT MANAGEMENT -->
-
   <section class="module-section">
     <h2>Employee Seat Management</h2>
-
-```
 <div>Seats Total: <strong id="seatTotal">0</strong></div>
 <div>Seats Used: <strong id="seatUsed">0</strong></div>
 <div>Seats Available: <strong id="seatRemaining">0</strong></div>
@@ -85,7 +74,6 @@
     Assign Seat
   </button>
 </div>
-```
 
   </section>
 
@@ -93,8 +81,6 @@
 
   <section class="module-section">
     <h2>Employees</h2>
-
-```
 <table style="width:100%;border-collapse:collapse;">
   <thead>
     <tr>
@@ -130,13 +116,10 @@
 
   <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
 </div>
-```
-
+    
   </section>
 
 </main>
-
-<!-- SCRIPTS -->
 
 <script src="/ams-training-portal/frontend/js/route-guard.js"></script>
 
@@ -151,4 +134,3 @@ function logout(){
 
 </body>
 </html>
-
