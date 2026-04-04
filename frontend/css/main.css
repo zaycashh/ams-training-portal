@@ -880,3 +880,97 @@ color:#c0392b;
   width:100%;
   margin-top:25px;
 }
+/* =========================
+   DASHBOARD UPGRADE (SaaS STYLE)
+========================= */
+
+.module-container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+/* HEADER */
+.module-header{
+  background:white;
+  padding:20px 25px;
+  border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  margin-bottom:20px;
+}
+
+/* CARDS */
+.module-section{
+  background:white;
+  padding:20px 25px;
+  border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  margin-bottom:20px;
+}
+
+/* TITLES */
+.module-section h2{
+  margin-top:0;
+  margin-bottom:15px;
+  font-size:20px;
+}
+
+/* BUTTONS */
+.btn-primary{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-primary:hover{
+  background:#1d4ed8;
+}
+
+.btn-secondary{
+  background:#f1f5f9;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:500;
+}
+
+/* INPUT */
+.input{
+  width:100%;
+  padding:10px;
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  margin-top:10px;
+}
+
+th{
+  text-align:left;
+  padding:10px;
+  background:#f8fafc;
+}
+
+td{
+  padding:10px;
+  border-bottom:1px solid #f1f5f9;
+}
+
+/* SEAT STATS */
+.module-section div strong{
+  color:#2563eb;
+}
+
+/* SMALL TEXT */
+#inviteMsg{
+  font-size:14px;
+}
