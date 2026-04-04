@@ -1,11 +1,22 @@
 /* =========================================================
-   COMPANY ADMIN DASHBOARD — DRIFT-PROOF VERSION
+   COMPANY ADMIN DASHBOARD — FINAL UPGRADED VERSION
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   loadCompanyDashboard(user);
 });
+
+/* =========================================================
+   GLOBAL PROGRAM
+========================================================= */
+
+function getCompanyProgram() {
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  return company.program || "FAA"; // default safe
+}
 
 /* =========================================================
    LOAD DASHBOARD
@@ -36,14 +47,12 @@ function loadCompanyDashboard(user) {
 }
 
 /* =========================================================
-   DERIVED SEAT SYSTEM (SOURCE OF TRUTH = usedSeats)
+   SEAT SYSTEM (EMPLOYEE ONLY)
 ========================================================= */
 
 function getSeatStats(company) {
 
   const total = company?.seats?.employee?.total ?? 0;
-
-  // ✅ ONLY SOURCE OF TRUTH
   const used = Object.keys(company?.usedSeats || {}).length;
 
   const remaining = total - used;
@@ -56,14 +65,27 @@ function getSeatStats(company) {
 }
 
 function updateSeatCounts(company) {
+
+  if (!company) {
+    company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  }
+
   const stats = getSeatStats(company);
 
-  document.getElementById("seatTotal").textContent = stats.totalPurchased;
-  document.getElementById("seatUsed").textContent = stats.usedSeats;
-  document.getElementById("seatRemaining").textContent = stats.remaining;
+  const totalEl = document.getElementById("seatTotal");
+  const usedEl = document.getElementById("seatUsed");
+  const remainingEl = document.getElementById("seatRemaining");
+
+  if (totalEl) totalEl.textContent = stats.totalPurchased || 0;
+  if (usedEl) usedEl.textContent = stats.usedSeats || 0;
+  if (remainingEl) {
+    remainingEl.textContent =
+      stats.remaining >= 0 ? stats.remaining : 0;
+  }
 }
+
 /* =========================================================
-   LOAD EMPLOYEES
+   LOAD EMPLOYEES (PROGRAM-AWARE)
 ========================================================= */
 
 function loadEmployees(companyId) {
@@ -77,6 +99,8 @@ function loadEmployees(companyId) {
   if (!tbody) return;
 
   tbody.innerHTML = "";
+
+  const program = getCompanyProgram();
 
   const employees = users.filter(
     u => u.companyId === companyId && u.role === "employee"
@@ -95,8 +119,12 @@ function loadEmployees(companyId) {
 
     const seatAssigned = !!company.usedSeats[emp.email];
 
-    // 🔵 Per-employee completion tracking
-    const completedKey = `employeeTrainingCompleted_${emp.email}`;
+    /* 🔥 PROGRAM-AWARE COMPLETION */
+    const completedKey =
+      program === "FMCSA"
+        ? `fmcsaEmployeeCompleted_${emp.email}`
+        : `employeeTrainingCompleted_${emp.email}`;
+
     const trainingCompleted =
       localStorage.getItem(completedKey) === "true";
 
@@ -140,7 +168,6 @@ function loadEmployees(companyId) {
   });
 }
 
-
 /* =========================================================
    ASSIGN SEAT
 ========================================================= */
@@ -157,9 +184,8 @@ window.assignSeat = function (email) {
 
   const total = company?.seats?.employee?.total ?? 0;
   const used = Object.keys(company.usedSeats).length;
-  const remaining = total - used;
 
-  if (remaining <= 0) {
+  if (used >= total) {
     alert("No seats available.");
     return;
   }
@@ -187,15 +213,19 @@ window.removeEmployee = function (email) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  // 🔵 Check if training was completed
-  const completedKey = `employeeTrainingCompleted_${email}`;
+  const program = getCompanyProgram();
+
+  const completedKey =
+    program === "FMCSA"
+      ? `fmcsaEmployeeCompleted_${email}`
+      : `employeeTrainingCompleted_${email}`;
+
   const trainingCompleted =
     localStorage.getItem(completedKey) === "true";
 
   const updatedUsers = users.filter(u => u.email !== email);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  // 🔒 Only restore seat if training NOT completed
   if (company.usedSeats && company.usedSeats[email] && !trainingCompleted) {
     delete company.usedSeats[email];
   }
@@ -207,7 +237,7 @@ window.removeEmployee = function (email) {
 };
 
 /* =========================================================
-   RENDER ACTIVE SEAT ASSIGNMENTS
+   REVOKE SEAT
 ========================================================= */
 
 window.revokeSeat = function (email) {
@@ -219,13 +249,18 @@ window.revokeSeat = function (email) {
     return;
   }
 
-  // 🔒 Prevent revoking completed training seats
-  const completedKey = `employeeTrainingCompleted_${email}`;
+  const program = getCompanyProgram();
+
+  const completedKey =
+    program === "FMCSA"
+      ? `fmcsaEmployeeCompleted_${email}`
+      : `employeeTrainingCompleted_${email}`;
+
   const trainingCompleted =
     localStorage.getItem(completedKey) === "true";
 
   if (trainingCompleted) {
-    alert("Seat cannot be revoked. This employee has already completed training.");
+    alert("Seat cannot be revoked. Training completed.");
     return;
   }
 
@@ -240,124 +275,7 @@ window.revokeSeat = function (email) {
 };
 
 /* =========================================================
-   BUY 5 MORE SEATS (STACK SAFE)
-========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const buyBtn = document.getElementById("buySeatsBtn");
-  if (!buyBtn) return;
-
-  buyBtn.addEventListener("click", () => {
-
-    // 🔵 Redirect to payment page instead of directly adding seats
-    window.location.href =
-      "../pages/payment.html?type=employee_seats&qty=5";
-
-  });
-
-});
-
-/* =========================================================
-   INVITE EMPLOYEE
-========================================================= */
-
-window.inviteEmployee = function () {
-
-  const emailInput = document.getElementById("inviteEmail");
-  const msg = document.getElementById("inviteMsg");
-
-  const email = emailInput.value.trim().toLowerCase();
-
-  if (!email) {
-    msg.textContent = "Please enter an employee email.";
-    msg.style.color = "red";
-    return;
-  }
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
-
-  if (!company) {
-    msg.textContent = "Company profile not found.";
-    msg.style.color = "red";
-    return;
-  }
-
-  company.invites = company.invites || {};
-  company.usedSeats = company.usedSeats || {};
-
-  const totalSeats = company.seats?.employee?.total ?? 0;
-  const usedSeats = Object.keys(company.usedSeats).length;
-
-  /* ========================================
-     BLOCK IF SEATS ARE FULL
-  ======================================== */
-
-  if (usedSeats >= totalSeats) {
-    msg.textContent = "No seats available. Please purchase more seats.";
-    msg.style.color = "red";
-    return;
-  }
-
-  /* ========================================
-     BLOCK IF TRAINING ALREADY COMPLETED
-  ======================================== */
-
-  const completedKey = `employeeTrainingCompleted_${email}`;
-  const trainingCompleted =
-    localStorage.getItem(completedKey) === "true";
-
-  if (trainingCompleted) {
-    msg.textContent = "Employee already completed training.";
-    msg.style.color = "red";
-    return;
-  }
-
-  /* ========================================
-     BLOCK IF SEAT ALREADY ASSIGNED
-  ======================================== */
-
-  if (company.usedSeats[email]) {
-    msg.textContent = "Employee already has a seat assigned.";
-    msg.style.color = "red";
-    return;
-  }
-
-  /* ========================================
-     BLOCK IF INVITE ALREADY EXISTS
-  ======================================== */
-
-  if (company.invites[email]) {
-    msg.textContent =
-      `Invite already exists. Code: ${company.invites[email].code}`;
-    msg.style.color = "#b8860b";
-    return;
-  }
-
-  /* ========================================
-     GENERATE INVITE CODE
-  ======================================== */
-
-  const inviteCode = Math.random()
-    .toString(36)
-    .substring(2, 8)
-    .toUpperCase();
-
-  company.invites[email] = {
-    code: inviteCode,
-    createdAt: Date.now()
-  };
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  msg.textContent = `Invite created. Code: ${inviteCode}`;
-  msg.style.color = "green";
-
-  emailInput.value = "";
-};
-
-/* =========================================================
-   RENDER ACTIVE SEAT ASSIGNMENTS (FIX)
+   RENDER ACTIVE SEATS
 ========================================================= */
 
 function renderSeatAssignments(company) {
@@ -368,7 +286,6 @@ function renderSeatAssignments(company) {
   list.innerHTML = "";
 
   const usedSeats = company.usedSeats || {};
-
   const emails = Object.keys(usedSeats);
 
   if (!emails.length) {
@@ -377,15 +294,12 @@ function renderSeatAssignments(company) {
   }
 
   emails.forEach(email => {
-
     const li = document.createElement("li");
-
     li.textContent = email;
-
     list.appendChild(li);
-
   });
 }
+
 /* =========================================================
    LOGOUT
 ========================================================= */
