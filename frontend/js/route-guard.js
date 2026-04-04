@@ -8,6 +8,78 @@ document.addEventListener("DOMContentLoaded", function () {
   const module = document.body?.dataset?.module || "";
   const path = window.location.pathname;
 
+/* =========================================================
+   FINAL PROGRAM + ROLE LOCK SYSTEM
+========================================================= */
+
+const company =
+  JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+const program = company.program;
+
+const user =
+  JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+const role = user.role;
+
+/* =========================
+   PROGRAM LOCK (FAA vs FMCSA)
+========================= */
+
+const fmcsaModules = [
+  "fmcsa-employee",
+  "fmcsa-module-a",
+  "fmcsa-drug-alcohol",
+  "fmcsa-der"
+];
+
+const faaModules = [
+  "employee",
+  "supervisor",
+  "der"
+];
+
+// 🚫 FAA company trying FMCSA pages
+if (program === "FAA" && fmcsaModules.includes(module)) {
+  window.location.href = "dashboard.html";
+  return;
+}
+
+// 🚫 FMCSA company trying FAA pages
+if (program === "FMCSA" && faaModules.includes(module)) {
+  window.location.href = "dashboard.html";
+  return;
+}
+
+/* =========================
+   ROLE LOCK
+========================= */
+
+// 🔒 Employee restrictions
+if (role === "employee") {
+
+  if (
+    module === "supervisor" ||
+    module === "der" ||
+    module === "fmcsa-module-a" ||
+    module === "fmcsa-der"
+  ) {
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+}
+
+// 🔒 Optional: Supervisor cannot access DER
+if (role === "supervisor") {
+
+  if (module === "der" || module === "fmcsa-der") {
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+}
+   
   /* =========================
      REQUIRE LOGIN
   ========================= */
