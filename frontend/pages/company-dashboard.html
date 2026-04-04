@@ -18,11 +18,11 @@
   <header class="module-header" style="display:flex; justify-content:space-between; align-items:center;">
     <h1 style="margin:0;">Company Admin Dashboard</h1>
 
-
+```
 <div class="module-controls">
   <button class="btn-secondary" onclick="logout()">Logout</button>
 </div>
-
+```
 
   </header>
 
@@ -31,30 +31,25 @@
   <section class="module-section">
     <h2>Company Overview</h2>
 
-
+```
 <p><strong>Company:</strong> <span id="companyName">—</span></p>
 <p><strong>Admin Email:</strong> <span id="companyAdmin">—</span></p>
 <p><strong>Modules:</strong> <span id="companyModules">—</span></p>
-
+```
 
   </section>
 
-  <!-- TRAINING PROGRAM -->
+  <!-- 🔥 TRAINING PROGRAM (READ ONLY) -->
 
   <section class="module-section">
     <h2>Training Program</h2>
 
-
-<select id="programSelect" class="input">
-  <option value="">Select Program</option>
-  <option value="FAA">FAA</option>
-  <option value="FMCSA">FMCSA</option>
-</select>
-
-<button class="btn-primary" onclick="saveProgram()" style="margin-top:10px;">
-  Save Program
-</button>
-
+```
+<p>
+  <strong>Program:</strong>
+  <span id="companyProgram">—</span>
+</p>
+```
 
   </section>
 
@@ -63,7 +58,7 @@
   <section class="module-section">
     <h2>Employee Seat Management</h2>
 
-
+```
 <div>Seats Total: <strong id="seatTotal">0</strong></div>
 <div>Seats Used: <strong id="seatUsed">0</strong></div>
 <div>Seats Available: <strong id="seatRemaining">0</strong></div>
@@ -74,11 +69,9 @@
 
 <hr style="margin:20px 0; opacity:.2;" />
 
-<!-- ACTIVE SEATS -->
 <h3>Active Seat Assignments</h3>
 <ul id="seatUserList" style="margin-top:10px;"></ul>
 
-<!-- ASSIGN SEAT -->
 <div style="margin-top:20px; max-width:400px;">
   <h4>Assign Seat</h4>
 
@@ -92,7 +85,7 @@
     Assign Seat
   </button>
 </div>
-
+```
 
   </section>
 
@@ -101,7 +94,7 @@
   <section class="module-section">
     <h2>Employees</h2>
 
-
+```
 <table style="width:100%;border-collapse:collapse;">
   <thead>
     <tr>
@@ -119,7 +112,6 @@
   </tbody>
 </table>
 
-<!-- INVITE EMPLOYEE -->
 <div style="margin-top:16px; max-width:420px;">
   <h3 style="margin-bottom:6px;">Invite Employee</h3>
 
@@ -138,7 +130,7 @@
 
   <p id="inviteMsg" style="margin-top:6px; opacity:.8;"></p>
 </div>
-
+```
 
   </section>
 
@@ -159,3 +151,4 @@ function logout(){
 
 </body>
 </html>
+
