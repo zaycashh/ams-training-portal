@@ -111,7 +111,10 @@ if (programEl) {
 function getSeatStats(company) {
 
   const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
+
+  const used = Object.keys(
+    company?.usedSeats?.employee || {}
+  ).length;
 
   const remaining = total - used;
 
@@ -235,13 +238,13 @@ window.assignSeat = function (email) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   if (!company.usedSeats) company.usedSeats = {};
 
-  if (company.usedSeats[email]) {
+  if (delete company.usedSeats.employee[email];) {
     alert("Seat already assigned.");
     return;
   }
 
   const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company.usedSeats).length;
+  const used = Object.keys(company.usedSeats.employee || {}).length;
 
   if (used >= total) {
     alert("No seats available.");
@@ -250,7 +253,7 @@ window.assignSeat = function (email) {
 
   if (!confirm("Assign seat to this employee?")) return;
 
-  company.usedSeats[email] = {
+  company.usedSeats.employee[email] = {
     assignedAt: Date.now()
   };
 
@@ -284,8 +287,8 @@ window.removeEmployee = function (email) {
   const updatedUsers = users.filter(u => u.email !== email);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  if (company.usedSeats && company.usedSeats[email] && !trainingCompleted) {
-    delete company.usedSeats[email];
+  if (company.usedSeats && delete company.usedSeats.employee[email]; && !trainingCompleted) {
+    delete company.usedSeats.employee[email];
   }
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
@@ -302,7 +305,7 @@ window.revokeSeat = function (email) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats || !company.usedSeats[email]) {
+  if (!company.usedSeats || !delete company.usedSeats.employee[email];) {
     alert("Seat not found.");
     return;
   }
@@ -324,7 +327,7 @@ window.revokeSeat = function (email) {
 
   if (!confirm("Revoke this seat?")) return;
 
-  delete company.usedSeats[email];
+  delete company.usedSeats.employee[email];
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
@@ -343,7 +346,7 @@ function renderSeatAssignments(company) {
 
   list.innerHTML = "";
 
-  const usedSeats = company.usedSeats || {};
+  const usedSeats = company.usedSeats.employee || {};
   const emails = Object.keys(usedSeats);
 
   if (!emails.length) {
