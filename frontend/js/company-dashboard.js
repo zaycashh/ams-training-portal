@@ -341,6 +341,10 @@ function buySupervisorSeats() {
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  if (!company.seats.supervisor) {
+    company.seats.supervisor = { total: 0 };
+  }
+
   company.seats.supervisor.total += 1;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
@@ -350,13 +354,15 @@ function buySupervisorSeats() {
   location.reload();
 }
 
-/* =========================================================
-   BUY DER SEAT
-========================================================= */
+
 function buyDerSeats() {
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.seats.der) {
+    company.seats.der = { total: 0 };
+  }
 
   company.seats.der.total += 1;
 
@@ -365,7 +371,7 @@ function buyDerSeats() {
   alert("DER seat purchased!");
 
   location.reload();
-}
+} 
 /* =========================================================
    LOGOUT
 ========================================================= */
