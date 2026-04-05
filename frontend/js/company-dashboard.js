@@ -238,7 +238,7 @@ window.assignSeat = function (email) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   if (!company.usedSeats) company.usedSeats = {};
 
-  if (delete company.usedSeats.employee[email];) {
+  if (company.usedSeats.employee[email]) {
     alert("Seat already assigned.");
     return;
   }
@@ -287,7 +287,7 @@ window.removeEmployee = function (email) {
   const updatedUsers = users.filter(u => u.email !== email);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  if (company.usedSeats && delete company.usedSeats.employee[email]; && !trainingCompleted) {
+  if (company.usedSeats?.employee?.[email] && !trainingCompleted) {
     delete company.usedSeats.employee[email];
   }
 
@@ -305,7 +305,7 @@ window.revokeSeat = function (email) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats || !delete company.usedSeats.employee[email];) {
+  if (!company.usedSeats?.employee?.[email]) {
     alert("Seat not found.");
     return;
   }
