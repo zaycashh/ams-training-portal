@@ -24,6 +24,25 @@ function getCompanyProgram() {
 
 function loadCompanyDashboard(user) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+   /* =========================================================
+   🔥 STEP 1 — MULTI-SEAT STRUCTURE (ADD THIS)
+========================================================= */
+
+if (!company.seats || typeof company.seats.employee === "number") {
+  company.seats = {
+    employee: { total: company.seats?.employee || 0 },
+    supervisor: { total: 0 },
+    der: { total: 0 }
+  };
+}
+
+if (!company.usedSeats || !company.usedSeats.employee) {
+  company.usedSeats = {
+    employee: company.usedSeats || {},
+    supervisor: {},
+    der: {}
+  };
+}
   const programEl = document.getElementById("companyProgram");
 
 if (programEl) {
