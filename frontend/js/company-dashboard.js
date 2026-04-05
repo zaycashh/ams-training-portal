@@ -333,7 +333,39 @@ function renderSeatAssignments(company) {
     list.appendChild(li);
   });
 }
+/* =========================================================
+   BUY SUPERVISOR SEAT
+========================================================= */
+function buySupervisorSeats() {
 
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  company.seats.supervisor.total += 1;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("Supervisor seat purchased!");
+
+  location.reload();
+}
+
+/* =========================================================
+   BUY DER SEAT
+========================================================= */
+function buyDerSeats() {
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  company.seats.der.total += 1;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("DER seat purchased!");
+
+  location.reload();
+}
 /* =========================================================
    LOGOUT
 ========================================================= */
