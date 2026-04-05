@@ -90,17 +90,28 @@
 <ul id="seatUserList" style="margin-top:10px;"></ul>
 
 <div style="margin-top:20px; max-width:400px;">
-  <h4>Assign Seat</h4>
+  <h4>Assign Training</h4>
 
-  <input
-    id="seatEmail"
-    placeholder="Enter employee email"
-    class="input"
-  />
+<input
+  id="seatEmail"
+  placeholder="Enter employee email"
+  class="input"
+/>
 
-  <button class="btn-primary" onclick="handleAssignSeat()" style="margin-top:10px;">
-    Assign Seat
+<div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+
+  <button class="btn-primary" onclick="assignEmployeeSeat()">
+    Assign Employee
   </button>
+
+  <button class="btn-primary" onclick="assignSupervisorSeat()">
+    Assign Supervisor
+  </button>
+
+  <button class="btn-primary" onclick="assignDerSeat()">
+    Assign DER
+  </button>
+
 </div>
 
   </section>
