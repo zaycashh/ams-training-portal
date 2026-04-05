@@ -24,9 +24,12 @@ function getCompanyProgram() {
 
 function loadCompanyDashboard(user) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-   /* =========================================================
-   🔥 STEP 1 — MULTI-SEAT STRUCTURE (ADD THIS)
+   
+/* =========================================================
+   🔥 STEP 1 — MULTI-SEAT STRUCTURE (FINAL FIX)
 ========================================================= */
+
+let updated = false;
 
 if (!company.seats || typeof company.seats.employee === "number") {
   company.seats = {
@@ -34,6 +37,7 @@ if (!company.seats || typeof company.seats.employee === "number") {
     supervisor: { total: 0 },
     der: { total: 0 }
   };
+  updated = true;
 }
 
 if (!company.usedSeats || !company.usedSeats.employee) {
@@ -42,6 +46,12 @@ if (!company.usedSeats || !company.usedSeats.employee) {
     supervisor: {},
     der: {}
   };
+  updated = true;
+}
+
+/* 🔥 SAVE BACK TO LOCALSTORAGE */
+if (updated) {
+  localStorage.setItem("companyProfile", JSON.stringify(company));
 }
   const programEl = document.getElementById("companyProgram");
 
