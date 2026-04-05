@@ -26,30 +26,54 @@ function loadCompanyDashboard(user) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
    
 /* =========================================================
-   🔥 STEP 1 — MULTI-SEAT STRUCTURE (FINAL FIX)
+   🔥 ENSURE FULL SEAT STRUCTURE (FINAL FIX)
 ========================================================= */
 
 let updated = false;
 
-if (!company.seats || typeof company.seats.employee === "number") {
-  company.seats = {
-    employee: { total: company.seats?.employee || 0 },
-    supervisor: { total: 0 },
-    der: { total: 0 }
-  };
+if (!company.seats) {
+  company.seats = {};
   updated = true;
 }
 
-if (!company.usedSeats || !company.usedSeats.employee) {
-  company.usedSeats = {
-    employee: company.usedSeats || {},
-    supervisor: {},
-    der: {}
-  };
+// 🔥 FORCE ALL SEAT TYPES
+if (!company.seats.employee) {
+  company.seats.employee = { total: 0 };
   updated = true;
 }
 
-/* 🔥 SAVE BACK TO LOCALSTORAGE */
+if (!company.seats.supervisor) {
+  company.seats.supervisor = { total: 0 };
+  updated = true;
+}
+
+if (!company.seats.der) {
+  company.seats.der = { total: 0 };
+  updated = true;
+}
+
+// 🔥 USED SEATS
+if (!company.usedSeats) {
+  company.usedSeats = {};
+  updated = true;
+}
+
+if (!company.usedSeats.employee) {
+  company.usedSeats.employee = {};
+  updated = true;
+}
+
+if (!company.usedSeats.supervisor) {
+  company.usedSeats.supervisor = {};
+  updated = true;
+}
+
+if (!company.usedSeats.der) {
+  company.usedSeats.der = {};
+  updated = true;
+}
+
+// 🔥 SAVE FIX
 if (updated) {
   localStorage.setItem("companyProfile", JSON.stringify(company));
 }
