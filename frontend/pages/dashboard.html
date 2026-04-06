@@ -134,8 +134,25 @@ You’ve been invited by your company to complete required training.
       style="padding:10px; flex:1;"
     />
 
-    <button class="btn-primary" onclick="assignSeat()">Assign</button>
-    <button class="btn-secondary" onclick="removeSeat()">Remove</button>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+  <button class="btn-primary" onclick="assignSeat('employee')">
+    Assign Employee
+  </button>
+
+  <button class="btn-primary" onclick="assignSeat('supervisor')">
+    Assign Supervisor
+  </button>
+
+  <button class="btn-primary" onclick="assignSeat('der')">
+    Assign DER
+  </button>
+
+  <button class="btn-secondary" onclick="removeSeat()">
+    Remove
+  </button>
+
+</div>
   </div>
 
   <div id="seatList"></div>
