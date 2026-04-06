@@ -386,6 +386,21 @@ function updateFMCSATimer() {
   }
 }
 /* =========================
+   GET USER ACCESS (SAFE)
+========================= */
+
+function getUserAccess(email) {
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  return {
+    employee: !!company.usedSeats?.employee?.[email],
+    supervisor: !!company.usedSeats?.supervisor?.[email],
+    der: !!company.usedSeats?.der?.[email]
+  };
+}
+/* =========================
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
@@ -415,7 +430,33 @@ if (program === "faa") {
     .forEach(el => el.style.display = "block");
 
 }
+/* =========================
+   EMPLOYEE MODULE FILTER (FINAL FIX)
+========================= */
 
+if (user?.role === "employee") {
+
+  const access = getUserAccess(user.email);
+
+  /* FMCSA SUPERVISOR */
+  if (!access.supervisor) {
+    const el = document.getElementById("supervisorTrainingBtn");
+    if (el) el.closest(".card")?.remove();
+  }
+
+  /* FMCSA DER */
+  if (!access.der) {
+    const el = document.getElementById("derFmcsaBtn");
+    if (el) el.closest(".card")?.remove();
+  }
+
+  /* FMCSA EMPLOYEE */
+  if (!access.employee) {
+    const el = document.getElementById("employeeTrainingBtn");
+    if (el) el.closest(".card")?.remove();
+  }
+
+}
 /* =========================
    EMPLOYEE LOCK (CORRECT)
 ========================= */
@@ -440,6 +481,7 @@ if (program === "faa") {
       el.innerHTML = `<span class="seat-badge ${status.type}">${status.label}</span>`;
     }
   }
+   
 /* =========================
    SHOW ADMIN PANEL
 ========================= */
