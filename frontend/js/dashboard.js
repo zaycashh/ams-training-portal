@@ -1,7 +1,10 @@
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 const email = user?.email;
 
-const program = localStorage.getItem("amsProgram");
+const company =
+  JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+const program = (company.program || "").toLowerCase();
 
 /* =========================
    COURSE KEYS
@@ -408,26 +411,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
    
 /* =========================
-   PROGRAM LOCK (FAA vs FMCSA)
+   PROGRAM LOCK (FIXED)
 ========================= */
 
 if (program === "fmcsa") {
 
   document.querySelectorAll(".faa-section")
-    .forEach(el => el.style.display = "none");
-
-  document.querySelectorAll(".fmcsa-section")
-    .forEach(el => el.style.display = "block");
+    .forEach(el => el.remove());
 
 }
 
 if (program === "faa") {
 
   document.querySelectorAll(".fmcsa-section")
-    .forEach(el => el.style.display = "none");
-
-  document.querySelectorAll(".faa-section")
-    .forEach(el => el.style.display = "block");
+    .forEach(el => el.remove());
 
 }
 /* =========================
