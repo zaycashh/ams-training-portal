@@ -754,15 +754,72 @@ if (user.role === "employee" && user.type === "company") {
    FMCSA SUPERVISOR BUTTON
 ========================= */
 
+/* =========================
+   FMCSA SUPERVISOR BUTTON FIX (SEAT + INDIVIDUAL)
+========================= */
+
 function updateFMCSASupervisorButton() {
 
-  const btn = document.getElementById("fmcsaSupervisorBtn");
+  const btn = document.getElementById("supervisorTrainingBtn");
   if (!btn) return;
 
-  const hasSeat = hasCompanySeat("supervisor");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  const email = user.email;
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  /* =========================
+     CHECK COMPANY SEAT
+  ========================= */
+
+  const hasSeat =
+    company.usedSeats?.supervisor?.[email] === true;
+
+  /* =========================
+     CHECK INDIVIDUAL PURCHASE
+  ========================= */
 
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
+
+  /* =========================
+     CHECK COMPLETION
+  ========================= */
+
+  const completed =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+  /* =========================
+     FINAL LOGIC
+  ========================= */
+
+  if (completed) {
+
+    btn.textContent = "🎓 View Certificate";
+    btn.onclick = () => {
+      window.location.href = "fmcsa-certificates.html?type=supervisor";
+    };
+    return;
+  }
+
+  if (hasSeat || paid) {
+
+    btn.textContent = "Start Training";
+    btn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+
+  } else {
+
+    btn.textContent = "🔒 Locked — Purchase Required";
+    btn.onclick = () => {
+      window.location.href = "payment.html?module=fmcsa";
+    };
+
+  }
+}
 
  /* =========================
    COMPANY EMPLOYEE (SEAT)
