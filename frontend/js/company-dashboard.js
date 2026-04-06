@@ -266,7 +266,7 @@ function assignDerSeat() {
 }
 
 /* =========================================================
-   LOAD EMPLOYEES (PROGRAM-AWARE)
+   LOAD EMPLOYEES (PROGRAM-AWARE + TRAINING TYPE)
 ========================================================= */
 
 function loadEmployees(companyId) {
@@ -274,7 +274,13 @@ function loadEmployees(companyId) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats) {
+    company.usedSeats = {
+      employee: {},
+      supervisor: {},
+      der: {}
+    };
+  }
 
   const tbody = document.getElementById("employeeTable");
   if (!tbody) return;
@@ -290,7 +296,7 @@ function loadEmployees(companyId) {
   if (!employees.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" style="opacity:.6;">No employees yet</td>
+        <td colspan="6" style="opacity:.6;">No employees yet</td>
       </tr>
     `;
     return;
@@ -298,16 +304,52 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
-    const seatAssigned = !!company.usedSeats.employee?.[emp.email];
+    /* =========================
+       DETERMINE TRAINING TYPE
+    ========================= */
 
-    /* 🔥 PROGRAM-AWARE COMPLETION */
-    const completedKey =
-      program === "FMCSA"
-        ? `fmcsaEmployeeCompleted_${emp.email}`
-        : `employeeTrainingCompleted_${emp.email}`;
+    let trainingType = "None";
+
+    if (company.usedSeats.supervisor?.[emp.email]) {
+      trainingType = "Supervisor";
+    } else if (company.usedSeats.der?.[emp.email]) {
+      trainingType = "DER";
+    } else if (company.usedSeats.employee?.[emp.email]) {
+      trainingType = "Employee";
+    }
+
+    const seatAssigned = trainingType !== "None";
+
+    /* =========================
+       COMPLETION CHECK
+    ========================= */
+
+    let completedKey = "";
+
+    if (program === "FMCSA") {
+      if (trainingType === "Supervisor") {
+        completedKey = `fmcsaModuleBCompleted_${emp.email}`;
+      } else if (trainingType === "DER") {
+        completedKey = `fmcsaDERCompleted_${emp.email}`;
+      } else {
+        completedKey = `fmcsaEmployeeCompleted_${emp.email}`;
+      }
+    } else {
+      if (trainingType === "Supervisor") {
+        completedKey = `supervisorTrainingCompleted_${emp.email}`;
+      } else if (trainingType === "DER") {
+        completedKey = `derTrainingCompleted_${emp.email}`;
+      } else {
+        completedKey = `employeeTrainingCompleted_${emp.email}`;
+      }
+    }
 
     const trainingCompleted =
       localStorage.getItem(completedKey) === "true";
+
+    /* =========================
+       STATUS LABEL
+    ========================= */
 
     let statusLabel = "Invited";
 
@@ -319,25 +361,43 @@ function loadEmployees(companyId) {
       statusLabel = "Completed";
     }
 
+    /* =========================
+       RENDER ROW
+    ========================= */
+
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
       <td>${emp.email}</td>
       <td>Employee</td>
+      <td>${trainingType}</td>
       <td>${statusLabel}</td>
       <td>
         ${
           seatAssigned
             ? `<button class="btn-secondary"
                  onclick="revokeSeat('${emp.email}')">
-                 Revoke Seat
+                 Revoke
                </button>`
-            : `<button class="btn-primary"
-                 onclick="assignEmployeeSeat('${emp.email}')">
-                 Assign Seat
-               </button>`
+            : `
+              <button class="btn-primary"
+                onclick="assignEmployeeSeat('${emp.email}')">
+                Assign Employee
+              </button>
+
+              <button class="btn-primary"
+                onclick="assignSupervisorSeat('${emp.email}')">
+                Assign Supervisor
+              </button>
+
+              <button class="btn-primary"
+                onclick="assignDerSeat('${emp.email}')">
+                Assign DER
+              </button>
+            `
         }
+
         <button class="btn-secondary"
           onclick="removeEmployee('${emp.email}')">
           Remove
@@ -348,7 +408,6 @@ function loadEmployees(companyId) {
     tbody.appendChild(tr);
   });
 }
-
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
