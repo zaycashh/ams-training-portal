@@ -91,39 +91,82 @@ document.addEventListener("DOMContentLoaded", function () {
     return !!company?.usedSeats?.[user.email];
   }
 
-  /* =========================================================
-     EMPLOYEE ACCESS CONTROL (SEAT REQUIRED)
-  ========================================================= */
+  /* =========================
+   EMPLOYEE ACCESS CONTROL (FINAL)
+========================= */
 
-  if (user?.role === "employee" && user?.type === "company") {
+if (user?.role === "employee" && user?.type === "company") {
 
-    const hasSeat = hasCompanySeat();
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-    if (
-      path.includes("fmcsa-module-a.html") ||
-      path.includes("fmcsa-drug-alcohol.html") ||
-      path.includes("fmcsa-der.html") ||
-      path.includes("fmcsa-employee-training.html")
-    ) {
+  const email = user.email;
 
-      if (!hasSeat) {
+  const hasEmployeeSeat =
+    company?.usedSeats?.employee?.[email] === true ||
+    !!company?.usedSeats?.employee?.[email];
 
-        sessionStorage.setItem(
-          "ams_notice",
-          "No seat assigned. Contact your administrator."
-        );
+  const hasSupervisorSeat =
+    company?.usedSeats?.supervisor?.[email] === true ||
+    !!company?.usedSeats?.supervisor?.[email];
 
-        window.location.replace("dashboard.html");
-        return;
-      }
-    }
+  const hasDerSeat =
+    company?.usedSeats?.der?.[email] === true ||
+    !!company?.usedSeats?.der?.[email];
 
-    // 🚫 Block payment page
-    if (path.includes("payment.html")) {
+  /* =========================
+     MODULE ACCESS RULES
+  ========================= */
+
+  // 🔒 EMPLOYEE TRAINING
+  if (path.includes("employee")) {
+    if (!hasEmployeeSeat) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "No employee seat assigned."
+      );
       window.location.replace("dashboard.html");
       return;
     }
   }
+
+  // 🔒 SUPERVISOR (FAA + FMCSA)
+  if (
+    path.includes("supervisor") ||
+    path.includes("fmcsa-module-a") ||
+    path.includes("fmcsa-drug-alcohol")
+  ) {
+    if (!hasSupervisorSeat) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "Supervisor training not assigned."
+      );
+      window.location.replace("dashboard.html");
+      return;
+    }
+  }
+
+  // 🔒 DER (FAA + FMCSA)
+  if (
+    path.includes("der") ||
+    path.includes("fmcsa-der")
+  ) {
+    if (!hasDerSeat) {
+      sessionStorage.setItem(
+        "ams_notice",
+        "DER training not assigned."
+      );
+      window.location.replace("dashboard.html");
+      return;
+    }
+  }
+
+  // 🚫 BLOCK PAYMENT PAGE FOR EMPLOYEES
+  if (path.includes("payment.html")) {
+    window.location.replace("dashboard.html");
+    return;
+  }
+}
 
   /* =========================================================
      ALLOW NON-MODULE PAGES
