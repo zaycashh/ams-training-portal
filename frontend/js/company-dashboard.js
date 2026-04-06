@@ -495,7 +495,7 @@ function logout() {
 }
 
 /* =========================================================
-   INVITE EMPLOYEE (SIMPLE SYSTEM)
+   INVITE EMPLOYEE (REAL SYSTEM READY)
 ========================================================= */
 
 function inviteEmployee() {
@@ -507,7 +507,11 @@ function inviteEmployee() {
 
   const email = input.value.trim().toLowerCase();
 
-  if (!email) {
+  /* =========================
+     VALIDATION
+  ========================= */
+
+  if (!email || !email.includes("@")) {
     if (msg) msg.textContent = "Enter a valid email";
     return;
   }
@@ -515,26 +519,59 @@ function inviteEmployee() {
   let company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.invites) {
-    company.invites = {};
-  }
+  if (!company.invites) company.invites = {};
+  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
 
-  // 🚫 prevent duplicate invite
+  /* =========================
+     BLOCK DUPLICATES
+  ========================= */
+
   if (company.invites[email]) {
     if (msg) msg.textContent = "Already invited";
     return;
   }
 
+  /* 🚫 Already has seat */
+  if (company.usedSeats.employee[email]) {
+    if (msg) msg.textContent = "User already assigned";
+    return;
+  }
+
+  /* =========================
+     GENERATE INVITE CODE
+  ========================= */
+
+  const inviteCode =
+    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  /* =========================
+     STORE INVITE
+  ========================= */
+
   company.invites[email] = {
     email,
-    createdAt: Date.now()
+    code: inviteCode,
+    program: company.program || "unknown",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "pending"
   };
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  if (msg) msg.textContent = "Invite saved (demo mode)";
+  /* =========================
+     UI FEEDBACK
+  ========================= */
+
+  if (msg) msg.textContent = "Invite created: " + inviteCode;
 
   input.value = "";
 
-  console.log("Invites:", company.invites);
+  /* =========================
+     DEBUG (VERY IMPORTANT)
+  ========================= */
+
+  console.log("Invite Created:", inviteCode);
+  console.log("All Invites:", company.invites);
 }
