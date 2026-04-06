@@ -178,7 +178,7 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
-    const seatAssigned = !!company.usedSeats[emp.email];
+    const seatAssigned = !!company.usedSeats.employee?.[emp.email];
 
     /* 🔥 PROGRAM-AWARE COMPLETION */
     const completedKey =
@@ -214,7 +214,7 @@ function loadEmployees(companyId) {
                  Revoke Seat
                </button>`
             : `<button class="btn-primary"
-                 onclick="assignSeat('${emp.email}')">
+                 onclick="assignEmployeeSeat('${emp.email}')">
                  Assign Seat
                </button>`
         }
@@ -228,40 +228,6 @@ function loadEmployees(companyId) {
     tbody.appendChild(tr);
   });
 }
-
-/* =========================================================
-   ASSIGN SEAT
-========================================================= */
-
-window.assignSeat = function (email) {
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  if (!company.usedSeats) company.usedSeats = {};
-
-  if (company.usedSeats.employee[email]) {
-    alert("Seat already assigned.");
-    return;
-  }
-
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company.usedSeats.employee || {}).length;
-
-  if (used >= total) {
-    alert("No seats available.");
-    return;
-  }
-
-  if (!confirm("Assign seat to this employee?")) return;
-
-  company.usedSeats.employee[email] = {
-    assignedAt: Date.now()
-  };
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (user) loadCompanyDashboard(user);
-};
 
 /* =========================================================
    REMOVE EMPLOYEE
