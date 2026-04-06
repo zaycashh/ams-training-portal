@@ -202,3 +202,48 @@ if (user?.role === "employee" && user?.type === "company") {
   }
 
 });
+
+/* =========================================================
+   INVITE EMPLOYEE (SIMPLE SYSTEM)
+========================================================= */
+
+function inviteEmployee() {
+
+  const input = document.getElementById("inviteEmail");
+  const msg = document.getElementById("inviteMsg");
+
+  if (!input) return;
+
+  const email = input.value.trim().toLowerCase();
+
+  if (!email) {
+    if (msg) msg.textContent = "Enter a valid email";
+    return;
+  }
+
+  let company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.invites) {
+    company.invites = {};
+  }
+
+  // 🚫 prevent duplicate invite
+  if (company.invites[email]) {
+    if (msg) msg.textContent = "Already invited";
+    return;
+  }
+
+  company.invites[email] = {
+    email,
+    createdAt: Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) msg.textContent = "Invite saved (demo mode)";
+
+  input.value = "";
+
+  console.log("Invites:", company.invites);
+}
