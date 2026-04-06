@@ -432,19 +432,30 @@ function renderSeatAssignments(company) {
 
   list.innerHTML = "";
 
-  const usedSeats = company.usedSeats.employee || {};
-  const emails = Object.keys(usedSeats);
+  const allSeats = company.usedSeats || {};
 
-  if (!emails.length) {
+  let items = [];
+
+  ["employee", "supervisor", "der"].forEach(type => {
+
+    const users = allSeats[type] || {};
+
+    Object.keys(users).forEach(email => {
+      items.push(`
+        <li>
+          ${email} — <strong>${type.toUpperCase()}</strong>
+        </li>
+      `);
+    });
+
+  });
+
+  if (!items.length) {
     list.innerHTML = "<li style='opacity:.6;'>No active seats</li>";
     return;
   }
 
-  emails.forEach(email => {
-    const li = document.createElement("li");
-    li.textContent = email;
-    list.appendChild(li);
-  });
+  list.innerHTML = items.join("");
 }
 /* =========================================================
    BUY SUPERVISOR SEAT
