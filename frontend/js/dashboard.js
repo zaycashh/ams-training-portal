@@ -936,7 +936,7 @@ if (user.role === "employee" && user.type === "company") {
 
 }
 /* =========================
-   ADMIN SEAT CONTROL
+   ADMIN SEAT CONTROL (FINAL CLEAN VERSION)
 ========================= */
 
 function assignSeat(type) {
@@ -948,6 +948,7 @@ function assignSeat(type) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  // ✅ Ensure structure exists
   if (!company.usedSeats) {
     company.usedSeats = {
       employee: {},
@@ -956,12 +957,11 @@ function assignSeat(type) {
     };
   }
 
-  // ✅ ensure structure exists
   if (!company.usedSeats[type]) {
     company.usedSeats[type] = {};
   }
 
-  // 🚫 prevent duplicate
+  // 🚫 Prevent duplicate assignment
   if (company.usedSeats[type][email]) {
     alert("Already assigned");
     return;
@@ -971,28 +971,59 @@ function assignSeat(type) {
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
+  alert(`${type.toUpperCase()} seat assigned`);
+
   renderSeatList();
+  updateSeatCounts();
 
   input.value = "";
 }
+
+
+/* =========================
+   REMOVE SEAT (FIXED)
+========================= */
 
 function removeSeat() {
 
   const input = document.getElementById("seatEmailInput");
-  const email = input.value.trim();
+  const email = input.value.trim().toLowerCase();
+
+  if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (company.usedSeats && company.usedSeats[email]) {
-    delete company.usedSeats[email];
+  if (!company.usedSeats) return;
+
+  let removed = false;
+
+  // 🔥 Remove from ALL seat types
+  ["employee", "supervisor", "der"].forEach(type => {
+    if (company.usedSeats[type]?.[email]) {
+      delete company.usedSeats[type][email];
+      removed = true;
+    }
+  });
+
+  if (!removed) {
+    alert("No seat found for this user");
+    return;
   }
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
+  alert("Seat removed");
+
   renderSeatList();
+  updateSeatCounts();
 
   input.value = "";
 }
+
+
+/* =========================
+   RENDER SEAT LIST (FIXED)
+========================= */
 
 function renderSeatList() {
 
@@ -1000,19 +1031,37 @@ function renderSeatList() {
   if (!container) return;
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  const seats = company.usedSeats || {};
 
-  if (Object.keys(seats).length === 0) {
+  const allSeats = company.usedSeats || {};
+
+  let rows = [];
+
+  ["employee", "supervisor", "der"].forEach(type => {
+
+    const users = allSeats[type] || {};
+
+    Object.keys(users).forEach(email => {
+      rows.push(`
+        <div style="padding:8px; border-bottom:1px solid #eee;">
+          🎟 ${email} — <strong>${type.toUpperCase()}</strong>
+        </div>
+      `);
+    });
+
+  });
+
+  if (rows.length === 0) {
     container.innerHTML = "<p>No assigned seats</p>";
     return;
   }
 
-  container.innerHTML = Object.keys(seats).map(email => `
-    <div style="padding:8px; border-bottom:1px solid #eee;">
-      🎟 ${email}
-    </div>
-  `).join("");
+  container.innerHTML = rows.join("");
 }
+
+
+/* =========================
+   EMPLOYEE TRAINING ROUTE
+========================= */
 
 function getEmployeeTrainingRoute() {
 
