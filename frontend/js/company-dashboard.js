@@ -538,7 +538,20 @@ function revokeSeat(type, email) {
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats || !company.usedSeats[type]) return;
+  if (!company.usedSeats) {
+    alert("Seat not found.");
+    return;
+  }
+
+  if (!company.usedSeats[type]) {
+    alert("Seat type not found.");
+    return;
+  }
+
+  if (!company.usedSeats[type][email]) {
+    alert("Seat not found.");
+    return;
+  }
 
   /* 🚫 BLOCK IF COMPLETED */
 
@@ -561,13 +574,13 @@ function revokeSeat(type, email) {
     return;
   }
 
-  /* ✅ REMOVE */
+  /* ✅ REMOVE CORRECTLY */
 
   delete company.usedSeats[type][email];
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  /* 🔥 FORCE UI REFRESH */
+  /* 🔥 RE-RENDER */
 
   renderSeatAssignments(company);
 }
