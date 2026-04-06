@@ -441,19 +441,19 @@ if (user?.role === "employee") {
   /* FMCSA SUPERVISOR */
   if (!access.supervisor) {
     const el = document.getElementById("supervisorTrainingBtn");
-    if (el) el.closest(".card")?.remove();
+    if (el) el.closest(".module-card")?.remove();
   }
 
   /* FMCSA DER */
   if (!access.der) {
     const el = document.getElementById("derFmcsaBtn");
-    if (el) el.closest(".card")?.remove();
+    if (el) el.closest(".module-card")?.remove();
   }
 
   /* FMCSA EMPLOYEE */
   if (!access.employee) {
     const el = document.getElementById("employeeTrainingBtn");
-    if (el) el.closest(".card")?.remove();
+    if (el) el.closest(".module-card")?.remove();
   }
 
 }
