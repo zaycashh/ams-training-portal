@@ -751,11 +751,7 @@ if (user.role === "employee" && user.type === "company") {
 
 }
 /* =========================
-   FMCSA SUPERVISOR BUTTON
-========================= */
-
-/* =========================
-   FMCSA SUPERVISOR BUTTON FIX (SEAT + INDIVIDUAL)
+   FMCSA SUPERVISOR BUTTON (FINAL FIXED)
 ========================= */
 
 function updateFMCSASupervisorButton() {
@@ -767,7 +763,6 @@ function updateFMCSASupervisorButton() {
   if (!user) return;
 
   const email = user.email;
-
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   /* =========================
@@ -775,7 +770,7 @@ function updateFMCSASupervisorButton() {
   ========================= */
 
   const hasSeat =
-    company.usedSeats?.supervisor?.[email] === true;
+    company?.usedSeats?.supervisor?.[email] === true;
 
   /* =========================
      CHECK INDIVIDUAL PURCHASE
@@ -792,7 +787,7 @@ function updateFMCSASupervisorButton() {
     localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
   /* =========================
-     FINAL LOGIC
+     COMPLETED
   ========================= */
 
   if (completed) {
@@ -801,24 +796,67 @@ function updateFMCSASupervisorButton() {
     btn.onclick = () => {
       window.location.href = "fmcsa-certificates.html?type=supervisor";
     };
+
     return;
   }
 
-  if (hasSeat || paid) {
+  /* =========================
+     COMPANY EMPLOYEE (SEAT LOGIC)
+  ========================= */
+
+  if (user.role === "employee" && user.type === "company") {
+
+    if (hasSeat) {
+
+      setAssignedBadge("supervisorSeatBadge");
+
+      btn.textContent = "Start Training";
+      btn.style.opacity = "1";
+      btn.style.cursor = "pointer";
+
+      btn.onclick = () => {
+        window.location.href = "fmcsa-module-a.html";
+      };
+
+      return;
+    }
+
+    clearBadge("supervisorSeatBadge");
+
+    btn.textContent = "🔒 Seat Required";
+    btn.style.opacity = "0.7";
+    btn.style.cursor = "not-allowed";
+
+    btn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
+
+    return;
+  }
+
+  /* =========================
+     INDIVIDUAL PURCHASE
+  ========================= */
+
+  if (paid) {
 
     btn.textContent = "Start Training";
     btn.onclick = () => {
       window.location.href = "fmcsa-module-a.html";
     };
 
-  } else {
-
-    btn.textContent = "🔒 Locked — Purchase Required";
-    btn.onclick = () => {
-      window.location.href = "payment.html?module=fmcsa";
-    };
-
+    return;
   }
+
+  /* =========================
+     LOCKED
+  ========================= */
+
+  btn.textContent = "🔒 Locked — Purchase Required";
+  btn.onclick = () => {
+    window.location.href = "payment.html?module=fmcsa";
+  };
+
 }
 
  /* =========================
