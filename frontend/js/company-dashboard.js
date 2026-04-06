@@ -443,44 +443,6 @@ window.removeEmployee = function (email) {
 };
 
 /* =========================================================
-   REVOKE SEAT
-========================================================= */
-
-window.revokeSeat = function (email) {
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.usedSeats?.employee?.[email]) {
-    alert("Seat not found.");
-    return;
-  }
-
-  const program = getCompanyProgram();
-
-  const completedKey =
-    program === "FMCSA"
-      ? `fmcsaEmployeeCompleted_${email}`
-      : `employeeTrainingCompleted_${email}`;
-
-  const trainingCompleted =
-    localStorage.getItem(completedKey) === "true";
-
-  if (trainingCompleted) {
-    alert("Seat cannot be revoked. Training completed.");
-    return;
-  }
-
-  if (!confirm("Revoke this seat?")) return;
-
-  delete company.usedSeats.employee[email];
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (user) loadCompanyDashboard(user);
-};
-
-/* =========================================================
    RENDER ACTIVE SEATS (FIXED)
 ========================================================= */
 
@@ -533,7 +495,7 @@ function renderSeatAssignments(company) {
    REVOKE SEAT (UNIVERSAL)
 ========================================================= */
 
-function revokeSeat(type, email) {
+window.revokeSeat = function (type, email) {
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
