@@ -4,14 +4,6 @@ const email = user?.email;
 const company =
   JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-const storedProgram = localStorage.getItem("amsProgram");
-
-const program = (
-  company.program ||
-  storedProgram ||
-  ""
-).toLowerCase();
-
 /* =========================
    COURSE KEYS
 ========================= */
@@ -414,7 +406,18 @@ function getUserAccess(email) {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const company =
+  JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+const storedProgram = localStorage.getItem("amsProgram");
+
+const program = (
+  company.program ||
+  storedProgram ||
+  ""
+).toLowerCase();
+
+console.log("PROGRAM:", program);
    
 /* =========================
    PROGRAM LOCK (FIXED)
