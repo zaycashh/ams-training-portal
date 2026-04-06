@@ -939,18 +939,35 @@ if (user.role === "employee" && user.type === "company") {
    ADMIN SEAT CONTROL
 ========================= */
 
-function assignSeat() {
+function assignSeat(type) {
 
   const input = document.getElementById("seatEmailInput");
-  const email = input.value.trim();
+  const email = input.value.trim().toLowerCase();
 
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats) {
+    company.usedSeats = {
+      employee: {},
+      supervisor: {},
+      der: {}
+    };
+  }
 
-  company.usedSeats[email] = true;
+  // ✅ ensure structure exists
+  if (!company.usedSeats[type]) {
+    company.usedSeats[type] = {};
+  }
+
+  // 🚫 prevent duplicate
+  if (company.usedSeats[type][email]) {
+    alert("Already assigned");
+    return;
+  }
+
+  company.usedSeats[type][email] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
