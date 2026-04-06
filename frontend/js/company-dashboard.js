@@ -481,7 +481,7 @@ window.revokeSeat = function (email) {
 };
 
 /* =========================================================
-   RENDER ACTIVE SEATS
+   RENDER ACTIVE SEATS (FIXED)
 ========================================================= */
 
 function renderSeatAssignments(company) {
@@ -500,11 +500,24 @@ function renderSeatAssignments(company) {
     const users = allSeats[type] || {};
 
     Object.keys(users).forEach(email => {
+
       items.push(`
-        <li>
-          ${email} — <strong>${type.toUpperCase()}</strong>
+        <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          
+          <span>
+            ${email} — <strong>${type.toUpperCase()}</strong>
+          </span>
+
+          <button 
+            class="btn-danger"
+            onclick="revokeSeat('${type}', '${email}')"
+          >
+            Revoke
+          </button>
+
         </li>
       `);
+
     });
 
   });
@@ -515,6 +528,48 @@ function renderSeatAssignments(company) {
   }
 
   list.innerHTML = items.join("");
+}
+/* =========================================================
+   REVOKE SEAT (UNIVERSAL)
+========================================================= */
+
+function revokeSeat(type, email) {
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats || !company.usedSeats[type]) return;
+
+  /* 🚫 BLOCK IF COMPLETED */
+
+  let completed = false;
+
+  if (type === "der") {
+    completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  }
+
+  if (type === "supervisor") {
+    completed = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  }
+
+  if (type === "employee") {
+    completed = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+  }
+
+  if (completed) {
+    alert("Cannot revoke — training already completed");
+    return;
+  }
+
+  /* ✅ REMOVE */
+
+  delete company.usedSeats[type][email];
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  /* 🔥 FORCE UI REFRESH */
+
+  renderSeatAssignments(company);
 }
 /* =========================================================
    BUY SUPERVISOR SEAT
