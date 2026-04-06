@@ -4,7 +4,13 @@ const email = user?.email;
 const company =
   JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-const program = (company.program || "").toLowerCase();
+const storedProgram = localStorage.getItem("amsProgram");
+
+const program = (
+  company.program ||
+  storedProgram ||
+  ""
+).toLowerCase();
 
 /* =========================
    COURSE KEYS
