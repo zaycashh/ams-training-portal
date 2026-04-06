@@ -131,18 +131,38 @@ function updateSeatCounts(company) {
     company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   }
 
-  const stats = getSeatStats(company);
+  // EMPLOYEE
+  const empTotal = company?.seats?.employee?.total || 0;
+  const empUsed = Object.keys(company?.usedSeats?.employee || {}).length;
 
-  const totalEl = document.getElementById("seatTotal");
-  const usedEl = document.getElementById("seatUsed");
-  const remainingEl = document.getElementById("seatRemaining");
+  // SUPERVISOR
+  const supTotal = company?.seats?.supervisor?.total || 0;
+  const supUsed = Object.keys(company?.usedSeats?.supervisor || {}).length;
 
-  if (totalEl) totalEl.textContent = stats.totalPurchased || 0;
-  if (usedEl) usedEl.textContent = stats.usedSeats || 0;
-  if (remainingEl) {
-    remainingEl.textContent =
-      stats.remaining >= 0 ? stats.remaining : 0;
-  }
+  // DER
+  const derTotal = company?.seats?.der?.total || 0;
+  const derUsed = Object.keys(company?.usedSeats?.der || {}).length;
+
+  // UPDATE UI
+  const seatTotal = document.getElementById("seatTotal");
+  const seatUsed = document.getElementById("seatUsed");
+  const seatRemaining = document.getElementById("seatRemaining");
+
+  if (seatTotal) seatTotal.textContent = empTotal;
+  if (seatUsed) seatUsed.textContent = empUsed;
+  if (seatRemaining) seatRemaining.textContent = empTotal - empUsed;
+
+  const supTotalEl = document.getElementById("supervisorTotal");
+  const supUsedEl = document.getElementById("supervisorUsed");
+
+  if (supTotalEl) supTotalEl.textContent = supTotal;
+  if (supUsedEl) supUsedEl.textContent = supUsed;
+
+  const derTotalEl = document.getElementById("derTotal");
+  const derUsedEl = document.getElementById("derUsed");
+
+  if (derTotalEl) derTotalEl.textContent = derTotal;
+  if (derUsedEl) derUsedEl.textContent = derUsed;
 }
 
 /* =========================================================
