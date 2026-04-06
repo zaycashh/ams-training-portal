@@ -47,26 +47,31 @@
   <!-- SEAT MANAGEMENT -->
   <section class="module-section">
     <h2>Employee Seat Management</h2>
-<div style="display:flex; gap:20px; margin-top:10px;">
+<div style="display:flex; gap:25px; flex-wrap:wrap; margin-top:10px;">
 
+  <!-- EMPLOYEE -->
   <div>
-    <small>Total</small><br>
-    <strong id="seatTotal">0</strong>
+    <small>Employee Seats</small><br>
+    Total: <strong id="seatTotal">0</strong><br>
+    Used: <strong id="seatUsed">0</strong><br>
+    Available: <strong id="seatRemaining">0</strong>
   </div>
 
+  <!-- SUPERVISOR -->
   <div>
-    <small>Used</small><br>
-    <strong id="seatUsed">0</strong>
+    <small>Supervisor Seats</small><br>
+    Total: <strong id="supervisorTotal">0</strong><br>
+    Used: <strong id="supervisorUsed">0</strong>
   </div>
 
+  <!-- DER -->
   <div>
-    <small>Available</small><br>
-    <strong id="seatRemaining">0</strong>
+    <small>DER Seats</small><br>
+    Total: <strong id="derTotal">0</strong><br>
+    Used: <strong id="derUsed">0</strong>
   </div>
 
 </div>
-<div>Seats Used: <strong id="seatUsed">0</strong></div>
-<div>Seats Available: <strong id="seatRemaining">0</strong></div>
 
 <button id="buySeatsBtn" class="btn-primary" style="margin-top:10px;">
   Buy 5 More Seats
@@ -85,7 +90,6 @@
 
 </div>
     
-
 <h3>Active Seat Assignments</h3>
 <ul id="seatUserList" style="margin-top:10px;"></ul>
 
