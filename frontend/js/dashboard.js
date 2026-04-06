@@ -639,16 +639,14 @@ function updateFMCSAProgress() {
 /* =========================
    GENERIC SEAT CHECK
 ========================= */
-
-function hasCompanySeat() {
+function hasCompanySeat(type) {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!user || user.role !== "employee" || user.type !== "company") return null;
+  if (!user || user.role !== "employee" || user.type !== "company") return false;
 
-  return company?.usedSeats?.[user.email] === true;
-
+  return company?.usedSeats?.[type]?.[user.email] === true;
 }
 /* =========================
    DER COMPLETION STATUS
@@ -661,7 +659,7 @@ function updateFMCSDERButtonState() {
 
   const derDateEl = document.getElementById("derFmcsaCompletionDate");
 
-  const hasSeat = hasCompanySeat();
+  const hasSeat = hasCompanySeat("der");
 
   const paid =
     localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
@@ -761,7 +759,7 @@ function updateFMCSASupervisorButton() {
   const btn = document.getElementById("fmcsaSupervisorBtn");
   if (!btn) return;
 
-  const hasSeat = hasCompanySeat();
+  const hasSeat = hasCompanySeat("supervisor");
 
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
@@ -844,7 +842,7 @@ function updateFMCSAEmployeeButton() {
     localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
 
   const hasSeat =
-    company?.usedSeats?.[user.email] === true;
+    company?.usedSeats?.employee?.[user.email] === true;
 
   const empCompleted =
     localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
