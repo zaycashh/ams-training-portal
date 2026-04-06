@@ -146,6 +146,106 @@ function updateSeatCounts(company) {
 }
 
 /* =========================================================
+   ASSIGN EMPLOYEE SEAT (UPDATED)
+========================================================= */
+
+function assignEmployeeSeat() {
+
+  const email = document.getElementById("seatEmail").value.trim();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const total = company.seats?.employee?.total || 0;
+  const used = Object.keys(company.usedSeats.employee || {}).length;
+
+  if (used >= total) {
+    return alert("No employee seats available");
+  }
+
+  if (company.usedSeats.employee[email]) {
+    return alert("Employee already assigned");
+  }
+
+  company.usedSeats.employee[email] = {
+    assignedAt: Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("Employee seat assigned");
+
+  location.reload();
+}
+
+
+/* =========================================================
+   ASSIGN SUPERVISOR SEAT
+========================================================= */
+
+function assignSupervisorSeat() {
+
+  const email = document.getElementById("seatEmail").value.trim();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const total = company.seats?.supervisor?.total || 0;
+  const used = Object.keys(company.usedSeats.supervisor || {}).length;
+
+  if (used >= total) {
+    return alert("No supervisor seats available");
+  }
+
+  if (company.usedSeats.supervisor[email]) {
+    return alert("Supervisor already assigned");
+  }
+
+  company.usedSeats.supervisor[email] = {
+    assignedAt: Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("Supervisor seat assigned");
+
+  location.reload();
+}
+
+/* =========================================================
+   ASSIGN DER SEAT
+========================================================= */
+
+function assignDerSeat() {
+
+  const email = document.getElementById("seatEmail").value.trim();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const total = company.seats?.der?.total || 0;
+  const used = Object.keys(company.usedSeats.der || {}).length;
+
+  if (used >= total) {
+    return alert("No DER seats available");
+  }
+
+  if (company.usedSeats.der[email]) {
+    return alert("DER already assigned");
+  }
+
+  company.usedSeats.der[email] = {
+    assignedAt: Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("DER seat assigned");
+
+  location.reload();
+}
+
+/* =========================================================
    LOAD EMPLOYEES (PROGRAM-AWARE)
 ========================================================= */
 
