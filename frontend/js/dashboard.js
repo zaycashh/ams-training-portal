@@ -816,11 +816,27 @@ function updateFMCSASupervisorButton() {
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
 
-  const completed =
-    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  const modA =
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+
+  const modB =
+  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+  /* MODULE A COMPLETED BUT NOT B */
+if (modA && !modB) {
+
+  btn.textContent = "Continue Training";
+  btn.style.opacity = "1";
+
+  btn.onclick = () => {
+    window.location.href = "fmcsa-drug-alcohol.html";
+  };
+
+  return;
+}
 
   /* COMPLETED */
-  if (completed) {
+  if (modA && modB) {
     btn.textContent = "🎓 View Certificate";
     btn.onclick = () => {
       window.location.href = "fmcsa-certificates.html?type=supervisor";
@@ -829,30 +845,42 @@ function updateFMCSASupervisorButton() {
   }
 
   /* COMPANY SEAT */
-  if (user.role === "employee") {
+  
+if (user.role === "employee") {
 
-    if (hasSeat) {
-      setAssignedBadge("supervisorSeatBadge");
+  if (hasSeat) {
 
+    setAssignedBadge("supervisorSeatBadge");
+    btn.style.opacity = "1";
+
+    if (modA && !modB) {
+      btn.textContent = "Continue Training";
+      btn.onclick = () => {
+        window.location.href = "fmcsa-drug-alcohol.html";
+      };
+      return;
+    }
+
+    if (!modA) {
       btn.textContent = "Start Training";
-      btn.style.opacity = "1";
-
       btn.onclick = () => {
         window.location.href = "fmcsa-module-a.html";
       };
       return;
     }
 
-    clearBadge("supervisorSeatBadge");
-
-    btn.textContent = "🔒 Seat Required";
-    btn.style.opacity = "0.7";
-
-    btn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
-    };
-    return;
   }
+
+  clearBadge("supervisorSeatBadge");
+
+  btn.textContent = "🔒 Seat Required";
+  btn.style.opacity = "0.7";
+
+  btn.onclick = () => {
+    showToast("No seat assigned. Contact your admin.", "warning");
+  };
+  return;
+}
 
   /* INDIVIDUAL PURCHASE */
   if (paid) {
