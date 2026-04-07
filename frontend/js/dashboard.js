@@ -889,7 +889,7 @@ function updateFMCSAEmployeeButton() {
     localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
 
   const hasSeat =
-    company?.usedSeats?.employee?.[user.email] === true;
+    !!company?.usedSeats?.employee?.[user.email];
 
   const empCompleted =
     localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
