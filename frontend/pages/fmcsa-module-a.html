@@ -168,7 +168,10 @@ RESTORE PROGRESS
 ========================== */
 document.addEventListener("DOMContentLoaded", function() {
 
-  const contentDone = localStorage.getItem("fmcsa_mod1_content_done");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user.email;
+
+  const contentDone = localStorage.getItem(`fmcsa_mod1_content_done_${email}`);
 
   if (contentDone === "true") {
     document.getElementById("contentSection").classList.add("hidden");
@@ -257,7 +260,7 @@ completeBtn.onclick = () => {
   const email = user?.email || "guest";
 
   // mark content complete
-  localStorage.setItem(`fmcsaModuleAContentDone_${email}`, "true");
+  localStorage.setItem(`fmcsa_mod1_content_done_${email}`, "true");
 
   // unlock quiz button
   const quizBtn = document.getElementById("btnQuiz");
