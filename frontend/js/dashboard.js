@@ -854,49 +854,11 @@ function updateFMCSASupervisorButton() {
     return;
   }
 
-  /* INDIVIDUAL PURCHASE */
-  if (paid) {
-    btn.textContent = "Start Training";
-    btn.onclick = () => {
-      window.location.href = "fmcsa-module-a.html";
-    };
-    return;
-  }
-
   /* LOCKED */
   btn.textContent = "🔒 Locked — Purchase Required";
   btn.onclick = () => {
     window.location.href = "payment.html?type=fmcsa";
   };
-}
-  
-  /* =========================
-     INDIVIDUAL PURCHASE
-  ========================= */
-  if (paid === true) {
-
-    btn.textContent = "Start Training";
-    btn.style.opacity = "1";
-    btn.style.cursor = "pointer";
-
-    btn.onclick = () => {
-      window.location.href = "fmcsa-module-a.html";
-    };
-
-    return;
-  }
-
-  /* =========================
-     LOCKED (DEFAULT)
-  ========================= */
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.style.opacity = "0.7";
-  btn.style.cursor = "not-allowed";
-
-  btn.onclick = () => {
-    window.location.href = "payment.html?type=fmcsa";
-  };
-
 }
   
 /* =========================
