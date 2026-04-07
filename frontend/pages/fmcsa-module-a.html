@@ -78,9 +78,9 @@ You must review all content before taking the quiz.
 </div>
 
 <div style="text-align:center; margin-top:20px;">
-  <button id="completeContentBtn" style="display:none;">
-    TAKE QUIZ
-  </button>
+  <button id="completeContentBtn" class="btn-primary">
+  TAKE QUIZ
+</button>>
 </div>
 
 </section>
@@ -228,11 +228,13 @@ function renderPage(num) {
     document.getElementById("progressBar").style.width =
       (num / totalPages * 100) + "%";
 
-    if (completeBtn) {
+if (completeBtn) {
   if (num === totalPages) {
     completeBtn.style.display = "inline-block";
+    completeBtn.disabled = false;   //
   } else {
     completeBtn.style.display = "none";
+    completeBtn.disabled = true;    //
   }
 }
 
@@ -243,7 +245,7 @@ function renderPage(num) {
 document.getElementById("prevPageBtn").onclick = () => {
   if (pageNum > 1) {
     pageNum--;
-    renderPage(pageNum);
+    ;
   }
 };
 
