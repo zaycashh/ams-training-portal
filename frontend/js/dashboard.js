@@ -869,47 +869,7 @@ function updateFMCSASupervisorButton() {
     window.location.href = "payment.html?type=fmcsa";
   };
 }
-  /* =========================
-   FMCSA SUPERVISOR ACCESS LOGIC (FINAL CLEAN)
-========================= */
-
-function handleSupervisorAccess(btn, user, hasSeat, paid) {
-
-  if (!btn) return;
-
-  /* =========================
-     COMPANY EMPLOYEE (SEAT)
-  ========================= */
-  if (user.role === "employee" && user.type === "company") {
-
-    if (hasSeat === true) {
-
-      setAssignedBadge("supervisorSeatBadge");
-
-      btn.textContent = "Start Training";
-      btn.style.opacity = "1";
-      btn.style.cursor = "pointer";
-
-      btn.onclick = () => {
-        window.location.href = "fmcsa-module-a.html";
-      };
-
-      return;
-    }
-
-    clearBadge("supervisorSeatBadge");
-
-    btn.textContent = "🔒 Seat Required";
-    btn.style.opacity = "0.7";
-    btn.style.cursor = "not-allowed";
-
-    btn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
-    };
-
-    return;
-  }
-
+  
   /* =========================
      INDIVIDUAL PURCHASE
   ========================= */
