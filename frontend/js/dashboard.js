@@ -798,6 +798,7 @@ if (user.role === "employee" && user.type === "company") {
   };
 
 }
+
 function updateFMCSASupervisorButton() {
 
   const btn = document.getElementById("supervisorTrainingBtn");
@@ -860,7 +861,49 @@ function updateFMCSASupervisorButton() {
     window.location.href = "payment.html?type=fmcsa";
   };
 }
-  
+    /* COMPANY SEAT */
+  if (user.role === "employee" && user.type === "company") {
+
+    if (hasSeat) {
+      setAssignedBadge("supervisorSeatBadge");
+
+      btn.textContent = "Start Training";
+      btn.style.opacity = "1";
+
+      btn.onclick = () => {
+        window.location.href = "fmcsa-module-a.html";
+      };
+      return;
+    }
+
+    clearBadge("supervisorSeatBadge");
+
+    btn.textContent = "🔒 Seat Required";
+    btn.style.opacity = "0.7";
+
+    btn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
+    return;
+  }
+
+  /* INDIVIDUAL PURCHASE */
+  if (paid) {
+    btn.textContent = "Start Training";
+
+    btn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+
+    return;
+  }
+
+  /* LOCKED */
+  btn.textContent = "🔒 Locked — Purchase Required";
+
+  btn.onclick = () => {
+    window.location.href = "payment.html?type=fmcsa";
+  };
 /* =========================
    FMCSA MODULE UNLOCK SYSTEM
 ========================= */
