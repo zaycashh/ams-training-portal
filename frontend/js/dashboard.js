@@ -798,10 +798,6 @@ if (user.role === "employee" && user.type === "company") {
   };
 
 }
-/* =========================
-   FMCSA SUPERVISOR BUTTON (FINAL FIXED)
-========================= */
-
 function updateFMCSASupervisorButton() {
 
   const btn = document.getElementById("supervisorTrainingBtn");
@@ -811,94 +807,39 @@ function updateFMCSASupervisorButton() {
   if (!user) return;
 
   const email = user.email;
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  /* =========================
-     CHECK COMPANY SEAT
-  ========================= */
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const hasSeat =
     company?.usedSeats?.supervisor?.[email] === true;
 
-   /* =========================
-   COMPANY EMPLOYEE (SEAT)
-========================= */
-if (user.role === "employee" && user.type === "company") {
-
-  if (hasSeat === true) {
-
-    setAssignedBadge("supervisorSeatBadge");
-
-    btn.textContent = "Start Training";
-    btn.style.opacity = "1";
-    btn.style.cursor = "pointer";
-
-    btn.onclick = () => {
-      window.location.href = "fmcsa-module-a.html";
-    };
-
-    return;
-  }
-
-  clearBadge("supervisorSeatBadge");
-
-  btn.textContent = "🔒 Seat Required";
-  btn.style.opacity = "0.7";
-  btn.style.cursor = "not-allowed";
-
-  btn.onclick = () => {
-    showToast("No seat assigned. Contact your admin.", "warning");
-  };
-
-  return;
-}
-
-  /* =========================
-     CHECK INDIVIDUAL PURCHASE
-  ========================= */
-
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
-
-  /* =========================
-     CHECK COMPLETION
-  ========================= */
 
   const completed =
     localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-  /* =========================
-     COMPLETED
-  ========================= */
-
+  /* COMPLETED */
   if (completed) {
-
     btn.textContent = "🎓 View Certificate";
     btn.onclick = () => {
       window.location.href = "fmcsa-certificates.html?type=supervisor";
     };
-
     return;
   }
 
-  /* =========================
-     COMPANY EMPLOYEE (SEAT LOGIC)
-  ========================= */
-
+  /* COMPANY SEAT */
   if (user.role === "employee" && user.type === "company") {
 
     if (hasSeat) {
-
       setAssignedBadge("supervisorSeatBadge");
 
       btn.textContent = "Start Training";
       btn.style.opacity = "1";
-      btn.style.cursor = "pointer";
 
       btn.onclick = () => {
         window.location.href = "fmcsa-module-a.html";
       };
-
       return;
     }
 
@@ -906,15 +847,28 @@ if (user.role === "employee" && user.type === "company") {
 
     btn.textContent = "🔒 Seat Required";
     btn.style.opacity = "0.7";
-    btn.style.cursor = "not-allowed";
 
     btn.onclick = () => {
       showToast("No seat assigned. Contact your admin.", "warning");
     };
-
     return;
   }
 
+  /* INDIVIDUAL PURCHASE */
+  if (paid) {
+    btn.textContent = "Start Training";
+    btn.onclick = () => {
+      window.location.href = "fmcsa-module-a.html";
+    };
+    return;
+  }
+
+  /* LOCKED */
+  btn.textContent = "🔒 Locked — Purchase Required";
+  btn.onclick = () => {
+    window.location.href = "payment.html?type=fmcsa";
+  };
+}
   /* =========================
    FMCSA SUPERVISOR ACCESS LOGIC (FINAL CLEAN)
 ========================= */
