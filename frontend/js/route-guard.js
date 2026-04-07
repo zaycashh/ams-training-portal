@@ -170,6 +170,27 @@ if (user?.role === "employee" && user?.type === "company") {
 
   const email = user.email;
 
+   /* =========================================================
+   CERTIFICATE ACCESS (ALLOW IF COMPLETED)
+========================================================= */
+
+if (path.includes("fmcsa-certificates")) {
+
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  if (completedSupervisor || completedDER || completedEmployee) {
+    return; // ✅ allow access
+  }
+
+}
+
   /* =========================================================
      PAYMENT CHECK (INDIVIDUAL ONLY)
   ========================================================= */
