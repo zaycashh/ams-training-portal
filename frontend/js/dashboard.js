@@ -195,7 +195,11 @@ function getEmployeeSeatStatus() {
     return { type: "locked", label: "🔒 No Seats Available" };
   }
 
-  if (company.usedSeats?.[user.email]) {
+  if (
+  company.usedSeats?.employee?.[user.email] ||
+  company.usedSeats?.supervisor?.[user.email] ||
+  company.usedSeats?.der?.[user.email]
+) {
     return { type: "assigned", label: "🎟 Seat Assigned" };
   }
 
@@ -246,7 +250,11 @@ if (user.role === "employee" && user.type === "company") {
   }
 
   // Seat already assigned
-  if (company.usedSeats?.[user.email]) {
+  if (
+  company.usedSeats?.employee?.[user.email] ||
+  company.usedSeats?.supervisor?.[user.email] ||
+  company.usedSeats?.der?.[user.email]
+) {
     startFAA("employee");
     return;
   }
