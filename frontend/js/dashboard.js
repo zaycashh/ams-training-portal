@@ -985,19 +985,14 @@ function assignSeat(type) {
     return;
   }
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  let company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) {
-    company.usedSeats = {
-      employee: {},
-      supervisor: {},
-      der: {}
-    };
-  }
-
-  if (!company.usedSeats[type]) {
-    company.usedSeats[type] = {};
-  }
+  /* 🔥 FORCE CLEAN STRUCTURE */
+  company.usedSeats = {
+    employee: company.usedSeats?.employee || {},
+    supervisor: company.usedSeats?.supervisor || {},
+    der: company.usedSeats?.der || {}
+  };
 
   if (company.usedSeats[type][email]) {
     alert("Already assigned");
