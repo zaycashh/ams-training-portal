@@ -495,15 +495,18 @@ if (currentUser.role === "company_admin" || currentUser.role === "owner") {
   if (panel) panel.style.display = "block";
 }
    
- updateFAAModuleButtons();
- updateFAACompletionDates();  
- updateFMCSATimer();
- updateFMCSDERButtonState();
- updateFMCSAEmployeeButton();
- updateFMCSASupervisorButton();
- updateFMCSAStatus();  
- updateFMCSAProgress();
- renderSeatList();  
+updateFAAModuleButtons();
+updateFAACompletionDates();
+
+updateFMCSAStatus();
+
+updateFMCSATimer();
+updateFMCSDERButtonState();
+updateFMCSAEmployeeButton();
+updateFMCSASupervisorButton();
+
+updateFMCSAProgress();
+renderSeatList();
    
 /* =========================
 MODULE A COMPLETION DATE
