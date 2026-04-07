@@ -396,7 +396,7 @@ function getUserAccess(email) {
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   return {
-    employee: !!company.usedSeats?.supervisor?.[email],
+    employee: !!company.usedSeats?.employee?.[email],   // ✅ FIXED
     supervisor: !!company.usedSeats?.supervisor?.[email],
     der: !!company.usedSeats?.der?.[email]
   };
