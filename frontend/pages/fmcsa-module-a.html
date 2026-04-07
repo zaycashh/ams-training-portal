@@ -254,23 +254,6 @@ document.getElementById("nextPageBtn").onclick = () => {
   }
 };
 
-completeBtn.onclick = () => {
-  
-  console.log("CLICKED BUTTON 🔥");
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const email = user?.email || "guest";
-
-  // mark content complete
-  localStorage.setItem(`fmcsa_mod1_content_done_${email}`, "true");
-
-  // unlock quiz button
-  const quizBtn = document.getElementById("btnQuiz");
-  if (quizBtn) {
-    quizBtn.disabled = false;
-    quizBtn.classList.remove("disabled");
-  }
-
   // switch section properly
   showSection("quiz");
 
@@ -573,9 +556,33 @@ Attempts remaining: ${remaining>0?remaining:0}
  function goDashboard() {
   window.location.href = "dashboard.html";
 } 
+
+document.addEventListener("click", function(e){
+
+  if (e.target.closest("#completeContentBtn")) {
+
+    console.log("CLICKED BUTTON 🔥");
+
+    const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+    const email = user.email;
+
+    localStorage.setItem(`fmcsa_mod1_content_done_${email}`, "true");
+
+    const quizBtn = document.getElementById("btnQuiz");
+    if (quizBtn) {
+      quizBtn.disabled = false;
+      quizBtn.classList.remove("disabled");
+    }
+
+    showSection("quiz");
+    initQuiz();
+
+  }
+
+});
+
 </script>
-    
+
 <script src="../js/route-guard.js"></script>
-  
 </body>
 </html>
