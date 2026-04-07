@@ -680,7 +680,7 @@ function hasCompanySeat(type) {
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!user || user.role !== "employee" || user.type !== "company") return false;
+  if (!user || user.role !== "employee") return false;
 
   return company?.usedSeats?.[type]?.[user.email] === true;
 }
@@ -729,7 +729,7 @@ function updateFMCSDERButtonState() {
   /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (user.role === "employee" && user.type === "company") {
+if (user.role === "employee") {
 
   if (hasSeat === true) {
 
@@ -818,7 +818,7 @@ function updateFMCSASupervisorButton() {
   }
 
   /* COMPANY SEAT */
-  if (user.role === "employee" && user.type === "company") {
+  if (user.role === "employee") {
 
     if (hasSeat) {
       setAssignedBadge("supervisorSeatBadge");
@@ -909,7 +909,7 @@ function updateFMCSAEmployeeButton() {
 /* =========================
    COMPANY EMPLOYEE (SEAT)
 ========================= */
-if (user.role === "employee" && user.type === "company") {
+if (user.role === "employee") {
 
   if (hasSeat) {
 
