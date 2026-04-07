@@ -986,17 +986,19 @@ if (user.role === "employee" && user.type === "company") {
 /* =========================
    ADMIN SEAT CONTROL (FINAL CLEAN VERSION)
 ========================= */
-
 function assignSeat(type) {
 
   const input = document.getElementById("seatEmailInput");
-  const email = input.value.trim().toLowerCase();
+  if (!input) return;
 
-  if (!email) return alert("Enter email");
+  const email = input.value.trim().toLowerCase();
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  // ✅ Ensure structure exists
   if (!company.usedSeats) {
     company.usedSeats = {
       employee: {},
@@ -1008,6 +1010,23 @@ function assignSeat(type) {
   if (!company.usedSeats[type]) {
     company.usedSeats[type] = {};
   }
+
+  if (company.usedSeats[type][email]) {
+    alert("Already assigned");
+    return;
+  }
+
+  company.usedSeats[type][email] = true;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert(`${type.toUpperCase()} seat assigned`);
+
+  renderSeatList();
+  updateSeatCounts?.();
+
+  input.value = "";
+}
 /* =========================
    REMOVE SEAT (FINAL CLEAN)
 ========================= */
