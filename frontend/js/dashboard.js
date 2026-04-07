@@ -916,12 +916,55 @@ if (user.role === "employee" && user.type === "company") {
   }
 
   /* =========================
+   FMCSA SUPERVISOR ACCESS LOGIC (FINAL CLEAN)
+========================= */
+
+function handleSupervisorAccess(btn, user, hasSeat, paid) {
+
+  if (!btn) return;
+
+  /* =========================
+     COMPANY EMPLOYEE (SEAT)
+  ========================= */
+  if (user.role === "employee" && user.type === "company") {
+
+    if (hasSeat === true) {
+
+      setAssignedBadge("supervisorSeatBadge");
+
+      btn.textContent = "Start Training";
+      btn.style.opacity = "1";
+      btn.style.cursor = "pointer";
+
+      btn.onclick = () => {
+        window.location.href = "fmcsa-module-a.html";
+      };
+
+      return;
+    }
+
+    clearBadge("supervisorSeatBadge");
+
+    btn.textContent = "🔒 Seat Required";
+    btn.style.opacity = "0.7";
+    btn.style.cursor = "not-allowed";
+
+    btn.onclick = () => {
+      showToast("No seat assigned. Contact your admin.", "warning");
+    };
+
+    return;
+  }
+
+  /* =========================
      INDIVIDUAL PURCHASE
   ========================= */
-
-  if (paid) {
+  if (paid === true) {
 
     btn.textContent = "Start Training";
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+
     btn.onclick = () => {
       window.location.href = "fmcsa-module-a.html";
     };
@@ -930,42 +973,18 @@ if (user.role === "employee" && user.type === "company") {
   }
 
   /* =========================
-     LOCKED
-  ========================= */
-
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => {
-    window.location.href = "payment.html?module=fmcsa";
-  };
-
-}
-
-  /* =========================
-     PURCHASED
-  ========================= */
-  if (hasSeat === true) {
-  setAssignedBadge("supervisorSeatBadge");
-}
-   if (paid) {
-
-    btn.textContent = "Start Training";
-
-    btn.onclick = () => {
-      window.location.href = "fmcsa-module-a.html";
-    };
-
-  }
-
-  /* =========================
-     LOCKED
+     LOCKED (DEFAULT)
   ========================= */
   btn.textContent = "🔒 Locked — Purchase Required";
+  btn.style.opacity = "0.7";
+  btn.style.cursor = "not-allowed";
 
   btn.onclick = () => {
     window.location.href = "payment.html?type=fmcsa";
   };
 
 }
+  
 /* =========================
    FMCSA MODULE UNLOCK SYSTEM
 ========================= */
