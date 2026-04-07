@@ -273,21 +273,23 @@ if (!drugCanvas) {
   });
 
   function updateAlcoholProgress() {
-    const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
-    document.getElementById("alcoholProgressBar").style.width = percent + "%";
+  const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
+  document.getElementById("alcoholProgressBar").style.width = percent + "%";
 
-    const takeAlcoholBtn = document.getElementById("takeAlcoholQuizBtn");
+  const takeAlcoholBtn = document.getElementById("takeAlcoholQuizBtn");
 
-    if (takeAlcoholBtn) {
-      if (alcoholCurrentPage === alcoholTotalPages) {
-        takeAlcoholBtn.style.display = "inline-block";
-      } else {
-        takeAlcoholBtn.style.display = "none";
-      }
+  if (takeAlcoholBtn) {
+    if (alcoholCurrentPage === alcoholTotalPages) {
+      takeAlcoholBtn.style.display = "inline-block";
+    } else {
+      takeAlcoholBtn.style.display = "none";
     }
+  }
+}
  
   restoreProgress();
   wireButtons();
+   
 });
 
 /* =========================================================
