@@ -1042,11 +1042,42 @@ function assignSeat(type) {
   }
 
   // 🚫 Prevent duplicate assignment
+  /* =========================
+   ASSIGN SEAT (FINAL CLEAN)
+========================= */
+function assignSeat(type) {
+
+  const input = document.getElementById("seatEmailInput");
+  if (!input) return;
+
+  const email = input.value.trim().toLowerCase();
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  // Ensure structure
+  if (!company.usedSeats) {
+    company.usedSeats = {
+      employee: {},
+      supervisor: {},
+      der: {}
+    };
+  }
+
+  if (!company.usedSeats[type]) {
+    company.usedSeats[type] = {};
+  }
+
+  // Prevent duplicate
   if (company.usedSeats[type][email]) {
     alert("Already assigned");
     return;
   }
 
+  // Assign
   company.usedSeats[type][email] = true;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
@@ -1054,30 +1085,35 @@ function assignSeat(type) {
   alert(`${type.toUpperCase()} seat assigned`);
 
   renderSeatList();
-  updateSeatCounts();
+  updateSeatCounts?.(); // safe call (won’t break if missing)
 
   input.value = "";
 }
 
 
 /* =========================
-   REMOVE SEAT (FIXED)
+   REMOVE SEAT (FINAL CLEAN)
 ========================= */
-
 function removeSeat() {
 
   const input = document.getElementById("seatEmailInput");
-  const email = input.value.trim().toLowerCase();
+  if (!input) return;
 
-  if (!email) return alert("Enter email");
+  const email = input.value.trim().toLowerCase();
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) return;
+  if (!company.usedSeats) {
+    alert("No seats exist");
+    return;
+  }
 
   let removed = false;
 
-  // 🔥 Remove from ALL seat types
   ["employee", "supervisor", "der"].forEach(type => {
     if (company.usedSeats[type]?.[email]) {
       delete company.usedSeats[type][email];
@@ -1095,23 +1131,21 @@ function removeSeat() {
   alert("Seat removed");
 
   renderSeatList();
-  updateSeatCounts();
+  updateSeatCounts?.();
 
   input.value = "";
 }
 
 
 /* =========================
-   RENDER SEAT LIST (FIXED)
+   RENDER SEAT LIST (FINAL CLEAN)
 ========================= */
-
 function renderSeatList() {
 
   const container = document.getElementById("seatList");
   if (!container) return;
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
   const allSeats = company.usedSeats || {};
 
   let rows = [];
@@ -1140,23 +1174,21 @@ function renderSeatList() {
 
 
 /* =========================
-   EMPLOYEE TRAINING ROUTE
+   EMPLOYEE TRAINING ROUTE (FINAL SAFE)
 ========================= */
-
 function getEmployeeTrainingRoute() {
-
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (!user) return null;
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   if (!company.program) return null;
 
-  if (company.program === "FMCSA") {
+  const program = company.program.toUpperCase();
+
+  if (program === "FMCSA") {
     return "fmcsa-employee-training.html";
   }
 
-  if (company.program === "FAA") {
+  if (program === "FAA") {
     return "employee-training.html";
   }
 
