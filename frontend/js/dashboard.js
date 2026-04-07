@@ -811,7 +811,7 @@ function updateFMCSASupervisorButton() {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const hasSeat =
-    company?.usedSeats?.supervisor?.[email] === true;
+    !!company?.usedSeats?.supervisor?.[email];
 
   const paid =
     localStorage.getItem(`paid_fmcsa_${email}`) === "true";
