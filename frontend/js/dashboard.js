@@ -861,7 +861,7 @@ function updateFMCSASupervisorButton() {
     window.location.href = "payment.html?type=fmcsa";
   };
 }
-    /* COMPANY SEAT */
+     /* COMPANY SEAT */
   if (user.role === "employee" && user.type === "company") {
 
     if (hasSeat) {
