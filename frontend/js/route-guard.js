@@ -58,18 +58,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // 🔒 Employee restrictions
   if (role === "employee") {
 
-  if (
-    module === "supervisor" ||
-    module === "der" ||
-    module === "fmcsa-module-a" ||
-    module === "fmcsa-der"
-  ) {
+  // Only block FAA modules directly
+  if (module === "supervisor" || module === "der") {
     window.location.href = "dashboard.html";
     return;
   }
 
 }
-
   // 🔒 Optional: Supervisor cannot access DER
   if (role === "supervisor") {
 
