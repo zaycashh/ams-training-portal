@@ -255,6 +255,8 @@ document.getElementById("nextPageBtn").onclick = () => {
 };
 
 completeBtn.onclick = () => {
+  
+  console.log("CLICKED BUTTON 🔥");
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const email = user?.email || "guest";
