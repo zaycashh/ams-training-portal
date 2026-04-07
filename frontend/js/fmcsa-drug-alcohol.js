@@ -184,10 +184,15 @@ if (!drugCanvas) {
     const percent = (drugCurrentPage / drugTotalPages) * 100;
     document.getElementById("drugProgressBar").style.width = percent + "%";
 
-    if (drugCurrentPage === drugTotalPages) {
-      document.getElementById("completeDrugContentBtn").disabled = false;
+    const takeQuizBtn = document.getElementById("takeDrugQuizBtn");
+
+    if (takeQuizBtn) {
+      if (drugCurrentPage === drugTotalPages) {
+        takeQuizBtn.style.display = "inline-block";
+      } else {
+        takeQuizBtn.style.display = "none";
+      }
     }
-  }
 
   /* =========================================================
      ALCOHOL PDF ENGINE
@@ -270,10 +275,15 @@ if (!drugCanvas) {
     const percent = (alcoholCurrentPage / alcoholTotalPages) * 100;
     document.getElementById("alcoholProgressBar").style.width = percent + "%";
 
-    if (alcoholCurrentPage === alcoholTotalPages) {
-      document.getElementById("completeAlcoholContentBtn").disabled = false;
+    const takeAlcoholBtn = document.getElementById("takeAlcoholQuizBtn");
+
+    if (takeAlcoholBtn) {
+      if (alcoholCurrentPage === alcoholTotalPages) {
+        takeAlcoholBtn.style.display = "inline-block";
+      } else {
+        takeAlcoholBtn.style.display = "none";
+      }
     }
-  }
  
   restoreProgress();
   wireButtons();
@@ -334,16 +344,22 @@ function restoreProgress() {
 
 function wireButtons() {
 
-  document.getElementById("completeDrugContentBtn")?.addEventListener("click", () => {
-    localStorage.setItem(DRUG_CONTENT_KEY, "true");
-    showSection("drugQuizSection");
-    initDrugQuiz();
-  });
+document.getElementById("takeDrugQuizBtn")?.addEventListener("click", () => {
 
-  document.getElementById("completeAlcoholContentBtn")?.addEventListener("click", () => {
+  localStorage.setItem(DRUG_CONTENT_KEY, "true");
+
+  showSection("drugQuizSection");
+  initDrugQuiz();
+
+});
+
+  document.getElementById("takeAlcoholQuizBtn")?.addEventListener("click", () => {
+
     localStorage.setItem(ALCOHOL_CONTENT_KEY, "true");
+
     showSection("alcoholQuizSection");
     initAlcoholQuiz();
+
   });
 }
 
