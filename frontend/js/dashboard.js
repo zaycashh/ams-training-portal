@@ -855,38 +855,6 @@ function updateFMCSASupervisorButton() {
     return;
   }
 
-  /* LOCKED */
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => {
-    window.location.href = "payment.html?type=fmcsa";
-  };
-}
-     /* COMPANY SEAT */
-  if (user.role === "employee" && user.type === "company") {
-
-    if (hasSeat) {
-      setAssignedBadge("supervisorSeatBadge");
-
-      btn.textContent = "Start Training";
-      btn.style.opacity = "1";
-
-      btn.onclick = () => {
-        window.location.href = "fmcsa-module-a.html";
-      };
-      return;
-    }
-
-    clearBadge("supervisorSeatBadge");
-
-    btn.textContent = "🔒 Seat Required";
-    btn.style.opacity = "0.7";
-
-    btn.onclick = () => {
-      showToast("No seat assigned. Contact your admin.", "warning");
-    };
-    return;
-  }
-
   /* INDIVIDUAL PURCHASE */
   if (paid) {
     btn.textContent = "Start Training";
@@ -900,10 +868,10 @@ function updateFMCSASupervisorButton() {
 
   /* LOCKED */
   btn.textContent = "🔒 Locked — Purchase Required";
-
   btn.onclick = () => {
     window.location.href = "payment.html?type=fmcsa";
   };
+}
 /* =========================
    FMCSA MODULE UNLOCK SYSTEM
 ========================= */
@@ -1040,57 +1008,6 @@ function assignSeat(type) {
   if (!company.usedSeats[type]) {
     company.usedSeats[type] = {};
   }
-
-  // 🚫 Prevent duplicate assignment
-  /* =========================
-   ASSIGN SEAT (FINAL CLEAN)
-========================= */
-function assignSeat(type) {
-
-  const input = document.getElementById("seatEmailInput");
-  if (!input) return;
-
-  const email = input.value.trim().toLowerCase();
-  if (!email) {
-    alert("Enter email");
-    return;
-  }
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  // Ensure structure
-  if (!company.usedSeats) {
-    company.usedSeats = {
-      employee: {},
-      supervisor: {},
-      der: {}
-    };
-  }
-
-  if (!company.usedSeats[type]) {
-    company.usedSeats[type] = {};
-  }
-
-  // Prevent duplicate
-  if (company.usedSeats[type][email]) {
-    alert("Already assigned");
-    return;
-  }
-
-  // Assign
-  company.usedSeats[type][email] = true;
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  alert(`${type.toUpperCase()} seat assigned`);
-
-  renderSeatList();
-  updateSeatCounts?.(); // safe call (won’t break if missing)
-
-  input.value = "";
-}
-
-
 /* =========================
    REMOVE SEAT (FINAL CLEAN)
 ========================= */
