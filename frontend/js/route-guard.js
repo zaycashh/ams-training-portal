@@ -171,10 +171,18 @@ if (user?.role === "employee" && user?.type === "company") {
   const email = user.email;
 
 /* =========================================================
-   CERTIFICATE ACCESS (ALLOW IF COMPLETED)
+   CERTIFICATE ACCESS (SAFE BYPASS)
 ========================================================= */
 
 if (path.includes("fmcsa-certificates")) {
+
+  const userData = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!userData || !userData.email) {
+    return; // no user, just stop safely
+  }
+
+  const email = userData.email;
 
   const completedSupervisor =
     localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
@@ -186,7 +194,11 @@ if (path.includes("fmcsa-certificates")) {
     localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
   if (completedSupervisor || completedDER || completedEmployee) {
-    console.log("✅
+    console.log("✅ Certificate access granted");
+    return; // 🔥 stops guard completely
+  }
+
+}
 
   /* =========================================================
      PAYMENT CHECK (INDIVIDUAL ONLY)
