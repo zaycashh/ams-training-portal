@@ -170,7 +170,7 @@ if (user?.role === "employee" && user?.type === "company") {
 
   const email = user.email;
 
-   /* =========================================================
+/* =========================================================
    CERTIFICATE ACCESS (ALLOW IF COMPLETED)
 ========================================================= */
 
@@ -186,10 +186,7 @@ if (path.includes("fmcsa-certificates")) {
     localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
 
   if (completedSupervisor || completedDER || completedEmployee) {
-    return; // ✅ allow access
-  }
-
-}
+    console.log("✅
 
   /* =========================================================
      PAYMENT CHECK (INDIVIDUAL ONLY)
