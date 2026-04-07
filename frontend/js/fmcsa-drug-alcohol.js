@@ -108,6 +108,8 @@ if (isFMCSAExpired()) {
   let drugCurrentPage = 1;
   let drugTotalPages = 0;
 
+  let drugRenderTask = null; 
+
   const drugCanvas = document.getElementById("drugPdfCanvas");
 const drugCtx = drugCanvas ? drugCanvas.getContext("2d") : null;
 
@@ -134,21 +136,35 @@ if (!drugCanvas) {
   });
 
   function renderDrugPage(pageNum) {
-    drugPdfDoc.getPage(pageNum).then(page => {
-      const viewport = page.getViewport({ scale: 1.2 });
 
-      drugCanvas.height = viewport.height;
-      drugCanvas.width = viewport.width;
-
-      page.render({
-        canvasContext: drugCtx,
-        viewport: viewport
-      });
-
-      document.getElementById("drugCurrentPage").textContent = pageNum;
-      updateDrugProgress();
-    });
+  if (drugRenderTask) {
+    drugRenderTask.cancel();
   }
+
+  drugPdfDoc.getPage(pageNum).then(page => {
+
+    const viewport = page.getViewport({ scale: 1.2 });
+
+    drugCanvas.height = viewport.height;
+    drugCanvas.width = viewport.width;
+
+    const renderContext = {
+      canvasContext: drugCtx,
+      viewport: viewport
+    };
+
+    drugRenderTask = page.render(renderContext);
+
+    drugRenderTask.promise
+      .then(() => {})
+      .catch(() => {});
+
+    document.getElementById("drugCurrentPage").textContent = pageNum;
+    updateDrugProgress();
+
+  });
+
+}
 
   document.getElementById("drugNextPageBtn")?.addEventListener("click", () => {
     if (drugCurrentPage < drugTotalPages) {
