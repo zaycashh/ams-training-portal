@@ -58,17 +58,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // 🔒 Employee restrictions
   if (role === "employee") {
 
-    if (
-      module === "supervisor" ||
-      module === "der" ||
-      module === "fmcsa-module-a" ||
-      module === "fmcsa-der"
-    ) {
-      window.location.href = "dashboard.html";
-      return;
-    }
-
+  if (
+    module === "supervisor" ||
+    module === "der" ||
+    module === "fmcsa-module-a" ||
+    module === "fmcsa-der"
+  ) {
+    window.location.href = "dashboard.html";
+    return;
   }
+
+}
 
   // 🔒 Optional: Supervisor cannot access DER
   if (role === "supervisor") {
