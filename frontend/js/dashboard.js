@@ -693,7 +693,7 @@ function hasCompanySeat(type) {
 
   if (!user || user.role !== "employee") return false;
 
-  return company?.usedSeats?.[type]?.[user.email] === true;
+  return !!company?.usedSeats?.[type]?.[user.email];
 }
 /* =========================
    DER COMPLETION STATUS
