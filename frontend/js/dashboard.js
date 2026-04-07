@@ -954,7 +954,6 @@ if (user.role === "employee" && user.type === "company") {
       window.location.href = "fmcsa-module-a.html";
     };
 
-    return;
   }
 
   /* =========================
