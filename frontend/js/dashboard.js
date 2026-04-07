@@ -439,30 +439,18 @@ if (program === "faa") {
 /* =========================
    EMPLOYEE MODULE FILTER (FINAL FIX)
 ========================= */
-
+  
 if (user?.role === "employee") {
 
   const access = getUserAccess(user.email);
 
-  /* FMCSA SUPERVISOR */
-  if (!access.supervisor) {
-    const el = document.getElementById("supervisorTrainingBtn");
-    if (el) el.closest(".module-card")?.remove();
-  }
+  /* DO NOT REMOVE MODULES */
+  /* Let button logic handle access */
 
-  /* FMCSA DER */
-  if (!access.der) {
-    const el = document.getElementById("derFmcsaBtn");
-    if (el) el.closest(".module-card")?.remove();
-  }
-
-  /* FMCSA EMPLOYEE */
-  if (!access.employee) {
-    const el = document.getElementById("employeeTrainingBtn");
-    if (el) el.closest(".module-card")?.remove();
-  }
+  console.log("Employee Access:", access);
 
 }
+
 /* =========================
    EMPLOYEE LOCK (CORRECT)
 ========================= */
