@@ -4,6 +4,36 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+   /* =========================================================
+   CERTIFICATE ACCESS (SAFE BYPASS)
+========================================================= */
+
+if (path.includes("fmcsa-certificates")) {
+
+  const userData = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!userData || !userData.email) {
+    return; // no user, just stop safely
+  }
+
+  const email = userData.email;
+
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  if (completedSupervisor || completedDER || completedEmployee) {
+    console.log("✅ Certificate access granted");
+    return; // 🔥 stops guard completely
+  }
+
+}
+
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body?.dataset?.module || "";
   const path = window.location.pathname;
@@ -169,36 +199,6 @@ if (user?.role === "employee" && user?.type === "company") {
   if (!module) return;
 
   const email = user.email;
-
-/* =========================================================
-   CERTIFICATE ACCESS (SAFE BYPASS)
-========================================================= */
-
-if (path.includes("fmcsa-certificates")) {
-
-  const userData = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!userData || !userData.email) {
-    return; // no user, just stop safely
-  }
-
-  const email = userData.email;
-
-  const completedSupervisor =
-    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-  const completedDER =
-    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-
-  const completedEmployee =
-    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-
-  if (completedSupervisor || completedDER || completedEmployee) {
-    console.log("✅ Certificate access granted");
-    return; // 🔥 stops guard completely
-  }
-
-}
 
   /* =========================================================
      PAYMENT CHECK (INDIVIDUAL ONLY)
