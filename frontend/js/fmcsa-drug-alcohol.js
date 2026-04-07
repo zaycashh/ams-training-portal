@@ -181,18 +181,19 @@ if (!drugCanvas) {
   });
 
   function updateDrugProgress() {
-    const percent = (drugCurrentPage / drugTotalPages) * 100;
-    document.getElementById("drugProgressBar").style.width = percent + "%";
+  const percent = (drugCurrentPage / drugTotalPages) * 100;
+  document.getElementById("drugProgressBar").style.width = percent + "%";
 
-    const takeQuizBtn = document.getElementById("takeDrugQuizBtn");
+  const takeQuizBtn = document.getElementById("takeDrugQuizBtn");
 
-    if (takeQuizBtn) {
-      if (drugCurrentPage === drugTotalPages) {
-        takeQuizBtn.style.display = "inline-block";
-      } else {
-        takeQuizBtn.style.display = "none";
-      }
+  if (takeQuizBtn) {
+    if (drugCurrentPage === drugTotalPages) {
+      takeQuizBtn.style.display = "inline-block";
+    } else {
+      takeQuizBtn.style.display = "none";
     }
+  }
+}
 
   /* =========================================================
      ALCOHOL PDF ENGINE
