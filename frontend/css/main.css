@@ -975,7 +975,9 @@ td{
   font-size:14px;
 }
 @media print {
-  body {
+  img {
+    filter: none !important;
+    opacity: 1 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
