@@ -101,6 +101,43 @@ Object.keys(company.usedSeats.employee).forEach(email => {
     updated = true;
   }
 });
+   /* =========================
+   🔥 NORMALIZE SUPERVISOR
+========================= */
+
+Object.keys(company.usedSeats.supervisor).forEach(email => {
+  const seat = company.usedSeats.supervisor[email];
+
+  if (typeof seat !== "object") {
+    company.usedSeats.supervisor[email] = {
+      assignedAt: Date.now(),
+      revoked: false
+    };
+    updated = true;
+  } else if (!("revoked" in seat)) {
+    seat.revoked = false;
+    updated = true;
+  }
+});
+
+/* =========================
+   🔥 NORMALIZE DER
+========================= */
+
+Object.keys(company.usedSeats.der).forEach(email => {
+  const seat = company.usedSeats.der[email];
+
+  if (typeof seat !== "object") {
+    company.usedSeats.der[email] = {
+      assignedAt: Date.now(),
+      revoked: false
+    };
+    updated = true;
+  } else if (!("revoked" in seat)) {
+    seat.revoked = false;
+    updated = true;
+  }
+});
 
 /* =========================
    🔥 SAVE FIX
