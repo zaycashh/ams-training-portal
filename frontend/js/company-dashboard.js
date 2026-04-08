@@ -326,9 +326,6 @@ function loadEmployees(companyId) {
 
      const seatAssigned = trainingType !== "None";
 
-     console.log("EMP EMAIL RAW:", emp.email);
-     console.log("EMP EMAIL CLEAN:", emp.email.trim().toLowerCase());
-
     /* =========================
    COMPLETION CHECK (FIXED)
 ========================= */
@@ -370,7 +367,8 @@ if (program === "FMCSA") {
   }
 
 }
-
+console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
+     
     /* =========================
        STATUS LABEL
     ========================= */
