@@ -338,46 +338,30 @@ function loadEmployees(companyId) {
 
     const seatAssigned = trainingType !== "None";
 
-    /* =========================
-   COMPLETION CHECK (FINAL FIX)
+/* =========================
+   COMPLETION CHECK (FORCED FIX)
 ========================= */
 
 let trainingCompleted = false;
 
-if (program === "FMCSA") {
+const keys = Object.keys(localStorage);
 
-  let key = null;
+console.log("ALL KEYS:", keys);
 
-  if (trainingType === "Supervisor") {
-    key = Object.keys(localStorage).find(k =>
-      k.startsWith("fmcsaModuleBCompleted_") &&
-      k.includes(cleanEmail)
-    );
-  }
+const matchKey = keys.find(k =>
+  k.toLowerCase().includes(cleanEmail) &&
+  k.includes("Completed")
+);
 
-  else if (trainingType === "DER") {
-    key = Object.keys(localStorage).find(k =>
-      k.startsWith("fmcsaDERCompleted_") &&
-      k.includes(cleanEmail)
-    );
-  }
+console.log("MATCH KEY FOUND:", matchKey);
 
-  else if (trainingType === "Employee") {
-    key = Object.keys(localStorage).find(k =>
-      k.startsWith("fmcsaEmployeeCompleted_") &&
-      k.includes(cleanEmail)
-    );
-  }
+const val = matchKey ? localStorage.getItem(matchKey) : null;
 
-  const val = key ? localStorage.getItem(key) : null;
+console.log("MATCH VALUE:", val);
 
-  console.log("FOUND KEY:", key);
-  console.log("VALUE:", val);
+trainingCompleted = val === "true";
 
-  trainingCompleted = val === "true";
-}
-
-console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
+console.log("FINAL RESULT:", trainingCompleted);
 
     /* =========================
        STATUS LABEL
