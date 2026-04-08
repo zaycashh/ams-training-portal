@@ -974,3 +974,32 @@ td{
 #inviteMsg{
   font-size:14px;
 }
+@media print {
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .module-header,
+  button {
+    display: none !important;
+  }
+
+  .module-container {
+    margin: 0;
+    padding: 0;
+  }
+
+  #employeeCertTemplate,
+  #supervisorCertTemplate,
+  #derCertTemplate {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+    page-break-after: avoid;
+  }
+
+}
