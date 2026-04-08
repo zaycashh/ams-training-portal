@@ -308,10 +308,15 @@ function loadEmployees(companyId) {
     return;
   }
 
+  /* =========================================================
+     🔥 LOOP FIX (YOU WERE MISSING THIS)
+  ========================================================= */
+
   employees.forEach(emp => {
 
-  console.log("EMP:", emp.email);
-  
+    const cleanEmail = emp.email.trim().toLowerCase(); // ✅ MUST BE FIRST
+
+    console.log("EMP:", cleanEmail);
 
     /* =========================
        DETERMINE TRAINING TYPE
@@ -319,47 +324,48 @@ function loadEmployees(companyId) {
 
     let trainingType = "None";
 
-   if (company.usedSeats.supervisor && company.usedSeats.supervisor[cleanEmail]) {
-     trainingType = "Supervisor";
-   } 
-   else if (company.usedSeats.der && company.usedSeats.der[cleanEmail]
-     trainingType = "DER";
-   } 
-   else if (company.usedSeats.employee && company.usedSeats.employee[cleanEmail]
-     trainingType = "Employee";
-   }
-     console.log("Training Type:", trainingType);
+    if (company.usedSeats.supervisor && company.usedSeats.supervisor[cleanEmail]) {
+      trainingType = "Supervisor";
+    } 
+    else if (company.usedSeats.der && company.usedSeats.der[cleanEmail]) { // ✅ FIXED )
+      trainingType = "DER";
+    } 
+    else if (company.usedSeats.employee && company.usedSeats.employee[cleanEmail]) { // ✅ FIXED )
+      trainingType = "Employee";
+    }
 
-     const seatAssigned = trainingType !== "None";
+    console.log("Training Type:", trainingType);
+
+    const seatAssigned = trainingType !== "None";
 
     /* =========================
-   COMPLETION CHECK (FIXED)
-========================= */
-const cleanEmail = emp.email.trim().toLowerCase();
-   
-let trainingCompleted = false;
+       COMPLETION CHECK
+    ========================= */
 
-if (program === "FMCSA") {
+    let trainingCompleted = false;
 
-  if (trainingType === "Supervisor") {
-    const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
-    console.log("SUP KEY VALUE:", val);
-    trainingCompleted = val === "true";
-  }
+    if (program === "FMCSA") {
 
-  else if (trainingType === "DER") {
-    const val = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`);
-    trainingCompleted = val === "true";
-  }
+      if (trainingType === "Supervisor") {
+        const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
+        console.log("SUP KEY VALUE:", val);
+        trainingCompleted = val === "true";
+      }
 
-  else if (trainingType === "Employee") {
-    const val = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`);
-    trainingCompleted = val === "true";
-  }
+      else if (trainingType === "DER") {
+        const val = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`);
+        trainingCompleted = val === "true";
+      }
 
-}
-     console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
-     
+      else if (trainingType === "Employee") {
+        const val = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`);
+        trainingCompleted = val === "true";
+      }
+
+    }
+
+    console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
+
     /* =========================
        STATUS LABEL
     ========================= */
@@ -390,36 +396,37 @@ if (program === "FMCSA") {
         ${
           seatAssigned
             ? `<button class="btn-secondary"
-                 onclick="revokeSeat('${emp.email}')">
+                 onclick="revokeSeat('${cleanEmail}')">
                  Revoke
                </button>`
             : `
               <button class="btn-primary"
-                onclick="assignEmployeeSeat('${emp.email}')">
+                onclick="assignEmployeeSeat('${cleanEmail}')">
                 Assign Employee
               </button>
 
               <button class="btn-primary"
-                onclick="assignSupervisorSeat('${emp.email}')">
+                onclick="assignSupervisorSeat('${cleanEmail}')">
                 Assign Supervisor
               </button>
 
               <button class="btn-primary"
-                onclick="assignDerSeat('${emp.email}')">
+                onclick="assignDerSeat('${cleanEmail}')">
                 Assign DER
               </button>
             `
         }
 
         <button class="btn-secondary"
-          onclick="removeEmployee('${emp.email}')">
+          onclick="removeEmployee('${cleanEmail}')">
           Remove
         </button>
       </td>
     `;
 
     tbody.appendChild(tr);
-  });
+
+  }); // ✅ LOOP CLOSED PROPERLY
 }
 /* =========================================================
    REMOVE EMPLOYEE
