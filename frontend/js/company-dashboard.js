@@ -329,7 +329,7 @@ function loadEmployees(companyId) {
     /* =========================
    COMPLETION CHECK (FIXED)
 ========================= */
-
+     
 let trainingCompleted = false;
 
 const cleanEmail = emp.email;
@@ -353,6 +353,7 @@ if (program === "FMCSA") {
   }
 
 }
+     console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
      
     /* =========================
        STATUS LABEL
