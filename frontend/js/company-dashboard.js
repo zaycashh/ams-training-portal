@@ -133,15 +133,21 @@ function updateSeatCounts(company) {
 
   // EMPLOYEE
   const empTotal = company?.seats?.employee?.total || 0;
-  const empUsed = Object.keys(company?.usedSeats?.employee || {}).length;
+  const empUsed = Object.keys(company?.usedSeats?.employee || {})
+  .map(e => e.trim().toLowerCase())
+  .length;
 
   // SUPERVISOR
   const supTotal = company?.seats?.supervisor?.total || 0;
-  const supUsed = Object.keys(company?.usedSeats?.supervisor || {}).length;
+  const supUsed = Object.keys(company?.usedSeats?.supervisor || {})
+  .map(e => e.trim().toLowerCase())
+  .length;
 
   // DER
   const derTotal = company?.seats?.der?.total || 0;
-  const derUsed = Object.keys(company?.usedSeats?.der || {}).length;
+  const derUsed = Object.keys(company?.usedSeats?.der || {})
+  .map(e => e.trim().toLowerCase())
+  .length
 
   // UPDATE UI
   const seatTotal = document.getElementById("seatTotal");
