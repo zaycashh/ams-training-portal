@@ -304,6 +304,9 @@ function loadEmployees(companyId) {
 
   employees.forEach(emp => {
 
+  console.log("EMP:", emp.email);
+  console.log("Training Type:", trainingType);
+
     /* =========================
        DETERMINE TRAINING TYPE
     ========================= */
