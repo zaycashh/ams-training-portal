@@ -131,46 +131,78 @@ function updateSeatCounts(company) {
     company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   }
 
-  // EMPLOYEE
+  /* =========================
+     EMPLOYEE
+  ========================= */
+
   const empTotal = company?.seats?.employee?.total || 0;
+
   const empUsed = Object.keys(company?.usedSeats?.employee || {})
-  .map(e => e.trim().toLowerCase())
-  .length;
+    .map(e => e.trim().toLowerCase())
+    .length;
 
-  // SUPERVISOR
+  const empAvailable = Math.max(0, empTotal - empUsed);
+
+  /* =========================
+     SUPERVISOR
+  ========================= */
+
   const supTotal = company?.seats?.supervisor?.total || 0;
+
   const supUsed = Object.keys(company?.usedSeats?.supervisor || {})
-  .map(e => e.trim().toLowerCase())
-  .length;
+    .map(e => e.trim().toLowerCase())
+    .length;
 
-  // DER
+  const supAvailable = Math.max(0, supTotal - supUsed);
+
+  /* =========================
+     DER
+  ========================= */
+
   const derTotal = company?.seats?.der?.total || 0;
-  const derUsed = Object.keys(company?.usedSeats?.der || {})
-  .map(e => e.trim().toLowerCase())
-  .length
 
-  // UPDATE UI
+  const derUsed = Object.keys(company?.usedSeats?.der || {})
+    .map(e => e.trim().toLowerCase())
+    .length;
+
+  const derAvailable = Math.max(0, derTotal - derUsed);
+
+  /* =========================
+     UPDATE UI — EMPLOYEE
+  ========================= */
+
   const seatTotal = document.getElementById("seatTotal");
   const seatUsed = document.getElementById("seatUsed");
   const seatRemaining = document.getElementById("seatRemaining");
 
   if (seatTotal) seatTotal.textContent = empTotal;
   if (seatUsed) seatUsed.textContent = empUsed;
-  if (seatRemaining) seatRemaining.textContent = empTotal - empUsed;
+  if (seatRemaining) seatRemaining.textContent = empAvailable;
+
+  /* =========================
+     UPDATE UI — SUPERVISOR
+  ========================= */
 
   const supTotalEl = document.getElementById("supervisorTotal");
   const supUsedEl = document.getElementById("supervisorUsed");
+  const supAvailEl = document.getElementById("supervisorAvailable");
 
   if (supTotalEl) supTotalEl.textContent = supTotal;
   if (supUsedEl) supUsedEl.textContent = supUsed;
+  if (supAvailEl) supAvailEl.textContent = supAvailable;
+
+  /* =========================
+     UPDATE UI — DER
+  ========================= */
 
   const derTotalEl = document.getElementById("derTotal");
   const derUsedEl = document.getElementById("derUsed");
+  const derAvailEl = document.getElementById("derAvailable");
 
   if (derTotalEl) derTotalEl.textContent = derTotal;
   if (derUsedEl) derUsedEl.textContent = derUsed;
+  if (derAvailEl) derAvailEl.textContent = derAvailable;
 }
-
 /* =========================================================
    ASSIGN EMPLOYEE SEAT (UPDATED)
 ========================================================= */
@@ -360,8 +392,6 @@ const val = matchKey ? localStorage.getItem(matchKey) : null;
 console.log("MATCH VALUE:", val);
 
 trainingCompleted = val === "true";
-
-console.log("FINAL RESULT:", trainingCompleted);
 
     /* =========================
        STATUS LABEL
