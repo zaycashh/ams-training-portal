@@ -3,6 +3,9 @@
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
+     
+  const path = window.location.pathname;
+
 
    /* =========================================================
    CERTIFICATE ACCESS (SAFE BYPASS)
@@ -36,7 +39,6 @@ if (path.includes("fmcsa-certificates")) {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body?.dataset?.module || "";
-  const path = window.location.pathname;
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
