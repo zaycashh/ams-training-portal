@@ -350,7 +350,7 @@ console.log("ALL KEYS:", keys);
 
 const matchKey = keys.find(k =>
   k.toLowerCase().includes(cleanEmail) &&
-  k.includes("Completed")
+  k.toLowerCase().includes("completed")
 );
 
 console.log("MATCH KEY FOUND:", matchKey);
