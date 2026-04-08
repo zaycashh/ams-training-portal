@@ -341,16 +341,20 @@ function loadEmployees(companyId) {
     /* =========================
        COMPLETION CHECK
     ========================= */
-
+    console.log("CHECKING KEY:", `fmcsaModuleBCompleted_${cleanEmail}`);
     let trainingCompleted = false;
 
     if (program === "FMCSA") {
 
-      if (trainingType === "Supervisor") {
-        const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
-        console.log("SUP KEY VALUE:", val);
-        trainingCompleted = val === "true";
-      }
+   if (trainingType === "Supervisor") {
+
+  const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
+
+  console.log("SUP KEY VALUE:", val);
+
+  trainingCompleted = val === "true";
+
+}
 
       else if (trainingType === "DER") {
         const val = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`);
