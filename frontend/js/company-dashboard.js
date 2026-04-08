@@ -350,8 +350,8 @@ function loadEmployees(companyId) {
       }
     }
 
-    const trainingCompleted =
-      localStorage.getItem(completedKey) === "true";
+  const trainingCompleted =
+  String(localStorage.getItem(completedKey)) === "true";
 
     /* =========================
        STATUS LABEL
