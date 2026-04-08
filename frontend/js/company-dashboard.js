@@ -31,12 +31,24 @@ function loadCompanyDashboard(user) {
 
 let updated = false;
 
+/* =========================
+   BASE STRUCTURE FIRST
+========================= */
+
 if (!company.seats) {
   company.seats = {};
   updated = true;
 }
 
-// 🔥 FORCE ALL SEAT TYPES
+if (!company.usedSeats) {
+  company.usedSeats = {};
+  updated = true;
+}
+
+/* =========================
+   FORCE ALL SEAT TYPES
+========================= */
+
 if (!company.seats.employee) {
   company.seats.employee = { total: 0 };
   updated = true;
@@ -52,11 +64,9 @@ if (!company.seats.der) {
   updated = true;
 }
 
-// 🔥 USED SEATS
-if (!company.usedSeats) {
-  company.usedSeats = {};
-  updated = true;
-}
+/* =========================
+   FORCE USED SEAT STRUCTURE
+========================= */
 
 if (!company.usedSeats.employee) {
   company.usedSeats.employee = {};
@@ -73,7 +83,29 @@ if (!company.usedSeats.der) {
   updated = true;
 }
 
-// 🔥 SAVE FIX
+/* =========================
+   🔥 NORMALIZE EMPLOYEE SEATS
+========================= */
+
+Object.keys(company.usedSeats.employee).forEach(email => {
+  const seat = company.usedSeats.employee[email];
+
+  if (typeof seat !== "object") {
+    company.usedSeats.employee[email] = {
+      assignedAt: Date.now(),
+      revoked: false
+    };
+    updated = true;
+  } else if (!("revoked" in seat)) {
+    seat.revoked = false;
+    updated = true;
+  }
+});
+
+/* =========================
+   🔥 SAVE FIX
+========================= */
+
 if (updated) {
   localStorage.setItem("companyProfile", JSON.stringify(company));
 }
@@ -137,9 +169,9 @@ function updateSeatCounts(company) {
 
   const empTotal = company?.seats?.employee?.total || 0;
 
-  const empUsed = Object.keys(company?.usedSeats?.employee || {})
-    .map(e => e.trim().toLowerCase())
-    .length;
+  const empUsed = Object.values(company?.usedSeats?.employee || {})
+  .filter(s => !s.revoked)
+  .length;
 
   const empAvailable = Math.max(0, empTotal - empUsed);
 
@@ -226,8 +258,9 @@ function assignEmployeeSeat() {
   }
 
   company.usedSeats.employee[email] = {
-    assignedAt: Date.now()
-  };
+  assignedAt: Date.now(),
+  revoked: false
+};
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
