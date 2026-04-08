@@ -143,29 +143,29 @@ function updateSeatCounts(company) {
 
   const empAvailable = Math.max(0, empTotal - empUsed);
 
+ /* =========================
+   SUPERVISOR
+========================= */
+
+const supTotal = company?.seats?.supervisor?.total || 0;
+
+const supUsed = Object.values(company?.usedSeats?.supervisor || {})
+  .filter(s => !s.revoked)
+  .length;
+
+const supAvailable = Math.max(0, supTotal - supUsed);
+   
   /* =========================
-     SUPERVISOR
-  ========================= */
+   DER
+========================= */
 
-  const supTotal = company?.seats?.supervisor?.total || 0;
+const derTotal = company?.seats?.der?.total || 0;
 
-  const supUsed = Object.keys(company?.usedSeats?.supervisor || {})
-    .map(e => e.trim().toLowerCase())
-    .length;
+const derUsed = Object.values(company?.usedSeats?.der || {})
+  .filter(s => !s.revoked)
+  .length;
 
-  const supAvailable = Math.max(0, supTotal - supUsed);
-
-  /* =========================
-     DER
-  ========================= */
-
-  const derTotal = company?.seats?.der?.total || 0;
-
-  const derUsed = Object.keys(company?.usedSeats?.der || {})
-    .map(e => e.trim().toLowerCase())
-    .length;
-
-  const derAvailable = Math.max(0, derTotal - derUsed);
+const derAvailable = Math.max(0, derTotal - derUsed);
 
   /* =========================
      UPDATE UI — EMPLOYEE
@@ -585,7 +585,10 @@ window.revokeSeat = function (type, email) {
 
   /* ✅ REMOVE CORRECTLY */
 
-  delete company.usedSeats[type][email];
+  company.usedSeats[type][email] = {
+  revoked: true,
+  assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
+};
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
