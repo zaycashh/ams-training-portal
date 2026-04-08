@@ -332,42 +332,27 @@ function loadEmployees(companyId) {
 
 let trainingCompleted = false;
 
+const cleanEmail = emp.email;
+
 if (program === "FMCSA") {
 
   if (trainingType === "Supervisor") {
-    trainingCompleted =
-      localStorage.getItem(`fmcsaModuleBCompleted_${emp.email}`) === "true";
+    const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
+    console.log("SUP KEY VALUE:", val);
+    trainingCompleted = val === "true";
   }
 
   else if (trainingType === "DER") {
-    trainingCompleted =
-      localStorage.getItem(`fmcsaDERCompleted_${emp.email}`) === "true";
+    const val = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`);
+    trainingCompleted = val === "true";
   }
 
   else if (trainingType === "Employee") {
-    trainingCompleted =
-      localStorage.getItem(`fmcsaEmployeeCompleted_${emp.email}`) === "true";
-  }
-
-} else {
-
-  if (trainingType === "Supervisor") {
-    trainingCompleted =
-      localStorage.getItem(`supervisorTrainingCompleted_${emp.email}`) === "true";
-  }
-
-  else if (trainingType === "DER") {
-    trainingCompleted =
-      localStorage.getItem(`derTrainingCompleted_${emp.email}`) === "true";
-  }
-
-  else if (trainingType === "Employee") {
-    trainingCompleted =
-      localStorage.getItem(`employeeTrainingCompleted_${emp.email}`) === "true";
+    const val = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`);
+    trainingCompleted = val === "true";
   }
 
 }
-console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
      
     /* =========================
        STATUS LABEL
