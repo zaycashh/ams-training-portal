@@ -313,13 +313,13 @@ function loadEmployees(companyId) {
 
     let trainingType = "None";
 
-   if (company.usedSeats.supervisor && company.usedSeats.supervisor[emp.email]) {
+   if (company.usedSeats.supervisor && company.usedSeats.supervisor[cleanEmail]) {
      trainingType = "Supervisor";
    } 
-   else if (company.usedSeats.der && company.usedSeats.der[emp.email]) {
+   else if (company.usedSeats.der && company.usedSeats.der[cleanEmail]
      trainingType = "DER";
    } 
-   else if (company.usedSeats.employee && company.usedSeats.employee[emp.email]) {
+   else if (company.usedSeats.employee && company.usedSeats.employee[cleanEmail]
      trainingType = "Employee";
    }
      console.log("Training Type:", trainingType);
@@ -329,10 +329,9 @@ function loadEmployees(companyId) {
     /* =========================
    COMPLETION CHECK (FIXED)
 ========================= */
-     
+const cleanEmail = emp.email.trim().toLowerCase();
+   
 let trainingCompleted = false;
-
-const cleanEmail = emp.email;
 
 if (program === "FMCSA") {
 
