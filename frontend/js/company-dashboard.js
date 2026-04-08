@@ -327,31 +327,46 @@ function loadEmployees(companyId) {
      const seatAssigned = trainingType !== "None";
 
     /* =========================
-       COMPLETION CHECK
-    ========================= */
+   COMPLETION CHECK (FIXED)
+========================= */
 
-    let completedKey = "";
+let trainingCompleted = false;
 
-    if (program === "FMCSA") {
-      if (trainingType === "Supervisor") {
-        completedKey = `fmcsaModuleBCompleted_${emp.email}`;
-      } else if (trainingType === "DER") {
-        completedKey = `fmcsaDERCompleted_${emp.email}`;
-      } else {
-        completedKey = `fmcsaEmployeeCompleted_${emp.email}`;
-      }
-    } else {
-      if (trainingType === "Supervisor") {
-        completedKey = `supervisorTrainingCompleted_${emp.email}`;
-      } else if (trainingType === "DER") {
-        completedKey = `derTrainingCompleted_${emp.email}`;
-      } else {
-        completedKey = `employeeTrainingCompleted_${emp.email}`;
-      }
-    }
+if (program === "FMCSA") {
 
-  const trainingCompleted =
-  String(localStorage.getItem(completedKey)) === "true";
+  if (trainingType === "Supervisor") {
+    trainingCompleted =
+      localStorage.getItem(`fmcsaModuleBCompleted_${emp.email}`) === "true";
+  }
+
+  else if (trainingType === "DER") {
+    trainingCompleted =
+      localStorage.getItem(`fmcsaDERCompleted_${emp.email}`) === "true";
+  }
+
+  else if (trainingType === "Employee") {
+    trainingCompleted =
+      localStorage.getItem(`fmcsaEmployeeCompleted_${emp.email}`) === "true";
+  }
+
+} else {
+
+  if (trainingType === "Supervisor") {
+    trainingCompleted =
+      localStorage.getItem(`supervisorTrainingCompleted_${emp.email}`) === "true";
+  }
+
+  else if (trainingType === "DER") {
+    trainingCompleted =
+      localStorage.getItem(`derTrainingCompleted_${emp.email}`) === "true";
+  }
+
+  else if (trainingType === "Employee") {
+    trainingCompleted =
+      localStorage.getItem(`employeeTrainingCompleted_${emp.email}`) === "true";
+  }
+
+}
 
     /* =========================
        STATUS LABEL
