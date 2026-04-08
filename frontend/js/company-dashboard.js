@@ -305,7 +305,7 @@ function loadEmployees(companyId) {
   employees.forEach(emp => {
 
   console.log("EMP:", emp.email);
-  console.log("Training Type:", trainingType);
+  
 
     /* =========================
        DETERMINE TRAINING TYPE
@@ -322,6 +322,7 @@ function loadEmployees(companyId) {
    else if (company.usedSeats.employee && company.usedSeats.employee[emp.email]) {
      trainingType = "Employee";
    }
+     console.log("Training Type:", trainingType);
 
      const seatAssigned = trainingType !== "None";
 
