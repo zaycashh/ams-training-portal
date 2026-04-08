@@ -986,7 +986,7 @@ td{
 .print-mode #supervisorCertTemplate,
 .print-mode #derCertTemplate {
   position: fixed;
-  top: 40;
+  top: 70;
   left: 0;
   width: 100%;
   height: 100%;
