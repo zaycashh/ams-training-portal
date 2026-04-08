@@ -976,6 +976,11 @@ td{
 }
 @media print {
 
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
   body {
     margin: 0;
     padding: 0;
@@ -997,9 +1002,14 @@ td{
     position: absolute;
     top: 0;
     left: 0;
-    margin: 0;
     width: 100%;
+    transform: scale(0.95);
+    transform-origin: top left;
     page-break-after: avoid;
+  }
+
+  * {
+    page-break-inside: avoid !important;
   }
 
 }
