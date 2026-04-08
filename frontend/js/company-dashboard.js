@@ -787,10 +787,4 @@ function inviteEmployee() {
 
   input.value = "";
 
-  /* =========================
-     DEBUG (VERY IMPORTANT)
-  ========================= */
-
-  console.log("Invite Created:", inviteCode);
-  console.log("All Invites:", company.invites);
 }
