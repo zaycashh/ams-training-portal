@@ -994,8 +994,3 @@ td{
   align-items: center;
   justify-content: center;
 }
-.print-mode #employeeCertTemplate img,
-.print-mode #supervisorCertTemplate img,
-.print-mode #derCertTemplate img {
-  width: 90%;
-}
