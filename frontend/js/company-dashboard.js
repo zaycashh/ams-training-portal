@@ -310,15 +310,17 @@ function loadEmployees(companyId) {
 
     let trainingType = "None";
 
-    if (company.usedSeats.supervisor?.[emp.email]) {
-      trainingType = "Supervisor";
-    } else if (company.usedSeats.der?.[emp.email]) {
-      trainingType = "DER";
-    } else if (company.usedSeats.employee?.[emp.email]) {
-      trainingType = "Employee";
-    }
+   if (company.usedSeats.supervisor && company.usedSeats.supervisor[emp.email]) {
+     trainingType = "Supervisor";
+   } 
+   else if (company.usedSeats.der && company.usedSeats.der[emp.email]) {
+     trainingType = "DER";
+   } 
+   else if (company.usedSeats.employee && company.usedSeats.employee[emp.email]) {
+     trainingType = "Employee";
+   }
 
-    const seatAssigned = trainingType !== "None";
+     const seatAssigned = trainingType !== "None";
 
     /* =========================
        COMPLETION CHECK
