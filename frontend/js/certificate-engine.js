@@ -18,7 +18,6 @@ function generateCertificateId(prefix = "AMS") {
   return `${prefix}-${random}`;
 }
 
-
 /* =========================================================
    STORE CERTIFICATE (PER USER)
 ========================================================= */
