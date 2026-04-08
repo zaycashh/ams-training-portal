@@ -182,9 +182,9 @@ function getSeatStats(company) {
 
   const total = company?.seats?.employee?.total ?? 0;
 
-  const used = Object.keys(
-    company?.usedSeats?.employee || {}
-  ).length;
+  const used = Object.values(company?.usedSeats?.employee || {})
+  .filter(s => !s.revoked)
+  .length;
 
   const remaining = total - used;
 
@@ -459,8 +459,6 @@ const matchKey = keys.find(k =>
 );
 
 const val = matchKey ? localStorage.getItem(matchKey) : null;
-
-console.log("MATCH VALUE:", val);
 
 trainingCompleted = val === "true";
 
