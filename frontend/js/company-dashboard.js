@@ -339,36 +339,45 @@ function loadEmployees(companyId) {
     const seatAssigned = trainingType !== "None";
 
     /* =========================
-       COMPLETION CHECK
-    ========================= */
-    console.log("CHECKING KEY:", `fmcsaModuleBCompleted_${cleanEmail}`);
-    let trainingCompleted = false;
+   COMPLETION CHECK (FINAL FIX)
+========================= */
 
-    if (program === "FMCSA") {
+let trainingCompleted = false;
 
-   if (trainingType === "Supervisor") {
+if (program === "FMCSA") {
 
-  const val = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`);
+  let key = null;
 
-  console.log("SUP KEY VALUE:", val);
+  if (trainingType === "Supervisor") {
+    key = Object.keys(localStorage).find(k =>
+      k.startsWith("fmcsaModuleBCompleted_") &&
+      k.includes(cleanEmail)
+    );
+  }
+
+  else if (trainingType === "DER") {
+    key = Object.keys(localStorage).find(k =>
+      k.startsWith("fmcsaDERCompleted_") &&
+      k.includes(cleanEmail)
+    );
+  }
+
+  else if (trainingType === "Employee") {
+    key = Object.keys(localStorage).find(k =>
+      k.startsWith("fmcsaEmployeeCompleted_") &&
+      k.includes(cleanEmail)
+    );
+  }
+
+  const val = key ? localStorage.getItem(key) : null;
+
+  console.log("FOUND KEY:", key);
+  console.log("VALUE:", val);
 
   trainingCompleted = val === "true";
-
 }
 
-      else if (trainingType === "DER") {
-        const val = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`);
-        trainingCompleted = val === "true";
-      }
-
-      else if (trainingType === "Employee") {
-        const val = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`);
-        trainingCompleted = val === "true";
-      }
-
-    }
-
-    console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
+console.log("TRAINING COMPLETED VALUE:", trainingCompleted);
 
     /* =========================
        STATUS LABEL
