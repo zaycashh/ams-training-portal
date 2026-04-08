@@ -113,6 +113,7 @@ Object.keys(company.usedSeats.supervisor).forEach(email => {
       assignedAt: Date.now(),
       revoked: false
     };
+     
     updated = true;
   } else if (!("revoked" in seat)) {
     seat.revoked = false;
@@ -284,7 +285,9 @@ function assignEmployeeSeat() {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.employee?.total || 0;
-  const used = Object.keys(company.usedSeats.employee || {}).length;
+  const used = Object.values(company.usedSeats.employee || {})
+  .filter(s => !s.revoked)
+  .length;
 
   if (used >= total) {
     return alert("No employee seats available");
@@ -319,7 +322,9 @@ function assignSupervisorSeat() {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.supervisor?.total || 0;
-  const used = Object.keys(company.usedSeats.supervisor || {}).length;
+  const used = Object.values(company.usedSeats.supervisor || {})
+  .filter(s => !s.revoked)
+  .length;
 
   if (used >= total) {
     return alert("No supervisor seats available");
@@ -330,8 +335,9 @@ function assignSupervisorSeat() {
   }
 
   company.usedSeats.supervisor[email] = {
-    assignedAt: Date.now()
-  };
+  assignedAt: Date.now(),
+  revoked: false
+};
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
@@ -352,7 +358,9 @@ function assignDerSeat() {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.der?.total || 0;
-  const used = Object.keys(company.usedSeats.der || {}).length;
+  const used = Object.values(company.usedSeats.der || {})
+  .filter(s => !s.revoked)
+  .length;
 
   if (used >= total) {
     return alert("No DER seats available");
@@ -363,8 +371,9 @@ function assignDerSeat() {
   }
 
   company.usedSeats.der[email] = {
-    assignedAt: Date.now()
-  };
+  assignedAt: Date.now(),
+  revoked: false
+};
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
@@ -418,8 +427,6 @@ function loadEmployees(companyId) {
 
     const cleanEmail = emp.email.trim().toLowerCase(); // ✅ MUST BE FIRST
 
-    console.log("EMP:", cleanEmail);
-
     /* =========================
        DETERMINE TRAINING TYPE
     ========================= */
@@ -436,8 +443,6 @@ function loadEmployees(companyId) {
       trainingType = "Employee";
     }
 
-    console.log("Training Type:", trainingType);
-
     const seatAssigned = trainingType !== "None";
 
 /* =========================
@@ -448,14 +453,10 @@ let trainingCompleted = false;
 
 const keys = Object.keys(localStorage);
 
-console.log("ALL KEYS:", keys);
-
 const matchKey = keys.find(k =>
   k.toLowerCase().includes(cleanEmail) &&
   k.toLowerCase().includes("completed")
 );
-
-console.log("MATCH KEY FOUND:", matchKey);
 
 const val = matchKey ? localStorage.getItem(matchKey) : null;
 
