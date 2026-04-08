@@ -167,27 +167,6 @@ const employeeCompleted =
 localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 
 /* ===============================
-ACCESS CONTROL
-=============================== */
-
- if (!supervisorPurchased && !derPurchased && !employeeCompleted) {
-
-  alert("FMCSA Training requires purchase.");
-  window.location.replace("dashboard.html");
-  return;
-}
-/* ✅ FIXED COMPLETION FLAGS */
-
-const modACompleted =
-  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-
-const modBCompleted =
-  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-const derCompleted =
-  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-
-/* ===============================
 FINAL ACCESS CHECK
 =============================== */
 
