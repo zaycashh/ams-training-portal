@@ -393,7 +393,7 @@ console.log("FINAL RESULT:", trainingCompleted);
         ${
           seatAssigned
             ? `<button class="btn-secondary"
-                 onclick="revokeSeat('${cleanEmail}')">
+                 onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
                  Revoke
                </button>`
             : `
