@@ -613,3 +613,27 @@ font-weight:600;
 padding:10px;
 border-bottom:1px solid #e5e7eb;
 }
+/* =========================
+   FAA / FMCSA TOGGLE
+========================= */
+
+.reg-type-toggle{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:20px 0;
+}
+
+.reg-toggle{
+  padding:10px 18px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#dce3ef;
+  font-weight:600;
+}
+
+.reg-toggle.active{
+  background:#0b1d3a;
+  color:#fff;
+}
