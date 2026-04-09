@@ -166,43 +166,6 @@ const derPurchased =
 const employeeCompleted =
 localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 
-/* ===============================
-FINAL ACCESS CHECK
-=============================== */
-
-if (
-  !modACompleted &&
-  !modBCompleted &&
-  !derCompleted &&
-  !employeeCompleted
-) {
-  window.location.replace("dashboard.html");
-  return;
-}
-  
-/* OPTIONAL 30 DAY EXPIRATION */
-
-const start = localStorage.getItem("fmcsa_start_date");
-
-if(start){
-
-const DAY_MS = 86400000;
-const LIMIT_DAYS = 30;
-
-const elapsed = Date.now() - Number(start);
-const daysUsed = Math.floor(elapsed / DAY_MS);
-
-if(daysUsed >= LIMIT_DAYS){
-
-alert("FMCSA training window expired. Repurchase required.");
-window.location.replace("dashboard.html");
-return;
-
-}
-
-}
-
-})();
 </script>
 
 <main class="module-container cert-container">
@@ -517,11 +480,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const employeeCompleted =
     localStorage.getItem("fmcsaEmployeeCompleted") === "true";
   
-  /* IF NOTHING COMPLETED RETURN */
-  if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
-    window.location.replace("dashboard.html");
-    return;
-  }
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+
+// 🚀 ALLOW COMPANY ADMIN VIEW
+if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+  window.location.replace("dashboard.html");
+  return;
+}
 
   /* ===============================
   URL CONTROL
