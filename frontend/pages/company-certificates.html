@@ -80,7 +80,25 @@ const emails = new Set();
     const key = `amsCertificates_${email}`;
     const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
-    certs.forEach(cert => {
+    certs
+  .filter(cert => {
+
+    // 🔥 ONLY SHOW FINAL SUPERVISOR CERT
+    if (cert.type === "fmcsa_supervisor") return true;
+
+    // 🔥 SHOW EMPLOYEE / DER NORMAL
+    if (cert.type === "fmcsa_employee") return true;
+    if (cert.type === "fmcsa_der") return true;
+
+    // 🔥 FAA (if needed)
+    if (cert.type === "faa_employee") return true;
+    if (cert.type === "faa_supervisor") return true;
+    if (cert.type === "faa_der") return true;
+
+    return false;
+
+  })
+  .forEach(cert => {
 
       /* =========================
          🔥 PROGRAM FILTER (IMPORTANT)
