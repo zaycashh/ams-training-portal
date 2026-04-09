@@ -66,3 +66,91 @@ body {
   opacity: .9;
   font-size: 15px;
 }
+/* ===============================
+   PAGE LAYOUT (DASHBOARD + PAGES)
+================================ */
+
+.dashboard-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* ===============================
+   GRID SYSTEM
+================================ */
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ===============================
+   CARD SYSTEM
+================================ */
+
+.module-card {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+}
+
+.module-card h2 {
+  margin-bottom: 10px;
+}
+
+.module-card p {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+/* ===============================
+   CERTIFICATE PAGE
+================================ */
+
+.cert-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.cert-admin-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+/* ===============================
+   TABLE (CERTIFICATES)
+================================ */
+
+.cert-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.cert-table th {
+  text-align: left;
+  background: #f3f4f6;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.cert-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cert-table tr:hover {
+  background: #f9fafb;
+}
