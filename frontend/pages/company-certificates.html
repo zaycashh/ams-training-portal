@@ -75,65 +75,36 @@ const emails = new Set();
 
   let hasData = false;
 
-  emails.forEach(email => {
+ emails.forEach(email => {
 
-    const key = `amsCertificates_${email}`;
-    const certs = JSON.parse(localStorage.getItem(key) || "[]");
+  const key = `amsCertificates_${email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
-    certs
-  .filter(cert => {
+  certs
+    .filter(...)
+    .forEach(cert => {
 
-    if (!cert.type) return false;
+      hasData = true;
 
-    const type = cert.type.toLowerCase();
+      const tr = document.createElement("tr");
 
-    /* =========================
-       🔥 PROGRAM LOCK FIRST
-    ========================= */
+      tr.innerHTML = `
+        <td>${email}</td>
+        <td>${formatCourse(cert)}</td>
+        <td>${formatDate(cert)}</td>
+        <td>
+          <button class="btn-primary"
+            onclick="viewCert('${cert.id}', '${email}')">
+            View
+          </button>
+        </td>
+      `;
 
-    if (program === "FMCSA" && !type.includes("fmcsa")) return false;
-    if (program === "FAA" && !type.includes("faa")) return false;
-
-    /* =========================
-       🔥 FINAL CERT TYPES ONLY
-    ========================= */
-
-    if (type === "fmcsa_supervisor") return true;
-    if (type === "fmcsa_employee") return true;
-    if (type === "fmcsa_der") return true;
-
-    if (type === "faa_supervisor") return true;
-    if (type === "faa_employee") return true;
-    if (type === "faa_der") return true;
-
-    return false;
-
-  })
-  .forEach(cert => {
-
-    hasData = true;
-
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${email}</td>
-      <td>${formatCourse(cert)}</td>
-      <td>${formatDate(cert)}</td>
-      <td>
-        <button class="btn-primary"
-          onclick="viewCert('${cert.id}', '${email}')">
-          View
-        </button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-
-  });
+      tbody.appendChild(tr);
 
     });
 
-  });
+});
 
   if (!hasData) {
     tbody.innerHTML = `
