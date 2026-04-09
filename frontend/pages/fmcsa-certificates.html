@@ -170,12 +170,14 @@ localStorage.getItem("fmcsaEmployeeCompleted") === "true";
 FINAL ACCESS CHECK
 =============================== */
 
-if (
-  !modACompleted &&
-  !modBCompleted &&
-  !derCompleted &&
-  !employeeCompleted
-) {
+const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
+
+/* ===============================
+ALLOW DIRECT CERT VIEW (FIX)
+=============================== */
+
+if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
   window.location.replace("dashboard.html");
   return;
 }
@@ -542,6 +544,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedCert = null;
 
   if (certId) {
+    
+// 🔥 allow company admin to view ANY cert by id
+// (no completion required)
 
     const key = `amsCertificates_${email}`;
     const registry = JSON.parse(localStorage.getItem(key) || "[]");
