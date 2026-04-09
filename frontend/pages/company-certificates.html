@@ -81,7 +81,25 @@ const emails = new Set();
   const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
   certs
-    .filter(...)
+    .filter(cert => {
+
+      if (!cert.type) return false;
+
+      const type = cert.type.toLowerCase();
+
+      if (program === "FMCSA" && !type.includes("fmcsa")) return false;
+      if (program === "FAA" && !type.includes("faa")) return false;
+
+      return [
+        "fmcsa_supervisor",
+        "fmcsa_employee",
+        "fmcsa_der",
+        "faa_supervisor",
+        "faa_employee",
+        "faa_der"
+      ].includes(type);
+
+    })
     .forEach(cert => {
 
       hasData = true;
@@ -105,19 +123,6 @@ const emails = new Set();
     });
 
 });
-
-  if (!hasData) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="4" style="text-align:center;">
-          No certificates found for this program.
-        </td>
-      </tr>
-    `;
-  }
-
-});
-
 /* =========================
    FORMAT COURSE NAME
 ========================= */
