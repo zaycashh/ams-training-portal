@@ -5,7 +5,17 @@
 document.addEventListener("DOMContentLoaded", function () {
      
   const path = window.location.pathname;
+   
+   /* =========================
+   ✅ ALLOW CERTIFICATE PAGES
+========================= */
 
+if (
+  path.includes("fmcsa-certificates.html") ||
+  path.includes("faa-certificates.html")
+) {
+  return; // 🚀 DO NOT BLOCK CERT PAGES
+}
 
    /* =========================================================
    CERTIFICATE ACCESS (SAFE BYPASS)
