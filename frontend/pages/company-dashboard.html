@@ -7,7 +7,79 @@
 
   <link rel="stylesheet" href="/ams-training-portal/frontend/css/main.css" />
 </head>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
+  const tbody = document.getElementById("certTableBody");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company || !company.usedSeats) {
+    tbody.innerHTML = "<tr><td colspan='4'>No company data found</td></tr>";
+    return;
+  }
+
+  let allCerts = [];
+
+  // 🔥 LOOP ALL EMPLOYEES FROM SEATS
+  ["employee", "supervisor", "der"].forEach(type => {
+
+    const users = company.usedSeats[type] || {};
+
+    Object.keys(users).forEach(email => {
+
+      const key = `amsCertificates_${email}`;
+      const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+      certs.forEach(cert => {
+        allCerts.push({
+          email,
+          name: cert.name || email,
+          course: cert.course,
+          date: cert.date,
+          id: cert.id
+        });
+      });
+
+    });
+
+  });
+
+  // ❗ NO CERTS
+  if (!allCerts.length) {
+    tbody.innerHTML = "<tr><td colspan='4'>No certificates found</td></tr>";
+    return;
+  }
+
+  // 🔥 RENDER
+  allCerts.forEach(cert => {
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${cert.name}</td>
+      <td>${cert.course}</td>
+      <td>${new Date(cert.date).toLocaleDateString()}</td>
+      <td>
+        <button class="btn-primary"
+          onclick="viewCert('${cert.id}')">
+          View
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+});
+
+// 🔥 VIEW CERT
+function viewCert(id) {
+  window.location.href = `fmcsa-certificates.html?id=${id}`;
+}
+</script>
+  
 <body data-role="company-admin">
 
 <main class="module-container">
