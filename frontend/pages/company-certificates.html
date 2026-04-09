@@ -166,6 +166,13 @@ function viewCert(id, email){
     return;
   }
 
+  if (cert.type && cert.type.toLowerCase().includes("fmcsa")) {
+    window.location.href = "fmcsa-certificates.html?id=" + id;
+  } else {
+    window.location.href = "faa-certificates.html?id=" + id;
+  }
+}
+
 /* =========================
    NAVIGATION
 ========================= */
@@ -173,6 +180,7 @@ function viewCert(id, email){
 function goDashboard(){
   window.location.href = "dashboard.html";
 }
+
 </script>
 
 </body>
