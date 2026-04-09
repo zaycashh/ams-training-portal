@@ -482,6 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const params = new URLSearchParams(window.location.search);
   const certId = params.get("id");
+  const type = params.get("type");
 
 // 🚀 ALLOW COMPANY ADMIN VIEW
 if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
@@ -667,7 +668,8 @@ if (employeeCompleted) {
 }
   
 });
-  
+
+})(); 
 </script>
   
 
