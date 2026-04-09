@@ -487,7 +487,20 @@ trainingCompleted = val === "true";
      <td>${emp.email}</td>
      <td>Employee</td>
      <td>${trainingType}</td>
-     <td>${statusLabel}</td>
+     <td>
+  ${statusLabel}
+
+  ${
+    statusLabel === "Completed"
+      ? `<br>
+         <button class="btn-primary"
+           onclick="viewEmployeeCert('${cleanEmail}')">
+           View Certificate
+         </button>`
+      : ""
+  }
+
+</td>
      <td>
    
        ${
@@ -810,4 +823,22 @@ function inviteEmployee() {
 
   input.value = "";
 
+}
+
+function viewEmployeeCert(email) {
+
+  const key = `amsCertificates_${email}`;
+  const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+  if (!certs.length) {
+    alert("No certificate found for this employee");
+    return;
+  }
+
+  // 🔥 Get latest certificate
+  const latestCert = certs[certs.length - 1];
+
+  // 🔥 Redirect to certificate page
+  window.location.href =
+    `fmcsa-certificates.html?id=${latestCert.id}`;
 }
