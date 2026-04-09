@@ -484,8 +484,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const certId = params.get("id");
   const type = params.get("type");
 
-// 🚀 ALLOW COMPANY ADMIN VIEW
-if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+
+// 🚀 ALLOW COMPANY ADMIN VIEW (FINAL FIX)
+const role = user?.role;
+
+if (
+  !certId &&
+  role !== "company_admin" &&
+  !modACompleted &&
+  !modBCompleted &&
+  !derCompleted &&
+  !employeeCompleted
+) {
   window.location.replace("dashboard.html");
   return;
 }
