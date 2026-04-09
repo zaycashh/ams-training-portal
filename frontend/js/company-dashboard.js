@@ -528,6 +528,10 @@ tr.innerHTML = `
 `;
 
 tbody.appendChild(tr);
+
+});
+   
+}
      
 /* =========================================================
    REMOVE EMPLOYEE
