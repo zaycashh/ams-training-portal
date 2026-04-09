@@ -83,46 +83,53 @@ const emails = new Set();
     certs
   .filter(cert => {
 
-    // 🔥 ONLY SHOW FINAL SUPERVISOR CERT
-    if (cert.type === "fmcsa_supervisor") return true;
+    if (!cert.type) return false;
 
-    // 🔥 SHOW EMPLOYEE / DER NORMAL
-    if (cert.type === "fmcsa_employee") return true;
-    if (cert.type === "fmcsa_der") return true;
+    const type = cert.type.toLowerCase();
 
-    // 🔥 FAA (if needed)
-    if (cert.type === "faa_employee") return true;
-    if (cert.type === "faa_supervisor") return true;
-    if (cert.type === "faa_der") return true;
+    /* =========================
+       🔥 PROGRAM LOCK FIRST
+    ========================= */
+
+    if (program === "FMCSA" && !type.includes("fmcsa")) return false;
+    if (program === "FAA" && !type.includes("faa")) return false;
+
+    /* =========================
+       🔥 FINAL CERT TYPES ONLY
+    ========================= */
+
+    if (type === "fmcsa_supervisor") return true;
+    if (type === "fmcsa_employee") return true;
+    if (type === "fmcsa_der") return true;
+
+    if (type === "faa_supervisor") return true;
+    if (type === "faa_employee") return true;
+    if (type === "faa_der") return true;
 
     return false;
 
   })
   .forEach(cert => {
 
-      /* =========================
-         🔥 PROGRAM FILTER (IMPORTANT)
-      ========================= */
+    hasData = true;
 
-      if (program === "FMCSA" && !cert.type?.startsWith("fmcsa")) return;
-      if (program === "FAA" && !cert.type?.startsWith("faa")) return;
+    const tr = document.createElement("tr");
 
-      hasData = true;
+    tr.innerHTML = `
+      <td>${email}</td>
+      <td>${formatCourse(cert)}</td>
+      <td>${formatDate(cert)}</td>
+      <td>
+        <button class="btn-primary"
+          onclick="viewCert('${cert.id}', '${email}')">
+          View
+        </button>
+      </td>
+    `;
 
-      const tr = document.createElement("tr");
+    tbody.appendChild(tr);
 
-      tr.innerHTML = `
-        <td>${email}</td>
-        <td>${formatCourse(cert)}</td>
-        <td>${formatDate(cert)}</td>
-        <td>
-          <button class="btn-primary" onclick="viewCert('${cert.id}', '${email}')">
-            View
-          </button>
-        </td>
-      `;
-
-      tbody.appendChild(tr);
+  });
 
     });
 
