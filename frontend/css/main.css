@@ -9,7 +9,7 @@
 }
 
 /* ===============================
-   BASE
+   PAGE BASE
 ================================ */
 body {
   background: #f4f6f8;
@@ -18,14 +18,62 @@ body {
 }
 
 /* ===============================
+   AUTH (LOGIN / REGISTER)
+================================ */
+.auth-container {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-form .form-row {
+  margin-bottom: 16px;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* ===============================
    BUTTONS
 ================================ */
 .btn-primary {
-  padding: 10px 16px;
+  flex: 1;
+  padding: 12px;
   background: #2563eb;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
 }
@@ -35,10 +83,10 @@ body {
 }
 
 .btn-secondary {
-  padding: 10px 16px;
+  padding: 12px;
   background: #e5e7eb;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
 }
@@ -48,72 +96,520 @@ body {
 }
 
 /* ===============================
-   HEADER
+   DASHBOARD
 ================================ */
-.portal-header {
-  background: #0f2a4a;
-  color: white;
-  padding: 50px 20px;
-  text-align: center;
-}
-
-.portal-header h1 {
-  font-size: 32px;
-  margin-bottom: 6px;
-}
-
-/* ===============================
-   PAGE LAYOUT
-================================ */
-.dashboard-container,
-.cert-container {
+.dashboard-container {
   max-width: 1100px;
   margin: 40px auto;
   padding: 20px;
 }
 
-/* ===============================
-   CARDS
-================================ */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+/* 🔒 Fix logout button sizing */
+.dashboard-header .btn-secondary {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
 .module-card {
   background: #ffffff;
-  padding: 22px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.module-card h2 {
+  margin-bottom: 10px;
+}
+
+.module-card p {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.module-card.locked {
+  opacity: 0.85;
 }
 
 /* ===============================
-   CERT PAGE
+   DASHBOARD SECTIONS
 ================================ */
-.cert-admin-container {
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+}
+
+.section-note {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+.section-divider {
+  margin: 40px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+/* ===============================
+   FMCSA SECTION
+================================ */
+.fmcsa-section {
+  background: #fff8e6;
+  border: 1px solid #f0d28c;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.fmcsa-section h2 {
+  margin-top: 0;
+}
+
+.fmcsa-section .section-note {
+  color: #8a5a00;
+  font-weight: 500;
+}
+
+/* ===============================
+   MODULE PAGES
+================================ */
+.module-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.module-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.module-nav button {
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.module-section {
   background: #ffffff;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* ===============================
-   TABLE
+   UTILITIES
 ================================ */
-.cert-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.hidden {
+  display: none !important;
 }
+/* =========================
+   MODULE NAV STATES
+========================= */
 
-.cert-table th {
-  text-align: left;
-  background: #f3f4f6;
-  padding: 12px;
+.module-nav button.active {
+  background-color: #2563eb; /* blue */
+  color: #fff;
   font-weight: 600;
 }
 
-.cert-table td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+.module-nav button.completed {
+  background-color: #16a34a; /* green */
+  color: #fff;
 }
 
-.cert-table tr:hover {
+.module-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pdf-viewer {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+#pdfCanvas {
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.pdf-controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-wrapper {
+  height: 8px;
+  background: #eee;
+  margin-top: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #2c7be5;
+  transition: width 0.3s ease;
+}
+
+.quiz-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.quiz-nav button {
+  flex: 0 0 auto !important;   /* stop flex stretching */
+  width: 140px !important;     /* fixed width */
+}
+/* ===============================
+   PDF VIEWER (Module A Style)
+================================ */
+.pdf-viewer {
+  max-width: 850px;          /* 🔥 matches Module A width */
+  margin: 0 auto 20px auto;  /* center + spacing below */
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.pdf-viewer canvas {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+}
+
+.pdf-controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-wrapper {
+  height: 8px;
+  background: #eee;
+  margin-top: 15px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#drugProgressBar {
+  height: 100%;
+  width: 0%;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+/* ================================
+   QUIZ CARD STYLING
+================================ */
+
+.quiz-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.quiz-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.quiz-question h3 {
+  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.quiz-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quiz-option:hover {
   background: #f9fafb;
+  border-color: #2563eb;
+}
+
+.quiz-option input {
+  margin-right: 10px;
+}
+
+.result-box {
+  padding: 16px;
+  margin-top: 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.result-box.pass {
+  background: #e6f4ea;
+  color: #166534;
+}
+
+.result-box.fail {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.badge {
+  background: #e6f4ea;
+  color: #1e7e34;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 6px;
+  display: inline-block;
+}
+/* =========================
+   TOAST STYLE
+========================= */
+.ams-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #222;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.ams-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* =========================
+   TOAST SYSTEM
+========================= */
+.ams-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  color: #fff;
+  min-width: 250px;
+}
+
+/* Visible */
+.ams-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Types */
+.ams-toast.info {
+  background: #2c3e50;
+}
+
+.ams-toast.success {
+  background: #27ae60;
+}
+
+.ams-toast.warning {
+  background: #b8860b;
+}
+
+.ams-toast.error {
+  background: #c0392b;
+}
+/* ===============================
+   BACK LINK (REGISTRATION NAV)
+================================ */
+.back-link {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.back-link a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2563eb;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
+/* =========================
+   FMCSA PROGRESS BAR
+========================= */
+
+.fmcsa-progress-wrapper {
+  margin: 10px 0 20px 0;
+}
+
+.fmcsa-progress-bar{
+height:8px;
+background:#e5e7eb;
+border-radius:6px;
+overflow:hidden;
+}
+
+#fmcsaProgressFill{
+height:100%;
+background:#2563eb;
+border-radius:6px;
+transition:width .3s ease;
+}
+
+#fmcsaProgressFill {
+  height: 100%;
+  width: 0%;
+  background: #2563eb;
+  transition: width 0.4s ease;
+}
+
+#fmcsaProgressText {
+  font-size: 13px;
+  margin-top: 6px;
+  color: #555;
+}
+.fmcsa-section .modules-grid{
+  margin-top:20px;
+}
+
+.module-card h3{
+  margin-top:0;
+}
+/* Match FMCSA DER box to supervisor bundle color */
+.fmcsa-der-card {
+  background: #efe6d1 !important;
+  border: 1px solid #e1c88b;
+  border-radius: 8px;
+}
+
+.portal-header h1 {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.portal-header p {
+  opacity: 0.9;
+  font-size: 16px;
+}
+
+/* Training cards grid */
+
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+/* Card styling */
+
+.training-card {
+  background: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.training-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+/* Section spacing */
+
+.section-block {
+  margin-top: 40px;
+}
+/* Make bundle modules equal width */
+
+.bundle-modules {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* When only one module exists (DER section) */
+.bundle-section .bundle-modules:has(.module-card:only-child) {
+  grid-template-columns: 1fr;
+  max-width: 500px;
+}
+.training-date{
+display:inline-block;
+margin-top:8px;
+font-size:12px;
+background:#e6f4ea;
+color:#1e7e34;
+padding:5px 10px;
+border-radius:6px;
+font-weight:600;
+}
+.cert-table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+.cert-table th{
+text-align:left;
+background:#f3f4f6;
+padding:10px;
+font-weight:600;
+}
+
+.cert-table td{
+padding:10px;
+border-bottom:1px solid #e5e7eb;
 }
