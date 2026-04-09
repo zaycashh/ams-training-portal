@@ -6,45 +6,15 @@ document.addEventListener("DOMContentLoaded", function () {
      
   const path = window.location.pathname;
    
-   /* =========================
-   ✅ ALLOW CERTIFICATE PAGES
-========================= */
-
-if (
-  path.includes("fmcsa-certificates.html") ||
-  path.includes("faa-certificates.html")
-) {
-  return; // 🚀 DO NOT BLOCK CERT PAGES
-}
-
-   /* =========================================================
-   CERTIFICATE ACCESS (SAFE BYPASS)
+/* =========================================================
+   ✅ ALLOW ALL CERTIFICATE PAGES (NO BLOCKING)
 ========================================================= */
 
-if (path.includes("fmcsa-certificates")) {
-
-  const userData = JSON.parse(localStorage.getItem("amsUser") || "null");
-
-  if (!userData || !userData.email) {
-    return; // no user, just stop safely
-  }
-
-  const email = userData.email;
-
-  const completedSupervisor =
-    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-  const completedDER =
-    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-
-  const completedEmployee =
-    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-
-  if (completedSupervisor || completedDER || completedEmployee) {
-    console.log("✅ Certificate access granted");
-    return; // 🔥 stops guard completely
-  }
-
+if (
+  path.includes("fmcsa-certificates") ||
+  path.includes("faa-certificates")
+) {
+  return; // 🚀 ALWAYS ALLOW
 }
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
