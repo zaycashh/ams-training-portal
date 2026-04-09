@@ -77,7 +77,7 @@ const emails = new Set();
 
   let hasData = false;
 
-  Object.keys(employees).forEach(email => {
+  emails.forEach(email => {
 
     const key = `amsCertificates_${email}`;
     const certs = JSON.parse(localStorage.getItem(key) || "[]");
