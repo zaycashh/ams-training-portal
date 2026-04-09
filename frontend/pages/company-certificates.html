@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -25,20 +24,20 @@
 
   <div class="cert-admin-container">
 
-<h2>Employee Certificates</h2>
+    <h2>Employee Certificates</h2>
 
-<table class="cert-table">
-  <thead>
-    <tr>
-      <th>Employee</th>
-      <th>Course</th>
-      <th>Date Completed</th>
-      <th>Certificate</th>
-    </tr>
-  </thead>
+    <table class="cert-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Course</th>
+          <th>Date Completed</th>
+          <th>Certificate</th>
+        </tr>
+      </thead>
 
-  <tbody id="certTableBody"></tbody>
-</table>
+      <tbody id="certTableBody"></tbody>
+    </table>
 
   </div>
 
@@ -58,77 +57,86 @@ document.addEventListener("DOMContentLoaded", () => {
   const tbody = document.getElementById("certTableBody");
   if (!tbody) return;
 
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  const program = company.program || "FAA"; // 🔥 LOCKED PROGRAM
-
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const program = company.program || "FAA";
   const allSeats = company.usedSeats || {};
 
-const emails = new Set();
+  const emails = new Set();
 
-["employee", "supervisor", "der"].forEach(type => {
-  Object.keys(allSeats[type] || {}).forEach(email => {
-    emails.add(email);
+  ["employee", "supervisor", "der"].forEach(type => {
+    Object.keys(allSeats[type] || {}).forEach(email => {
+      emails.add(email);
+    });
   });
-});
 
   let hasData = false;
 
- emails.forEach(email => {
+  emails.forEach(email => {
 
-  const key = `amsCertificates_${email}`;
-  const certs = JSON.parse(localStorage.getItem(key) || "[]");
+    const key = `amsCertificates_${email}`;
+    const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
-  certs
-    .filter(cert => {
+    certs
+      .filter(cert => {
 
-      if (!cert.type) return false;
+        if (!cert.type) return false;
 
-      const type = cert.type.toLowerCase();
+        const type = cert.type.toLowerCase();
 
-      if (program === "FMCSA" && !type.includes("fmcsa")) return false;
-      if (program === "FAA" && !type.includes("faa")) return false;
+        if (program === "FMCSA" && !type.includes("fmcsa")) return false;
+        if (program === "FAA" && !type.includes("faa")) return false;
 
-      return [
-        "fmcsa_supervisor",
-        "fmcsa_employee",
-        "fmcsa_der",
-        "faa_supervisor",
-        "faa_employee",
-        "faa_der"
-      ].includes(type);
+        return [
+          "fmcsa_supervisor",
+          "fmcsa_employee",
+          "fmcsa_der",
+          "faa_supervisor",
+          "faa_employee",
+          "faa_der"
+        ].includes(type);
 
-    })
-    .forEach(cert => {
+      })
+      .forEach(cert => {
 
-      hasData = true;
+        hasData = true;
 
-      const tr = document.createElement("tr");
+        const tr = document.createElement("tr");
 
-      tr.innerHTML = `
-        <td>${email}</td>
-        <td>${formatCourse(cert)}</td>
-        <td>${formatDate(cert)}</td>
-        <td>
-          <button class="btn-primary"
-            onclick="viewCert('${cert.id}', '${email}')">
-            View
-          </button>
+        tr.innerHTML = `
+          <td>${email}</td>
+          <td>${formatCourse(cert)}</td>
+          <td>${formatDate(cert)}</td>
+          <td>
+            <button class="btn-primary"
+              onclick="viewCert('${cert.id}', '${email}')">
+              View
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+
+      });
+
+  });
+
+  if (!hasData) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center;">
+          No certificates found for this program.
         </td>
-      `;
-
-      tbody.appendChild(tr);
-
-    });
+      </tr>
+    `;
+  }
 
 });
+
 /* =========================
-   FORMAT COURSE NAME
+   GLOBAL FUNCTIONS
 ========================= */
 
 function formatCourse(cert) {
-
   const map = {
     fmcsa_supervisor: "FMCSA Supervisor Training",
     fmcsa_employee: "FMCSA Employee Training",
@@ -137,36 +145,23 @@ function formatCourse(cert) {
     faa_employee: "FAA Employee Training",
     faa_der: "FAA DER Training"
   };
-
   return map[cert.type] || cert.course || "Training";
 }
 
-/* =========================
-   FORMAT DATE (SAFE)
-========================= */
-
 function formatDate(cert) {
   if (cert.displayDate) return cert.displayDate;
-
-  if (cert.date) {
-    return new Date(cert.date).toLocaleDateString("en-US");
-  }
-
+  if (cert.date) return new Date(cert.date).toLocaleDateString("en-US");
   return "—";
 }
 
-/* =========================
-   VIEW CERTIFICATE
-========================= */
-
-function viewCert(id, email){
+function viewCert(id, email) {
 
   const key = `amsCertificates_${email}`;
   const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
   const cert = certs.find(c => c.id === id);
 
-  if(!cert){
+  if (!cert) {
     alert("Certificate not found");
     return;
   }
@@ -178,18 +173,10 @@ function viewCert(id, email){
   }
 }
 
-/* =========================
-   NAVIGATION
-========================= */
-
-function goDashboard(){
+function goDashboard() {
   window.location.href = "dashboard.html";
 }
-  
-});
-  
 </script>
 
 </body>
 </html>
-
