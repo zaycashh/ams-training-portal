@@ -527,11 +527,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const employeeCompleted =
     localStorage.getItem("fmcsaEmployeeCompleted") === "true";
   
-  /* IF NOTHING COMPLETED RETURN */
-  if (!modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
-    window.location.replace("dashboard.html");
-    return;
-  }
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+
+/* SAFE ACCESS CHECK (FINAL FIX) */
+if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+  window.location.replace("dashboard.html");
+  return;
+}
 
   /* ===============================
   URL CONTROL
@@ -545,13 +548,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (certId) {
     
-// 🔥 allow company admin to view ANY cert by id
-// (no completion required)
+let selectedCert = null;
 
-    const key = `amsCertificates_${email}`;
-    const registry = JSON.parse(localStorage.getItem(key) || "[]");
+// 🔥 SEARCH ALL USERS (COMPANY ADMIN VIEW FIX)
+for (let key in localStorage) {
 
-    selectedCert = registry.find(c => c.id === certId);
+  if (key.startsWith("amsCertificates_")) {
+
+    const list = JSON.parse(localStorage.getItem(key) || "[]");
+
+    const found = list.find(c => c.id === certId);
+
+    if (found) {
+      selectedCert = found;
+      break;
+    }
+  }
+}
+
+if (!selectedCert) {
+  alert("Certificate not found");
+  return;
+}
 
     if (!selectedCert) {
       alert("Certificate not found");
