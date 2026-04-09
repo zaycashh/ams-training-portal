@@ -480,49 +480,51 @@ trainingCompleted = val === "true";
        RENDER ROW
     ========================= */
 
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
-      <td>${emp.email}</td>
-      <td>Employee</td>
-      <td>${trainingType}</td>
-      <td>${statusLabel}</td>
-      <td>
-        ${
-          seatAssigned
-            ? `<button class="btn-secondary"
-                 onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-                 Revoke
-               </button>`
-            : `
-              <button class="btn-primary"
-                onclick="assignEmployeeSeat('${cleanEmail}')">
-                Assign Employee
-              </button>
-
-              <button class="btn-primary"
-                onclick="assignSupervisorSeat('${cleanEmail}')">
-                Assign Supervisor
-              </button>
-
-              <button class="btn-primary"
-                onclick="assignDerSeat('${cleanEmail}')">
-                Assign DER
-              </button>
-            `
-        }
-
-        <button class="btn-secondary"
-          onclick="removeEmployee('${cleanEmail}')">
-          Remove
-        </button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-
-  }); // ✅ LOOP CLOSED PROPERLY
+       const tr = document.createElement("tr");
+   
+   tr.innerHTML = `
+     <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
+     <td>${emp.email}</td>
+     <td>Employee</td>
+     <td>${trainingType}</td>
+     <td>${statusLabel}</td>
+     <td>
+   
+       ${
+         seatAssigned
+           ? `<button class="btn-secondary"
+                onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+                Remove Seat
+              </button>`
+           : `
+             <button class="btn-primary"
+               onclick="assignEmployeeSeat('${cleanEmail}')">
+               Assign Employee
+             </button>
+   
+             <button class="btn-primary"
+               onclick="assignSupervisorSeat('${cleanEmail}')">
+               Assign Supervisor
+             </button>
+   
+             <button class="btn-primary"
+               onclick="assignDerSeat('${cleanEmail}')">
+               Assign DER
+             </button>
+           `
+       }
+   
+       <button class="btn-secondary"
+         onclick="removeEmployee('${cleanEmail}')">
+         Remove Employee
+       </button>
+   
+     </td>
+   `;
+   
+   tbody.appendChild(tr);
+   
+   });
 }
 /* =========================================================
    REMOVE EMPLOYEE
@@ -535,24 +537,51 @@ window.removeEmployee = function (email) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  const program = getCompanyProgram();
+  const keys = Object.keys(localStorage);
 
-  const completedKey =
-    program === "FMCSA"
-      ? `fmcsaEmployeeCompleted_${email}`
-      : `employeeTrainingCompleted_${email}`;
+const trainingCompleted = keys.some(k =>
+  k.toLowerCase().includes(email.toLowerCase()) &&
+  k.toLowerCase().includes("completed") &&
+  localStorage.getItem(k) === "true"
+);
 
-  const trainingCompleted =
-    localStorage.getItem(completedKey) === "true";
+  /* =========================
+     🚫 BLOCK IF COMPLETED
+  ========================= */
+
+  if (trainingCompleted) {
+    alert("Cannot remove employee — training completed (record must be kept)");
+    return;
+  }
+
+  /* =========================
+     REMOVE USER
+  ========================= */
 
   const updatedUsers = users.filter(u => u.email !== email);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  if (company.usedSeats?.employee?.[email] && !trainingCompleted) {
+  /* =========================
+     REMOVE SEAT (SAFE)
+  ========================= */
+
+  if (company.usedSeats?.employee?.[email]) {
     delete company.usedSeats.employee[email];
   }
 
+  if (company.usedSeats?.supervisor?.[email]) {
+    delete company.usedSeats.supervisor[email];
+  }
+
+  if (company.usedSeats?.der?.[email]) {
+    delete company.usedSeats.der[email];
+  }
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  /* =========================
+     REFRESH DASHBOARD
+  ========================= */
 
   const user = JSON.parse(localStorage.getItem("amsUser"));
   if (user) loadCompanyDashboard(user);
@@ -586,13 +615,6 @@ function renderSeatAssignments(company) {
             ${email} — <strong>${type.toUpperCase()}</strong>
           </span>
 
-          <button 
-            class="btn-danger"
-            onclick="revokeSeat('${type}', '${email}')"
-          >
-            Revoke
-          </button>
-
         </li>
       `);
 
@@ -607,6 +629,7 @@ function renderSeatAssignments(company) {
 
   list.innerHTML = items.join("");
 }
+
 /* =========================================================
    REVOKE SEAT (UNIVERSAL)
 ========================================================= */
