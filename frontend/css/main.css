@@ -9,7 +9,7 @@
 }
 
 /* ===============================
-   PAGE BASE
+   BASE
 ================================ */
 body {
   background: #f4f6f8;
@@ -62,66 +62,30 @@ body {
   margin-bottom: 6px;
 }
 
-.portal-header p {
-  opacity: .9;
-  font-size: 15px;
-}
 /* ===============================
-   PAGE LAYOUT (DASHBOARD + PAGES)
+   PAGE LAYOUT
 ================================ */
-
-.dashboard-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 20px;
-}
-
-/* ===============================
-   GRID SYSTEM
-================================ */
-
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-/* ===============================
-   CARD SYSTEM
-================================ */
-
-.module-card {
-  background: #ffffff;
-  padding: 22px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
-}
-
-.module-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.08);
-}
-
-.module-card h2 {
-  margin-bottom: 10px;
-}
-
-.module-card p {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-/* ===============================
-   CERTIFICATE PAGE
-================================ */
-
+.dashboard-container,
 .cert-container {
   max-width: 1100px;
   margin: 40px auto;
   padding: 20px;
 }
 
+/* ===============================
+   CARDS
+================================ */
+.module-card {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+}
+
+/* ===============================
+   CERT PAGE
+================================ */
 .cert-admin-container {
   background: #ffffff;
   padding: 25px;
@@ -130,9 +94,8 @@ body {
 }
 
 /* ===============================
-   TABLE (CERTIFICATES)
+   TABLE
 ================================ */
-
 .cert-table {
   width: 100%;
   border-collapse: collapse;
@@ -153,40 +116,4 @@ body {
 
 .cert-table tr:hover {
   background: #f9fafb;
-}
-/* ===============================
-   CERT HEADER (SEARCH + FILTER)
-================================ */
-
-.cert-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.cert-header h2 {
-  margin: 0;
-}
-
-/* CONTROLS */
-.cert-controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-/* INPUT + SELECT */
-.cert-controls input,
-.cert-controls select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* OPTIONAL WIDTH */
-#certSearch {
-  width: 220px;
 }
