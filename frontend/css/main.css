@@ -154,3 +154,39 @@ body {
 .cert-table tr:hover {
   background: #f9fafb;
 }
+/* ===============================
+   CERT HEADER (SEARCH + FILTER)
+================================ */
+
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cert-header h2 {
+  margin: 0;
+}
+
+/* CONTROLS */
+.cert-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* INPUT + SELECT */
+.cert-controls input,
+.cert-controls select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* OPTIONAL WIDTH */
+#certSearch {
+  width: 220px;
+}
