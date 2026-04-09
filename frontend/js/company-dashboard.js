@@ -479,66 +479,56 @@ trainingCompleted = val === "true";
     /* =========================
        RENDER ROW
     ========================= */
+     const tr = document.createElement("tr");
 
-       const tr = document.createElement("tr");
-   
-   tr.innerHTML = `
-     <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
-     <td>${emp.email}</td>
-     <td>Employee</td>
-     <td>${trainingType}</td>
-     <td>
-  ${statusLabel}
+tr.innerHTML = `
+  <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
+  <td>${emp.email}</td>
+  <td>Employee</td>
+  <td>${trainingType}</td>
 
-  ${
-    statusLabel === "Completed"
-      ? `<br>
-         <button class="btn-primary"
-           onclick="viewEmployeeCert('${cleanEmail}')">
-           View Certificate
-         </button>`
-      : ""
-  }
+  <!-- STATUS ONLY (CLEAN) -->
+  <td>
+    ${statusLabel}
+  </td>
 
-</td>
-     <td>
-   
-       ${
-         seatAssigned
-           ? `<button class="btn-secondary"
-                onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-                Remove Seat
-              </button>`
-           : `
-             <button class="btn-primary"
-               onclick="assignEmployeeSeat('${cleanEmail}')">
-               Assign Employee
-             </button>
-   
-             <button class="btn-primary"
-               onclick="assignSupervisorSeat('${cleanEmail}')">
-               Assign Supervisor
-             </button>
-   
-             <button class="btn-primary"
-               onclick="assignDerSeat('${cleanEmail}')">
-               Assign DER
-             </button>
-           `
-       }
-   
-       <button class="btn-secondary"
-         onclick="removeEmployee('${cleanEmail}')">
-         Remove Employee
-       </button>
-   
-     </td>
-   `;
-   
-   tbody.appendChild(tr);
-   
-   });
-}
+  <!-- ACTIONS -->
+  <td>
+
+    ${
+      seatAssigned
+        ? `<button class="btn-secondary"
+             onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+             Remove Seat
+           </button>`
+        : `
+          <button class="btn-primary"
+            onclick="assignEmployeeSeat('${cleanEmail}')">
+            Assign Employee
+          </button>
+
+          <button class="btn-primary"
+            onclick="assignSupervisorSeat('${cleanEmail}')">
+            Assign Supervisor
+          </button>
+
+          <button class="btn-primary"
+            onclick="assignDerSeat('${cleanEmail}')">
+            Assign DER
+          </button>
+        `
+    }
+
+    <button class="btn-secondary"
+      onclick="removeEmployee('${cleanEmail}')">
+      Remove Employee
+    </button>
+
+  </td>
+`;
+
+tbody.appendChild(tr);
+     
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
