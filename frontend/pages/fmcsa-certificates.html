@@ -493,10 +493,6 @@ if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCom
   URL CONTROL
   =============================== */
 
-  const params = new URLSearchParams(window.location.search);
-  const certId = params.get("id");
-  const type = params.get("type");
-
   let selectedCert = null;
 
   if (certId) {
