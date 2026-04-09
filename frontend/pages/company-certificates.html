@@ -195,11 +195,11 @@ function viewCert(id, email){
     return;
   }
 
-  if(cert.type?.startsWith("fmcsa")){
-    window.location.href = "fmcsa-certificates.html?id=" + id;
-  } else {
-    window.location.href = "faa-certificates.html?id=" + id;
-  }
+  if (cert.type && cert.type.toLowerCase().includes("fmcsa")) {
+  window.location.href = "fmcsa-certificates.html?id=" + id;
+} else {
+  window.location.href = "faa-certificates.html?id=" + id;
+}
 
 }
 
