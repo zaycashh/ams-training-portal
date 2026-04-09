@@ -994,3 +994,19 @@ td{
   align-items: center;
   justify-content: center;
 }
+/* =========================
+   CERTIFICATE PAGE STYLING
+========================= */
+
+.cert-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.cert-admin-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
