@@ -2,20 +2,24 @@
    AMS ROUTE GUARD (FINAL - CLEAN + SAFE)
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
-     
-  const path = window.location.pathname;
-   
-/* =========================================================
-   ✅ ALLOW ALL CERTIFICATE PAGES (NO BLOCKING)
-========================================================= */
+/* =========================
+   🔥 HARD CERTIFICATE BYPASS (RUNS FIRST)
+========================= */
+
+const path = window.location.pathname;
 
 if (
   path.includes("fmcsa-certificates") ||
   path.includes("faa-certificates")
 ) {
-  return; // 🚀 ALWAYS ALLOW
-}
+  console.log("✅ Certificate page — bypass route guard");
+} else {
+
+/* =========================================================
+   MAIN ROUTE GUARD
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module = document.body?.dataset?.module || "";
@@ -23,11 +27,11 @@ if (
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  const program = company.program; // 🔥 SINGLE SOURCE
+  const program = company.program;
   const role = user?.role;
 
   /* =========================================================
-     REQUIRE LOGIN FIRST
+     REQUIRE LOGIN
   ========================================================= */
   if (!user && !path.includes("login")) {
     window.location.replace("login.html");
@@ -51,13 +55,11 @@ if (
     "der"
   ];
 
-  // 🚫 FAA company trying FMCSA pages
   if (program === "FAA" && fmcsaModules.includes(module)) {
     window.location.href = "dashboard.html";
     return;
   }
 
-  // 🚫 FMCSA company trying FAA pages
   if (program === "FMCSA" && faaModules.includes(module)) {
     window.location.href = "dashboard.html";
     return;
@@ -67,123 +69,79 @@ if (
      ROLE LOCK
   ========================================================= */
 
-  // 🔒 Employee restrictions
   if (role === "employee") {
-
-  // Only block FAA modules directly
-  if (module === "supervisor" || module === "der") {
-    window.location.href = "dashboard.html";
-    return;
+    if (module === "supervisor" || module === "der") {
+      window.location.href = "dashboard.html";
+      return;
+    }
   }
 
-}
-  // 🔒 Optional: Supervisor cannot access DER
   if (role === "supervisor") {
-
     if (module === "der" || module === "fmcsa-der") {
       window.location.href = "dashboard.html";
       return;
     }
-
   }
 
   /* =========================================================
-     COMPANY SEAT CHECK
+     EMPLOYEE COMPANY SEAT CHECK
   ========================================================= */
 
-  function hasCompanySeat() {
-    const company =
-      JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (user?.role === "employee" && user?.type === "company") {
 
-    return !!company?.usedSeats?.[user.email];
-  }
+    const email = user.email;
 
-  /* =========================
-   EMPLOYEE ACCESS CONTROL (FINAL)
-========================= */
+    const hasEmployeeSeat =
+      company?.usedSeats?.employee?.[email];
 
-if (user?.role === "employee" && user?.type === "company") {
+    const hasSupervisorSeat =
+      company?.usedSeats?.supervisor?.[email];
 
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    const hasDerSeat =
+      company?.usedSeats?.der?.[email];
 
-  const email = user.email;
+    // EMPLOYEE
+    if (path.includes("employee") && !hasEmployeeSeat) {
+      window.location.replace("dashboard.html");
+      return;
+    }
 
-  const hasEmployeeSeat =
-    company?.usedSeats?.employee?.[email] === true ||
-    !!company?.usedSeats?.employee?.[email];
+    // SUPERVISOR
+    if (
+      (path.includes("supervisor") ||
+       path.includes("fmcsa-module-a") ||
+       path.includes("fmcsa-drug-alcohol")) &&
+      !hasSupervisorSeat
+    ) {
+      window.location.replace("dashboard.html");
+      return;
+    }
 
-  const hasSupervisorSeat =
-    company?.usedSeats?.supervisor?.[email] === true ||
-    !!company?.usedSeats?.supervisor?.[email];
+    // DER
+    if (
+      (path.includes("der") || path.includes("fmcsa-der")) &&
+      !hasDerSeat
+    ) {
+      window.location.replace("dashboard.html");
+      return;
+    }
 
-  const hasDerSeat =
-    company?.usedSeats?.der?.[email] === true ||
-    !!company?.usedSeats?.der?.[email];
-
-  /* =========================
-     MODULE ACCESS RULES
-  ========================= */
-
-  // 🔒 EMPLOYEE TRAINING
-  if (path.includes("employee")) {
-    if (!hasEmployeeSeat) {
-      sessionStorage.setItem(
-        "ams_notice",
-        "No employee seat assigned."
-      );
+    // BLOCK PAYMENT
+    if (path.includes("payment")) {
       window.location.replace("dashboard.html");
       return;
     }
   }
-
-  // 🔒 SUPERVISOR (FAA + FMCSA)
-  if (
-    path.includes("supervisor") ||
-    path.includes("fmcsa-module-a") ||
-    path.includes("fmcsa-drug-alcohol")
-  ) {
-    if (!hasSupervisorSeat) {
-      sessionStorage.setItem(
-        "ams_notice",
-        "Supervisor training not assigned."
-      );
-      window.location.replace("dashboard.html");
-      return;
-    }
-  }
-
-  // 🔒 DER (FAA + FMCSA)
-  if (
-    path.includes("der") ||
-    path.includes("fmcsa-der")
-  ) {
-    if (!hasDerSeat) {
-      sessionStorage.setItem(
-        "ams_notice",
-        "DER training not assigned."
-      );
-      window.location.replace("dashboard.html");
-      return;
-    }
-  }
-
-  // 🚫 BLOCK PAYMENT PAGE FOR EMPLOYEES
-  if (path.includes("payment.html")) {
-    window.location.replace("dashboard.html");
-    return;
-  }
-}
 
   /* =========================================================
-     ALLOW NON-MODULE PAGES
+     NON-MODULE PAGES
   ========================================================= */
   if (!module) return;
 
   const email = user.email;
 
   /* =========================================================
-     PAYMENT CHECK (INDIVIDUAL ONLY)
+     INDIVIDUAL PAYMENT CHECK
   ========================================================= */
 
   if (user?.type !== "company") {
@@ -209,3 +167,5 @@ if (user?.role === "employee" && user?.type === "company") {
   }
 
 });
+
+}
