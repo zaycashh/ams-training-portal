@@ -65,7 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const program = company.program || "FAA"; // 🔥 LOCKED PROGRAM
 
-  const employees = company.usedSeats || {};
+  const allSeats = company.usedSeats || {};
+
+const emails = new Set();
+
+["employee", "supervisor", "der"].forEach(type => {
+  Object.keys(allSeats[type] || {}).forEach(email => {
+    emails.add(email);
+  });
+});
 
   let hasData = false;
 
