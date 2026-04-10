@@ -829,10 +829,12 @@ function viewEmployeeCert(email) {
     return;
   }
 
-  // 🔥 Get latest certificate
   const latestCert = certs[certs.length - 1];
 
-  // 🔥 Redirect to certificate page
+  console.log("VIEWING EMPLOYEE:", email);
+  console.log("CERT:", latestCert);
+
+  // 🔥 Pass employee email to cert page
   window.location.href =
-    `fmcsa-certificates.html?id=${latestCert.id}`;
+    `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
 }
