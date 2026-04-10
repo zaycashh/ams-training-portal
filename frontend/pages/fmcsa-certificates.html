@@ -672,58 +672,85 @@ if (selectedCert.type === "fmcsa_supervisor") {
     height: 90
   });
 }
-  } else {
+/*
+===============================
+OLD CERTIFICATE SYSTEM DISABLED
+===============================
 
-    if (type) {
-      showCert(type);
-    } else {
-      if (employeeCompleted) showCert("employee");
-      else if (derCompleted) showCert("der");
-      else if (modACompleted) showCert("supervisor");
-    }
+const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
-  }
+const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
+const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
 
-  /* ===============================
-  SUPERVISOR CERTIFICATE
-  =============================== */
+document.getElementById("certStudentName").textContent =
+  user.fullName ||
+  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+  user.email ||
+  "User";
 
-  const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
-  const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+const finalDate = storedBDate || storedADate;
 
-  const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
-  const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
+document.getElementById("certCompletionDate").textContent =
+  finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
 
-  document.getElementById("certStudentName").textContent =
-    user.fullName ||
-    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-    user.email ||
-    "User";
+if (certIdA) {
+  document.getElementById("certCertificateId").textContent =
+    "Certificate ID: " + certIdA;
+}
 
-  const finalDate = storedBDate || storedADate;
+if (certIdB) {
+  document.getElementById("certCertificateIdB").textContent =
+    "Drug & Alcohol ID: " + certIdB;
+}
 
-  document.getElementById("certCompletionDate").textContent =
-    finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
+const finalCertId = certIdB || certIdA;
 
-  if (certIdA) {
-    document.getElementById("certCertificateId").textContent =
-      "Certificate ID: " + certIdA;
-  }
+if (finalCertId) {
+  const verifyUrl =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    finalCertId;
 
-  if (certIdB) {
-    document.getElementById("certCertificateIdB").textContent =
-      "Drug & Alcohol ID: " + certIdB;
-  }
+  const qrContainer = document.getElementById("certQR");
+  qrContainer.innerHTML = "";
 
-  const finalCertId = certIdB || certIdA;
+  new QRCode(qrContainer, {
+    text: verifyUrl,
+    width: 90,
+    height: 90
+  });
+}
 
-  if (finalCertId) {
+/* DER CERTIFICATE */
+
+if (derCompleted) {
+  const certIdDER =
+    localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+
+  const storedDate =
+    localStorage.getItem(`fmcsaDERDate_${email}`);
+
+  if (certIdDER) {
     const verifyUrl =
       window.location.origin +
       "/ams-training-portal/frontend/pages/verify.html?id=" +
-      finalCertId;
+      certIdDER;
 
-    const qrContainer = document.getElementById("certQR");
+    document.getElementById("derCertStudentName").textContent =
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email;
+
+    document.getElementById("derCertCompletionDate").textContent =
+      storedDate
+        ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+        : "";
+
+    document.getElementById("derCertCertificateId").textContent =
+      "Certificate ID: " + certIdDER;
+
+    const qrContainer = document.getElementById("derCertQR");
     qrContainer.innerHTML = "";
 
     new QRCode(qrContainer, {
@@ -732,56 +759,11 @@ if (selectedCert.type === "fmcsa_supervisor") {
       height: 90
     });
   }
+}
 
-  /* ===============================
-  DER CERTIFICATE
-  =============================== */
-
-  if (derCompleted) {
-
-    const certIdDER =
-      localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-
-    const storedDate =
-      localStorage.getItem(`fmcsaDERDate_${email}`);
-    
-    if (certIdDER) {
-
-      const verifyUrl =
-        window.location.origin +
-        "/ams-training-portal/frontend/pages/verify.html?id=" +
-        certIdDER;
-
-      document.getElementById("derCertStudentName").textContent =
-        user.fullName ||
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-        user.email;
-
-      document.getElementById("derCertCompletionDate").textContent =
-        storedDate
-          ? new Date(Number(storedDate)).toLocaleDateString("en-US")
-          : "";
-
-      document.getElementById("derCertCertificateId").textContent =
-        "Certificate ID: " + certIdDER;
-
-      const qrContainer = document.getElementById("derCertQR");
-      qrContainer.innerHTML = "";
-
-      new QRCode(qrContainer, {
-        text: verifyUrl,
-        width: 90,
-        height: 90
-      });
-    }
-  }
-
-/* ===============================
-EMPLOYEE CERTIFICATE (FINAL FIX)
-=============================== */
+/* EMPLOYEE CERTIFICATE */
 
 if (employeeCompleted) {
-
   const certId =
     localStorage.getItem("fmcsaEmployeeCertificateId");
 
@@ -793,23 +775,19 @@ if (employeeCompleted) {
     "/ams-training-portal/frontend/pages/verify.html?id=" +
     certId;
 
-  // ✅ NAME (MATCH YOUR HTML)
   document.getElementById("empCertStudentName").textContent =
     user.fullName ||
     `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
     user.email;
 
-  // ✅ DATE
   document.getElementById("empCertCompletionDate").textContent =
     storedDate
       ? new Date(Number(storedDate)).toLocaleDateString("en-US")
       : "";
 
-  // ✅ CERT ID
   document.getElementById("empCertCertificateId").textContent =
     "Certificate ID: " + certId;
 
-  // ✅ QR
   const qrTemplate = document.getElementById("empCertQR");
   qrTemplate.innerHTML = "";
 
@@ -818,11 +796,9 @@ if (employeeCompleted) {
     width: 90,
     height: 90
   });
-
 }
-  
-});
-</script>
+
+*/
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
