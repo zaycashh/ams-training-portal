@@ -34,7 +34,9 @@ function registerCertificate(data) {
   let registry =
     JSON.parse(localStorage.getItem(key) || "[]");
 
-  const exists = registry.find(c => c.id === data.id);
+  const exists = registry.find(
+  c => c.id === data.id || (c.type === data.type && c.email === user.email)
+);
 
   if (!exists) {
 
@@ -155,6 +157,43 @@ function generateDerCertificate() {
     name: name,
     course: "FMCSA Designated Employer Representative Training",
     type: "fmcsa_der",
+    date: Date.now(),
+    displayDate: new Date().toLocaleDateString("en-US")
+  });
+}
+/* ========================================================
+   GENERATE EMPLOYEE CERTIFICATE
+======================================================== */
+
+function generateEmployeeCertificate() {
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) {
+    alert("User not found");
+    return;
+  }
+
+  const name = getUserName(user);
+
+  let certId =
+    localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
+
+  if (!certId) {
+
+    certId = generateCertificateId("AMS-FMCSA-EMP");
+
+    localStorage.setItem(
+      `fmcsaEmployeeCertificateId_${user.email}`,
+      certId
+    );
+  }
+
+  registerCertificate({
+    id: certId,
+    name: name,
+    course: "FMCSA Employee Awareness Training",
+    type: "fmcsa_employee",
     date: Date.now(),
     displayDate: new Date().toLocaleDateString("en-US")
   });
