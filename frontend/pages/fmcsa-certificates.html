@@ -468,13 +468,11 @@ function returnToDashboard(){
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  // 🔥 detect admin from ID
   if (user.id && user.id.startsWith("admin-")) {
     window.location.href = "company-dashboard.html";
     return;
   }
 
-  // normal users
   window.location.href = "dashboard.html";
 }
   
@@ -548,16 +546,10 @@ if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCom
   /* ===============================
   URL CONTROL
   =============================== */
-
-  const params = new URLSearchParams(window.location.search);
   const certId = params.get("id");
   const type = params.get("type");
 
   let selectedCert = null;
-
-  if (certId) {
-    
-let selectedCert = null;
 
 // 🔥 SEARCH ALL USERS (COMPANY ADMIN VIEW FIX)
 for (let key in localStorage) {
