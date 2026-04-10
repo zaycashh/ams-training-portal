@@ -836,5 +836,5 @@ function viewEmployeeCert(email) {
 
   // 🔥 Pass employee email to cert page
   window.location.href =
-    `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
+    `dot-certificate.html?id=${latestCert.id}&email=${email}`;
 }
