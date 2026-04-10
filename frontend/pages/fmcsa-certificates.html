@@ -458,14 +458,16 @@ function returnToDashboard(){
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  if(user.role === "company_admin"){
+  // 🔥 FORCE company admin to go to company dashboard
+  if (user.role === "company_admin") {
     window.location.href = "company-dashboard.html";
-  } else {
-    window.location.href = "dashboard.html";
+    return;
   }
 
+  // normal users
+  window.location.href = "dashboard.html";
 }
-
+  
 function showCert(type){
 
   document.getElementById("employeeCertTemplate").classList.add("hidden");
@@ -526,9 +528,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const employeeCompleted =
     localStorage.getItem("fmcsaEmployeeCompleted") === "true";
-  
-  const params = new URLSearchParams(window.location.search);
-  const certId = params.get("id");
 
 /* SAFE ACCESS CHECK (FINAL FIX) */
 if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
