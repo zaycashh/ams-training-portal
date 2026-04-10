@@ -650,7 +650,13 @@ function handleDerFmcsa() {
   localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
-    window.location.href = "dot-certificate.html?id=YOUR_CERT_ID";
+    const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
+
+if (certId) {
+  window.location.href = `dot-certificate.html?id=${certId}`;
+} else {
+  alert("Certificate not found");
+}
     return;
   }
 
@@ -725,7 +731,13 @@ function updateFMCSDERButtonState() {
     derFmcsaBtn.textContent = "View DER Certificate";
 
     derFmcsaBtn.onclick = () => {
-      window.location.href = "dot-certificate.html?id=YOUR_CERT_ID";
+      const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
+
+if (certId) {
+  window.location.href = `dot-certificate.html?id=${certId}`;
+} else {
+  alert("Certificate not found");
+}
     };
 
     if (derDate && derDateEl) {
