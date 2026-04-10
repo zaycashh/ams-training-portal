@@ -733,54 +733,19 @@ function gradeAlcoholQuiz() {
 if (score >= PASS_SCORE_ALCOHOL) {
 
   localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+  localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
 
-  /* =========================
-     FINAL SUPERVISOR CERT (A + B)
-  ========================= */
+  // 🔥 USE ENGINE (THIS FIXES EVERYTHING)
+  generateSupervisorCertificate();
 
-  const moduleACompleted =
-    localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-
-  if (moduleACompleted) {
-
-    let certId =
-      localStorage.getItem(`fmcsaSupervisorCertificateId_${email}`);
-
-    if (!certId) {
-
-      certId = generateCertificateId("AMS-FMCSA-SUP");
-
-      localStorage.setItem(
-        `fmcsaSupervisorCertificateId_${email}`,
-        certId
-      );
-
-      if (typeof registerCertificate === "function") {
-
-        registerCertificate({
-          id: certId,
-          name: user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-          course: "FMCSA Supervisor Reasonable Suspicion & Drug and Alcohol Awareness Training",
-          date: Date.now()
-        });
-
-      }
-
-    }
-
-    localStorage.setItem(`fmcsaSupervisorDate_${email}`, Date.now());
-
-  }
-
-  sessionStorage.setItem("redirectToCertificates", "true");
-
+  // Clean attempts
   localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
   localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
 
   resultBox.innerHTML = `
     <div class="result-box pass">
       You passed Drug & Alcohol Training!
-      Generating certificate...
+      Certificate generated successfully.
     </div>
   `;
 
