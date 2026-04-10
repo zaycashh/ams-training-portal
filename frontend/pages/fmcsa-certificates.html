@@ -39,40 +39,160 @@ width:100%;
 CERT TEMPLATES (UNCHANGED)
 ======================= -->
 
-<div id="employeeCertTemplate" class="hidden active-cert">
-<img src="../assets/certificates/fmcsa-employee-template.png" style="width:100%;">
+<!-- EMPLOYEE CERTIFICATE TEMPLATE -->
+<div id="employeeCertTemplate"
+class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
 
-<img src="../assets/certificates/ams-seal.png"
-style="position:absolute; bottom:90px; left:160px; width:120px;">
+<img 
+  src="../assets/certificates/fmcsa-employee-template.png"
+  style="
+    width:100%;
+    display:block;
+    image-rendering: auto;
+  "
+>
 
-<div id="empCertStudentName" style="position:absolute; top:170px; left:50%; transform:translateX(-50%); font-size:30px; font-weight:bold;"></div>
-<div id="empCertCompletionDate" style="position:absolute; top:292px; left:539px;"></div>
-<div id="empCertCertificateId" style="position:absolute; top:455px; left:350px;"></div>
-<div id="empCertQR" style="position:absolute; bottom:90px; right:150px;"></div>
+<!-- Seal -->
+<img 
+  src="../assets/certificates/ams-seal.png"
+  style="
+    position:absolute;
+    bottom:90px;
+    left:160px;
+    width:120px;
+    transform:rotate(-10deg);
+    filter:drop-shadow(0px 3px 4px rgba(0,0,0,0.35));
+    display:block;
+    image-rendering:auto;
+  "
+>
+
+<!-- NAME -->
+<div id="empCertStudentName"
+style="
+position:absolute;
+top:170px;
+left:52%;
+transform:translateX(-50%);
+text-align:center;
+font-size:30px;
+font-weight:700;
+letter-spacing:1px;
+white-space:nowrap;
+">
 </div>
 
-<div id="supervisorCertTemplate" class="hidden active-cert">
-<img src="../assets/certificates/fmcsa-supervisor-template.png" style="width:100%;">
-
-<img src="../assets/certificates/ams-seal.png"
-style="position:absolute; bottom:90px; left:160px; width:120px;">
-
-<div id="certStudentName" style="position:absolute; top:184px; width:100%; text-align:center; font-size:32px;"></div>
-<div id="certCompletionDate" style="position:absolute; top:383px; left:548px;"></div>
-<div id="certCertificateId" style="position:absolute; top:454px; left:350px;"></div>
-<div id="certQR" style="position:absolute; bottom:90px; right:150px;"></div>
+<!-- DATE -->
+<div id="empCertCompletionDate"
+style="
+position:absolute;
+top:292px;
+left:539px;
+font-size:16px;
+white-space:nowrap;
+">
 </div>
 
-<div id="derCertTemplate" class="hidden active-cert">
-<img src="../assets/certificates/fmcsa-der-template.png" style="width:100%;">
+<!-- CERT ID -->
+<div id="empCertCertificateId"
+style="
+position:absolute;
+top:455px;
+left:350px;
+font-size:10px;
+">
+</div>
 
-<img src="../assets/certificates/ams-seal.png"
-style="position:absolute; bottom:90px; left:160px; width:120px;">
+<!-- QR -->
+<div id="empCertQR"
+style="
+position:absolute;
+bottom:90px;
+right:150px;
+">
+</div>
 
-<div id="derCertStudentName" style="position:absolute; top:184px; width:100%; text-align:center; font-size:32px;"></div>
-<div id="derCertCompletionDate" style="position:absolute; top:306px; left:535px;"></div>
-<div id="derCertCertificateId" style="position:absolute; top:470px; left:350px;"></div>
-<div id="derCertQR" style="position:absolute; bottom:90px; right:150px;"></div>
+</div>
+  
+<!-- SUPERVISOR CERTIFICATE TEMPLATE -->
+<div id="supervisorCertTemplate"
+class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
+
+<img 
+  src="../assets/certificates/fmcsa-supervisor-template.png"
+  style="
+    width:100%;
+    display:block;
+    image-rendering: auto;
+  "
+>
+
+<img 
+  src="../assets/certificates/ams-seal.png"
+  style="
+    position:absolute;
+    bottom:90px;
+    left:160px;
+    width:120px;
+    transform:rotate(-10deg);
+    filter:drop-shadow(0px 3px 4px rgba(0,0,0,0.35));
+    display:block;
+    image-rendering:auto;
+  "
+>
+
+<!-- NAME -->
+<div id="certStudentName"
+style="
+position:absolute;
+top:184px;
+width:100%;
+text-align:center;
+font-size:32px;
+font-weight:bold;
+">
+</div>
+
+<!-- DATE -->
+<div id="certCompletionDate"
+style="
+position:absolute;
+top:383px;
+left:548px;
+font-size:16px;
+">
+</div>
+
+<!-- CERT ID -->
+<div id="certCertificateId"
+style="
+position:absolute;
+top:454px;
+left:350px;
+font-size:10px;
+">
+</div>
+  
+<div id="certCertificateIdB"
+style="
+position:absolute;
+top:470px;
+left:350px;
+font-size:10px;
+">
+</div>
+
+<!-- QR -->
+<div id="certQR"
+style="
+position:absolute;
+bottom:90px;
+right:150px;
+">
+</div>
+
 </div>
 
 </main>
