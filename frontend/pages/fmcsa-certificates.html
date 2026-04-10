@@ -458,8 +458,8 @@ function returnToDashboard(){
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  // 🔥 FORCE company admin to go to company dashboard
-  if (user.role === "company_admin") {
+  // 🔥 detect admin from ID
+  if (user.id && user.id.startsWith("admin-")) {
     window.location.href = "company-dashboard.html";
     return;
   }
