@@ -600,7 +600,78 @@ else if (selectedCert.type === "fmcsa_der") {
 else {
   showCert("supervisor");
 }
+/* =========================
+FILL CERT DATA (MASTER FIX)
+========================= */
 
+const name =
+  selectedCert.name ||
+  user.fullName ||
+  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+  user.email;
+
+/* EMPLOYEE */
+if (selectedCert.type === "fmcsa_employee") {
+
+  document.getElementById("empCertStudentName").textContent = name;
+
+  document.getElementById("empCertCompletionDate").textContent =
+    new Date(selectedCert.date).toLocaleDateString("en-US");
+
+  document.getElementById("empCertCertificateId").textContent =
+    "Certificate ID: " + selectedCert.id;
+
+  const qr = document.getElementById("empCertQR");
+  qr.innerHTML = "";
+
+  new QRCode(qr, {
+    text: window.location.href,
+    width: 90,
+    height: 90
+  });
+}
+
+/* DER */
+if (selectedCert.type === "fmcsa_der") {
+
+  document.getElementById("derCertStudentName").textContent = name;
+
+  document.getElementById("derCertCompletionDate").textContent =
+    new Date(selectedCert.date).toLocaleDateString("en-US");
+
+  document.getElementById("derCertCertificateId").textContent =
+    "Certificate ID: " + selectedCert.id;
+
+  const qr = document.getElementById("derCertQR");
+  qr.innerHTML = "";
+
+  new QRCode(qr, {
+    text: window.location.href,
+    width: 90,
+    height: 90
+  });
+}
+
+/* SUPERVISOR */
+if (selectedCert.type === "fmcsa_supervisor") {
+
+  document.getElementById("certStudentName").textContent = name;
+
+  document.getElementById("certCompletionDate").textContent =
+    new Date(selectedCert.date).toLocaleDateString("en-US");
+
+  document.getElementById("certCertificateId").textContent =
+    "Certificate ID: " + selectedCert.id;
+
+  const qr = document.getElementById("certQR");
+  qr.innerHTML = "";
+
+  new QRCode(qr, {
+    text: window.location.href,
+    width: 90,
+    height: 90
+  });
+}
   } else {
 
     if (type) {
