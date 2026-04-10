@@ -142,6 +142,7 @@ localStorage.setItem(key, JSON.stringify(registry));
 <body>
 
 <script>
+<script>
 (function(){
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -153,35 +154,46 @@ if(!user){
 
 const email = user?.email;
 
-/* ===============================
-CHECK PURCHASE ACCESS (FIXED)
-=============================== */
-
-const supervisorPurchased =
-  localStorage.getItem(`paid_fmcsa_${email}`) === "true";
-
-const derPurchased =
-  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
-
-const employeeCompleted =
-localStorage.getItem("fmcsaEmployeeCompleted") === "true";
-
-/* ===============================
-FINAL ACCESS CHECK
-=============================== */
-
+// ✅ GET CERT ID EARLY (FIX)
 const params = new URLSearchParams(window.location.search);
 const certId = params.get("id");
 
+// ✅ ADMIN DETECTION
+const isAdmin = user?.id && user.id.startsWith("admin-");
+
 /* ===============================
-ALLOW DIRECT CERT VIEW (FIX)
+ALLOW ADMIN DIRECT ACCESS
+=============================== */
+
+if (isAdmin && certId) {
+  return; // 🚀 allow company admin to view cert
+}
+
+/* ===============================
+NORMAL USER ACCESS CHECK
+=============================== */
+
+const modACompleted =
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+
+const modBCompleted =
+  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+const derCompleted =
+  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+const employeeCompleted =
+  localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+
+/* ===============================
+FINAL ACCESS CHECK
 =============================== */
 
 if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
   window.location.replace("dashboard.html");
   return;
 }
-  
+
 /* OPTIONAL 30 DAY EXPIRATION */
 
 const start = localStorage.getItem("fmcsa_start_date");
@@ -195,11 +207,9 @@ const elapsed = Date.now() - Number(start);
 const daysUsed = Math.floor(elapsed / DAY_MS);
 
 if(daysUsed >= LIMIT_DAYS){
-
-alert("FMCSA training window expired. Repurchase required.");
-window.location.replace("dashboard.html");
-return;
-
+  alert("FMCSA training window expired. Repurchase required.");
+  window.location.replace("dashboard.html");
+  return;
 }
 
 }
