@@ -835,27 +835,24 @@ function updateFMCSASupervisorButton() {
   localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
   /* MODULE A COMPLETED BUT NOT B */
-if (modA && !modB) {
+if (modA && modB) {
 
-  btn.textContent = "Continue Training";
-  btn.style.opacity = "1";
+  btn.textContent = "🎓 View Certificate";
 
   btn.onclick = () => {
-    window.location.href = "fmcsa-drug-alcohol.html";
+
+    const certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+
+    if (certId) {
+      window.location.href = `dot-certificate.html?id=${certId}`;
+    } else {
+      alert("Certificate not found");
+    }
+
   };
 
   return;
 }
-
-  /* COMPLETED */
-  if (modA && modB) {
-    btn.textContent = "🎓 View Certificate";
-    btn.onclick = () => {
-      window.location.href = "dot-certificate.html?id=YOUR_CERT_ID";
-    };
-    return;
-  }
-
   /* COMPANY SEAT */
   
 if (user.role === "employee") {
@@ -942,20 +939,28 @@ function updateFMCSAEmployeeButton() {
   ========================= */
   if (empCompleted) {
 
-    btn.textContent = "🎓 View Certificate";
+  btn.textContent = "🎓 View Certificate";
 
-    btn.onclick = () => {
-      window.location.href = "dot-certificate.html?id=YOUR_CERT_ID";
-    };
+  btn.onclick = () => {
 
-    if (dateEl && empDate) {
-      dateEl.textContent =
-        "✔ Completed " +
-        new Date(Number(empDate)).toLocaleDateString("en-US");
+    const certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
+
+    if (certId) {
+      window.location.href = `dot-certificate.html?id=${certId}`;
+    } else {
+      alert("Certificate not found");
     }
 
-    return;
+  };
+
+  if (dateEl && empDate) {
+    dateEl.textContent =
+      "✔ Completed " +
+      new Date(Number(empDate)).toLocaleDateString("en-US");
   }
+
+  return;
+}
 
 /* =========================
    COMPANY EMPLOYEE (SEAT)
