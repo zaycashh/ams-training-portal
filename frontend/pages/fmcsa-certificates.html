@@ -108,7 +108,6 @@ PROFESSIONAL PRINT BUTTON
 .btn-print:active {
   transform: scale(0.98);
 }
-</style>
 
 <script>
 
@@ -539,6 +538,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const email = user?.email;
 
+  const params = new URLSearchParams(window.location.search);
+  const certId = params.get("id");
+  const type = params.get("type");
+
   const modACompleted =
     localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
@@ -560,9 +563,6 @@ if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCom
   /* ===============================
   URL CONTROL
   =============================== */
-  const certId = params.get("id");
-  const type = params.get("type");
-
   let selectedCert = null;
 
 // 🔥 SEARCH ALL USERS (COMPANY ADMIN VIEW FIX)
