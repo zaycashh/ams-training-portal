@@ -7,38 +7,303 @@
 <link rel="stylesheet" href="../css/main.css" />
 
 <style>
-.cert-container{ max-width:900px; margin:auto; }
-.hidden{ display:none; }
+.cert-container{
+max-width:900px;
+margin:auto;
+}
 
-/* PRINT */
-.print-mode * { visibility:hidden; }
-.print-mode .active-cert,
-.print-mode .active-cert * { visibility:visible; }
+.cert-card{
+background:#f9fafc;
+border:1px solid #dce3ef;
+border-radius:8px;
+padding:20px;
+margin-bottom:20px;
+}
 
-.print-mode .active-cert{
-position:fixed;
-top:0;
-left:0;
-width:100%;
+.cert-card h2{
+margin-top:0;
+}
+
+.cert-title{
+font-size:20px;
+font-weight:600;
+}
+
+.hidden{
+display:none;
+}
+
+.quiz-container label{
+display:block;
+margin:8px 0;
+cursor:pointer;
+font-size:15px;
+}
+
+.tab-btn{
+background:#0b1d3a;
+color:white;
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:6px;
+cursor:pointer;
+font-weight:500;
+}
+
+.tab-btn:hover{
+background:#142a52;
+}
+.tab-btn.active{
+background:#1e3a8a;
+}
+  .print-mode * {
+  visibility: hidden;
+}
+
+.print-mode #employeeCertTemplate,
+.print-mode #employeeCertTemplate *,
+.print-mode #supervisorCertTemplate,
+.print-mode #supervisorCertTemplate *,
+.print-mode #derCertTemplate,
+.print-mode #derCertTemplate * {
+  visibility: visible;
+}
+
+.print-mode #employeeCertTemplate,
+.print-mode #supervisorCertTemplate,
+.print-mode #derCertTemplate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+  /* =========================
+PROFESSIONAL PRINT BUTTON
+========================= */
+
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+
+  background: #1e3a8a;
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-print:hover {
+  background: #142a52;
+}
+
+.btn-print:active {
+  transform: scale(0.98);
 }
 </style>
+
+<script>
+
+/* ===================================
+CERTIFICATE REGISTRY
+=================================== */
+
+function registerCertificate(cert){
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+if(!user) return;
+
+const key = `amsCertificates_${user.email}`;
+
+let registry =
+JSON.parse(localStorage.getItem(key) || "[]");
+
+const exists = registry.find(c => c.id === cert.id);
+
+if(!exists){
+  registry.push(cert);
+}
+
+localStorage.setItem(key, JSON.stringify(registry));
+}
+
+</script>
+
 </head>
 
 <body>
 
+<script>
+<script>
+(function(){
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+if(!user){
+  window.location.replace("login.html");
+  return;
+}
+
+const email = user?.email;
+
+// ✅ GET CERT ID EARLY (FIX)
+const params = new URLSearchParams(window.location.search);
+const certId = params.get("id");
+
+// ✅ ADMIN DETECTION
+const isAdmin = user?.id && user.id.startsWith("admin-");
+
+/* ===============================
+ALLOW ADMIN DIRECT ACCESS
+=============================== */
+
+if (isAdmin && certId) {
+  return; // 🚀 allow company admin to view cert
+}
+
+/* ===============================
+NORMAL USER ACCESS CHECK
+=============================== */
+
+const modACompleted =
+  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+
+const modBCompleted =
+  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+const derCompleted =
+  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+const employeeCompleted =
+  localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+
+/* ===============================
+FINAL ACCESS CHECK
+=============================== */
+
+if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+  window.location.replace("dashboard.html");
+  return;
+}
+
+/* OPTIONAL 30 DAY EXPIRATION */
+
+const start = localStorage.getItem("fmcsa_start_date");
+
+if(start){
+
+const DAY_MS = 86400000;
+const LIMIT_DAYS = 30;
+
+const elapsed = Date.now() - Number(start);
+const daysUsed = Math.floor(elapsed / DAY_MS);
+
+if(daysUsed >= LIMIT_DAYS){
+  alert("FMCSA training window expired. Repurchase required.");
+  window.location.replace("dashboard.html");
+  return;
+}
+
+}
+
+})();
+</script>
+
 <main class="module-container cert-container">
 
 <header class="module-header">
+  
 <h1>FMCSA Training Certificates</h1>
+  
+<button class="btn-print" onclick="printCert()">
+  🖨 Print
+</button>
 
-<button onclick="printCert()">🖨 Print</button>
-<button onclick="returnToDashboard()">Return to Dashboard</button>
+<button class="btn-secondary" onclick="returnToDashboard()">
+Return to Dashboard
+</button>
 </header>
+  
+  <!-- DER CERTIFICATE TEMPLATE -->
+<div id="derCertTemplate" class="hidden"
+style="position:relative; max-width:900px; margin:auto; margin-top:40px;">
 
-<!-- =======================
-CERT TEMPLATES (UNCHANGED)
-======================= -->
+<img 
+  src="../assets/certificates/fmcsa-der-template.png"
+  style="
+    width:100%;
+    display:block;
+    image-rendering: auto;
+  "
+>
 
+<!-- Seal -->
+<img 
+  src="../assets/certificates/ams-seal.png"
+  style="
+    position:absolute;
+    bottom:90px;
+    left:160px;
+    width:120px;
+    transform:rotate(-10deg);
+    filter:drop-shadow(0px 3px 4px rgba(0,0,0,0.35));
+    display:block;
+    image-rendering:auto;
+  "
+>
+
+<!-- Student Name -->
+<div id="derCertStudentName"
+style="
+position:absolute;
+top:184px;
+width:100%;
+text-align:center;
+font-size:32px;
+font-weight:bold;
+">
+</div>
+
+<!-- Completion Date -->
+<div id="derCertCompletionDate"
+style="
+position:absolute;
+top:306px;
+left:535px;
+font-size:16px;
+white-space:nowrap;
+">
+</div>
+  
+<!-- Certificate ID -->
+<div id="derCertCertificateId"
+style="
+position:absolute;
+top:470px;
+left:350px;
+font-size:10px;
+">
+</div>
+
+<!-- QR -->
+<div id="derCertQR"
+style="
+position:absolute;
+bottom:90px;
+right:150px;
+">
+</div>
+
+</div>
+  
 <!-- EMPLOYEE CERTIFICATE TEMPLATE -->
 <div id="employeeCertTemplate"
 class="hidden"
@@ -194,144 +459,304 @@ right:150px;
 </div>
 
 </div>
+  
+<script>
+function returnToDashboard(){
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+  if (user.id && user.id.startsWith("admin-")) {
+    window.location.href = "company-dashboard.html";
+    return;
+  }
+
+  window.location.href = "dashboard.html";
+}
+</script>
+  
 </main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 
-/* =========================
-RETURN DASHBOARD (FIXED)
-========================= */
 function returnToDashboard(){
+
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  if(user.id && user.id.startsWith("admin-")){
+  if (user.id && user.id.startsWith("admin-")) {
     window.location.href = "company-dashboard.html";
-  } else {
-    window.location.href = "dashboard.html";
+    return;
   }
-}
 
-/* =========================
-SHOW CERT
-========================= */
+  window.location.href = "dashboard.html";
+}
+  
 function showCert(type){
+
   document.getElementById("employeeCertTemplate").classList.add("hidden");
   document.getElementById("supervisorCertTemplate").classList.add("hidden");
   document.getElementById("derCertTemplate").classList.add("hidden");
 
-  document.getElementById(type + "CertTemplate").classList.remove("hidden");
+  if(type === "employee"){
+    document.getElementById("employeeCertTemplate").classList.remove("hidden");
+  }
+
+  if(type === "supervisor"){
+    document.getElementById("supervisorCertTemplate").classList.remove("hidden");
+  }
+
+  if(type === "der"){
+    document.getElementById("derCertTemplate").classList.remove("hidden");
+  }
+
 }
 
-/* =========================
-PRINT
-========================= */
 function printCert(){
+
+  const cert = document.querySelector(
+    "#employeeCertTemplate:not(.hidden), #supervisorCertTemplate:not(.hidden), #derCertTemplate:not(.hidden)"
+  );
+
+  if(!cert){
+    alert("No certificate found.");
+    return;
+  }
+
   document.body.classList.add("print-mode");
-  setTimeout(()=>window.print(),100);
+
+  setTimeout(() => {
+    window.print();
+    document.body.classList.remove("print-mode");
+  }, 100);
+
 }
 
-/* =========================
-LOAD CERT (FIXED CLEAN)
-========================= */
+/* ===================================
+LOAD CERTIFICATES
+=================================== */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-const email = user.email;
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user?.email;
 
-const params = new URLSearchParams(window.location.search);
-const certId = params.get("id");
+  const modACompleted =
+    localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
 
-let selectedCert = null;
+  const modBCompleted =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-/* 🔥 SEARCH ALL CERTS (ADMIN SAFE) */
-for(let key in localStorage){
-  if(key.startsWith("amsCertificates_")){
+  const derCompleted =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+  const employeeCompleted =
+    localStorage.getItem("fmcsaEmployeeCompleted") === "true";
+
+/* SAFE ACCESS CHECK (FINAL FIX) */
+if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCompleted) {
+  window.location.replace("dashboard.html");
+  return;
+}
+
+  /* ===============================
+  URL CONTROL
+  =============================== */
+  const certId = params.get("id");
+  const type = params.get("type");
+
+  let selectedCert = null;
+
+// 🔥 SEARCH ALL USERS (COMPANY ADMIN VIEW FIX)
+for (let key in localStorage) {
+
+  if (key.startsWith("amsCertificates_")) {
+
     const list = JSON.parse(localStorage.getItem(key) || "[]");
+
     const found = list.find(c => c.id === certId);
-    if(found){
+
+    if (found) {
       selectedCert = found;
       break;
     }
   }
 }
 
-if(!selectedCert){
+if (!selectedCert) {
   alert("Certificate not found");
   return;
 }
 
-/* SHOW TYPE */
-if(selectedCert.type === "fmcsa_employee"){
+    if (!selectedCert) {
+      alert("Certificate not found");
+      return;
+    }
+    
+if (selectedCert.type === "fmcsa_employee") {
   showCert("employee");
-}
-else if(selectedCert.type === "fmcsa_der"){
+} 
+else if (selectedCert.type === "fmcsa_der") {
   showCert("der");
-}
-else{
+} 
+else {
   showCert("supervisor");
 }
 
-/* =========================
-FILL DATA
-========================= */
+  } else {
 
-const name =
-user.fullName ||
-`${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-user.email;
+    if (type) {
+      showCert(type);
+    } else {
+      if (employeeCompleted) showCert("employee");
+      else if (derCompleted) showCert("der");
+      else if (modACompleted) showCert("supervisor");
+    }
 
-/* EMPLOYEE */
-if(selectedCert.type === "fmcsa_employee"){
-  document.getElementById("empCertStudentName").textContent = name;
-  document.getElementById("empCertCompletionDate").textContent =
-    new Date(selectedCert.date).toLocaleDateString();
+  }
 
-  document.getElementById("empCertCertificateId").textContent =
-    "Certificate ID: " + selectedCert.id;
+  /* ===============================
+  SUPERVISOR CERTIFICATE
+  =============================== */
 
-  new QRCode(document.getElementById("empCertQR"), {
-    text: window.location.href,
-    width: 90,
-    height: 90
-  });
-}
+  const certIdA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+  const certIdB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
-/* SUPERVISOR */
-if(selectedCert.type === "fmcsa_supervisor"){
-  document.getElementById("certStudentName").textContent = name;
+  const storedADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
+  const storedBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
+
+  document.getElementById("certStudentName").textContent =
+    user.fullName ||
+    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+    user.email ||
+    "User";
+
+  const finalDate = storedBDate || storedADate;
+
   document.getElementById("certCompletionDate").textContent =
-    new Date(selectedCert.date).toLocaleDateString();
+    finalDate ? new Date(Number(finalDate)).toLocaleDateString("en-US") : "";
 
-  document.getElementById("certCertificateId").textContent =
-    "Certificate ID: " + selectedCert.id;
+  if (certIdA) {
+    document.getElementById("certCertificateId").textContent =
+      "Certificate ID: " + certIdA;
+  }
 
-  new QRCode(document.getElementById("certQR"), {
-    text: window.location.href,
+  if (certIdB) {
+    document.getElementById("certCertificateIdB").textContent =
+      "Drug & Alcohol ID: " + certIdB;
+  }
+
+  const finalCertId = certIdB || certIdA;
+
+  if (finalCertId) {
+    const verifyUrl =
+      window.location.origin +
+      "/ams-training-portal/frontend/pages/verify.html?id=" +
+      finalCertId;
+
+    const qrContainer = document.getElementById("certQR");
+    qrContainer.innerHTML = "";
+
+    new QRCode(qrContainer, {
+      text: verifyUrl,
+      width: 90,
+      height: 90
+    });
+  }
+
+  /* ===============================
+  DER CERTIFICATE
+  =============================== */
+
+  if (derCompleted) {
+
+    const certIdDER =
+      localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+
+    const storedDate =
+      localStorage.getItem(`fmcsaDERDate_${email}`);
+    
+    if (certIdDER) {
+
+      const verifyUrl =
+        window.location.origin +
+        "/ams-training-portal/frontend/pages/verify.html?id=" +
+        certIdDER;
+
+      document.getElementById("derCertStudentName").textContent =
+        user.fullName ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+        user.email;
+
+      document.getElementById("derCertCompletionDate").textContent =
+        storedDate
+          ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+          : "";
+
+      document.getElementById("derCertCertificateId").textContent =
+        "Certificate ID: " + certIdDER;
+
+      const qrContainer = document.getElementById("derCertQR");
+      qrContainer.innerHTML = "";
+
+      new QRCode(qrContainer, {
+        text: verifyUrl,
+        width: 90,
+        height: 90
+      });
+    }
+  }
+
+/* ===============================
+EMPLOYEE CERTIFICATE (FINAL FIX)
+=============================== */
+
+if (employeeCompleted) {
+
+  const certId =
+    localStorage.getItem("fmcsaEmployeeCertificateId");
+
+  const storedDate =
+    localStorage.getItem("fmcsaEmployeeDate");
+
+  const verifyUrl =
+    window.location.origin +
+    "/ams-training-portal/frontend/pages/verify.html?id=" +
+    certId;
+
+  // ✅ NAME (MATCH YOUR HTML)
+  document.getElementById("empCertStudentName").textContent =
+    user.fullName ||
+    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+    user.email;
+
+  // ✅ DATE
+  document.getElementById("empCertCompletionDate").textContent =
+    storedDate
+      ? new Date(Number(storedDate)).toLocaleDateString("en-US")
+      : "";
+
+  // ✅ CERT ID
+  document.getElementById("empCertCertificateId").textContent =
+    "Certificate ID: " + certId;
+
+  // ✅ QR
+  const qrTemplate = document.getElementById("empCertQR");
+  qrTemplate.innerHTML = "";
+
+  new QRCode(qrTemplate, {
+    text: verifyUrl,
     width: 90,
     height: 90
   });
+
 }
-
-/* DER */
-if(selectedCert.type === "fmcsa_der"){
-  document.getElementById("derCertStudentName").textContent = name;
-  document.getElementById("derCertCompletionDate").textContent =
-    new Date(selectedCert.date).toLocaleDateString();
-
-  document.getElementById("derCertCertificateId").textContent =
-    "Certificate ID: " + selectedCert.id;
-
-  new QRCode(document.getElementById("derCertQR"), {
-    text: window.location.href,
-    width: 90,
-    height: 90
-  });
-}
-
+  
 });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+</body>
+</html>
 
 </script>
 
