@@ -650,7 +650,7 @@ function handleDerFmcsa() {
   localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
-    window.location.href = "fmcsa-certificates.html?type=der";
+    window.location.href = "dot-certificate.html?type=der";
     return;
   }
 
@@ -725,7 +725,7 @@ function updateFMCSDERButtonState() {
     derFmcsaBtn.textContent = "View DER Certificate";
 
     derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=der";
+      window.location.href = "dot-certificate.html?type=der";
     };
 
     if (derDate && derDateEl) {
@@ -839,7 +839,7 @@ if (modA && !modB) {
   if (modA && modB) {
     btn.textContent = "🎓 View Certificate";
     btn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=supervisor";
+      window.location.href = "dot-certificate.html?type=supervisor";
     };
     return;
   }
@@ -933,7 +933,7 @@ function updateFMCSAEmployeeButton() {
     btn.textContent = "🎓 View Certificate";
 
     btn.onclick = () => {
-      window.location.href = "fmcsa-certificates.html?type=employee";
+      window.location.href = "dot-certificate.html?type=employee";
     };
 
     if (dateEl && empDate) {
