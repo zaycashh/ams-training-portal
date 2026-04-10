@@ -535,9 +535,6 @@ LOAD CERTIFICATES
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-  const email = user?.email;
-
   const params = new URLSearchParams(window.location.search);
   const certId = params.get("id");
   const type = params.get("type");
@@ -561,36 +558,35 @@ if (!certId && !modACompleted && !modBCompleted && !derCompleted && !employeeCom
 }
 
   /* ===============================
-  URL CONTROL
-  =============================== */
-  let selectedCert = null;
+URL CONTROL (FIXED - CLEAN)
+=============================== */
 
-// 🔥 SEARCH ALL USERS (COMPANY ADMIN VIEW FIX)
-for (let key in localStorage) {
+let selectedCert = null;
 
-  if (key.startsWith("amsCertificates_")) {
+/* ✅ GET CORRECT EMAIL (ADMIN OR USER) */
+const params = new URLSearchParams(window.location.search);
+const overrideEmail = params.get("email");
 
-    const list = JSON.parse(localStorage.getItem(key) || "[]");
+const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+const email = overrideEmail || user?.email;
 
-    const found = list.find(c => c.id === certId);
+/* ✅ LOAD ONLY THAT USER'S CERTS */
+const key = `amsCertificates_${email}`;
+const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
-    if (found) {
-      selectedCert = found;
-      break;
-    }
-  }
-}
+/* ✅ FIND CERT BY ID */
+selectedCert = registry.find(c => c.id === certId);
 
+/* ❌ IF NOT FOUND */
 if (!selectedCert) {
   alert("Certificate not found");
   return;
 }
 
-    if (!selectedCert) {
-      alert("Certificate not found");
-      return;
-    }
-    
+/* ===============================
+SHOW CORRECT TEMPLATE
+=============================== */
+
 if (selectedCert.type === "fmcsa_employee") {
   showCert("employee");
 } 
