@@ -834,7 +834,7 @@ function updateFMCSASupervisorButton() {
   const modB =
   localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-  /* =========================
+/* =========================
    COMPLETED (A + B)
 ========================= */
 if (modA && modB) {
@@ -843,7 +843,9 @@ if (modA && modB) {
 
   btn.onclick = () => {
 
-    const certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+    const certId =
+      localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
+      localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
     if (certId) {
       window.location.href = `fmcsa-certificates.html?id=${certId}`;
@@ -855,7 +857,6 @@ if (modA && modB) {
 
   return;
 }
-
 /* =========================
    MODULE A DONE ONLY
 ========================= */
