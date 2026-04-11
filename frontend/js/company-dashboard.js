@@ -821,6 +821,32 @@ function inviteEmployee() {
 
 function viewEmployeeCert(email) {
 
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) {
+    alert("No company data found");
+    return;
+  }
+
+  /* =========================
+     🔒 SECURITY CHECK
+  ========================= */
+
+  const isAssigned =
+    company.usedSeats?.employee?.[email] ||
+    company.usedSeats?.supervisor?.[email] ||
+    company.usedSeats?.der?.[email];
+
+  if (!isAssigned) {
+    alert("Access denied: This employee is not assigned to your company.");
+    return;
+  }
+
+  /* =========================
+     LOAD CERT
+  ========================= */
+
   const key = `amsCertificates_${email}`;
   const certs = JSON.parse(localStorage.getItem(key) || "[]");
 
@@ -831,10 +857,10 @@ function viewEmployeeCert(email) {
 
   const latestCert = certs[certs.length - 1];
 
-  console.log("VIEWING EMPLOYEE:", email);
-  console.log("CERT:", latestCert);
+  /* 🔥 FLAG ADMIN VIEW */
+  sessionStorage.setItem("adminViewing", "true");
 
-  // 🔥 Pass employee email to cert page
+  /* ✅ CORRECT PAGE */
   window.location.href =
-    `dot-certificate.html?id=${latestCert.id}&email=${email}`;
+    `fmcsa-certificates.html?id=${latestCert.id}`;
 }
