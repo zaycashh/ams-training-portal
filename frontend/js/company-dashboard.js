@@ -493,38 +493,47 @@ tr.innerHTML = `
   </td>
 
   <!-- ACTIONS -->
-  <td>
+<td>
 
-    ${
-      seatAssigned
-        ? `<button class="btn-secondary"
-             onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-             Remove Seat
-           </button>`
-        : `
-          <button class="btn-primary"
-            onclick="assignEmployeeSeat('${cleanEmail}')">
-            Assign Employee
-          </button>
+  ${
+    seatAssigned
+      ? `<button class="btn-secondary"
+           onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+           Remove Seat
+         </button>`
+      : `
+        <button class="btn-primary"
+          onclick="assignEmployeeSeat('${cleanEmail}')">
+          Assign Employee
+        </button>
 
-          <button class="btn-primary"
-            onclick="assignSupervisorSeat('${cleanEmail}')">
-            Assign Supervisor
-          </button>
+        <button class="btn-primary"
+          onclick="assignSupervisorSeat('${cleanEmail}')">
+          Assign Supervisor
+        </button>
 
-          <button class="btn-primary"
-            onclick="assignDerSeat('${cleanEmail}')">
-            Assign DER
-          </button>
-        `
-    }
+        <button class="btn-primary"
+          onclick="assignDerSeat('${cleanEmail}')">
+          Assign DER
+        </button>
+      `
+  }
 
-    <button class="btn-secondary"
-      onclick="removeEmployee('${cleanEmail}')">
-      Remove Employee
-    </button>
+  ${
+    trainingCompleted
+      ? `<button class="btn-success"
+           onclick="viewEmployeeCert('${cleanEmail}')">
+           🎓 View Certificate
+         </button>`
+      : ``
+  }
 
-  </td>
+  <button class="btn-secondary"
+    onclick="removeEmployee('${cleanEmail}')">
+    Remove Employee
+  </button>
+
+</td>
 `;
 
 tbody.appendChild(tr);
