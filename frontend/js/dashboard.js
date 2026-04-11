@@ -834,7 +834,9 @@ function updateFMCSASupervisorButton() {
   const modB =
   localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-  /* MODULE A COMPLETED BUT NOT B */
+  /* =========================
+   COMPLETED (A + B)
+========================= */
 if (modA && modB) {
 
   btn.textContent = "🎓 View Certificate";
@@ -844,7 +846,7 @@ if (modA && modB) {
     const certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
     if (certId) {
-      window.location.href = `dot-certificate.html?id=${certId}`;
+      window.location.href = `pages/dot-certificate.html?id=${certId}`;
     } else {
       alert("Certificate not found");
     }
@@ -853,6 +855,31 @@ if (modA && modB) {
 
   return;
 }
+
+/* =========================
+   MODULE A DONE ONLY
+========================= */
+if (modA && !modB) {
+
+  btn.textContent = "⚠️ Continue Training (Module B Required)";
+  btn.style.backgroundColor = "#f0ad4e";
+
+  btn.onclick = () => {
+    window.location.href = "fmcsa-drug-alcohol.html";
+  };
+
+  return;
+}
+
+/* =========================
+   NOT STARTED
+========================= */
+btn.textContent = "Start Module A – Reasonable Suspicion";
+
+btn.onclick = () => {
+  window.location.href = "fmcsa-module-a.html";
+};
+  
   /* COMPANY SEAT */
   
 if (user.role === "employee") {
