@@ -200,8 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const params = new URLSearchParams(window.location.search);
   const certId = params.get("id");
-  const overrideEmail = params.get("email");
   const isCompanyView = params.get("company") === "true";
+  const overrideEmail = params.get("email");
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const email = overrideEmail || user?.email;
@@ -209,7 +209,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const key = `amsCertificates_${email}`;
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
-  if (isCompanyView) {
+  let selectedCert = null;
+
+/* =========================
+   COMPANY ADMIN VIEW
+========================= */
+if (isCompanyView) {
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -243,8 +248,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 🔥 Show latest cert (safe start)
-  const selectedCert = companyCerts[companyCerts.length - 1];
+  // ✅ Pick latest employee certificate
+  selectedCert = companyCerts[companyCerts.length - 1];
+
+  /* =========================
+     RENDER CERT
+  ========================= */
 
   if (selectedCert.type === "fmcsa_employee") showCert("employee");
   else if (selectedCert.type === "fmcsa_der") showCert("der");
@@ -272,6 +281,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   return;
+}
+
+/* =========================
+   NORMAL USER FALLBACK
+========================= */
+if (!selectedCert) {
+
+  selectedCert = registry.find(c => c.id === certId);
+
+  if (!selectedCert) {
+    alert("Certificate not found");
+    return;
+  }
+
 }
 
   if (selectedCert.type === "fmcsa_employee") showCert("employee");
