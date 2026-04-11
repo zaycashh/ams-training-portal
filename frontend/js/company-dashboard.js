@@ -871,5 +871,5 @@ function viewEmployeeCert(email) {
 
   /* ✅ CORRECT PAGE */
   window.location.href =
-    `fmcsa-certificates.html?id=${latestCert.id}`;
+  `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
 }
