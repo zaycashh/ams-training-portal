@@ -653,7 +653,7 @@ function handleDerFmcsa() {
     const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
 
 if (certId) {
-  window.location.href = `fmcsa-certificates.html?id=${certId}`;
+  window.location.href = `dot-certificate.html?id=${certId}`;
 } else {
   alert("Certificate not found");
 }
@@ -846,7 +846,7 @@ if (modA && modB) {
     const certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
     if (certId) {
-      window.location.href = `dot-certificate.html?id=${certId}`;
+      window.location.href = `fmcsa-certificates.html?id=${certId}`;
     } else {
       alert("Certificate not found");
     }
@@ -973,7 +973,7 @@ function updateFMCSAEmployeeButton() {
     const certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
 
     if (certId) {
-      window.location.href = `dot-certificate.html?id=${certId}`;
+      window.location.href = `fmcsa-certificates.html?id=${certId}`;
     } else {
       alert("Certificate not found");
     }
