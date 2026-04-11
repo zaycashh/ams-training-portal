@@ -266,12 +266,36 @@ if (isCompanyView) {
     empCertStudentName.textContent = name;
     empCertCompletionDate.textContent = date;
     empCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+    
+    if (selectedCert.type === "fmcsa_employee") {
+  empCertStudentName.textContent = name;
+  empCertCompletionDate.textContent = date;
+  empCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+
+  new QRCode(empCertQR, {
+    text: window.location.href,
+    width: 90,
+    height: 90
+  });
+}
   }
 
   if (selectedCert.type === "fmcsa_der") {
     derCertStudentName.textContent = name;
     derCertCompletionDate.textContent = date;
     derCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+    
+  if (selectedCert.type === "fmcsa_der") {
+  derCertStudentName.textContent = name;
+  derCertCompletionDate.textContent = date;
+  derCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+
+  new QRCode(derCertQR, {
+    text: window.location.href,
+    width: 90,
+    height: 90
+  });
+}
   }
 
   if (selectedCert.type === "fmcsa_supervisor") {
