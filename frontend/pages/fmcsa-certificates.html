@@ -144,13 +144,38 @@ cursor:pointer;
 <script>
 
 function returnToDashboard(){
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 
-  if (user.id && user.id.startsWith("admin-")) {
+  const user =
+    JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  const isAdminView =
+    sessionStorage.getItem("adminViewing") === "true";
+
+  /* =========================
+     ADMIN VIEW (FROM COMPANY DASHBOARD)
+  ========================= */
+
+  if (isAdminView) {
+    sessionStorage.removeItem("adminViewing");
     window.location.href = "company-dashboard.html";
-  } else {
-    window.location.href = "dashboard.html";
+    return;
   }
+
+  /* =========================
+     NORMAL USER
+  ========================= */
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (user.role === "company_admin" || user.role === "owner") {
+    window.location.href = "company-dashboard.html";
+    return;
+  }
+
+  window.location.href = "dashboard.html";
 }
 
 function showCert(type){
