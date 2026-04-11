@@ -262,18 +262,17 @@ if (isCompanyView) {
   const name = selectedCert.name || selectedCert.email;
   const date = new Date(selectedCert.date).toLocaleDateString("en-US");
     
-    if (selectedCert.type === "fmcsa_employee") {
+   if (selectedCert.type === "fmcsa_employee") {
   empCertStudentName.textContent = name;
   empCertCompletionDate.textContent = date;
   empCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
 
   new QRCode(empCertQR, {
-    text: window.location.href,
+    text: `${window.location.origin}/ams-training-portal/frontend/pages/verify.html?id=${selectedCert.id}`,
     width: 90,
     height: 90
   });
 }
-  }
     
   if (selectedCert.type === "fmcsa_der") {
   derCertStudentName.textContent = name;
@@ -281,12 +280,11 @@ if (isCompanyView) {
   derCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
 
   new QRCode(derCertQR, {
-    text: window.location.href,
+    text: `${window.location.origin}/ams-training-portal/frontend/pages/verify.html?id=${selectedCert.id}`,
     width: 90,
     height: 90
   });
 }
-  }
 
   if (selectedCert.type === "fmcsa_supervisor") {
   certStudentName.textContent = name;
@@ -294,13 +292,14 @@ if (isCompanyView) {
   certCertificateId.textContent = "Certificate ID: " + selectedCert.id;
 
   new QRCode(certQR, {
-    text: `${window.location.origin}/ams-training-portal/frontend/pages/verify.html?id=${selectedCert.id}`,
-    width: 110,
-    height: 110,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
+  text: `${window.location.origin}/ams-training-portal/frontend/pages/verify.html?id=${selectedCert.id}`,
+  width: 110,
+  height: 110,
+  colorDark: "#000000",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.H
+});
+    
 }
 
   return;
