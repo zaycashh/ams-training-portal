@@ -261,11 +261,6 @@ if (isCompanyView) {
 
   const name = selectedCert.name || selectedCert.email;
   const date = new Date(selectedCert.date).toLocaleDateString("en-US");
-
-  if (selectedCert.type === "fmcsa_employee") {
-    empCertStudentName.textContent = name;
-    empCertCompletionDate.textContent = date;
-    empCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
     
     if (selectedCert.type === "fmcsa_employee") {
   empCertStudentName.textContent = name;
@@ -279,11 +274,6 @@ if (isCompanyView) {
   });
 }
   }
-
-  if (selectedCert.type === "fmcsa_der") {
-    derCertStudentName.textContent = name;
-    derCertCompletionDate.textContent = date;
-    derCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
     
   if (selectedCert.type === "fmcsa_der") {
   derCertStudentName.textContent = name;
