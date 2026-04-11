@@ -653,7 +653,7 @@ function handleDerFmcsa() {
     const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
 
 if (certId) {
-  window.location.href = `dot-certificate.html?id=${certId}`;
+  window.location.href = `fmcsa-certificates.html?id=${certId}`;
 } else {
   alert("Certificate not found");
 }
@@ -734,7 +734,7 @@ function updateFMCSDERButtonState() {
       const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
 
 if (certId) {
-  window.location.href = `dot-certificate.html?id=${certId}`;
+  window.location.href = `fmcsa-certificates.html?id=${certId}`;
 } else {
   alert("Certificate not found");
 }
