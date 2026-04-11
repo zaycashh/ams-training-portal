@@ -519,15 +519,6 @@ tr.innerHTML = `
       `
   }
 
-  ${
-    trainingCompleted
-      ? `<button class="btn-success"
-           onclick="viewEmployeeCert('${cleanEmail}')">
-           🎓 View Certificate
-         </button>`
-      : ``
-  }
-
   <button class="btn-secondary"
     onclick="removeEmployee('${cleanEmail}')">
     Remove Employee
