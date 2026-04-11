@@ -846,7 +846,7 @@ if (modA && modB) {
     const certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
     if (certId) {
-      window.location.href = `pages/dot-certificate.html?id=${certId}`;
+      window.location.href = `dot-certificate.html?id=${certId}`;
     } else {
       alert("Certificate not found");
     }
