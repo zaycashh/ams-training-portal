@@ -201,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const certId = params.get("id");
   const overrideEmail = params.get("email");
+  const isCompanyView = params.get("company") === "true";
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const email = overrideEmail || user?.email;
@@ -208,12 +209,70 @@ document.addEventListener("DOMContentLoaded", () => {
   const key = `amsCertificates_${email}`;
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
-  const selectedCert = registry.find(c => c.id === certId);
+  if (isCompanyView) {
 
-  if (!selectedCert) {
-    alert("Certificate not found");
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) {
+    alert("No company data found");
     return;
   }
+
+  let companyCerts = [];
+
+  ["employee", "supervisor", "der"].forEach(type => {
+
+    const users = company.usedSeats[type] || {};
+
+    Object.keys(users).forEach(empEmail => {
+
+      const key = `amsCertificates_${empEmail}`;
+      const certs = JSON.parse(localStorage.getItem(key) || "[]");
+
+      certs.forEach(cert => {
+        companyCerts.push({ ...cert, email: empEmail });
+      });
+
+    });
+
+  });
+
+  if (!companyCerts.length) {
+    alert("No certificates found for your employees");
+    return;
+  }
+
+  // 🔥 Show latest cert (safe start)
+  const selectedCert = companyCerts[companyCerts.length - 1];
+
+  if (selectedCert.type === "fmcsa_employee") showCert("employee");
+  else if (selectedCert.type === "fmcsa_der") showCert("der");
+  else showCert("supervisor");
+
+  const name = selectedCert.name || selectedCert.email;
+  const date = new Date(selectedCert.date).toLocaleDateString("en-US");
+
+  if (selectedCert.type === "fmcsa_employee") {
+    empCertStudentName.textContent = name;
+    empCertCompletionDate.textContent = date;
+    empCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+  }
+
+  if (selectedCert.type === "fmcsa_der") {
+    derCertStudentName.textContent = name;
+    derCertCompletionDate.textContent = date;
+    derCertCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+  }
+
+  if (selectedCert.type === "fmcsa_supervisor") {
+    certStudentName.textContent = name;
+    certCompletionDate.textContent = date;
+    certCertificateId.textContent = "Certificate ID: " + selectedCert.id;
+  }
+
+  return;
+}
 
   if (selectedCert.type === "fmcsa_employee") showCert("employee");
   else if (selectedCert.type === "fmcsa_der") showCert("der");
