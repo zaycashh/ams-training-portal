@@ -532,18 +532,24 @@ tr.innerHTML = `
       ">
 
         ${
-          trainingType === "None"
-            ? `
-              <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
-              <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
-              <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
-            `
-            : `
-              <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-                Remove Seat
-              </button><br>
-            `
-        }
+  trainingType === "None"
+    ? `
+      <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
+      <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
+      <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+
+      <hr style="margin:6px 0;">
+
+      <button onclick="resendInvite('${cleanEmail}')">
+        Resend Invite
+      </button><br>
+    `
+    : `
+      <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+        Remove Seat
+      </button><br>
+    `
+}
 
         <button onclick="removeEmployee('${cleanEmail}')">
           Remove Employee
@@ -823,10 +829,6 @@ function inviteEmployee() {
   const inviteCode =
     "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-  /* =========================
-     STORE INVITE
-  ========================= */
-
   company.invites[email] = {
     email,
     code: inviteCode,
@@ -907,4 +909,41 @@ function toggleMenu(email) {
 
   // toggle current
   menu.style.display = isOpen ? "none" : "block";
+}
+
+function resendInvite(email) {
+
+  let company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.invites) company.invites = {};
+
+  const existingInvite = company.invites[email];
+
+  const msg = document.getElementById("inviteMsg");
+
+  if (existingInvite) {
+    if (msg) {
+      msg.textContent = "Invite Code: " + existingInvite.code;
+    }
+    return;
+  }
+
+  const newCode =
+    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  company.invites[email] = {
+    email,
+    code: newCode,
+    program: company.program || "unknown",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "resent"
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) {
+    msg.textContent = "New Invite Code: " + newCode;
+  }
 }
