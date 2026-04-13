@@ -224,9 +224,16 @@ function initQuiz() {
   checkCooldown();
 
   if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
+
+  const email = user?.email;
+  const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+
+  if (certId) {
     window.location.href = `fmcsa-certificates.html?id=${certId}`;
-    return;
   }
+
+  return;
+}
 
   renderQuestion();
 }
