@@ -964,6 +964,9 @@ function resendInvite(email) {
     </button>
   `;
 }
+   /* =========================================================
+   COPY INVITE CODE (GLOBAL)
+========================================================= */
 function copyInvite(code) {
   navigator.clipboard.writeText(code).then(() => {
     const msg = document.getElementById("inviteMsg");
