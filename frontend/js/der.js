@@ -20,7 +20,7 @@ const USER_EMAIL = user?.email || "guest";
 
 const DER_CONTENT_DONE_KEY = `derContentCompleted_${USER_EMAIL}`;
 const DER_PASSED_KEY = `derQuizPassed_${USER_EMAIL}`;
-const DER_COMPLETED_KEY = `fmcsaDERCompleted_${USER_EMAIL}`;
+const DER_COMPLETED_KEY = `derTrainingCompleted_${USER_EMAIL}`;
 const DER_ATTEMPTS_KEY = `derQuizAttempts_${USER_EMAIL}`;
 const DER_COOLDOWN_KEY = `derQuizCooldownUntil_${USER_EMAIL}`;
 const DER_CERT_CODE_KEY = `derCertificateCode_${USER_EMAIL}`;
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.body.dataset.module !== "der") return;
 
-  localStorage.setItem(`fmcsaDERDate_${USER_EMAIL}`, Date.now());
+  localStorage.setItem(`derTrainingDate_${USER_EMAIL}`, Date.now());
 
     alert("DER Training requires purchase.");
     window.location.href = "../pages/dashboard.html";
@@ -257,8 +257,8 @@ function populateDerCertificate() {
     user.fullName ||
     ((user.firstName || "") + " " + (user.lastName || "")).trim() ||
     user.email,
-  course: "FMCSA DER Training",
-  type: "fmcsa_der",
+  course: "FAA DER Training",
+  type: "faa_der",
   date: Date.now(),
   displayDate: new Date().toLocaleDateString("en-US")
 });
