@@ -395,7 +395,7 @@ function updateFMCSATimer() {
   }
 }
 /* =========================
-   GET USER ACCESS (SAFE)
+   GET USER ACCESS (FINAL FIX)
 ========================= */
 
 function getUserAccess(email) {
@@ -403,10 +403,30 @@ function getUserAccess(email) {
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+  if (!company.usedSeats) {
+    return {
+      employee: false,
+      supervisor: false,
+      der: false
+    };
+  }
+
+  const employee =
+    !!company.usedSeats?.employee?.[email] &&
+    company.usedSeats.employee[email].revoked !== true;
+
+  const supervisor =
+    !!company.usedSeats?.supervisor?.[email] &&
+    company.usedSeats.supervisor[email].revoked !== true;
+
+  const der =
+    !!company.usedSeats?.der?.[email] &&
+    company.usedSeats.der[email].revoked !== true;
+
   return {
-    employee: !!company.usedSeats?.employee?.[email],   // ✅ FIXED
-    supervisor: !!company.usedSeats?.supervisor?.[email],
-    der: !!company.usedSeats?.der?.[email]
+    employee,
+    supervisor,
+    der
   };
 }
 /* =========================
