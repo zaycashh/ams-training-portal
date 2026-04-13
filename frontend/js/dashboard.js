@@ -719,8 +719,11 @@ function hasCompanySeat(type) {
 
   if (!user || user.role !== "employee") return false;
 
-  return !!company?.usedSeats?.[type]?.[user.email];
+  const seat = company?.usedSeats?.[type]?.[user.email];
+
+  return !!seat && seat.revoked !== true;
 }
+
 /* =========================
    DER COMPLETION STATUS
 ========================= */
