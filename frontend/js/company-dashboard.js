@@ -480,53 +480,49 @@ trainingCompleted = val === "true";
       statusLabel = "Completed";
     }
 
-    /* =========================
-       RENDER ROW
-    ========================= */
-     const tr = document.createElement("tr");
-
-tr.innerHTML = `
-  <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
-  <td>${emp.email}</td>
-  <td>Employee</td>
-  <td>${trainingType}</td>
-
-  <!-- STATUS ONLY (CLEAN) -->
-  <td>
-    ${statusLabel}
-  </td>
-
-  <!-- ACTIONS -->
+    <!-- ACTIONS -->
 <td>
 
-  ${
-    seatAssigned
-      ? `<button class="btn-secondary"
-           onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-           Remove Seat
-         </button>`
-      : `
-        <button class="btn-primary"
-          onclick="assignEmployeeSeat('${cleanEmail}')">
-          Assign Employee
-        </button>
+  <div style="display:inline-block; position:relative;">
 
-        <button class="btn-primary"
-          onclick="assignSupervisorSeat('${cleanEmail}')">
-          Assign Supervisor
-        </button>
+    <button class="btn-primary"
+      onclick="toggleMenu('${cleanEmail}')">
+      Manage ▼
+    </button>
 
-        <button class="btn-primary"
-          onclick="assignDerSeat('${cleanEmail}')">
-          Assign DER
-        </button>
-      `
-  }
+    <div id="menu-${cleanEmail}" class="action-menu" style="
+      display:none;
+      position:absolute;
+      background:white;
+      border:1px solid #ddd;
+      padding:10px;
+      margin-top:5px;
+      z-index:10;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      min-width:160px;
+    ">
 
-  <button class="btn-secondary"
-    onclick="removeEmployee('${cleanEmail}')">
-    Remove Employee
-  </button>
+      ${
+        trainingType === "None"
+          ? `
+            <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
+            <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
+            <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+          `
+          : `
+            <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+              Remove Seat
+            </button><br>
+          `
+      }
+
+      <button onclick="removeEmployee('${cleanEmail}')">
+        Remove Employee
+      </button>
+
+    </div>
+
+  </div>
 
 </td>
 `;
@@ -867,4 +863,19 @@ function viewEmployeeCert(email) {
   /* ✅ CORRECT PAGE */
   window.location.href =
   `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
+}
+function toggleMenu(email) {
+
+  const menu = document.getElementById(`menu-${email}`);
+  if (!menu) return;
+
+  const isOpen = menu.style.display === "block";
+
+  // close all menus
+  document.querySelectorAll(".action-menu").forEach(m => {
+    m.style.display = "none";
+  });
+
+  // toggle current
+  menu.style.display = isOpen ? "none" : "block";
 }
