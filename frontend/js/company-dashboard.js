@@ -276,10 +276,11 @@ const derAvailable = Math.max(0, derTotal - derUsed);
 /* =========================================================
    ASSIGN EMPLOYEE SEAT (UPDATED)
 ========================================================= */
+function assignEmployeeSeat(emailParam) {
 
-function assignEmployeeSeat() {
+  const email = emailParam ||
+    document.getElementById("seatEmail").value.trim();
 
-  const email = document.getElementById("seatEmail").value.trim();
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -309,14 +310,15 @@ function assignEmployeeSeat() {
   location.reload();
 }
 
-
 /* =========================================================
    ASSIGN SUPERVISOR SEAT
 ========================================================= */
 
-function assignSupervisorSeat() {
+function assignSupervisorSeat(emailParam) {
 
-  const email = document.getElementById("seatEmail").value.trim();
+  const email = emailParam ||
+    document.getElementById("seatEmail").value.trim();
+
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -350,9 +352,11 @@ function assignSupervisorSeat() {
    ASSIGN DER SEAT
 ========================================================= */
 
-function assignDerSeat() {
+function assignDerSeat(emailParam) {
 
-  const email = document.getElementById("seatEmail").value.trim();
+  const email = emailParam ||
+    document.getElementById("seatEmail").value.trim();
+
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
