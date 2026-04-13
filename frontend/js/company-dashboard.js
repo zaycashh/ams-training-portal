@@ -488,7 +488,12 @@ if (!isInvite && trainingCompleted) {
 const tr = document.createElement("tr");
 
 tr.innerHTML = `
-  <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
+  <td>
+  ${isInvite
+    ? "(Pending User)"
+    : `${emp.firstName || ""} ${emp.lastName || ""}`
+  }
+</td>
   <td>${emp.email}</td>
   <td>${isInvite ? "Invited" : "Employee"}</td>
 
@@ -924,11 +929,17 @@ function resendInvite(email) {
   const msg = document.getElementById("inviteMsg");
 
   if (existingInvite) {
-    if (msg) {
-      msg.textContent = "Invite Code: " + existingInvite.code;
-    }
-    return;
+  if (msg) {
+    msg.innerHTML = `
+      Invite Code: <strong>${existingInvite.code}</strong>
+      <button onclick="copyInvite('${existingInvite.code}')"
+        style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+        Copy
+      </button>
+    `;
   }
+  return;
+}
 
   const newCode =
     "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -945,6 +956,19 @@ function resendInvite(email) {
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   if (msg) {
-    msg.textContent = "New Invite Code: " + newCode;
-  }
+  msg.innerHTML = `
+    New Invite Code: <strong>${newCode}</strong>
+    <button onclick="copyInvite('${newCode}')"
+      style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+      Copy
+    </button>
+  `;
+}
+function copyInvite(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const msg = document.getElementById("inviteMsg");
+    if (msg) {
+      msg.innerHTML += " ✅ Copied!";
+    }
+  });
 }
