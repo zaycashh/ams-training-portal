@@ -224,7 +224,7 @@ function initQuiz() {
   checkCooldown();
 
   if (localStorage.getItem(DER_QUIZ_PASSED_KEY) === "true") {
-    window.location.href = "fmcsa-certificates.html";
+    window.location.href = `fmcsa-certificates.html?id=${certId}`;
     return;
   }
 
@@ -348,8 +348,7 @@ if (!localStorage.getItem(`derCertRegistered_${user?.email}`)) {
   }
 
 }
-  localStorage.setItem("fmcsaDERDate", Date.now());
-
+       
       localStorage.removeItem(DER_ATTEMPTS_KEY);
       localStorage.removeItem(DER_COOLDOWN_KEY);
 
@@ -362,7 +361,7 @@ if (!localStorage.getItem(`derCertRegistered_${user?.email}`)) {
       }
 
       setTimeout(() => {
-        window.location.href = "fmcsa-certificates.html";
+        window.location.href = `fmcsa-certificates.html?id=${certId}`;
       }, 2000);
 
     } else {
