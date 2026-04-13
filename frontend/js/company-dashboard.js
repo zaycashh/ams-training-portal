@@ -480,51 +480,80 @@ trainingCompleted = val === "true";
       statusLabel = "Completed";
     }
 
-    <!-- ACTIONS -->
-<td>
+   /* =========================
+   RENDER ROW (FINAL CLEAN)
+========================= */
 
-  <div style="display:inline-block; position:relative;">
+const tr = document.createElement("tr");
 
-    <button class="btn-primary"
-      onclick="toggleMenu('${cleanEmail}')">
-      Manage ▼
-    </button>
+tr.innerHTML = `
+  <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
+  <td>${emp.email}</td>
+  <td>Employee</td>
 
-    <div id="menu-${cleanEmail}" class="action-menu" style="
-      display:none;
-      position:absolute;
-      background:white;
-      border:1px solid #ddd;
-      padding:10px;
-      margin-top:5px;
-      z-index:10;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      min-width:160px;
+  <td>
+    <span style="
+      padding:4px 8px;
+      border-radius:6px;
+      background:${
+        trainingType === "Supervisor" ? "#dbeafe" :
+        trainingType === "DER" ? "#dcfce7" :
+        trainingType === "Employee" ? "#fef9c3" :
+        "#eee"
+      };
+      font-weight:600;
     ">
+      ${trainingType}
+    </span>
+  </td>
 
-      ${
-        trainingType === "None"
-          ? `
-            <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
-            <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
-            <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
-          `
-          : `
-            <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-              Remove Seat
-            </button><br>
-          `
-      }
+  <td>${statusLabel}</td>
 
-      <button onclick="removeEmployee('${cleanEmail}')">
-        Remove Employee
+  <!-- ACTIONS -->
+  <td>
+
+    <div style="display:inline-block; position:relative;">
+
+      <button class="btn-primary"
+        onclick="toggleMenu('${cleanEmail}')">
+        Manage ▼
       </button>
+
+      <div id="menu-${cleanEmail}" class="action-menu" style="
+        display:none;
+        position:absolute;
+        background:white;
+        border:1px solid #ddd;
+        padding:10px;
+        margin-top:5px;
+        z-index:10;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        min-width:160px;
+      ">
+
+        ${
+          trainingType === "None"
+            ? `
+              <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
+              <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
+              <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+            `
+            : `
+              <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+                Remove Seat
+              </button><br>
+            `
+        }
+
+        <button onclick="removeEmployee('${cleanEmail}')">
+          Remove Employee
+        </button>
+
+      </div>
 
     </div>
 
-  </div>
-
-</td>
+  </td>
 `;
 
 tbody.appendChild(tr);
