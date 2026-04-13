@@ -427,9 +427,14 @@ function loadEmployees(companyId) {
      🔥 LOOP FIX (YOU WERE MISSING THIS)
   ========================================================= */
 
-  employees.forEach(emp => {
+  const invites = Object.values(company.invites || {});
+
+[...employees, ...invites].forEach(emp => {
 
     const cleanEmail = emp.email.trim().toLowerCase(); // ✅ MUST BE FIRST
+
+    const isInvite =
+   emp.status === "pending" || emp.status === "resent";
 
     /* =========================
        DETERMINE TRAINING TYPE
@@ -466,19 +471,15 @@ const val = matchKey ? localStorage.getItem(matchKey) : null;
 
 trainingCompleted = val === "true";
 
-    /* =========================
-       STATUS LABEL
-    ========================= */
-
     let statusLabel = "Invited";
 
-    if (seatAssigned && !trainingCompleted) {
-      statusLabel = "In Progress";
-    }
+if (!isInvite) {
+  statusLabel = "In Progress";
+}
 
-    if (seatAssigned && trainingCompleted) {
-      statusLabel = "Completed";
-    }
+if (!isInvite && trainingCompleted) {
+  statusLabel = "Completed";
+}
 
    /* =========================
    RENDER ROW (FINAL CLEAN)
@@ -489,7 +490,7 @@ const tr = document.createElement("tr");
 tr.innerHTML = `
   <td>${emp.firstName || ""} ${emp.lastName || ""}</td>
   <td>${emp.email}</td>
-  <td>Employee</td>
+  <td>${isInvite ? "Invited" : "Employee"}</td>
 
   <td>
     <span style="
@@ -532,7 +533,7 @@ tr.innerHTML = `
       ">
 
         ${
-  trainingType === "None"
+  trainingType === "None" || isInvite
     ? `
       <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
       <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
