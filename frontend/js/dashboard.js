@@ -804,6 +804,7 @@ if (user.role === "employee") {
   derFmcsaBtn.textContent = "🔒 Seat Required";
   derFmcsaBtn.style.opacity = "0.7";
   derFmcsaBtn.style.cursor = "not-allowed";
+  derFmcsaBtn.disabled = true;
 
   derFmcsaBtn.onclick = () => {
     showToast("No seat assigned. Contact your admin.", "warning");
