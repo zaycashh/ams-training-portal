@@ -26,6 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
 
+   const takeQuizBtn = document.getElementById("takeQuizBtn");
+
+if (takeQuizBtn) {
+  takeQuizBtn.onclick = () => {
+    showSection("quiz");
+
+    document.getElementById("btnQuiz").disabled = false;
+    document.getElementById("btnQuiz").classList.remove("disabled");
+  };
+}
+
   const currentPageEl = document.getElementById("currentPage");
   const totalPagesEl = document.getElementById("totalPages");
 
@@ -89,6 +100,14 @@ if (user) {
 
     if (prevPageBtn) prevPageBtn.disabled = num === 1;
     if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
+     
+     const takeQuizBtn = document.getElementById("takeQuizBtn");
+
+if (num === totalPages && takeQuizBtn) {
+  takeQuizBtn.classList.remove("hidden");
+} else if (takeQuizBtn) {
+  takeQuizBtn.classList.add("hidden");
+}
 
   });
 
