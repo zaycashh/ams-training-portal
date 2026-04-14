@@ -295,9 +295,11 @@ const email = (emailParam ||
     return alert("No employee seats available");
   }
 
-  if (company.usedSeats.employee[email]) {
-    return alert("Employee already assigned");
-  }
+  const existingSeat = company.usedSeats.employee[email];
+
+if (existingSeat && existingSeat.revoked !== true) {
+  return alert("Employee already assigned");
+}
 
   company.usedSeats.employee[email] = {
   assignedAt: Date.now(),
@@ -334,9 +336,11 @@ const email = (emailParam ||
     return alert("No supervisor seats available");
   }
 
-  if (company.usedSeats.supervisor[email]) {
-    return alert("Supervisor already assigned");
-  }
+  const existingSeat = company.usedSeats.supervisor[email];
+
+if (existingSeat && existingSeat.revoked !== true) {
+  return alert("Supervisor already assigned");
+}
 
   company.usedSeats.supervisor[email] = {
   assignedAt: Date.now(),
@@ -373,9 +377,11 @@ const email = (emailParam ||
     return alert("No DER seats available");
   }
 
-  if (company.usedSeats.der[email]) {
-    return alert("DER already assigned");
-  }
+  const existingSeat = company.usedSeats.der[email];
+
+if (existingSeat && existingSeat.revoked !== true) {
+  return alert("DER already assigned");
+}
 
   company.usedSeats.der[email] = {
   assignedAt: Date.now(),
