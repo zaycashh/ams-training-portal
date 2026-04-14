@@ -32,8 +32,12 @@ if (takeQuizBtn) {
   takeQuizBtn.onclick = () => {
     showSection("quiz");
 
-    document.getElementById("btnQuiz").disabled = false;
-    document.getElementById("btnQuiz").classList.remove("disabled");
+    const quizBtn = document.getElementById("btnQuiz");
+
+if (quizBtn) {
+  quizBtn.disabled = false;
+  quizBtn.classList.remove("disabled");
+}
   };
 }
 
@@ -130,35 +134,33 @@ if (num === totalPages && takeQuizBtn) {
 
   if (nextPageBtn) {
 
-   nextPageBtn.addEventListener("click", () => {
+  nextPageBtn.addEventListener("click", () => {
 
-  if (currentPage < totalPages) {
-    currentPage++;
-    renderPage(currentPage);
-  }
-
-  // 🔥 LAST PAGE REACHED
-  if (currentPage === totalPages) {
-
-    // Save completion per user
-    if (user) {
-      localStorage.setItem(`fmcsaDERContentDone_${user.email}`, "true");
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderPage(currentPage);
     }
 
-    // Unlock quiz tab
-    const quizBtn = document.getElementById("btnQuiz");
-    if (quizBtn) {
-      quizBtn.disabled = false;
-      quizBtn.classList.remove("disabled");
+    // 🔥 LAST PAGE REACHED
+    if (currentPage === totalPages) {
+
+      // Save completion per user
+      if (user) {
+        localStorage.setItem(`fmcsaDERContentDone_${user.email}`, "true");
+      }
+
+      // Unlock quiz tab
+      const quizBtn = document.getElementById("btnQuiz");
+      if (quizBtn) {
+        quizBtn.disabled = false;
+        quizBtn.classList.remove("disabled");
+      }
+
     }
 
-    document.getElementById("btnQuiz").disabled = false;
-    document.getElementById("btnQuiz").classList.remove("disabled");
-  }
+  });
 
-});
-
-  }
+}
    
   /* =========================================================
      QUIZ ENGINE
