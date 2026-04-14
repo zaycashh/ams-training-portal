@@ -777,38 +777,20 @@ if (certId) {
     return;
   }
 
- /* =========================
-   ACCESS (SEAT OR PURCHASE)
+/* =========================
+   ACCESS CONTROL (FINAL)
 ========================= */
 
-if (hasSeat || paid) {
+// 👤 COMPANY EMPLOYEE → SEAT ONLY
+if (user.role === "employee") {
 
   if (hasSeat) {
+
     setAssignedBadge("derSeatBadge");
-  } else {
-    clearBadge("derSeatBadge");
-  }
-
-  derFmcsaBtn.textContent = "Start DER Training";
-  derFmcsaBtn.style.opacity = "1";
-  derFmcsaBtn.style.cursor = "pointer";
-
-  derFmcsaBtn.onclick = () => {
-    window.location.href = "fmcsa-der.html";
-  };
-
-  return;
-}
-
-  /* =========================
-     PURCHASED
-  ========================= */
-  if (hasSeat === true) {
-  setAssignedBadge("derSeatBadge");
-}
-   if (paid) {
 
     derFmcsaBtn.textContent = "Start DER Training";
+    derFmcsaBtn.style.opacity = "1";
+    derFmcsaBtn.style.cursor = "pointer";
 
     derFmcsaBtn.onclick = () => {
       window.location.href = "fmcsa-der.html";
@@ -817,14 +799,43 @@ if (hasSeat || paid) {
     return;
   }
 
-  /* =========================
-     LOCKED
-  ========================= */
-  derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+  clearBadge("derSeatBadge");
+
+  derFmcsaBtn.textContent = "🔒 Seat Required";
+  derFmcsaBtn.style.opacity = "0.7";
+  derFmcsaBtn.style.cursor = "not-allowed";
 
   derFmcsaBtn.onclick = () => {
-    window.location.href = "payment.html?module=fmcsa-der&type=der_fmcsa";
+    showToast("No seat assigned. Contact your admin.", "warning");
   };
+
+  return;
+}
+
+/* =========================
+   INDIVIDUAL USER → PURCHASE
+========================= */
+
+if (paid) {
+
+  derFmcsaBtn.textContent = "Start DER Training";
+
+  derFmcsaBtn.onclick = () => {
+    window.location.href = "fmcsa-der.html";
+  };
+
+  return;
+}
+
+/* =========================
+   LOCKED
+========================= */
+
+derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+
+derFmcsaBtn.onclick = () => {
+  window.location.href = "payment.html?module=der_fmcsa";
+};
 
 }
 
