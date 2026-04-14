@@ -714,14 +714,18 @@ function updateFMCSAProgress() {
 ========================= */
 function hasCompanySeat(type) {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return false;
 
-  if (!user || user.role !== "employee") return false;
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const seat = company?.usedSeats?.[type]?.[user.email];
 
-  return !!seat && (seat === true || seat.revoked !== true);
+  // ✅ supports BOTH formats
+  if (seat === true) return true;
+  if (typeof seat === "object" && seat !== null && seat.revoked !== true) return true;
+
+  return false;
 }
 
 /* =========================
