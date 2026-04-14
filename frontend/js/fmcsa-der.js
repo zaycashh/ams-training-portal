@@ -63,37 +63,36 @@ if (user) {
 
   function renderPage(num) {
 
-    pdfDoc.getPage(num).then(page => {
+  pdfDoc.getPage(num).then(page => {
 
-      let containerWidth = pdfContainer.clientWidth || 800;
+    let containerWidth = pdfContainer.clientWidth || 800;
 
-      const viewport = page.getViewport({ scale: 1 });
-      const scale = containerWidth / viewport.width;
-      const scaledViewport = page.getViewport({ scale });
+    const viewport = page.getViewport({ scale: 1 });
+    const scale = containerWidth / viewport.width;
+    const scaledViewport = page.getViewport({ scale });
 
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
-      canvas.height = scaledViewport.height;
-      canvas.width = scaledViewport.width;
+    canvas.height = scaledViewport.height;
+    canvas.width = scaledViewport.width;
 
-      pdfContainer.innerHTML = "";
-      pdfContainer.appendChild(canvas);
+    pdfContainer.innerHTML = "";
+    pdfContainer.appendChild(canvas);
 
-      page.render({
-        canvasContext: context,
-        viewport: scaledViewport
-      });
-
-      if (currentPageEl) currentPageEl.textContent = num;
-
-      if (prevPageBtn) prevPageBtn.disabled = num === 1;
-      if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
-      }
-
+    page.render({
+      canvasContext: context,
+      viewport: scaledViewport
     });
 
-  }
+    if (currentPageEl) currentPageEl.textContent = num;
+
+    if (prevPageBtn) prevPageBtn.disabled = num === 1;
+    if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
+
+  });
+
+}
 
   if (prevPageBtn) {
 
