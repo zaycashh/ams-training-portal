@@ -777,34 +777,24 @@ if (certId) {
     return;
   }
 
-  /* =========================
-   COMPANY EMPLOYEE (SEAT)
+ /* =========================
+   ACCESS (SEAT OR PURCHASE)
 ========================= */
-if (user.role === "employee") {
 
-  if (hasSeat === true) {
+if (hasSeat || paid) {
 
+  if (hasSeat) {
     setAssignedBadge("derSeatBadge");
-
-    derFmcsaBtn.textContent = "Start DER Training";
-    derFmcsaBtn.style.opacity = "1";
-    derFmcsaBtn.style.cursor = "pointer";
-
-    derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-der.html";
-    };
-
-    return; // 🚨 CRITICAL
+  } else {
+    clearBadge("derSeatBadge");
   }
 
-  clearBadge("derSeatBadge");
-
-  derFmcsaBtn.textContent = "🔒 Seat Required";
-  derFmcsaBtn.style.opacity = "0.7";
-  derFmcsaBtn.style.cursor = "not-allowed";
+  derFmcsaBtn.textContent = "Start DER Training";
+  derFmcsaBtn.style.opacity = "1";
+  derFmcsaBtn.style.cursor = "pointer";
 
   derFmcsaBtn.onclick = () => {
-    showToast("No seat assigned. Contact your admin.", "warning");
+    window.location.href = "fmcsa-der.html";
   };
 
   return;
