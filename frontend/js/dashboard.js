@@ -670,7 +670,7 @@ function handleDerFmcsa() {
   localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
-    const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
+    const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
 
 if (certId) {
   window.location.href = `fmcsa-certificates.html?id=${certId}`;
@@ -730,6 +730,11 @@ function hasCompanySeat(type) {
 
 function updateFMCSDERButtonState() {
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
+
+  fmcsaDERCertificateId_${email}
+  
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
@@ -754,7 +759,7 @@ function updateFMCSDERButtonState() {
     derFmcsaBtn.textContent = "View DER Certificate";
 
     derFmcsaBtn.onclick = () => {
-      const certId = localStorage.getItem(`derFmcsaCertificateId_${email}`);
+      const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
 
 if (certId) {
   window.location.href = `fmcsa-certificates.html?id=${certId}`;
