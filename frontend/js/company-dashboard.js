@@ -493,6 +493,15 @@ const tr = document.createElement("tr");
 const completedDER =
   localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
 
+const completedSupervisor =
+  localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
+
+const completedEmployee =
+  localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+const hasAnyCert =
+  completedDER || completedSupervisor || completedEmployee;
+
 tr.innerHTML = `
   <td>
   ${isInvite
@@ -572,13 +581,13 @@ tr.innerHTML = `
 
     </div>
 
-    ${completedDER ? `
-      <button onclick="viewEmployeeCert('${cleanEmail}')"
-        class="btn-primary"
-        style="margin-top:6px;">
-        🎓 View Certificate
-      </button>
-    ` : ""}
+    ${hasAnyCert ? `
+  <button onclick="viewEmployeeCert('${cleanEmail}')"
+    class="btn-primary"
+    style="margin-top:6px;">
+    🎓 View Certificate
+  </button>
+` : ""}
 
   </td>
 `;
