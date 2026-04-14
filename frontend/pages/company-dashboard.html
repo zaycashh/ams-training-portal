@@ -85,20 +85,56 @@
 
 </div>
 
-<button id="buySeatsBtn" class="btn-primary" style="margin-top:10px;">
-  Buy 5 More Seats
-</button>
-    
-<hr style="margin:20px 0; opacity:.2;" />
-    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+<div style="position:relative; display:inline-block; margin-top:10px;">
 
-  <button class="btn-primary" onclick="buySupervisorSeats()">
-    Buy Supervisor Seat
+  <button class="btn-primary" onclick="toggleSeatMenu()">
+    + Add Seats ▼
   </button>
 
-  <button class="btn-primary" onclick="buyDerSeats()">
-    Buy DER Seat
-  </button>
+  <div id="seatMenu" style="
+    display:none;
+    position:absolute;
+    background:white;
+    border:1px solid #ddd;
+    padding:10px;
+    margin-top:5px;
+    z-index:20;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    min-width:200px;
+  ">
+
+    <!-- EMPLOYEE -->
+    <button onclick="buyEmployeeSeats()" style="width:100%; text-align:left;">
+      Employee (5 Pack)
+    </button>
+
+    <hr style="margin:8px 0;">
+
+    <!-- SUPERVISOR -->
+    <div style="font-weight:600; margin-bottom:4px;">Supervisor</div>
+
+    <button onclick="buySupervisorSeats(1)" style="width:100%; text-align:left;">
+      • 1 Seat
+    </button>
+
+    <button onclick="buySupervisorSeats(3)" style="width:100%; text-align:left;">
+      • 3 Seats (Save)
+    </button>
+
+    <hr style="margin:8px 0;">
+
+    <!-- DER -->
+    <div style="font-weight:600; margin-bottom:4px;">DER</div>
+
+    <button onclick="buyDerSeats(1)" style="width:100%; text-align:left;">
+      • 1 Seat
+    </button>
+
+    <button onclick="buyDerSeats(3)" style="width:100%; text-align:left;">
+      • 3 Seats (Save)
+    </button>
+
+  </div>
 
 </div>
     
