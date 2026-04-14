@@ -411,17 +411,15 @@ function getUserAccess(email) {
     };
   }
 
-  const employee =
-    !!company.usedSeats?.employee?.[email] &&
-    company.usedSeats.employee[email].revoked !== true;
+  function checkSeat(seat) {
+  if (seat === true) return true;
+  if (typeof seat === "object" && seat !== null && seat.revoked !== true) return true;
+  return false;
+}
 
-  const supervisor =
-    !!company.usedSeats?.supervisor?.[email] &&
-    company.usedSeats.supervisor[email].revoked !== true;
-
-  const der =
-    !!company.usedSeats?.der?.[email] &&
-    company.usedSeats.der[email].revoked !== true;
+const employee = checkSeat(company.usedSeats?.employee?.[email]);
+const supervisor = checkSeat(company.usedSeats?.supervisor?.[email]);
+const der = checkSeat(company.usedSeats?.der?.[email]);
 
   return {
     employee,
