@@ -760,6 +760,29 @@ window.revokeSeat = function (type, email) {
 
   renderSeatAssignments(company);
 }
+
+/* =========================================================
+   BUY EMPLOYEE SEATS (5 PACK)
+========================================================= */
+
+function buyEmployeeSeats(qty = 5) {
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.seats.employee) {
+    company.seats.employee = { total: 0 };
+  }
+
+  company.seats.employee.total += qty;
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert(`${qty} Employee seats purchased!`);
+
+  location.reload();
+}
+
 /* =========================================================
    BUY SUPERVISOR SEAT
 ========================================================= */
