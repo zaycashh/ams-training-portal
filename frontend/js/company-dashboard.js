@@ -861,6 +861,8 @@ function inviteEmployee() {
 
 function viewEmployeeCert(email) {
 
+  email = email.toLowerCase().trim(); // 🔥 FIX
+
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
@@ -900,10 +902,11 @@ function viewEmployeeCert(email) {
   /* 🔥 FLAG ADMIN VIEW */
   sessionStorage.setItem("adminViewing", "true");
 
-  /* ✅ CORRECT PAGE */
+  /* ✅ REDIRECT */
   window.location.href =
-  `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
+    `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
 }
+
 function toggleMenu(email) {
 
   const menu = document.getElementById(`menu-${email}`);
