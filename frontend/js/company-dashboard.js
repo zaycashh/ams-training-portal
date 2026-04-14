@@ -946,14 +946,29 @@ function toggleMenu(email) {
 }
 
 function toggleSeatMenu() {
-
   const menu = document.getElementById("seatMenu");
   if (!menu) return;
 
   const isOpen = menu.style.display === "block";
-
   menu.style.display = isOpen ? "none" : "block";
 }
+
+/* =========================
+   AUTO CLOSE SEAT MENU
+========================= */
+
+document.addEventListener("click", function (e) {
+
+  const menu = document.getElementById("seatMenu");
+  const button = document.querySelector("[onclick='toggleSeatMenu()']");
+
+  if (!menu || !button) return;
+
+  if (!menu.contains(e.target) && !button.contains(e.target)) {
+    menu.style.display = "none";
+  }
+
+});
 
 function resendInvite(email) {
 
