@@ -490,6 +490,9 @@ if (!isInvite && trainingCompleted) {
 
 const tr = document.createElement("tr");
 
+const completedDER =
+  localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
+
 tr.innerHTML = `
   <td>
   ${isInvite
@@ -497,6 +500,7 @@ tr.innerHTML = `
     : `${emp.firstName || ""} ${emp.lastName || ""}`
   }
 </td>
+
   <td>${emp.email}</td>
   <td>${isInvite ? "Invited" : "Employee"}</td>
 
@@ -541,24 +545,24 @@ tr.innerHTML = `
       ">
 
         ${
-  trainingType === "None" || isInvite
-    ? `
-      <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
-      <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
-      <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+          trainingType === "None" || isInvite
+            ? `
+              <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
+              <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
+              <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
 
-      <hr style="margin:6px 0;">
+              <hr style="margin:6px 0;">
 
-      <button onclick="resendInvite('${cleanEmail}')">
-        Resend Invite
-      </button><br>
-    `
-    : `
-      <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-        Remove Seat
-      </button><br>
-    `
-}
+              <button onclick="resendInvite('${cleanEmail}')">
+                Resend Invite
+              </button><br>
+            `
+            : `
+              <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+                Remove Seat
+              </button><br>
+            `
+        }
 
         <button onclick="removeEmployee('${cleanEmail}')">
           Remove Employee
@@ -567,6 +571,14 @@ tr.innerHTML = `
       </div>
 
     </div>
+
+    ${completedDER ? `
+      <button onclick="viewEmployeeCert('${cleanEmail}')"
+        class="btn-primary"
+        style="margin-top:6px;">
+        🎓 View Certificate
+      </button>
+    ` : ""}
 
   </td>
 `;
