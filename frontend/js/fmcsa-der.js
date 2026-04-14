@@ -133,10 +133,8 @@ if (user) {
       quizBtn.classList.remove("disabled");
     }
 
-    // 🔥 AUTO SWITCH TO QUIZ
-    alert("✅ Content completed. Proceed to Quiz.");
-
-    showSection("quiz");
+    document.getElementById("btnQuiz").disabled = false;
+    document.getElementById("btnQuiz").classList.remove("disabled");
   }
 
 });
@@ -428,4 +426,24 @@ function checkCooldown() {
 
 }
 
-}); 
+});
+
+function showSection(section) {
+
+  document.getElementById("contentSection")?.classList.add("hidden");
+  document.getElementById("quizSection")?.classList.add("hidden");
+  document.getElementById("certificateSection")?.classList.add("hidden");
+
+  if (section === "content") {
+    document.getElementById("contentSection")?.classList.remove("hidden");
+  }
+
+  if (section === "quiz") {
+    document.getElementById("quizSection")?.classList.remove("hidden");
+  }
+
+  if (section === "certificate") {
+    document.getElementById("certificateSection")?.classList.remove("hidden");
+  }
+
+}
