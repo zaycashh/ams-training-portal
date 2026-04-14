@@ -597,7 +597,7 @@ tbody.appendChild(tr);
 });
    
 }
-     
+
 /* =========================================================
    REMOVE EMPLOYEE
 ========================================================= */
@@ -763,7 +763,8 @@ window.revokeSeat = function (type, email) {
 /* =========================================================
    BUY SUPERVISOR SEAT
 ========================================================= */
-function buySupervisorSeats() {
+
+function buySupervisorSeats(qty = 1) {
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -772,17 +773,16 @@ function buySupervisorSeats() {
     company.seats.supervisor = { total: 0 };
   }
 
-  company.seats.supervisor.total += 1;
+  company.seats.supervisor.total += qty;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("Supervisor seat purchased!");
+  alert(`${qty} Supervisor seat(s) purchased!`);
 
   location.reload();
 }
 
-
-function buyDerSeats() {
+function buyDerSeats(qty = 1) {
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -791,14 +791,15 @@ function buyDerSeats() {
     company.seats.der = { total: 0 };
   }
 
-  company.seats.der.total += 1;
+  company.seats.der.total += qty;
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("DER seat purchased!");
+  alert(`${qty} DER seat(s) purchased!`);
 
   location.reload();
-} 
+}
+
 /* =========================================================
    LOGOUT
 ========================================================= */
@@ -941,6 +942,16 @@ function toggleMenu(email) {
   });
 
   // toggle current
+  menu.style.display = isOpen ? "none" : "block";
+}
+
+function toggleSeatMenu() {
+
+  const menu = document.getElementById("seatMenu");
+  if (!menu) return;
+
+  const isOpen = menu.style.display === "block";
+
   menu.style.display = isOpen ? "none" : "block";
 }
 
