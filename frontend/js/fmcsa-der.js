@@ -22,13 +22,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const url = "../assets/FMCSA-DER-Drug-Alc-Reg-Training.pdf";
 
   const pdfContainer = document.getElementById("pdfContainer");
-  const completeBtn = document.getElementById("completeContentBtn");
 
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
 
   const currentPageEl = document.getElementById("currentPage");
   const totalPagesEl = document.getElementById("totalPages");
+
+   // 🔥 STEP 4 — RESTORE QUIZ ACCESS ON REFRESH
+if (user) {
+  const done = localStorage.getItem(`fmcsaDERContentDone_${user.email}`);
+
+  if (done === "true") {
+    const quizBtn = document.getElementById("btnQuiz");
+    if (quizBtn) {
+      quizBtn.disabled = false;
+      quizBtn.classList.remove("disabled");
+    }
+  }
+}
 
   let pdfDoc = null;
   let currentPage = 1;
@@ -77,9 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (prevPageBtn) prevPageBtn.disabled = num === 1;
       if (nextPageBtn) nextPageBtn.disabled = num === totalPages;
-
-      if (completeBtn) {
-        completeBtn.disabled = num !== totalPages;
       }
 
     });
@@ -103,36 +112,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (nextPageBtn) {
 
-    nextPageBtn.addEventListener("click", () => {
+   nextPageBtn.addEventListener("click", () => {
 
-      if (currentPage < totalPages) {
-
-        currentPage++;
-        renderPage(currentPage);
-
-      }
-
-    });
-
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPage(currentPage);
   }
 
-  if (completeBtn) {
+  // 🔥 LAST PAGE REACHED
+  if (currentPage === totalPages) {
 
-    completeBtn.addEventListener("click", () => {
+    // Save completion per user
+    if (user) {
+      localStorage.setItem(`fmcsaDERContentDone_${user.email}`, "true");
+    }
 
-      localStorage.setItem(DER_CONTENT_KEY, "true");
+    // Unlock quiz tab
+    const quizBtn = document.getElementById("btnQuiz");
+    if (quizBtn) {
+      quizBtn.disabled = false;
+      quizBtn.classList.remove("disabled");
+    }
 
-      document.getElementById("contentSection").classList.add("hidden");
-      document.getElementById("quizSection").classList.remove("hidden");
+    // 🔥 AUTO SWITCH TO QUIZ
+    alert("✅ Content completed. Proceed to Quiz.");
 
-    });
-
+    showSection("quiz");
   }
 
-  if (localStorage.getItem(DER_CONTENT_KEY) === "true") {
-
-    document.getElementById("contentSection").classList.add("hidden");
-    document.getElementById("quizSection").classList.remove("hidden");
+});
 
   }
    
