@@ -451,15 +451,15 @@ function loadEmployees(companyId) {
 
     let trainingType = "None";
 
-    if (company.usedSeats.supervisor && company.usedSeats.supervisor[cleanEmail]) {
-      trainingType = "Supervisor";
-    } 
-    else if (company.usedSeats.der && company.usedSeats.der[cleanEmail]) { // ✅ FIXED )
-      trainingType = "DER";
-    } 
-    else if (company.usedSeats.employee && company.usedSeats.employee[cleanEmail]) { // ✅ FIXED )
-      trainingType = "Employee";
-    }
+    if (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) {
+  trainingType = "Supervisor";
+} 
+else if (company.usedSeats.der?.[cleanEmail] && !company.usedSeats.der[cleanEmail].revoked) {
+  trainingType = "DER";
+} 
+else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee[cleanEmail].revoked) {
+  trainingType = "Employee";
+}
 
     const seatAssigned = trainingType !== "None";
 
@@ -610,6 +610,10 @@ tbody.appendChild(tr);
 
 window.removeEmployee = function (email) {
 
+   if (company.invites && company.invites[email]) {
+  delete company.invites[email];
+}
+
   if (!confirm("Remove this employee from the company?")) return;
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
@@ -686,17 +690,15 @@ function renderSeatAssignments(company) {
 
     Object.keys(users).forEach(email => {
 
-      items.push(`
-        <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          
-          <span>
-            ${email} — <strong>${type.toUpperCase()}</strong>
-          </span>
+  if (users[email].revoked) return;
 
-        </li>
-      `);
+  items.push(`
+    <li>
+      ${email} — <strong>${type.toUpperCase()}</strong>
+    </li>
+  `);
 
-    });
+});
 
   });
 
@@ -844,6 +846,15 @@ function logout() {
 
 function inviteEmployee() {
 
+const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+const exists = users.find(u => u.email === email);
+
+if (exists) {
+  msg.textContent = "User already registered. Assign a seat instead.";
+  return;
+}
+
   const input = document.getElementById("inviteEmail");
   const msg = document.getElementById("inviteMsg");
 
@@ -877,9 +888,13 @@ function inviteEmployee() {
   }
 
   /* 🚫 Already has seat */
-  const seat = company.usedSeats?.employee?.[email];
+   
+const hasActiveSeat =
+  (company.usedSeats?.employee?.[email] && company.usedSeats.employee[email].revoked !== true) ||
+  (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+  (company.usedSeats?.der?.[email] && company.usedSeats.der[email].revoked !== true);
 
-if (seat && !seat.revoked) {
+if (hasActiveSeat) {
   msg.textContent = "User already assigned";
   return;
 }
@@ -929,9 +944,9 @@ function viewEmployeeCert(email) {
   ========================= */
 
   const isAssigned =
-    company.usedSeats?.employee?.[email] ||
-    company.usedSeats?.supervisor?.[email] ||
-    company.usedSeats?.der?.[email];
+  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
+  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
 
   if (!isAssigned) {
     alert("Access denied: This employee is not assigned to your company.");
