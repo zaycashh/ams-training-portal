@@ -278,8 +278,9 @@ const derAvailable = Math.max(0, derTotal - derUsed);
 ========================================================= */
 function assignEmployeeSeat(emailParam) {
 
-  const email = emailParam ||
-    document.getElementById("seatEmail").value.trim();
+   const email = (emailParam ||
+  document.getElementById("seatEmail").value.trim()
+).toLowerCase();
 
   if (!email) return alert("Enter email");
 
@@ -316,8 +317,9 @@ function assignEmployeeSeat(emailParam) {
 
 function assignSupervisorSeat(emailParam) {
 
-  const email = emailParam ||
-    document.getElementById("seatEmail").value.trim();
+ const email = (emailParam ||
+  document.getElementById("seatEmail").value.trim()
+).toLowerCase();
 
   if (!email) return alert("Enter email");
 
@@ -354,8 +356,9 @@ function assignSupervisorSeat(emailParam) {
 
 function assignDerSeat(emailParam) {
 
-  const email = emailParam ||
-    document.getElementById("seatEmail").value.trim();
+const email = (emailParam ||
+  document.getElementById("seatEmail").value.trim()
+).toLowerCase();
 
   if (!email) return alert("Enter email");
 
