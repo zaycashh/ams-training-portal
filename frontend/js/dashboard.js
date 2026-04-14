@@ -721,7 +721,7 @@ function hasCompanySeat(type) {
 
   const seat = company?.usedSeats?.[type]?.[user.email];
 
-  return !!seat && seat.revoked !== true;
+  return !!seat && (seat === true || seat.revoked !== true);
 }
 
 /* =========================
@@ -730,10 +730,10 @@ function hasCompanySeat(type) {
 
 function updateFMCSDERButtonState() {
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
+const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+if (!user) return;
 
-  fmcsaDERCertificateId_${email}
+const email = user.email;
   
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
