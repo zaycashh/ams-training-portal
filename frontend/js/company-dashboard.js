@@ -877,10 +877,12 @@ function inviteEmployee() {
   }
 
   /* 🚫 Already has seat */
-  if (company.usedSeats.employee[email]) {
-    if (msg) msg.textContent = "User already assigned";
-    return;
-  }
+  const seat = company.usedSeats?.employee?.[email];
+
+if (seat && !seat.revoked) {
+  msg.textContent = "User already assigned";
+  return;
+}
 
   /* =========================
      GENERATE INVITE CODE
