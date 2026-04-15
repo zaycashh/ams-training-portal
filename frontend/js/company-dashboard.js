@@ -305,7 +305,26 @@ if (existingSeat && existingSeat.revoked !== true) {
   assignedAt: Date.now(),
   revoked: false
 };
+   
+// 🔥 AUTO CREATE INVITE
+if (!company.invites) company.invites = {};
 
+if (!company.invites[email]) {
+
+  const code =
+    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  company.invites[email] = {
+    email,
+    code,
+    program: company.program || "fmcsa",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "assigned"
+  };
+
+  alert("Invite Code: " + code);
+}
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Employee seat assigned");
@@ -346,7 +365,26 @@ if (existingSeat && existingSeat.revoked !== true) {
   assignedAt: Date.now(),
   revoked: false
 };
+   
+// 🔥 AUTO CREATE INVITE
+if (!company.invites) company.invites = {};
 
+if (!company.invites[email]) {
+
+  const code =
+    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  company.invites[email] = {
+    email,
+    code,
+    program: company.program || "fmcsa",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "assigned"
+  };
+
+  alert("Invite Code: " + code);
+}
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Supervisor seat assigned");
@@ -387,7 +425,26 @@ if (existingSeat && existingSeat.revoked !== true) {
   assignedAt: Date.now(),
   revoked: false
 };
+   
+// 🔥 AUTO CREATE INVITE
+if (!company.invites) company.invites = {};
 
+if (!company.invites[email]) {
+
+  const code =
+    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  company.invites[email] = {
+    email,
+    code,
+    program: company.program || "fmcsa",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "assigned"
+  };
+
+  alert("Invite Code: " + code);
+}
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("DER seat assigned");
