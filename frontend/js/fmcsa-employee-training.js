@@ -477,6 +477,10 @@ questions.forEach((q,i)=>{
 
 const scorePercent = Math.round((correct/questions.length)*100);
 
+/* =========================================================
+   QUIZ SUBMIT (FINAL CLEAN)
+========================================================= */
+
 if(submitBtn){
 
 submitBtn.addEventListener("click",()=>{
@@ -538,6 +542,7 @@ alert(`Score: ${scorePercent}%`);
 });
 
 }
+   
 /* =========================================================
    COOLDOWN CHECK
 ========================================================= */
@@ -590,5 +595,6 @@ function showSection(section){
 
   const active = document.getElementById(sections[section]);
   if(active) active.classList.remove("hidden");
-};
+
+});   
    
