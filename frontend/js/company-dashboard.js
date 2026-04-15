@@ -495,14 +495,7 @@ if (!isInvite && trainingCompleted) {
 
 const tr = document.createElement("tr");
 
-const completedDER =
-  localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
-
-const completedSupervisor =
-  localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
-
-const completedEmployee =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+const hasAnyCert = trainingCompleted;
 
 const hasAnyCert =
   completedDER || completedSupervisor || completedEmployee;
