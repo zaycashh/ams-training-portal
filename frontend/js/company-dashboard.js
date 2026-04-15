@@ -1006,6 +1006,40 @@ document.addEventListener("click", function (e) {
 
 });
 
+/* =========================
+   AUTO CLOSE MANAGE MENUS
+========================= */
+
+document.addEventListener("click", function (e) {
+
+  // ALL manage menus
+  const menus = document.querySelectorAll(".action-menu");
+
+  // ALL manage buttons
+  const buttons = document.querySelectorAll("[onclick^='toggleMenu']");
+
+  let clickedInsideMenu = false;
+
+  menus.forEach(menu => {
+    if (menu.contains(e.target)) {
+      clickedInsideMenu = true;
+    }
+  });
+
+  buttons.forEach(btn => {
+    if (btn.contains(e.target)) {
+      clickedInsideMenu = true;
+    }
+  });
+
+  if (!clickedInsideMenu) {
+    menus.forEach(menu => {
+      menu.style.display = "none";
+    });
+  }
+
+});
+
 function resendInvite(email) {
 
    email = email.toLowerCase().trim();
