@@ -497,9 +497,6 @@ const tr = document.createElement("tr");
 
 const hasAnyCert = trainingCompleted;
 
-const hasAnyCert =
-  completedDER || completedSupervisor || completedEmployee;
-
 tr.innerHTML = `
   <td>
   ${isInvite
