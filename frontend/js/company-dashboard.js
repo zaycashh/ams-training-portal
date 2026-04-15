@@ -469,16 +469,17 @@ else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee
 
 let trainingCompleted = false;
 
-const keys = Object.keys(localStorage);
+const completedDER =
+  localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
 
-const matchKey = keys.find(k =>
-  k.toLowerCase().includes(cleanEmail) &&
-  k.toLowerCase().includes("completed")
-);
+const completedSupervisor =
+  localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
 
-const val = matchKey ? localStorage.getItem(matchKey) : null;
+const completedEmployee =
+  localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
 
-trainingCompleted = val === "true";
+const trainingCompleted =
+  completedDER || completedSupervisor || completedEmployee;
 
     let statusLabel = "Invited";
 
@@ -610,26 +611,36 @@ tbody.appendChild(tr);
 
 window.removeEmployee = function (email) {
 
-   if (company.invites && company.invites[email]) {
-  delete company.invites[email];
-}
-
   if (!confirm("Remove this employee from the company?")) return;
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  const keys = Object.keys(localStorage);
-
-const trainingCompleted = keys.some(k =>
-  k.toLowerCase().includes(email.toLowerCase()) &&
-  k.toLowerCase().includes("completed") &&
-  localStorage.getItem(k) === "true"
-);
+  const cleanEmail = email.toLowerCase().trim();
 
   /* =========================
-     🚫 BLOCK IF COMPLETED
+     REMOVE INVITE
   ========================= */
+
+  if (company.invites && company.invites[cleanEmail]) {
+    delete company.invites[cleanEmail];
+  }
+
+  /* =========================
+     CHECK COMPLETION (SAFE)
+  ========================= */
+
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
+
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
+
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+  const trainingCompleted =
+    completedDER || completedSupervisor || completedEmployee;
 
   if (trainingCompleted) {
     alert("Cannot remove employee — training completed (record must be kept)");
@@ -640,33 +651,26 @@ const trainingCompleted = keys.some(k =>
      REMOVE USER
   ========================= */
 
-  const updatedUsers = users.filter(u => u.email !== email);
+  const updatedUsers = users.filter(u => u.email !== cleanEmail);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
   /* =========================
-     REMOVE SEAT (SAFE)
+     REMOVE FROM ALL SEATS
   ========================= */
 
-  if (company.usedSeats?.employee?.[email]) {
-    delete company.usedSeats.employee[email];
-  }
-
-  if (company.usedSeats?.supervisor?.[email]) {
-    delete company.usedSeats.supervisor[email];
-  }
-
-  if (company.usedSeats?.der?.[email]) {
-    delete company.usedSeats.der[email];
-  }
+  ["employee", "supervisor", "der"].forEach(type => {
+    if (company.usedSeats?.[type]?.[cleanEmail]) {
+      delete company.usedSeats[type][cleanEmail];
+    }
+  });
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   /* =========================
-     REFRESH DASHBOARD
+     REFRESH
   ========================= */
 
-  const user = JSON.parse(localStorage.getItem("amsUser"));
-  if (user) loadCompanyDashboard(user);
+  location.reload();
 };
 
 /* =========================================================
@@ -846,15 +850,6 @@ function logout() {
 
 function inviteEmployee() {
 
-const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
-const exists = users.find(u => u.email === email);
-
-if (exists) {
-  msg.textContent = "User already registered. Assign a seat instead.";
-  return;
-}
-
   const input = document.getElementById("inviteEmail");
   const msg = document.getElementById("inviteMsg");
 
@@ -862,6 +857,15 @@ if (exists) {
 
   const email = input.value.trim().toLowerCase();
 
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  const exists = users.find(u => u.email === email);
+
+  if (exists) {
+    if (msg) msg.textContent = "User already registered. Assign a seat instead.";
+    return;
+  }
+   
   /* =========================
      VALIDATION
   ========================= */
