@@ -477,22 +477,44 @@ questions.forEach((q,i)=>{
 
 const scorePercent = Math.round((correct/questions.length)*100);
 
+if(submitBtn){
+
+submitBtn.addEventListener("click",()=>{
+
+let correct = 0;
+
+questions.forEach((q,i)=>{
+  if(selectedAnswers[i] === q.correct){
+    correct++;
+  }
+});
+
+const scorePercent = Math.round((correct/questions.length)*100);
+
+/* ========================= 
+   PASS
+========================= */
+
 if(scorePercent >= PASS_PERCENT){
 
   localStorage.setItem(COMPLETED_KEY,"true");
   localStorage.setItem(QUIZ_KEY,"true");
 
-let certId = localStorage.getItem(CERT_ID_KEY);
+  let certId = localStorage.getItem(CERT_ID_KEY);
 
-if(!certId){
-  const short = Math.random().toString(36).substring(2,8).toUpperCase();
-  certId = `AMS-SUP-${short}`;
-  localStorage.setItem(CERT_ID_KEY, certId);
+  if(!certId){
+    const short = Math.random().toString(36).substring(2,8).toUpperCase();
+    certId = `AMS-EMP-${short}`;
+    localStorage.setItem(CERT_ID_KEY, certId);
+  }
+
+  localStorage.setItem(CERT_DATE_KEY, Date.now());
+
+  alert(`Passed! Score: ${scorePercent}%`);
+
+  window.location.href = "fmcsa-certificates.html";
+  return;
 }
-
-localStorage.setItem(CERT_DATE_KEY, Date.now());
-   
-sessionStorage.setItem("redirectToCertificates", "true");
 
 /* ========================= 
    FAIL
