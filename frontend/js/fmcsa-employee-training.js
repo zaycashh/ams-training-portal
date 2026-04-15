@@ -590,5 +590,5 @@ function showSection(section){
 
   const active = document.getElementById(sections[section]);
   if(active) active.classList.remove("hidden");
-
-}
+};
+   
