@@ -467,8 +467,6 @@ else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee
    COMPLETION CHECK (FORCED FIX)
 ========================= */
 
-let trainingCompleted = false;
-
 const completedDER =
   localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
 
