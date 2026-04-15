@@ -610,13 +610,13 @@ tbody.appendChild(tr);
 ========================================================= */
 
 window.removeEmployee = function (email) {
-
+   
+  const cleanEmail = email.toLowerCase().trim();
+   
   if (!confirm("Remove this employee from the company?")) return;
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  const cleanEmail = email.toLowerCase().trim();
 
   /* =========================
      REMOVE INVITE
