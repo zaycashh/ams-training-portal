@@ -461,8 +461,6 @@ else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee
   trainingType = "Employee";
 }
 
-    const seatAssigned = trainingType !== "None";
-
 /* =========================
    COMPLETION CHECK (FORCED FIX)
 ========================= */
