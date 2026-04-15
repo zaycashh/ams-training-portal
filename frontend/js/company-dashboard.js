@@ -1022,6 +1022,8 @@ document.addEventListener("click", function (e) {
 
 function resendInvite(email) {
 
+   email = email.toLowerCase().trim();
+   
   let company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
