@@ -91,11 +91,10 @@ if(nextPageBtn) nextPageBtn.disabled = num === totalPages;
 
 if(completeBtn){
 
-  console.log("Page:", num, "Total:", totalPages); // debug
-
   if(num >= totalPages){
     completeBtn.style.display = "block";
     completeBtn.disabled = false;
+    completeBtn.textContent = "TAKE QUIZ";
   } else {
     completeBtn.style.display = "none";
   }
