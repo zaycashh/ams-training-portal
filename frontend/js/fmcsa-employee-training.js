@@ -29,7 +29,7 @@ const COOLDOWN_MINUTES = 15;
 const url = "../assets/fmcsa/fmcsa-employee-drug-alcohol-regulations.pdf";
 
 const pdfContainer = document.getElementById("pdfContainer");
-const completeBtn = document.getElementById("btnQuiz");
+const completeBtn = document.getElementById("takeQuizBtn");
 
 const prevPageBtn = document.getElementById("prevPageBtn");
 const nextPageBtn = document.getElementById("nextPageBtn");
