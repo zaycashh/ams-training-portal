@@ -567,8 +567,8 @@ initQuiz();
    SECTION NAVIGATION
 ========================================================= */
 
-function showSection(section){
-
+window.showSection = function(section){
+   
   const sections = {
     content: "contentSection",
     quiz: "quizSection",
