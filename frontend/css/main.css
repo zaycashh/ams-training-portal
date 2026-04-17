@@ -678,9 +678,3 @@ border-bottom:1px solid #e5e7eb;
   }
 
 }
-
-.quiz-btn-row {
-  grid-column: 1 / -1; /* span full width */
-  text-align: center;
-  margin-top: 10px;
-}
