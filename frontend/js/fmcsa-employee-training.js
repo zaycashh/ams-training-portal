@@ -563,7 +563,7 @@ initQuiz();
 
 }
 
-   /* =========================================================
+/* =========================================================
    SECTION NAVIGATION
 ========================================================= */
 
@@ -583,7 +583,5 @@ window.showSection = function(section){
   const active = document.getElementById(sections[section]);
   if(active) active.classList.remove("hidden");
 
-}
-
-});   
+};
    
