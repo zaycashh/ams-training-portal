@@ -584,4 +584,6 @@ function showSection(section){
   if(active) active.classList.remove("hidden");
 
 }
+
+});   
    
