@@ -372,20 +372,20 @@ function renderQuestion(){
 const question = questions[currentQuestionIndex];
 
 quizContainer.innerHTML = `
-<p><strong>${question.q}</strong></p>
+<div class="question-block">
+  <p class="question-text">${question.q}</p>
 
-<div class="answers">
+  <div class="answers">
 
-${Object.entries(question.a).map(([key,value]) => `
+    ${Object.entries(question.a).map(([key,value]) => `
+      <label class="quiz-option">
+        <input type="radio" name="answer" value="${key}"
+        ${selectedAnswers[currentQuestionIndex]===key?"checked":""}>
+        <span class="option-text">${key}. ${value}</span>
+      </label>
+    `).join("")}
 
-<label>
-<input type="radio" name="answer" value="${key}"
-${selectedAnswers[currentQuestionIndex]===key?"checked":""}>
-${key}. ${value}
-</label>
-
-`).join("")}
-
+  </div>
 </div>
 `;
 
