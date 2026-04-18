@@ -62,10 +62,13 @@ font-weight:600;
   margin-top: 10px;
 }
 
+.quiz-btn-inner {
+  display: inline-block;
+}
+
 #takeQuizBtn {
   width: auto;
-  display: inline-block;
-  padding: 10px 20px;
+  white-space: nowrap;
 }
   
 </style>
@@ -138,11 +141,11 @@ DOT Drug and Alcohol testing regulations and responsibilities.
 
   <!-- 👇 ADD BUTTON HERE -->
   <div class="quiz-btn-row">
+  <div class="quiz-btn-inner">
     <button id="takeQuizBtn" class="btn-primary" style="display:none;" onclick="showSection('quiz')">
       TAKE QUIZ
     </button>
   </div>
-
 </div>
   
 </section>
