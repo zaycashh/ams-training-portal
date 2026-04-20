@@ -511,12 +511,13 @@ if(scorePercent >= PASS_PERCENT){
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
   const certRecord = {
-    id: certId,
-    name: user.fullName || user.email,
-    course: "FMCSA Employee Drug & Alcohol Awareness Training",
-    date: Date.now(),
-    email: email
-  };
+  id: certId,
+  name: user.fullName || user.email,
+  course: "FMCSA Employee Drug & Alcohol Awareness Training",
+  type: "fmcsa_employee",
+  date: Date.now(),
+  email: email
+};
 
   const exists = registry.find(c => c.id === certId);
 
