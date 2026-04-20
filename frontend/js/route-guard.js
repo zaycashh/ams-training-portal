@@ -14,8 +14,9 @@ if (
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
   if (!user) {
-    window.location.replace("login.html");
-  }
+  window.location.replace("login.html");
+  return;
+}
 
   const company =
     JSON.parse(localStorage.getItem("companyProfile") || "{}");
@@ -47,9 +48,10 @@ if (
     completedEmployee || completedSupervisor || completedDER;
 
   if (!hasAnySeat && !hasAnyCompletion) {
-    alert("No certificate access.");
-    window.location.replace("dashboard.html");
-  }
+  alert("No certificate access.");
+  window.location.replace("dashboard.html");
+  return;
+}
 
 } else {
    
