@@ -460,10 +460,6 @@ renderQuestion();
 }
 
 /* =========================================================
-   QUIZ SUBMIT (FINAL CLEAN VERSION)
-========================================================= */
-
-   /* =========================================================
    QUIZ SUBMIT (FINAL CLEAN)
 ========================================================= */
 
@@ -499,6 +495,25 @@ if(scorePercent >= PASS_PERCENT){
   }
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user.email;
+
+  const key = `amsCertificates_${email}`;
+  const registry = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const certRecord = {
+    id: certId,
+    name: user.fullName || user.email,
+    course: "FMCSA Employee Drug & Alcohol Awareness Training",
+    date: Date.now(),
+    email: email
+  };
+
+  registry.push(certRecord);
+  localStorage.setItem(key, JSON.stringify(registry));
+
+  /* 🔥 END BLOCK */
 
   alert(`Passed! Score: ${scorePercent}%`);
 
