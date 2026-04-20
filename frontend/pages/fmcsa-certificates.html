@@ -259,7 +259,14 @@ if (isCompanyView) {
   else if (selectedCert.type === "fmcsa_der") showCert("der");
   else showCert("supervisor");
 
-  const name = selectedCert.name || selectedCert.email;
+  const userData =
+  JSON.parse(localStorage.getItem("amsUser") || "{}");
+
+const name =
+  userData.fullName ||
+  `${userData.firstName || ""} ${userData.lastName || ""}`.trim() ||
+  selectedCert.name ||
+  selectedCert.email;
   const date = new Date(selectedCert.date).toLocaleDateString("en-US");
     
    if (selectedCert.type === "fmcsa_employee") {
@@ -324,9 +331,10 @@ if (!selectedCert) {
   else showCert("supervisor");
 
   const name =
-    selectedCert.name ||
-    user.fullName ||
-    user.email;
+  user.fullName ||
+  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+  selectedCert.name ||
+  user.email;
 
   const date = new Date(selectedCert.date).toLocaleDateString("en-US");
 
