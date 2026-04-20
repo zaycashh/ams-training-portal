@@ -364,7 +364,7 @@ const completed =
   localStorage.getItem(QUIZ_KEY) === "true";
 
 if(hasSeat && completed){
-  window.location.href = "fmcsa-certificates.html";
+  window.location.href = `fmcsa-certificates.html?id=${certId}`;
   return;
 }
 
@@ -523,7 +523,7 @@ if(scorePercent >= PASS_PERCENT){
 
   alert(`Passed! Score: ${scorePercent}%`);
 
-  window.location.href = "fmcsa-certificates.html";
+  window.location.href = `fmcsa-certificates.html?id=${certId}`;
   return;
 }
 
