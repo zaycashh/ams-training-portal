@@ -512,7 +512,10 @@ if(scorePercent >= PASS_PERCENT){
 
   const certRecord = {
   id: certId,
-  name: user.fullName || user.email,
+  name:
+  user.fullName ||
+  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+  user.email,
   course: "FMCSA Employee Drug & Alcohol Awareness Training",
   type: "fmcsa_employee",
   date: Date.now(),
