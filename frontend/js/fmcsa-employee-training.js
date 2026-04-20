@@ -1,18 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+const email = user.email;
    
 /* =========================================================
    CONFIG KEYS
 ========================================================= */
 
-const CONTENT_KEY = "fmcsaEmployeeContentCompleted";
-const QUIZ_KEY = "fmcsaEmployeeQuizPassed";
-const COMPLETED_KEY = "fmcsaEmployeeCompleted";
+const CONTENT_KEY = `fmcsaEmployeeContentCompleted_${email}`;
+const QUIZ_KEY = `fmcsaEmployeeQuizPassed_${email}`;
+const COMPLETED_KEY = `fmcsaEmployeeCompleted_${email}`;
 
 const ATTEMPTS_KEY = "fmcsaEmployeeAttempts";
 const COOLDOWN_KEY = "fmcsaEmployeeCooldown";
 
-const CERT_ID_KEY = "fmcsaEmployeeCertificateId";
-const CERT_DATE_KEY = "fmcsaEmployeeDate";
+const CERT_ID_KEY = `fmcsaEmployeeCertificateId_${email}`;
+const CERT_DATE_KEY = `fmcsaEmployeeDate_${email}`;
 
 /* =========================================================
    QUIZ SETTINGS
@@ -148,7 +151,7 @@ if (completeBtn) {
   completeBtn.addEventListener("click", () => {
 
     localStorage.setItem(CONTENT_KEY, "true");
-    localStorage.removeItem("fmcsaEmployeeAnswers");
+    localStorage.removeItem(`fmcsaEmployeeAnswers_${email}`);
 
     document.getElementById("contentSection").classList.add("hidden");
     document.getElementById("quizSection").classList.remove("hidden");
@@ -325,7 +328,7 @@ correct:"B"
 
 let currentQuestionIndex = 0;
 let selectedAnswers = JSON.parse(
-localStorage.getItem("fmcsaEmployeeAnswers") || "{}"
+localStorage.getItem(`fmcsaEmployeeAnswers_${email}`) || "{}"
 );
 
 let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY)||"0",10);
@@ -352,11 +355,17 @@ function initQuiz(){
 
 checkCooldown();
 
-if(localStorage.getItem(QUIZ_KEY)==="true"){
+const company = JSON.parse(localStorage.getItem("companyProfile") || {});
 
-window.location.href="fmcsa-certificates.html";
-return;
+const hasSeat =
+  company.usedSeats?.employee?.[email];
 
+const completed =
+  localStorage.getItem(QUIZ_KEY) === "true";
+
+if(hasSeat && completed){
+  window.location.href = "fmcsa-certificates.html";
+  return;
 }
 
 renderQuestion();
@@ -413,8 +422,8 @@ input.addEventListener("change", e => {
 selectedAnswers[currentQuestionIndex] = e.target.value;
 
 localStorage.setItem(
-"fmcsaEmployeeAnswers",
-JSON.stringify(selectedAnswers)
+  `fmcsaEmployeeAnswers_${email}`,
+  JSON.stringify(selectedAnswers)
 );
 
 });
