@@ -363,6 +363,8 @@ const hasSeat =
 const completed =
   localStorage.getItem(QUIZ_KEY) === "true";
 
+   const certId = localStorage.getItem(CERT_ID_KEY);
+
 if(hasSeat && completed){
   window.location.href = `fmcsa-certificates.html?id=${certId}`;
   return;
@@ -516,8 +518,12 @@ if(scorePercent >= PASS_PERCENT){
     email: email
   };
 
+  const exists = registry.find(c => c.id === certId);
+
+if(!exists){
   registry.push(certRecord);
   localStorage.setItem(key, JSON.stringify(registry));
+}
 
   /* 🔥 END BLOCK */
 
