@@ -11,8 +11,8 @@ const CONTENT_KEY = `fmcsaEmployeeContentCompleted_${email}`;
 const QUIZ_KEY = `fmcsaEmployeeQuizPassed_${email}`;
 const COMPLETED_KEY = `fmcsaEmployeeCompleted_${email}`;
 
-const ATTEMPTS_KEY = "fmcsaEmployeeAttempts";
-const COOLDOWN_KEY = "fmcsaEmployeeCooldown";
+const ATTEMPTS_KEY = `fmcsaEmployeeAttempts_${email}`;
+const COOLDOWN_KEY = `fmcsaEmployeeCooldown_${email}`;
 
 const CERT_ID_KEY = `fmcsaEmployeeCertificateId_${email}`;
 const CERT_DATE_KEY = `fmcsaEmployeeDate_${email}`;
@@ -504,9 +504,6 @@ if(scorePercent >= PASS_PERCENT){
   }
 
   localStorage.setItem(CERT_DATE_KEY, Date.now());
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-  const email = user.email;
 
   const key = `amsCertificates_${email}`;
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
