@@ -1,7 +1,3 @@
-/* =========================================================
-   AMS ROUTE GUARD (FINAL - CLEAN + SAFE)
-========================================================= */
-
 /* =========================
    🔥 HARD CERTIFICATE BYPASS (RUNS FIRST)
 ========================= */
@@ -12,9 +8,51 @@ if (
   path.includes("fmcsa-certificates") ||
   path.includes("faa-certificates")
 ) {
-  console.log("✅ Certificate page — bypass route guard");
-} else {
 
+  console.log("✅ Certificate page — controlled access");
+
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  if (!user) {
+    window.location.replace("login.html");
+  }
+
+  const company =
+    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const email = user?.email;
+
+  const hasEmployeeSeat =
+    company?.usedSeats?.employee?.[email];
+
+  const hasSupervisorSeat =
+    company?.usedSeats?.supervisor?.[email];
+
+  const hasDerSeat =
+    company?.usedSeats?.der?.[email];
+
+  const hasAnySeat =
+    hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
+
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+
+  const hasAnyCompletion =
+    completedEmployee || completedSupervisor || completedDER;
+
+  if (!hasAnySeat && !hasAnyCompletion) {
+    alert("No certificate access.");
+    window.location.replace("dashboard.html");
+  }
+
+} else {
+   
 /* =========================================================
    MAIN ROUTE GUARD
 ========================================================= */
