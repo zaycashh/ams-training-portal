@@ -15,7 +15,7 @@ if (
 
   if (!user) {
   window.location.replace("login.html");
-  return;
+  throw new Error("Redirecting...");
 }
 
   const company =
@@ -50,7 +50,7 @@ if (
   if (!hasAnySeat && !hasAnyCompletion) {
   alert("No certificate access.");
   window.location.replace("dashboard.html");
-  return;
+  throw new Error("Redirecting...");
 }
 
 } else {
