@@ -447,10 +447,27 @@ function checkCooldown() {
 
 function showSection(section) {
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  // 🔥 BLOCK QUIZ ACCESS IF CONTENT NOT DONE
+  if (section === "quiz") {
+
+    const done =
+      localStorage.getItem(`fmcsaDERContentDone_${user?.email}`) === "true";
+
+    if (!done) {
+      alert("Complete training content first");
+      return;
+    }
+
+  }
+
+  // HIDE ALL
   document.getElementById("contentSection")?.classList.add("hidden");
   document.getElementById("quizSection")?.classList.add("hidden");
   document.getElementById("certificateSection")?.classList.add("hidden");
 
+  // SHOW ACTIVE
   if (section === "content") {
     document.getElementById("contentSection")?.classList.remove("hidden");
   }
