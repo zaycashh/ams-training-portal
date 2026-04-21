@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
 const email = user.email;
+let questions = [];
    
 /* =========================================================
    CONFIG KEYS
@@ -163,8 +164,8 @@ if (completeBtn) {
    QUIZ QUESTIONS
 ========================================================= */
 
-const questions = [
-
+questions = [
+   
 {
 q:"Who is subject to DOT drug testing?",
 a:{
@@ -513,8 +514,8 @@ const scorePercent = Math.round((correct/questions.length)*100);
 ========================= */
 
 const report = questions.map((q, i) => ({
-  question: q.question,
-  selected: selectedAnswers[i],
+  question: q.q,
+  selected: selectedAnswers[i] || "No answer",
   correct: q.correct,
   isCorrect: selectedAnswers[i] === q.correct
 }));
