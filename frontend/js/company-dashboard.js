@@ -647,10 +647,14 @@ tr.innerHTML = `
 
   <div style="display:inline-block; position:relative;">
     
-    <button class="btn-primary"
-      onclick="toggleMenu('${cleanEmail}')">
-      Manage ▼
-    </button>
+<button class="btn-primary"
+  onclick="toggleMenu('${cleanEmail}')"
+  style="display:flex; flex-direction:column; align-items:center; line-height:1.1;">
+
+  <span>Manage</span>
+  <span style="font-size:12px; opacity:.7;">Actions ▼</span>
+
+</button>
 
     <!-- 🔥 KEEP THIS DROPDOWN -->
     <div id="menu-${cleanEmail}" class="action-menu" style="
@@ -694,11 +698,14 @@ tr.innerHTML = `
   </div>
 
   ${hasAnyCert ? `
-  <button onclick="viewEmployeeCert('${cleanEmail}')"
-    class="btn-primary"
-    style="margin-top:6px;">
-    🎓 View Certificate
-  </button>
+<button onclick="viewEmployeeCert('${cleanEmail}')"
+  class="btn-primary"
+  style="display:flex; flex-direction:column; align-items:center; line-height:1.1;">
+
+  <span>View</span>
+  <span style="font-size:12px; opacity:.7;">Certificate</span>
+
+</button>
   ` : ""}
 
 </td>
