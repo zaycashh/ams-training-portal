@@ -544,14 +544,22 @@ if(scorePercent >= PASS_PERCENT){
   const key = `amsCertificates_${email}`;
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
+  /* 🔥 GET EMPLOYEE USER FIRST */
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const employeeUser = users.find(u => u.email === email);
+
+  /* 🔥 CREATE CERT RECORD */
   const certRecord = {
-  id: certId,
-  name: email, // ✅ FIXED
-  course: "FMCSA Employee Drug & Alcohol Awareness Training",
-  type: "fmcsa_employee",
-  date: Date.now(),
-  email: email
-};
+    id: certId,
+    name:
+      employeeUser?.fullName ||
+      `${employeeUser?.firstName || ""} ${employeeUser?.lastName || ""}`.trim() ||
+      email,
+    course: "FMCSA Employee Drug & Alcohol Awareness Training",
+    type: "fmcsa_employee",
+    date: Date.now(),
+    email: email
+  };
 
   const exists = registry.find(c => c.id === certId);
 
