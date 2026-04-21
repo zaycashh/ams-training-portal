@@ -427,6 +427,30 @@ if (!localStorage.getItem(`derCertRegistered_${user?.email}`)) {
 
 }
 
+/* =========================================================
+   QUIZ NAVIGATION (ADD THIS HERE)
+========================================================= */
+
+if (prevQuestionBtn) {
+  prevQuestionBtn.addEventListener("click", () => {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      renderQuestion();
+    }
+  });
+}
+
+if (nextQuestionBtn) {
+  nextQuestionBtn.addEventListener("click", () => {
+    if (currentQuestionIndex < derQuestions.length - 1) {
+      currentQuestionIndex++;
+      renderQuestion();
+    } else {
+      alert("You reached the last question. Click Submit.");
+    }
+  });
+}
+   
 function checkCooldown() {
 
   const cooldownUntil = parseInt(localStorage.getItem(DER_COOLDOWN_KEY) || "0", 10);
