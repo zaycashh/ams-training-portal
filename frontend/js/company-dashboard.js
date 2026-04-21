@@ -593,64 +593,71 @@ tr.innerHTML = `
   <td>${statusLabel}</td>
 
   <!-- ACTIONS -->
-  <td>
+<td>
 
-    <div style="display:inline-block; position:relative;">
+  <div style="display:inline-block; position:relative;">
+    
+    <button class="btn-primary"
+      onclick="toggleMenu('${cleanEmail}')">
+      Manage ▼
+    </button>
 
-      <button class="btn-primary"
-        onclick="toggleMenu('${cleanEmail}')">
-        Manage ▼
+    <!-- 🔥 KEEP THIS DROPDOWN -->
+    <div id="menu-${cleanEmail}" class="action-menu" style="
+      display:none;
+      position:absolute;
+      background:white;
+      border:1px solid #ddd;
+      padding:10px;
+      margin-top:5px;
+      z-index:10;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      min-width:160px;
+    ">
+
+      ${
+        trainingType === "None" || isInvite
+          ? `
+            <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
+            <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
+            <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+
+            <hr style="margin:6px 0;">
+
+            <button onclick="resendInvite('${cleanEmail}')">
+              Resend Invite
+            </button><br>
+          `
+          : `
+            <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
+              Remove Seat
+            </button><br>
+          `
+      }
+
+      <button onclick="removeEmployee('${cleanEmail}')">
+        Remove Employee
       </button>
-
-      <div id="menu-${cleanEmail}" class="action-menu" style="
-        display:none;
-        position:absolute;
-        background:white;
-        border:1px solid #ddd;
-        padding:10px;
-        margin-top:5px;
-        z-index:10;
-        box-shadow:0 4px 10px rgba(0,0,0,0.1);
-        min-width:160px;
-      ">
-
-        ${
-          trainingType === "None" || isInvite
-            ? `
-              <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
-              <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
-              <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
-
-              <hr style="margin:6px 0;">
-
-              <button onclick="resendInvite('${cleanEmail}')">
-                Resend Invite
-              </button><br>
-            `
-            : `
-              <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-                Remove Seat
-              </button><br>
-            `
-        }
-
-        <button onclick="removeEmployee('${cleanEmail}')">
-          Remove Employee
-        </button>
-
-      </div>
 
     </div>
 
-    ${hasAnyCert ? `
+  </div>
+
+  <!-- 🔥 QUICK REMOVE BUTTON -->
+  <button onclick="removeEmployee('${cleanEmail}')"
+    style="margin-top:6px;background:#dc3545;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;">
+    Remove
+  </button>
+
+  ${hasAnyCert ? `
   <button onclick="viewEmployeeCert('${cleanEmail}')"
     class="btn-primary"
     style="margin-top:6px;">
     🎓 View Certificate
   </button>
-` : ""}
+  ` : ""}
 
-  </td>
+</td>
 `;
 
 tbody.appendChild(tr);
