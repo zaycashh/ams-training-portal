@@ -29,16 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
    const takeQuizBtn = document.getElementById("takeQuizBtn");
 
 if (takeQuizBtn) {
-  takeQuizBtn.onclick = () => {
-    showSection("quiz");
 
-    const quizBtn = document.getElementById("btnQuiz");
+  takeQuizBtn.addEventListener("click", () => {
 
-if (quizBtn) {
-  quizBtn.disabled = false;
-  quizBtn.classList.remove("disabled");
-}
-  };
+    // 🔥 mark content completed
+    localStorage.setItem(`fmcsaDERContentDone_${user.email}`, "true");
+
+    // 🔥 switch sections
+    document.getElementById("contentSection").classList.add("hidden");
+    document.getElementById("quizSection").classList.remove("hidden");
+
+  });
+
 }
 
   const currentPageEl = document.getElementById("currentPage");
