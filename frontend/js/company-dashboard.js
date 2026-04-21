@@ -91,10 +91,22 @@ Object.keys(company.usedSeats.employee).forEach(email => {
   const seat = company.usedSeats.employee[email];
 
   if (typeof seat !== "object") {
-    company.usedSeats.employee[email] = {
-      assignedAt: Date.now(),
-      revoked: false
-    };
+company.usedSeats.employee[email] = {
+  assignedAt: Date.now(),
+  revoked: false
+};
+
+/* 🔥 ADD THIS RIGHT HERE */
+if (!company.employees) company.employees = {};
+
+if (!company.employees[email]) {
+  company.employees[email] = {
+    email: email,
+    role: "employee",
+    status: "invited",
+    addedAt: Date.now()
+  };
+}
     updated = true;
   } else if (!("revoked" in seat)) {
     seat.revoked = false;
