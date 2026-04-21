@@ -392,58 +392,96 @@ function assignEmployeeSeat(emailParam) {
 }
 
 /* =========================================================
-   ASSIGN SUPERVISOR SEAT
+   ASSIGN SUPERVISOR SEAT (MATCH EMPLOYEE + DER SYSTEM)
 ========================================================= */
-
 function assignSupervisorSeat(emailParam) {
 
-const email = (emailParam ||
-  document.getElementById("seatEmail").value.trim()
-).toLowerCase();
+  const email = (emailParam ||
+    document.getElementById("seatEmail").value.trim()
+  ).toLowerCase();
 
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.supervisor?.total || 0;
-  const used = Object.values(company.usedSeats.supervisor || {})
-  .filter(s => !s.revoked)
-  .length;
+
+  const used = Object.values(company.usedSeats?.supervisor || {})
+    .filter(s => !s.revoked)
+    .length;
 
   if (used >= total) {
     return alert("No supervisor seats available");
   }
 
+  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+
   const existingSeat = company.usedSeats.supervisor[email];
 
-if (existingSeat && existingSeat.revoked !== true) {
-  return alert("Supervisor already assigned");
-}
+  if (existingSeat && existingSeat.revoked !== true) {
+    return alert("Supervisor already assigned");
+  }
+
+  /* =========================
+     🔥 ASSIGN SEAT
+  ========================= */
 
   company.usedSeats.supervisor[email] = {
-  assignedAt: Date.now(),
-  revoked: false
-};
-   
-// 🔥 AUTO CREATE INVITE
-if (!company.invites) company.invites = {};
-
-if (!company.invites[email]) {
-
-  const code =
-    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  company.invites[email] = {
-    email,
-    code,
-    program: company.program || "fmcsa",
-    role: "employee",
-    createdAt: Date.now(),
-    status: "assigned"
+    assignedAt: Date.now(),
+    revoked: false
   };
 
-  alert("Invite Code: " + code);
-}
+  /* =========================
+     🔥 ADD TO TABLE IMMEDIATELY
+  ========================= */
+
+  if (!company.employees) company.employees = {};
+
+  company.employees[email] = {
+    email: email,
+    role: "supervisor",
+    status: "assigned",
+    addedAt: Date.now()
+  };
+
+  /* =========================
+     🔥 CREATE INVITE (SAME SYSTEM)
+  ========================= */
+
+  if (!company.invites) company.invites = {};
+
+  if (!company.invites[email]) {
+
+    const code =
+      "AMS-SUP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    company.invites[email] = {
+      email,
+      code,
+      program: company.program || "fmcsa",
+      role: "supervisor",
+      createdAt: Date.now(),
+      status: "assigned"
+    };
+
+    const msg = document.getElementById("inviteMsg");
+
+    if (msg) {
+      msg.innerHTML = `
+        Supervisor Invite Code: <strong>${code}</strong>
+        <button onclick="copyInvite('${code}')"
+          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+          Copy
+        </button>
+      `;
+    }
+  }
+
+  /* =========================
+     🔥 SAVE + REFRESH
+  ========================= */
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Supervisor seat assigned");
@@ -452,58 +490,96 @@ if (!company.invites[email]) {
 }
 
 /* =========================================================
-   ASSIGN DER SEAT
+   ASSIGN DER SEAT (MATCH EMPLOYEE SYSTEM)
 ========================================================= */
-
 function assignDerSeat(emailParam) {
 
-const email = (emailParam ||
-  document.getElementById("seatEmail").value.trim()
-).toLowerCase();
+  const email = (emailParam ||
+    document.getElementById("seatEmail").value.trim()
+  ).toLowerCase();
 
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.der?.total || 0;
-  const used = Object.values(company.usedSeats.der || {})
-  .filter(s => !s.revoked)
-  .length;
+
+  const used = Object.values(company.usedSeats?.der || {})
+    .filter(s => !s.revoked)
+    .length;
 
   if (used >= total) {
     return alert("No DER seats available");
   }
 
+  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats.der) company.usedSeats.der = {};
+
   const existingSeat = company.usedSeats.der[email];
 
-if (existingSeat && existingSeat.revoked !== true) {
-  return alert("DER already assigned");
-}
+  if (existingSeat && existingSeat.revoked !== true) {
+    return alert("DER already assigned");
+  }
+
+  /* =========================
+     🔥 ASSIGN SEAT
+  ========================= */
 
   company.usedSeats.der[email] = {
-  assignedAt: Date.now(),
-  revoked: false
-};
-   
-// 🔥 AUTO CREATE INVITE
-if (!company.invites) company.invites = {};
-
-if (!company.invites[email]) {
-
-  const code =
-    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  company.invites[email] = {
-    email,
-    code,
-    program: company.program || "fmcsa",
-    role: "employee",
-    createdAt: Date.now(),
-    status: "assigned"
+    assignedAt: Date.now(),
+    revoked: false
   };
 
-  alert("Invite Code: " + code);
-}
+  /* =========================
+     🔥 ADD TO TABLE IMMEDIATELY
+  ========================= */
+
+  if (!company.employees) company.employees = {};
+
+  company.employees[email] = {
+    email: email,
+    role: "der",
+    status: "assigned",
+    addedAt: Date.now()
+  };
+
+  /* =========================
+     🔥 CREATE INVITE (SAME AS EMPLOYEE)
+  ========================= */
+
+  if (!company.invites) company.invites = {};
+
+  if (!company.invites[email]) {
+
+    const code =
+      "AMS-DER-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    company.invites[email] = {
+      email,
+      code,
+      program: company.program || "fmcsa",
+      role: "der",
+      createdAt: Date.now(),
+      status: "assigned"
+    };
+
+    const msg = document.getElementById("inviteMsg");
+
+    if (msg) {
+      msg.innerHTML = `
+        DER Invite Code: <strong>${code}</strong>
+        <button onclick="copyInvite('${code}')"
+          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+          Copy
+        </button>
+      `;
+    }
+  }
+
+  /* =========================
+     🔥 SAVE + REFRESH
+  ========================= */
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("DER seat assigned");
