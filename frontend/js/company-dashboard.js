@@ -509,14 +509,16 @@ function loadEmployees(companyId) {
     u => u.companyId === companyId && u.role === "employee"
   );
 
-  if (!employees.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" style="opacity:.6;">No employees yet</td>
-      </tr>
-    `;
-    return;
-  }
+  const invites = Object.values(company.invites || {});
+
+if (!employees.length && !invites.length) {
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="6" style="opacity:.6;">No employees yet</td>
+    </tr>
+  `;
+  return;
+}
 
   /* =========================================================
      🔥 LOOP FIX (YOU WERE MISSING THIS)
