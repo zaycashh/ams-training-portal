@@ -291,22 +291,23 @@ const derAvailable = Math.max(0, derTotal - derUsed);
   if (derAvailEl) derAvailEl.textContent = derAvailable;
 }
 /* =========================================================
-   ASSIGN EMPLOYEE SEAT (UPDATED)
+   ASSIGN EMPLOYEE SEAT (FINAL CLEAN VERSION)
 ========================================================= */
 function assignEmployeeSeat(emailParam) {
 
-const email = (emailParam ||
-  document.getElementById("seatEmail").value.trim()
-).toLowerCase();
+  const email = (emailParam ||
+    document.getElementById("seatEmail").value.trim()
+  ).toLowerCase();
 
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   const total = company.seats?.employee?.total || 0;
+
   const used = Object.values(company.usedSeats.employee || {})
-  .filter(s => !s.revoked)
-  .length;
+    .filter(s => !s.revoked)
+    .length;
 
   if (used >= total) {
     return alert("No employee seats available");
@@ -314,58 +315,76 @@ const email = (emailParam ||
 
   const existingSeat = company.usedSeats.employee[email];
 
-if (existingSeat && existingSeat.revoked !== true) {
-  return alert("Employee already assigned");
-}
-
-  company.usedSeats.employee[email] = {
-  assignedAt: Date.now(),
-  revoked: false
-};
-   
-// 🔥 AUTO CREATE INVITE
-if (!company.invites) company.invites = {};
-
-// 🔥 AUTO CREATE INVITE
-if (!company.invites) company.invites = {};
-
-if (!company.invites[email]) {
-
-  const code =
-    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  company.invites[email] = {
-    email,
-    code,
-    program: company.program || "fmcsa",
-    role: "employee",
-    createdAt: Date.now(),
-    status: "assigned"
-  };
-
-  const msg = document.getElementById("inviteMsg");
-
-  if (msg) {
-    msg.innerHTML = `
-      Invite Code: <strong>${code}</strong>
-      <button onclick="copyInvite('${code}')"
-        style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-        Copy
-      </button>
-    `;
+  if (existingSeat && existingSeat.revoked !== true) {
+    return alert("Employee already assigned");
   }
 
+  /* =========================
+     🔥 ASSIGN SEAT
+  ========================= */
+
+  company.usedSeats.employee[email] = {
+    assignedAt: Date.now(),
+    revoked: false
+  };
+
+  /* =========================
+     🔥 ADD TO TABLE IMMEDIATELY
+  ========================= */
+
+  if (!company.employees) company.employees = {};
+
+  company.employees[email] = {
+    email: email,
+    role: "employee",
+    status: "assigned",
+    addedAt: Date.now()
+  };
+
+  /* =========================
+     🔥 CREATE INVITE
+  ========================= */
+
+  if (!company.invites) company.invites = {};
+
+  if (!company.invites[email]) {
+
+    const code =
+      "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    company.invites[email] = {
+      email,
+      code,
+      program: company.program || "fmcsa",
+      role: "employee",
+      createdAt: Date.now(),
+      status: "assigned"
+    };
+
+    const msg = document.getElementById("inviteMsg");
+
+    if (msg) {
+      msg.innerHTML = `
+        Invite Code: <strong>${code}</strong>
+        <button onclick="copyInvite('${code}')"
+          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+          Copy
+        </button>
+      `;
+    }
+  }
+
+  /* =========================
+     🔥 SAVE + REFRESH
+  ========================= */
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  alert("Employee seat assigned");
+
+  location.reload();
 }
 
-/* 🔥 ALWAYS SAVE */
-localStorage.setItem("companyProfile", JSON.stringify(company));
-
-alert("Employee seat assigned");
-
-location.reload();
-}
-   
-}
 /* =========================================================
    ASSIGN SUPERVISOR SEAT
 ========================================================= */
