@@ -614,7 +614,9 @@ if(attempts >= MAX_ATTEMPTS){
 
 alert(`Score: ${scorePercent}%`);
 
-});   
+});
+
+}  
    
 /* =========================================================
    INITIALIZE MODULE
