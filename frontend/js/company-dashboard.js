@@ -492,6 +492,7 @@ loadEmployees(company.id);
 
 const input = document.getElementById("seatEmail");
 if (input) input.value = "";
+}   
 
 /* =========================================================
    ASSIGN DER SEAT (MATCH EMPLOYEE SYSTEM)
