@@ -84,32 +84,37 @@ if (!company.usedSeats.der) {
 }
 
 /* =========================
-   🔥 NORMALIZE EMPLOYEE SEATS
+   🔥 NORMALIZE EMPLOYEE SEATS (FINAL FIX)
 ========================= */
 
 Object.keys(company.usedSeats.employee).forEach(email => {
-  const seat = company.usedSeats.employee[email];
+  let seat = company.usedSeats.employee[email];
 
+  // 🔥 Normalize seat structure
   if (typeof seat !== "object") {
-company.usedSeats.employee[email] = {
-  assignedAt: Date.now(),
-  revoked: false
-};
-
-/* 🔥 ADD THIS RIGHT HERE */
-if (!company.employees) company.employees = {};
-
-if (!company.employees[email]) {
-  company.employees[email] = {
-    email: email,
-    role: "employee",
-    status: "invited",
-    addedAt: Date.now()
-  };
-}
+    company.usedSeats.employee[email] = {
+      assignedAt: Date.now(),
+      revoked: false
+    };
+    seat = company.usedSeats.employee[email];
     updated = true;
-  } else if (!("revoked" in seat)) {
+  }
+
+  if (!("revoked" in seat)) {
     seat.revoked = false;
+    updated = true;
+  }
+
+  // 🔥 ALWAYS ensure employee exists in table
+  if (!company.employees) company.employees = {};
+
+  if (!company.employees[email]) {
+    company.employees[email] = {
+      email: email,
+      role: "employee",
+      status: "assigned",
+      addedAt: Date.now()
+    };
     updated = true;
   }
 });
