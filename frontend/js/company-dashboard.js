@@ -524,14 +524,14 @@ if (!employees.length && !invites.length) {
      🔥 LOOP FIX (YOU WERE MISSING THIS)
   ========================================================= */
 
-  const invites = Object.values(company.invites || {});
-
 [...employees, ...invites].forEach(emp => {
 
     const cleanEmail = emp.email.trim().toLowerCase(); // ✅ MUST BE FIRST
 
     const isInvite =
-   emp.status === "pending" || emp.status === "resent";
+      emp.status === "pending" ||
+      emp.status === "resent" ||
+      emp.status === "assigned";
 
     /* =========================
        DETERMINE TRAINING TYPE
