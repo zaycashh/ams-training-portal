@@ -488,6 +488,19 @@ questions.forEach((q,i)=>{
 
 const scorePercent = Math.round((correct/questions.length)*100);
 
+/* =========================
+   BUILD REPORT (ADD THIS FIRST)
+========================= */
+
+const report = questions.map((q, i) => ({
+  question: q.question,
+  selected: selectedAnswers[i],
+  correct: q.correct,
+  isCorrect: selectedAnswers[i] === q.correct
+}));
+
+localStorage.setItem(`quizReport_${email}`, JSON.stringify(report));
+
 /* ========================= 
    PASS
 ========================= */
@@ -511,25 +524,23 @@ if(scorePercent >= PASS_PERCENT){
   const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
   const certRecord = {
-  id: certId,
-  name:
-  user.fullName ||
-  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-  user.email,
-  course: "FMCSA Employee Drug & Alcohol Awareness Training",
-  type: "fmcsa_employee",
-  date: Date.now(),
-  email: email
-};
+    id: certId,
+    name:
+      user.fullName ||
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+      user.email,
+    course: "FMCSA Employee Drug & Alcohol Awareness Training",
+    type: "fmcsa_employee",
+    date: Date.now(),
+    email: email
+  };
 
   const exists = registry.find(c => c.id === certId);
 
-if(!exists){
-  registry.push(certRecord);
-  localStorage.setItem(key, JSON.stringify(registry));
-}
-
-  /* 🔥 END BLOCK */
+  if(!exists){
+    registry.push(certRecord);
+    localStorage.setItem(key, JSON.stringify(registry));
+  }
 
   alert(`Passed! Score: ${scorePercent}%`);
 
@@ -544,6 +555,33 @@ if(!exists){
 attempts++;
 localStorage.setItem(ATTEMPTS_KEY, attempts);
 
+/* 🔥 SHOW WRONG ANSWERS */
+
+const wrongAnswers = report.filter(r => !r.isCorrect);
+
+const resultEl = document.getElementById("quizResult");
+
+if(resultEl){
+  let html = `
+    <div class="result-box fail">
+      <strong>Score: ${scorePercent}%</strong><br><br>
+      <strong>Review Incorrect Answers:</strong>
+  `;
+
+  wrongAnswers.forEach(item => {
+    html += `
+      <div style="margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+        <div><strong>Q:</strong> ${item.question}</div>
+        <div style="color:red;">Your Answer: ${item.selected}</div>
+        <div style="color:green;">Correct Answer: ${item.correct}</div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  resultEl.innerHTML = html;
+}
+
 if(attempts >= MAX_ATTEMPTS){
 
   const cooldownUntil = Date.now() + (COOLDOWN_MINUTES*60000);
@@ -555,10 +593,6 @@ if(attempts >= MAX_ATTEMPTS){
 }
 
 alert(`Score: ${scorePercent}%`);
-
-});
-
-}
    
 /* =========================================================
    COOLDOWN CHECK
