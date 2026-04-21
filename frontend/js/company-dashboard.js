@@ -595,6 +595,7 @@ loadEmployees(company.id);
 
 const input = document.getElementById("seatEmail");
 if (input) input.value = "";
+}   
 
 /* =========================================================
    LOAD EMPLOYEES (PROGRAM-AWARE + TRAINING TYPE)
