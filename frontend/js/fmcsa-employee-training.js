@@ -348,6 +348,26 @@ if(totalQuestionsEl) totalQuestionsEl.textContent = questions.length;
 if(quizContainer) initQuiz();
 
 /* =========================================================
+   COOLDOWN CHECK
+========================================================= */
+
+function checkCooldown(){
+
+const cooldownUntil = parseInt(localStorage.getItem(COOLDOWN_KEY)||"0",10);
+
+if(Date.now()<cooldownUntil){
+
+const minutesLeft = Math.ceil((cooldownUntil-Date.now())/60000);
+
+alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
+
+window.location.href="dashboard.html";
+
+}
+
+}   
+
+/* =========================================================
    QUIZ INIT
 ========================================================= */
 
@@ -593,27 +613,9 @@ if(attempts >= MAX_ATTEMPTS){
 }
 
 alert(`Score: ${scorePercent}%`);
+
+});   
    
-/* =========================================================
-   COOLDOWN CHECK
-========================================================= */
-
-function checkCooldown(){
-
-const cooldownUntil = parseInt(localStorage.getItem(COOLDOWN_KEY)||"0",10);
-
-if(Date.now()<cooldownUntil){
-
-const minutesLeft = Math.ceil((cooldownUntil-Date.now())/60000);
-
-alert(`Quiz locked. Try again in ${minutesLeft} minutes.`);
-
-window.location.href="dashboard.html";
-
-}
-
-}
-
 /* =========================================================
    INITIALIZE MODULE
 ========================================================= */
