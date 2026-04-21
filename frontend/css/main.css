@@ -691,3 +691,10 @@ border-bottom:1px solid #e5e7eb;
 .input-field:focus {
   border-color: #3b82f6;
 }
+#inviteMsg {
+  background: #f5f7fb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 8px;
+}
