@@ -133,11 +133,15 @@ document.addEventListener("DOMContentLoaded", function () {
       program, //
       createdAt: Date.now(),
       seats: {
-      employee: { total: 0, used: 0 },
-      supervisor: { total: 0, used: 0 },
-      der: { total: 0, used: 0 }
+        employee: { total: 0, used: 0 },
+        supervisor: { total: 0, used: 0 },
+        der: { total: 0, used: 0 }
     },
-      usedSeats: {},
+      usedSeats: {
+        employee: {},
+        supervisor: {},
+        der: {}
+    },
       invites: {},
       modules: [],
       employees: {}
