@@ -323,8 +323,18 @@ if (!company.invites[email]) {
     status: "assigned"
   };
 
-  alert("Invite Code: " + code);
+  const msg = document.getElementById("inviteMsg");
+
+if (msg) {
+  msg.innerHTML = `
+    Invite Code: <strong>${code}</strong>
+    <button onclick="copyInvite('${code}')"
+      style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+      Copy
+    </button>
+  `;
 }
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Employee seat assigned");
