@@ -693,12 +693,6 @@ tr.innerHTML = `
 
   </div>
 
-  <!-- 🔥 QUICK REMOVE BUTTON -->
-  <button onclick="removeEmployee('${cleanEmail}')"
-    style="margin-top:6px;background:#dc3545;color:white;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;">
-    Remove
-  </button>
-
   ${hasAnyCert ? `
   <button onclick="viewEmployeeCert('${cleanEmail}')"
     class="btn-primary"
