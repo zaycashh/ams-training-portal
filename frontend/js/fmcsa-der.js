@@ -270,7 +270,7 @@ function renderQuestion() {
 
   const question = derQuestions[currentQuestionIndex];
 
-  const letters = ["A","B","C","D"];
+  const letters = ["A","B"];
 
   quizContainer.innerHTML = `
     <p><strong>${question.q}</strong></p>
