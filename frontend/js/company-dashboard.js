@@ -290,6 +290,7 @@ const derAvailable = Math.max(0, derTotal - derUsed);
   if (derUsedEl) derUsedEl.textContent = derUsed;
   if (derAvailEl) derAvailEl.textContent = derAvailable;
 }
+
 /* =========================================================
    ASSIGN EMPLOYEE SEAT (FINAL CLEAN VERSION)
 ========================================================= */
@@ -375,14 +376,19 @@ function assignEmployeeSeat(emailParam) {
   }
 
   /* =========================
-     🔥 SAVE + REFRESH
+     🔥 SAVE + LIVE UI UPDATE
   ========================= */
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
   alert("Employee seat assigned");
 
-  location.reload();
+  renderSeatAssignments(company);
+  updateSeatCounts(company);
+  loadEmployees(company.id);
+
+  const input = document.getElementById("seatEmail");
+  if (input) input.value = "";
 }
 
 /* =========================================================
