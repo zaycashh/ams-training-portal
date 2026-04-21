@@ -643,20 +643,19 @@ tr.innerHTML = `
   <td>${statusLabel}</td>
 
   <!-- ACTIONS -->
-<td>
+<!-- ACTIONS -->
+<td style="white-space:nowrap;">
 
   <div style="display:inline-block; position:relative;">
-    
-<button class="btn-primary"
-  onclick="toggleMenu('${cleanEmail}')"
-  style="display:flex; flex-direction:column; align-items:center; line-height:1.1;">
 
-  <span>Manage</span>
-  <span style="font-size:12px; opacity:.7;">Actions ▼</span>
+    <!-- MANAGE BUTTON -->
+    <button class="btn-primary"
+      onclick="toggleMenu('${cleanEmail}')"
+      style="padding:6px 10px;">
+      Manage ▼
+    </button>
 
-</button>
-
-    <!-- 🔥 KEEP THIS DROPDOWN -->
+    <!-- 🔥 KEEP YOUR DROPDOWN -->
     <div id="menu-${cleanEmail}" class="action-menu" style="
       display:none;
       position:absolute;
@@ -689,23 +688,22 @@ tr.innerHTML = `
           `
       }
 
-      <button onclick="removeEmployee('${cleanEmail}')">
-        Remove Employee
+      <button onclick="removeEmployee('${cleanEmail}')"
+        style="color:red;">
+        Delete Employee
       </button>
 
     </div>
 
   </div>
 
+  <!-- VIEW CERT BUTTON -->
   ${hasAnyCert ? `
-<button onclick="viewEmployeeCert('${cleanEmail}')"
-  class="btn-primary"
-  style="display:flex; flex-direction:column; align-items:center; line-height:1.1;">
-
-  <span>View</span>
-  <span style="font-size:12px; opacity:.7;">Certificate</span>
-
-</button>
+    <button onclick="viewEmployeeCert('${cleanEmail}')"
+      class="btn-primary"
+      style="margin-left:6px; padding:6px 10px;">
+      🎓 View
+    </button>
   ` : ""}
 
 </td>
