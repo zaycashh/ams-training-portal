@@ -321,6 +321,9 @@ if (existingSeat && existingSeat.revoked !== true) {
 // 🔥 AUTO CREATE INVITE
 if (!company.invites) company.invites = {};
 
+// 🔥 AUTO CREATE INVITE
+if (!company.invites) company.invites = {};
+
 if (!company.invites[email]) {
 
   const code =
@@ -337,21 +340,24 @@ if (!company.invites[email]) {
 
   const msg = document.getElementById("inviteMsg");
 
-if (msg) {
-  msg.innerHTML = `
-    Invite Code: <strong>${code}</strong>
-    <button onclick="copyInvite('${code}')"
-      style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-      Copy
-    </button>
-  `;
+  if (msg) {
+    msg.innerHTML = `
+      Invite Code: <strong>${code}</strong>
+      <button onclick="copyInvite('${code}')"
+        style="margin-left:10px; padding:4px 8px; cursor:pointer;">
+        Copy
+      </button>
+    `;
+  }
+
 }
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+/* 🔥 ALWAYS SAVE */
+localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("Employee seat assigned");
+alert("Employee seat assigned");
 
-  location.reload();
+location.reload();
 }
    
 }
