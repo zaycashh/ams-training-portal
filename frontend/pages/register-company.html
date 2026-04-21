@@ -130,11 +130,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const companyProfile = {
       id: companyId,
       name: companyName,
-      program, // 🔥 FIXED
+      program, //
       createdAt: Date.now(),
       seats: {
-        employee: { total: 5, used: 0 }
-      },
+      employee: { total: 0, used: 0 },
+      supervisor: { total: 0, used: 0 },
+      der: { total: 0, used: 0 }
+    },
       usedSeats: {},
       invites: {},
       modules: [],
