@@ -486,8 +486,12 @@ function assignSupervisorSeat(emailParam) {
 
   alert("Supervisor seat assigned");
 
-  location.reload();
-}
+renderSeatAssignments(company);
+updateSeatCounts(company);
+loadEmployees(company.id);
+
+const input = document.getElementById("seatEmail");
+if (input) input.value = "";
 
 /* =========================================================
    ASSIGN DER SEAT (MATCH EMPLOYEE SYSTEM)
@@ -584,8 +588,12 @@ function assignDerSeat(emailParam) {
 
   alert("DER seat assigned");
 
-  location.reload();
-}
+renderSeatAssignments(company);
+updateSeatCounts(company);
+loadEmployees(company.id);
+
+const input = document.getElementById("seatEmail");
+if (input) input.value = "";
 
 /* =========================================================
    LOAD EMPLOYEES (PROGRAM-AWARE + TRAINING TYPE)
