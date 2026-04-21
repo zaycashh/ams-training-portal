@@ -327,10 +327,7 @@ if (!selectedCert) {
   else showCert("supervisor");
 
   const name =
-  user.fullName ||
-  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-  selectedCert.name ||
-  user.email;
+  selectedCert.name || selectedCert.email;
 
   const date = new Date(selectedCert.date).toLocaleDateString("en-US");
 
