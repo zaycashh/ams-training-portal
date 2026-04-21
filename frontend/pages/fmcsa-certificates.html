@@ -263,11 +263,7 @@ if (isCompanyView) {
   JSON.parse(localStorage.getItem("amsUser") || "{}");
 
 const name =
-  userData.fullName ||
-  `${userData.firstName || ""} ${userData.lastName || ""}`.trim() ||
-  selectedCert.name ||
-  selectedCert.email;
-  const date = new Date(selectedCert.date).toLocaleDateString("en-US");
+  selectedCert.name || selectedCert.email;
     
    if (selectedCert.type === "fmcsa_employee") {
   empCertStudentName.textContent = name;
