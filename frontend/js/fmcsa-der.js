@@ -270,51 +270,45 @@ function renderQuestion() {
 
   const question = derQuestions[currentQuestionIndex];
 
+  const letters = ["A","B","C","D"];
+
   quizContainer.innerHTML = `
     <p><strong>${question.q}</strong></p>
-    ${Object.entries(question.a).map(([key, value]) => `
-      <label>
+
+    ${letters.map(key => `
+      <label class="quiz-option">
         <input type="radio" name="answer" value="${key}"
-        ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}>
-        ${key}. ${value}
+          ${selectedAnswers[currentQuestionIndex] === key ? "checked" : ""}>
+        ${key}. ${question.a[key]}
       </label>
     `).join("")}
   `;
 
+  // QUESTION COUNTER
   if (currentQuestionEl) currentQuestionEl.textContent = currentQuestionIndex + 1;
 
+  // NAV BUTTONS
   if (prevQuestionBtn) prevQuestionBtn.disabled = currentQuestionIndex === 0;
   if (nextQuestionBtn) nextQuestionBtn.disabled = currentQuestionIndex === derQuestions.length - 1;
 
+  // 🔥 SUBMIT BUTTON ONLY ON LAST QUESTION
+  if (submitBtn) {
+
+    if (currentQuestionIndex === derQuestions.length - 1) {
+      submitBtn.style.display = "block";
+    } else {
+      submitBtn.style.display = "none";
+    }
+
+  }
+
+  // SAVE ANSWERS
   document.querySelectorAll("input[name='answer']").forEach(input => {
     input.addEventListener("change", e => {
       selectedAnswers[currentQuestionIndex] = e.target.value;
-      updateSubmitState();
     });
   });
-}
 
-if (prevQuestionBtn) {
-  prevQuestionBtn.addEventListener("click", () => {
-    if (currentQuestionIndex > 0) {
-      currentQuestionIndex--;
-      renderQuestion();
-    }
-  });
-}
-
-if (nextQuestionBtn) {
-  nextQuestionBtn.addEventListener("click", () => {
-    if (currentQuestionIndex < derQuestions.length - 1) {
-      currentQuestionIndex++;
-      renderQuestion();
-    }
-  });
-}
-
-function updateSubmitState() {
-  if (!submitBtn) return;
-  submitBtn.disabled = Object.keys(selectedAnswers).length !== derQuestions.length;
 }
 
 if (submitBtn) {
