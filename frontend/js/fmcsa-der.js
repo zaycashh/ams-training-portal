@@ -32,9 +32,6 @@ if (takeQuizBtn) {
 
   takeQuizBtn.addEventListener("click", () => {
 
-    // 🔥 mark content completed
-    localStorage.setItem(`fmcsaDERContentDone_${user.email}`, "true");
-
     // 🔥 switch sections
     document.getElementById("contentSection").classList.add("hidden");
     document.getElementById("quizSection").classList.remove("hidden");
@@ -46,7 +43,8 @@ if (takeQuizBtn) {
   const currentPageEl = document.getElementById("currentPage");
   const totalPagesEl = document.getElementById("totalPages");
 
-   // 🔥 STEP 4 — RESTORE QUIZ ACCESS ON REFRESH
+// 🔥 STEP 4 — RESTORE QUIZ ACCESS ON REFRESH
+   
 if (user) {
   const done = localStorage.getItem(`fmcsaDERContentDone_${user.email}`);
 
