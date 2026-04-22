@@ -241,7 +241,7 @@ const totalQuestionsEl = document.getElementById("totalQuestions");
 
 if (totalQuestionsEl) totalQuestionsEl.textContent = derQuestions.length;
 
-if (submitBtn) submitBtn.disabled = true;
+if (submitBtn) submitBtn.disabled = false;
 
 if (quizContainer) initQuiz();
 
