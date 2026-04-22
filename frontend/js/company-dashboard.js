@@ -181,11 +181,6 @@ if (programEl) {
   document.getElementById("companyAdmin").textContent =
     user.email || "—";
 
-  document.getElementById("companyModules").textContent =
-    (company.modules && company.modules.length)
-      ? company.modules.join(", ")
-      : "—";
-
   loadEmployees(company.id);
   updateSeatCounts(company);
   renderSeatAssignments(company);
