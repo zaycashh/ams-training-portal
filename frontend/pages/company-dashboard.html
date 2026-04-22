@@ -79,8 +79,11 @@
 
 <div style="position:relative; display:inline-block; margin-top:10px;">
 
-  <button class="btn-primary" onclick="toggleSeatMenu()">
-    💳 Purchase Seats ▼
+  <button class="btn-primary" onclick="toggleSeatMenu()"
+  style="display:flex; align-items:center; gap:6px; font-weight:600;">
+  
+  💳 <span>Purchase Seats</span> <span style="font-size:12px;">▼</span>
+
   </button>
 
   <div id="seatMenu" style="
@@ -94,6 +97,10 @@
     box-shadow:0 4px 10px rgba(0,0,0,0.1);
     min-width:200px;
   ">
+    
+    <div style="font-weight:600; margin-bottom:6px; font-size:13px; opacity:.7;">
+      Select Seat Type
+    </div>
 
     <!-- EMPLOYEE -->
     <button onclick="buyEmployeeSeats()" style="width:100%; text-align:left;">
