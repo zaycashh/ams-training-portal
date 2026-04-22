@@ -426,8 +426,6 @@ if (hasAnySeat) {
   if (!company.usedSeats) company.usedSeats = {};
   if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
 
-  }
-
   /* =========================
      🔥 ASSIGN SEAT
   ========================= */
@@ -534,7 +532,6 @@ if (hasAnySeat) {
 
   if (!company.usedSeats) company.usedSeats = {};
   if (!company.usedSeats.der) company.usedSeats.der = {};
-  }
 
   /* =========================
      🔥 ASSIGN SEAT
