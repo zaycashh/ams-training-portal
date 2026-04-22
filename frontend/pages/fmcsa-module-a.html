@@ -138,13 +138,29 @@ You must review all content before taking the quiz.
 
 function showSection(section){
 
+  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const email = user.email;
+
+  // 🔥 BLOCK QUIZ ACCESS IF CONTENT NOT DONE
+  if(section === "quiz"){
+
+    const done =
+      localStorage.getItem(`fmcsa_mod1_content_done_${email}`) === "true";
+
+    if(!done){
+      alert("Complete training content first");
+      return;
+    }
+
+  }
+
   const content = document.getElementById("contentSection");
   const quiz = document.getElementById("quizSection");
   const cert = document.getElementById("certificateSection");
 
-  if(content) content.classList.add("hidden");
-  if(quiz) quiz.classList.add("hidden");
-  if(cert) cert.classList.add("hidden");
+  content?.classList.add("hidden");
+  quiz?.classList.add("hidden");
+  cert?.classList.add("hidden");
 
   if(section === "content"){
     content?.classList.remove("hidden");
