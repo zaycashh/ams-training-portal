@@ -562,29 +562,64 @@ localStorage.setItem(`fmcsaModuleADate_${email}`, Date.now());
 }
   
 else{
-attempts++;
-localStorage.setItem(ATTEMPT_KEY,attempts);
-const remaining=MAX_ATTEMPTS-attempts;
 
-if(remaining<=0){
+  attempts++;
+  localStorage.setItem(ATTEMPT_KEY,attempts);
 
-localStorage.setItem(COOLDOWN_KEY,Date.now()+COOLDOWN_MINUTES*60000);
-localStorage.setItem(ATTEMPT_KEY,0);
+  const remaining = MAX_ATTEMPTS - attempts;
 
-alert("Maximum attempts reached. Quiz locked for 15 minutes.");
+  if(remaining <= 0){
 
-window.location.href="dashboard.html";
+    localStorage.setItem(COOLDOWN_KEY, Date.now() + COOLDOWN_MINUTES*60000);
+    localStorage.setItem(ATTEMPT_KEY, 0);
 
-return;
+    alert("Maximum attempts reached. Quiz locked for 15 minutes.");
+    window.location.href="dashboard.html";
+    return;
+
+  }
+
+  // 🔥 BUILD REVIEW
+  let reviewHTML = "";
+
+  questions.forEach((q, i) => {
+
+    const userAnswer = userAnswers[i];
+
+    if(userAnswer !== q.correct){
+
+      reviewHTML += `
+        <div style="margin-top:15px;">
+          <p><strong>Question ${i+1}:</strong> ${q.q}</p>
+
+          <p style="color:#c0392b;">
+            Your Answer: ${userAnswer || "Not Answered"}.
+            ${q.a[userAnswer] || ""}
+          </p>
+
+          <p style="color:#27ae60;">
+            Correct Answer: ${q.correct}.
+            ${q.a[q.correct]}
+          </p>
+
+          <hr/>
+        </div>
+      `;
+
+    }
+
+  });
+
+  document.getElementById("quizResult").innerHTML = `
+    <div class="result-box fail">
+      <h3>Score: ${score}/8</h3>
+      <p>Attempts remaining: ${remaining}</p>
+      ${reviewHTML}
+    </div>
+  `;
 
 }
-
-document.getElementById("quizResult").innerHTML=
-`<div class="result-box fail">
-You scored ${score}/8.<br>
-Attempts remaining: ${remaining>0?remaining:0}
-</div>`;
-}
+  
 }
   
  function goDashboard() {
