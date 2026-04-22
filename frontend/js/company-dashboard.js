@@ -299,6 +299,16 @@ function assignEmployeeSeat(emailParam) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+   const hasAnySeat =
+  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
+  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
+
+if (hasAnySeat) {
+  alert("User already has a training assigned");
+  return;
+}
+
   const total = company.seats?.employee?.total || 0;
 
   const used = Object.values(company.usedSeats.employee || {})
@@ -307,12 +317,6 @@ function assignEmployeeSeat(emailParam) {
 
   if (used >= total) {
     return alert("No employee seats available");
-  }
-
-  const existingSeat = company.usedSeats.employee[email];
-
-  if (existingSeat && existingSeat.revoked !== true) {
-    return alert("Employee already assigned");
   }
 
   /* =========================
@@ -399,6 +403,16 @@ function assignSupervisorSeat(emailParam) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+   const hasAnySeat =
+  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
+  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
+
+if (hasAnySeat) {
+  alert("User already has a training assigned");
+  return;
+}
+
   const total = company.seats?.supervisor?.total || 0;
 
   const used = Object.values(company.usedSeats?.supervisor || {})
@@ -412,10 +426,6 @@ function assignSupervisorSeat(emailParam) {
   if (!company.usedSeats) company.usedSeats = {};
   if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
 
-  const existingSeat = company.usedSeats.supervisor[email];
-
-  if (existingSeat && existingSeat.revoked !== true) {
-    return alert("Supervisor already assigned");
   }
 
   /* =========================
@@ -502,6 +512,16 @@ function assignDerSeat(emailParam) {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
+   const hasAnySeat =
+  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
+  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
+
+if (hasAnySeat) {
+  alert("User already has a training assigned");
+  return;
+}
+
   const total = company.seats?.der?.total || 0;
 
   const used = Object.values(company.usedSeats?.der || {})
@@ -514,11 +534,6 @@ function assignDerSeat(emailParam) {
 
   if (!company.usedSeats) company.usedSeats = {};
   if (!company.usedSeats.der) company.usedSeats.der = {};
-
-  const existingSeat = company.usedSeats.der[email];
-
-  if (existingSeat && existingSeat.revoked !== true) {
-    return alert("DER already assigned");
   }
 
   /* =========================
