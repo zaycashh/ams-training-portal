@@ -403,13 +403,18 @@ div.innerHTML=`<strong>${i+1}. ${q.q}</strong>`;
 const ansDiv=document.createElement("div");
 ansDiv.className="answers";
 
-Object.entries(q.a).forEach(([letter,text])=>{
-ansDiv.innerHTML+=`
-<label>
-<input type="radio" name="q${i}" value="${letter}"
-${userAnswers[i]===letter?"checked":""}>
-${letter}) ${text}
-</label>`;
+Object.entries(q.a).forEach(([letter, text]) => {
+
+  ansDiv.innerHTML += `
+    <label class="quiz-option" style="display:block; margin-bottom:10px; cursor:pointer;">
+      <input type="radio" name="q${i}" value="${letter}"
+        ${userAnswers[i]===letter?"checked":""}>
+      <span style="margin-left:6px;">
+        ${letter}. ${text}
+      </span>
+    </label>
+  `;
+
 });
 
 div.appendChild(ansDiv);
