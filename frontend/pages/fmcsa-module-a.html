@@ -420,19 +420,38 @@ Object.entries(q.a).forEach(([letter, text]) => {
 div.appendChild(ansDiv);
 container.appendChild(div);
 }
+  const nextBtn = document.getElementById("nextQuizBtn");
+
+if (nextBtn) {
+
+  if (currentPage === 3) {
+    nextBtn.textContent = "Submit";
+  } else {
+    nextBtn.textContent = "Next";
+  }
+
+}
+  
 }
 
-document.getElementById("nextQuizBtn").onclick=()=>{
+document.getElementById("nextQuizBtn").onclick = () => {
+
   saveAnswers();
 
-  if(currentPage < 3){
+  if (currentPage < 3) {
+
     currentPage++;
     updateQuizPage();
-  }
-  else{
+
+  } else {
+
+    // 🔥 FINAL PAGE → SUBMIT
     gradeQuiz();
+
   }
+
 };
+  
 document.getElementById("prevQuizBtn").onclick=()=>{
   saveAnswers();
   if(currentPage > 0){
