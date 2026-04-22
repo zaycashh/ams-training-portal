@@ -98,97 +98,100 @@
     min-width:200px;
   ">
     
-    <div style="font-weight:600; margin-bottom:8px;">
-  Select Seat Type
-</div>
-
-<!-- EMPLOYEE -->
-<div style="margin-bottom:10px;">
-  <div style="font-size:13px; opacity:.7; margin-bottom:4px;">Employee</div>
-
-  <div onclick="buyEmployeeSeats()" style="
-    padding:10px;
-    border:1px solid #e5e7eb;
-    border-radius:8px;
+    <!-- EMPLOYEE -->
+<button onclick="buyEmployeeSeats()" 
+  style="
+    width:100%;
+    text-align:left;
+    padding:8px;
+    border:none;
+    background:none;
     cursor:pointer;
+    border-radius:6px;
     transition:all 0.15s ease;
   "
   onmouseover="this.style.background='#f5f7fb'"
-  onmouseout="this.style.background='white'">
+  onmouseout="this.style.background='transparent'">
+  Employee (5 Pack)
+</button>
 
-    <strong>5 Seats Bundle</strong><br>
-    <span style="font-size:12px; opacity:.7;">Best for teams</span>
-
-  </div>
-</div>
+<hr style="margin:8px 0;">
 
 <!-- SUPERVISOR -->
-<div style="margin-bottom:10px;">
-  <div style="font-size:13px; opacity:.7; margin-bottom:4px;">Supervisor</div>
+<div style="font-weight:600; margin-bottom:4px; font-size:13px; opacity:.7;">
+  Supervisor
+</div>
 
-  <div onclick="buySupervisorSeats(1)" style="
-    padding:10px;
-    border:1px solid #e5e7eb;
-    border-radius:8px;
-    margin-bottom:6px;
+<button onclick="buySupervisorSeats(1)" 
+  style="
+    width:100%;
+    text-align:left;
+    padding:8px;
+    border:none;
+    background:none;
     cursor:pointer;
+    border-radius:6px;
     transition:all 0.15s ease;
   "
   onmouseover="this.style.background='#f5f7fb'"
-  onmouseout="this.style.background='white'">
+  onmouseout="this.style.background='transparent'">
+  1 Seat
+</button>
 
-    1 Seat
-
-  </div>
-
-  <div onclick="buySupervisorSeats(3)" style="
-    padding:10px;
-    border:2px solid #3b82f6;
-    border-radius:8px;
+<button onclick="buySupervisorSeats(3)" 
+  style="
+    width:100%;
+    text-align:left;
+    padding:8px;
+    border:none;
+    background:none;
     cursor:pointer;
+    border-radius:6px;
     transition:all 0.15s ease;
   "
-  onmouseover="this.style.background='#eef4ff'"
-  onmouseout="this.style.background='white'">
+  onmouseover="this.style.background='#f5f7fb'"
+  onmouseout="this.style.background='transparent'">
+  3 Seats (Save)
+</button>
 
-    <strong>3 Seats (Best Value)</strong>
-
-  </div>
-</div>
+<hr style="margin:8px 0;">
 
 <!-- DER -->
-<div>
-  <div style="font-size:13px; opacity:.7; margin-bottom:4px;">DER</div>
+<div style="font-weight:600; margin-bottom:4px; font-size:13px; opacity:.7;">
+  DER
+</div>
 
-  <div onclick="buyDerSeats(1)" style="
-    padding:10px;
-    border:1px solid #e5e7eb;
-    border-radius:8px;
-    margin-bottom:6px;
+<button onclick="buyDerSeats(1)" 
+  style="
+    width:100%;
+    text-align:left;
+    padding:8px;
+    border:none;
+    background:none;
     cursor:pointer;
+    border-radius:6px;
     transition:all 0.15s ease;
   "
   onmouseover="this.style.background='#f5f7fb'"
-  onmouseout="this.style.background='white'">
+  onmouseout="this.style.background='transparent'">
+  1 Seat
+</button>
 
-    1 Seat
-
-  </div>
-
-  <div onclick="buyDerSeats(3)" style="
-    padding:10px;
-    border:2px solid #10b981;
-    border-radius:8px;
+<button onclick="buyDerSeats(3)" 
+  style="
+    width:100%;
+    text-align:left;
+    padding:8px;
+    border:none;
+    background:none;
     cursor:pointer;
+    border-radius:6px;
     transition:all 0.15s ease;
   "
-  onmouseover="this.style.background='#ecfdf5'"
-  onmouseout="this.style.background='white'">
-
-    <strong>3 Seats (Best Value)</strong>
-
-  </div>
-</div>
+  onmouseover="this.style.background='#f5f7fb'"
+  onmouseout="this.style.background='transparent'">
+  3 Seats (Save)
+</button>
     
 <h3>Active Seat Assignments</h3>
 <ul id="seatUserList" style="margin-top:10px;"></ul>
