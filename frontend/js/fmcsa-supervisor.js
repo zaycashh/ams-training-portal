@@ -288,6 +288,14 @@ function gradeQuiz() {
       localStorage.setItem(`fmcsaModuleACertificateId_${email}`, certId);
     }
 
+    /* Save cert ID into companyProfile so admin can view it */
+    try {
+      const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+      if (!cp.certIds) cp.certIds = {};
+      cp.certIds[email] = { certId, type: "supervisor", date: Date.now() };
+      localStorage.setItem("companyProfile", JSON.stringify(cp));
+    } catch(e) {}
+
     localStorage.removeItem(ATTEMPT_KEY);
     localStorage.removeItem(PROGRESS_KEY);
 
