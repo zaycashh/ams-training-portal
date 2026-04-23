@@ -668,15 +668,11 @@ function viewEmployeeCert(email) {
 
   if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
 
-  /* Look up cert ID from the correct localStorage keys */
-  const empCertId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
-  const derCertId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-  const supCertId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) ||
-                    localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+  /* Look up cert ID from companyProfile.certIds (written at completion time) */
+  const certEntry = company.certIds?.[email];
+  const certId = certEntry?.certId || null;
 
-  const certId = empCertId || derCertId || supCertId;
-
-  if (!certId) { alert("No certificate found for this employee."); return; }
+  if (!certId) { alert("No certificate found for this employee. They may need to complete their training first."); return; }
 
   sessionStorage.setItem("adminViewing", "true");
   window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}`;
