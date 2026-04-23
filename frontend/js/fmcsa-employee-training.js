@@ -398,6 +398,14 @@ if (submitBtn) {
 
       localStorage.setItem(CERT_DATE_KEY, Date.now());
 
+      /* Save cert ID into companyProfile so admin can view it */
+      try {
+        const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+        if (!cp.certIds) cp.certIds = {};
+        cp.certIds[email] = { certId, type: "employee", date: Date.now() };
+        localStorage.setItem("companyProfile", JSON.stringify(cp));
+      } catch(e) {}
+
       const key      = `amsCertificates_${email}`;
       const registry = JSON.parse(localStorage.getItem(key) || "[]");
 
