@@ -22,10 +22,13 @@ if (
     throw new Error("Redirecting...");
   }
 
-  /* Admins can always view certificates (they view on behalf of employees) */
-  if (user.role === "admin") {
-    console.log("✅ Admin — certificate access granted");
-    // allow through, no further checks
+  /* Company admins (no role field) can always view certs on behalf of employees */
+  const isEmployee   = user.role === "employee";
+  const isSupervisor = user.role === "supervisor";
+
+  if (!isEmployee && !isSupervisor) {
+    console.log("✅ Company admin — certificate access granted");
+    // allow through
   } else {
 
     const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
