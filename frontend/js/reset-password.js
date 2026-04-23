@@ -7,22 +7,41 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const password = document.getElementById("password").value;
-    const confirm = document.getElementById("confirmPassword").value;
+    const confirm  = document.getElementById("confirmPassword").value;
 
     if (!password || !confirm) {
-      alert("Please fill out all fields.");
+      showMsg("Please fill out all fields.", "error");
       return;
     }
 
     if (password !== confirm) {
-      alert("Passwords do not match.");
+      showMsg("Passwords do not match.", "error");
       return;
     }
 
-    // Placeholder for backend password reset
-    alert("Your password has been reset successfully.");
+    if (password.length < 8) {
+      showMsg("Password must be at least 8 characters.", "error");
+      return;
+    }
 
-    // Future redirect
-    // window.location.href = "login.html";
+    // ✅ Success feedback
+    showMsg("Your password has been reset successfully.", "success");
+
+    // 🔌 Placeholder for Cloudflare Worker backend call:
+    // fetch("/api/reset-password", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ password })
+    // }).then(res => res.json()).then(data => {
+    //   if (data.success) {
+    //     showMsg("Password reset successfully.", "success");
+    //     setTimeout(() => window.location.href = "login.html", 1500);
+    //   } else {
+    //     showMsg(data.message || "Something went wrong.", "error");
+    //   }
+    // });
+
+    // Future redirect (uncomment when backend is live):
+    // setTimeout(() => window.location.href = "login.html", 1500);
   });
 });
