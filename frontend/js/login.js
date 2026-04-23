@@ -15,12 +15,12 @@ document.getElementById("loginForm")
     const password = document.getElementById("password").value;
 
     if (!email || !password) {
-      alert("Please enter email and password");
+      showMsg("Please enter your email and password.", "error");
       return;
     }
 
     if (password !== DEV_PASSWORD) {
-      alert("Invalid email or password");
+      showMsg("Invalid email or password.", "error");
       return;
     }
 
@@ -31,14 +31,17 @@ document.getElementById("loginForm")
     const user = users.find(u => u.email === email);
 
     if (!user || !user.email || !user.role) {
-      alert("Account not found. Please register first.");
+      showMsg("Account not found. Please register first.", "error");
       return;
     }
-     
+
+    showMsg("Signing you in...", "success");
+
     localStorage.removeItem("amsUser");
     localStorage.setItem("amsUser", JSON.stringify(user));
 
-    redirectByRole(user);
+    // Short delay so the success message is visible before redirect
+    setTimeout(() => redirectByRole(user), 800);
   });
 
 /* =========================================================
@@ -46,12 +49,10 @@ document.getElementById("loginForm")
 ========================================================= */
 
 function redirectByRole(user) {
-
   if (user.type === "company" &&
       (user.role === "owner" || user.role === "company_admin")) {
     window.location.replace("company-dashboard.html");
     return;
   }
-
   window.location.replace("dashboard.html");
 }
