@@ -475,19 +475,33 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const params = new URLSearchParams(window.location.search);
-    const certId = params.get("id");
-    const user   = JSON.parse(localStorage.getItem("amsUser") || "null");
+    const certId     = params.get("id");
+    const emailParam = params.get("email") ? decodeURIComponent(params.get("email")).toLowerCase().trim() : null;
+    const adminViewing = sessionStorage.getItem("adminViewing") === "true";
+
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
     if (!user) {
       window.location.replace("login.html");
       return;
     }
 
-    const email = user.email;
+    /* Admin viewing someone else's cert — use the ?email= param */
+    const email = (adminViewing && emailParam) ? emailParam : user.email.toLowerCase().trim();
 
-    const fullName = user.fullName ||
-      `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email || "—";
+    /* For the name: if admin viewing, look up the employee in ams_users */
+    let fullName = "";
+    if (adminViewing && emailParam) {
+      const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+      const emp = users.find(u => u.email.toLowerCase().trim() === email);
+      fullName = emp
+        ? (emp.fullName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || emp.email)
+        : email;
+    } else {
+      fullName = user.fullName ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+        user.email || "—";
+    }
 
     /* -------------------------------------------------------
        FIND WHICH CERT TO SHOW based on ?id= param
