@@ -351,6 +351,14 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(`fmcsaDERCertificateId_${email}`, certId);
       }
 
+      /* Save cert ID into companyProfile so admin can view it */
+      try {
+        const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+        if (!cp.certIds) cp.certIds = {};
+        cp.certIds[email] = { certId, type: "der", date: Date.now() };
+        localStorage.setItem("companyProfile", JSON.stringify(cp));
+      } catch(e) {}
+
       /* Register certificate (no duplicates) */
       if (!localStorage.getItem(`derCertRegistered_${email}`)) {
         if (user && typeof registerCertificate === "function") {
