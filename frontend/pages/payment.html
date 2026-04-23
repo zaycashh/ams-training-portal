@@ -1,29 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <title>Complete Purchase | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg:#f7f6f2;--color-surface:#faf9f7;--color-surface-2:#ffffff;
+      --color-surface-offset:#f0ede8;--color-divider:#e2dfd9;--color-border:#d6d3cc;
+      --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-surface:#e6f2f2;
+      --color-success:#437a22;--color-success-surface:#edf5e7;
+      --color-warning:#964219;--color-warning-surface:#fdf0e8;
+      --color-blue:#006494;--color-blue-surface:#e6f0f7;
+      --color-purple:#7a39bb;--color-purple-surface:#f2ecfb;
+      --radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-2xl:1.25rem;--radius-full:9999px;
+      --shadow-card:0 1px 3px oklch(0.2 0.01 80/.06),0 4px 14px oklch(0.2 0.01 80/.07);
+      --transition:180ms cubic-bezier(0.16,1,0.3,1);
+      --font-body:'DM Sans','Helvetica Neue',sans-serif;
+      --font-ui:'Inter',sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#222120;
+      --color-surface-offset:#252422;--color-divider:#2e2d2b;--color-border:#393836;
+      --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+      --color-primary:#4f98a3;--color-primary-hover:#3a8490;--color-primary-surface:#1c3436;
+      --color-success:#6daa45;--color-success-surface:#1e2f16;
+      --color-warning:#bb653b;--color-warning-surface:#2e1f15;
+      --color-blue:#5591c7;--color-blue-surface:#1a2b38;
+      --color-purple:#a86fdf;--color-purple-surface:#2a1e3a;
+      --shadow-card:0 1px 3px oklch(0 0 0/.3),0 4px 14px oklch(0 0 0/.25);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+    body{font-family:var(--font-body);color:var(--color-text);background:var(--color-bg);min-height:100dvh;display:flex;flex-direction:column;}
+
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:.875rem 2rem;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:40;}
+    .topbar-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+    .topbar-logo{width:30px;height:30px;background:var(--color-primary);border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
+    .topbar-logo svg{color:#fff;}
+    .topbar-name{font-family:var(--font-ui);font-size:.8125rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text);}
+    .topbar-name span{display:block;font-size:.7rem;font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--color-text-muted);}
+    .icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-text-muted);background:none;border:none;cursor:pointer;transition:background var(--transition),color var(--transition);}
+    .icon-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
+
+    /* LAYOUT */
+    .page{flex:1;display:flex;align-items:center;justify-content:center;padding:2.5rem 1.5rem;}
+    .checkout-wrap{width:100%;max-width:480px;display:flex;flex-direction:column;gap:1.25rem;}
+
+    /* CARD */
+    .card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card);}
+    .card-header{padding:1.5rem 1.75rem 1.25rem;border-bottom:1px solid var(--color-divider);}
+    .card-body{padding:1.75rem;}
+
+    /* ORDER SUMMARY */
+    .order-icon{width:44px;height:44px;border-radius:var(--radius-xl);background:var(--color-primary-surface);color:var(--color-primary);display:grid;place-items:center;margin-bottom:1rem;}
+    .order-label{font-size:.75rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:.25rem;}
+    .order-title{font-size:1.25rem;font-weight:700;font-family:var(--font-ui);color:var(--color-text);line-height:1.3;margin-bottom:.5rem;}
+    .order-desc{font-size:.9375rem;color:var(--color-text-muted);line-height:1.6;}
+
+    .order-line{display:flex;align-items:center;justify-content:space-between;padding:.625rem 0;border-bottom:1px solid var(--color-divider);}
+    .order-line:last-child{border-bottom:none;}
+    .order-line-key{font-size:.9rem;color:var(--color-text-muted);}
+    .order-line-val{font-size:.9rem;font-weight:600;color:var(--color-text);}
+    .order-total{display:flex;align-items:center;justify-content:space-between;padding:1rem 0 0;margin-top:.5rem;border-top:2px solid var(--color-divider);}
+    .order-total-label{font-size:.9375rem;font-weight:700;font-family:var(--font-ui);}
+    .order-total-price{font-size:1.375rem;font-weight:700;font-family:var(--font-ui);color:var(--color-primary);}
+
+    /* NOTICE */
+    .notice{display:flex;align-items:flex-start;gap:.75rem;background:var(--color-primary-surface);border:1px solid color-mix(in oklab,var(--color-primary) 25%,transparent);border-radius:var(--radius-lg);padding:1rem 1.25rem;font-size:.875rem;color:var(--color-text-muted);line-height:1.6;}
+    .notice i{color:var(--color-primary);flex-shrink:0;margin-top:2px;}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-md);font-size:.9375rem;font-weight:600;font-family:var(--font-ui);transition:background var(--transition),box-shadow var(--transition),transform var(--transition);white-space:nowrap;cursor:pointer;border:none;width:100%;}
+    .btn:active{transform:translateY(1px);}
+    .btn-primary{background:var(--color-primary);color:#fff;box-shadow:0 1px 3px oklch(0.3 0.08 192/.35);}
+    .btn-primary:hover:not(:disabled){background:var(--color-primary-hover);box-shadow:0 3px 8px oklch(0.3 0.08 192/.4);}
+    .btn-primary:disabled{opacity:.55;cursor:not-allowed;}
+    .btn-secondary{background:var(--color-surface-offset);color:var(--color-text);border:1px solid var(--color-border);}
+    .btn-secondary:hover{background:var(--color-divider);}
+    .btn-actions{display:flex;flex-direction:column;gap:.75rem;}
+
+    /* SECURE BADGE */
+    .secure-note{display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.8125rem;color:var(--color-text-faint);margin-top:.25rem;}
+    .secure-note i{width:13px;height:13px;}
+
+    /* TOAST */
+    .ams-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;font-size:.9rem;font-weight:500;box-shadow:0 8px 30px oklch(0.2 0.01 80/.14);z-index:9999;display:flex;align-items:center;gap:.625rem;max-width:340px;animation:toastIn 220ms cubic-bezier(0.16,1,0.3,1);}
+    @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .toast-success{border-left:3px solid var(--color-success);color:var(--color-success);}
+    .toast-error{border-left:3px solid var(--color-warning);color:var(--color-warning);}
+    .toast-info{border-left:3px solid var(--color-primary);color:var(--color-primary);}
+  </style>
 </head>
+
 <body>
 
-<main class="auth-container">
-  <div class="auth-card">
-
-    <h2>Complete Purchase</h2>
-    <p>Click below to complete your purchase.</p>
-
-    <button id="payNowBtn" class="btn-primary">
-      Complete Purchase
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a class="topbar-brand" href="dashboard.html">
+      <div class="topbar-logo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="topbar-name">AMS<span>Training Portal</span></div>
+    </a>
+    <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
     </button>
+  </header>
 
-    <button class="btn-secondary" onclick="window.location.href='dashboard.html'">
-      Cancel
-    </button>
+  <!-- PAGE -->
+  <div class="page">
+    <div class="checkout-wrap">
 
+      <!-- ORDER SUMMARY CARD -->
+      <div class="card">
+        <div class="card-body">
+          <div class="order-icon">
+            <i data-lucide="shopping-cart" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="order-label">Order Summary</div>
+          <div class="order-title" id="orderTitle">Loading...</div>
+          <div class="order-desc" id="orderDesc"></div>
+        </div>
+        <div class="card-body" style="padding-top:0;">
+          <div class="order-line">
+            <span class="order-line-key">Program</span>
+            <span class="order-line-val" id="orderProgram">—</span>
+          </div>
+          <div class="order-line">
+            <span class="order-line-key">Role</span>
+            <span class="order-line-val" id="orderRole">—</span>
+          </div>
+          <div class="order-line">
+            <span class="order-line-key">Access</span>
+            <span class="order-line-val">Lifetime</span>
+          </div>
+          <div class="order-total">
+            <span class="order-total-label">Total</span>
+            <span class="order-total-price" id="orderPrice">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTICE -->
+      <div class="notice">
+        <i data-lucide="info" style="width:15px;height:15px;"></i>
+        <span>This is a secure checkout. Your training access will be granted immediately after purchase.</span>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="btn-actions">
+        <button class="btn btn-primary" id="payNowBtn">
+          <i data-lucide="lock" style="width:15px;height:15px;"></i>
+          Complete Purchase
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">
+          Cancel
+        </button>
+        <div class="secure-note">
+          <i data-lucide="shield-check" style="width:13px;height:13px;"></i>
+          Secured · 256-bit encryption
+        </div>
+      </div>
+
+    </div>
   </div>
-</main>
+
+<!-- DARK MODE TOGGLE -->
+<script>
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.setAttribute('data-theme',d);
+  function upd(){if(!t)return;t.innerHTML=d==='dark'
+    ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+    :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
+  upd();t&&t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);upd();});
+})();
+</script>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
 
 <script src="../js/payment.js"></script>
 
