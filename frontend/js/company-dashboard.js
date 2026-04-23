@@ -1,626 +1,722 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <title>Company Admin Dashboard | AMS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+/* =========================================================
+   COMPANY ADMIN DASHBOARD — FINAL UPGRADED VERSION
+========================================================= */
 
-  <style>
-    :root, [data-theme="light"] {
-      --color-bg:#f7f6f2;--color-surface:#faf9f7;--color-surface-2:#ffffff;
-      --color-surface-offset:#f0ede8;--color-divider:#e2dfd9;--color-border:#d6d3cc;
-      --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
-      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-surface:#e6f2f2;
-      --color-success:#437a22;--color-success-surface:#edf5e7;
-      --color-warning:#964219;--color-warning-surface:#fdf0e8;
-      --color-blue:#006494;--color-blue-surface:#e6f0f7;
-      --color-purple:#7a39bb;--color-purple-surface:#f2ecfb;
-      --radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-2xl:1.25rem;--radius-full:9999px;
-      --shadow-sm:0 1px 3px oklch(0.2 0.01 80/.07);
-      --shadow-md:0 4px 14px oklch(0.2 0.01 80/.09);
-      --shadow-lg:0 12px 36px oklch(0.2 0.01 80/.12);
-      --shadow-card:0 1px 3px oklch(0.2 0.01 80/.06),0 4px 14px oklch(0.2 0.01 80/.07);
-      --transition:180ms cubic-bezier(0.16,1,0.3,1);
-      --font-body:'DM Sans','Helvetica Neue',sans-serif;--font-ui:'Inter',sans-serif;
-      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
-      --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;
-      --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
-      --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
-      --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
-      --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
-      --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
-      --sidebar-w:240px;
-    }
-    [data-theme="dark"] {
-      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#222120;
-      --color-surface-offset:#252422;--color-divider:#2e2d2b;--color-border:#393836;
-      --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
-      --color-primary:#4f98a3;--color-primary-hover:#3a8490;--color-primary-surface:#1c3436;
-      --color-success:#6daa45;--color-success-surface:#1e2f16;
-      --color-warning:#bb653b;--color-warning-surface:#2e1f15;
-      --color-blue:#5591c7;--color-blue-surface:#1a2b38;
-      --color-purple:#a86fdf;--color-purple-surface:#2a1e3a;
-      --shadow-sm:0 1px 3px oklch(0 0 0/.25);
-      --shadow-md:0 4px 14px oklch(0 0 0/.35);
-      --shadow-card:0 1px 3px oklch(0 0 0/.3),0 4px 14px oklch(0 0 0/.25);
-    }
-
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;}
-    body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);min-height:100dvh;line-height:1.6;}
-    button{cursor:pointer;border:none;background:none;font:inherit;color:inherit;}
-    input,select,textarea{font:inherit;color:inherit;}
-    table{border-collapse:collapse;width:100%;}
-
-    .layout{display:flex;min-height:100dvh;}
-
-    /* SIDEBAR */
-    .sidebar{width:var(--sidebar-w);background:var(--color-surface);border-right:1px solid var(--color-divider);display:flex;flex-direction:column;padding:var(--space-6) 0;position:fixed;top:0;left:0;height:100vh;z-index:50;transition:transform var(--transition);}
-    .sidebar-logo{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-6) var(--space-6);border-bottom:1px solid var(--color-divider);margin-bottom:var(--space-4);}
-    .sidebar-logo-mark{width:32px;height:32px;background:var(--color-primary);border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
-    .sidebar-logo-mark svg{color:#fff;}
-    .sidebar-brand{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text);}
-    .sidebar-brand span{display:block;font-size:var(--text-xs);font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--color-text-muted);}
-    .sidebar-nav{flex:1;padding:0 var(--space-3);}
-    .nav-section-label{font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-faint);padding:var(--space-3) var(--space-3) var(--space-2);}
-    .nav-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);text-decoration:none;transition:background var(--transition),color var(--transition);cursor:pointer;margin-bottom:2px;}
-    .nav-item:hover{background:var(--color-surface-offset);color:var(--color-text);}
-    .nav-item.active{background:var(--color-primary-surface);color:var(--color-primary);font-weight:600;}
-    .nav-item i{width:16px;height:16px;flex-shrink:0;}
-    .sidebar-footer{padding:var(--space-4) var(--space-3) var(--space-2);border-top:1px solid var(--color-divider);}
-
-    /* MAIN */
-    .main{flex:1;margin-left:var(--sidebar-w);min-width:0;}
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:40;gap:var(--space-4);}
-    .topbar-left{display:flex;flex-direction:column;gap:2px;}
-    .topbar-title{font-size:var(--text-lg);font-weight:700;font-family:var(--font-ui);color:var(--color-text);line-height:1.2;}
-    .topbar-breadcrumb{font-size:var(--text-xs);color:var(--color-text-muted);}
-    .topbar-right{display:flex;align-items:center;gap:var(--space-3);}
-    .icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-text-muted);transition:background var(--transition),color var(--transition);}
-    .icon-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
-    .avatar{width:34px;height:34px;border-radius:var(--radius-full);background:var(--color-primary);color:#fff;display:grid;place-items:center;font-size:var(--text-xs);font-weight:700;font-family:var(--font-ui);letter-spacing:.05em;flex-shrink:0;}
-    .page{padding:var(--space-8);max-width:1140px;}
-
-    /* SECTION HEADER */
-    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);gap:var(--space-4);}
-    .section-title{font-size:var(--text-base);font-weight:700;font-family:var(--font-ui);color:var(--color-text);}
-
-    /* INFO CARDS */
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-8);}
-    .info-card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-card);}
-    .info-card-label{font-size:var(--text-xs);font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-2);}
-    .info-card-label i{color:var(--color-primary);}
-    .info-row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);padding:var(--space-2) 0;border-bottom:1px solid var(--color-divider);}
-    .info-row:last-child{border-bottom:none;padding-bottom:0;}
-    .info-row-key{font-size:var(--text-sm);color:var(--color-text-muted);font-weight:500;white-space:nowrap;}
-    .info-row-val{font-size:var(--text-sm);font-weight:600;color:var(--color-text);text-align:right;}
-
-    /* SEAT CARDS */
-    .seat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-8);}
-    .seat-card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-5) var(--space-6);box-shadow:var(--shadow-card);position:relative;overflow:hidden;}
-    .seat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--seat-accent,var(--color-primary));border-radius:var(--radius-xl) var(--radius-xl) 0 0;}
-    .seat-card-employee{--seat-accent:var(--color-primary);}
-    .seat-card-supervisor{--seat-accent:var(--color-blue);}
-    .seat-card-der{--seat-accent:var(--color-purple);}
-    .seat-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4);}
-    .seat-card-type{font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-muted);}
-    .seat-badge{font-size:var(--text-xs);font-weight:600;padding:2px var(--space-2);border-radius:var(--radius-full);background:var(--color-primary-surface);color:var(--color-primary);}
-    .seat-badge-supervisor{background:var(--color-blue-surface);color:var(--color-blue);}
-    .seat-badge-der{background:var(--color-purple-surface);color:var(--color-purple);}
-    .seat-stat-row{display:flex;gap:var(--space-4);}
-    .seat-stat{display:flex;flex-direction:column;gap:2px;}
-    .seat-stat-num{font-size:var(--text-xl);font-weight:700;font-family:var(--font-ui);line-height:1;color:var(--color-text);}
-    .seat-stat-label{font-size:var(--text-xs);color:var(--color-text-faint);font-weight:500;}
-    .seat-progress-bar{margin-top:var(--space-4);height:5px;border-radius:var(--radius-full);background:var(--color-surface-offset);overflow:hidden;}
-    .seat-progress-fill{height:100%;border-radius:var(--radius-full);background:var(--seat-accent,var(--color-primary));transition:width 0.6s cubic-bezier(0.16,1,0.3,1);}
-
-    /* CARD */
-    .card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-card);margin-bottom:var(--space-6);overflow:hidden;}
-    .card-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-5) var(--space-6);border-bottom:1px solid var(--color-divider);gap:var(--space-4);}
-    .card-title{font-size:var(--text-sm);font-weight:700;font-family:var(--font-ui);display:flex;align-items:center;gap:var(--space-2);color:var(--color-text);}
-    .card-title i{color:var(--color-primary);}
-    .card-body{padding:var(--space-6);}
-    .card-link{font-size:var(--text-xs);font-weight:600;color:var(--color-primary);text-decoration:none;display:flex;align-items:center;gap:4px;transition:opacity var(--transition);}
-    .card-link:hover{opacity:.75;}
-
-    /* QUICK STATS ROW */
-    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6);}
-    .stat-card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-5) var(--space-6);box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:var(--space-3);}
-    .stat-card-top{display:flex;align-items:center;justify-content:space-between;}
-    .stat-card-icon{width:34px;height:34px;border-radius:var(--radius-lg);display:grid;place-items:center;flex-shrink:0;}
-    .stat-card-icon i{width:16px;height:16px;}
-    .stat-icon-total{background:var(--color-primary-surface);color:var(--color-primary);}
-    .stat-icon-completed{background:var(--color-success-surface);color:var(--color-success);}
-    .stat-icon-progress{background:var(--color-blue-surface);color:var(--color-blue);}
-    .stat-icon-pending{background:var(--color-surface-offset);color:var(--color-text-muted);}
-    .stat-card-delta{font-size:var(--text-xs);font-weight:600;padding:2px var(--space-2);border-radius:var(--radius-full);}
-    .stat-delta-up{background:var(--color-success-surface);color:var(--color-success);}
-    .stat-delta-neutral{background:var(--color-surface-offset);color:var(--color-text-faint);}
-    .stat-card-num{font-size:var(--text-xl);font-weight:700;font-family:var(--font-ui);line-height:1;color:var(--color-text);}
-    .stat-card-label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500;margin-top:2px;}
-
-    /* ACTIVITY FEED */
-    .activity-list{display:flex;flex-direction:column;}
-    .activity-item{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-divider);transition:background var(--transition);}
-    .activity-item:last-child{border-bottom:none;}
-    .activity-item:hover{background:var(--color-surface-offset);}
-    .activity-dot-wrap{display:flex;flex-direction:column;align-items:center;padding-top:4px;flex-shrink:0;}
-    .activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-    .activity-dot-assign{background:var(--color-primary);}
-    .activity-dot-complete{background:var(--color-success);}
-    .activity-dot-purchase{background:var(--color-blue);}
-    .activity-dot-remove{background:var(--color-warning);}
-    .activity-content{flex:1;min-width:0;}
-    .activity-text{font-size:var(--text-sm);color:var(--color-text);line-height:1.5;}
-    .activity-text strong{font-weight:600;}
-    .activity-time{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:2px;}
-    .activity-badge{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px var(--space-2);border-radius:var(--radius-full);flex-shrink:0;align-self:center;}
-
-    /* STATUS */
-    .status-badge{display:inline-flex;align-items:center;gap:var(--space-1);font-size:11px;font-weight:600;padding:3px var(--space-2);border-radius:var(--radius-full);}
-    .status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-    .status-completed{background:var(--color-success-surface);color:var(--color-success);}
-    .status-completed .status-dot{background:var(--color-success);}
-
-    /* DROPDOWN */
-    .dropdown-wrap{position:relative;display:inline-block;}
-    .dropdown-menu{display:none;position:absolute;top:calc(100% + var(--space-2));left:0;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--space-2);min-width:220px;z-index:100;}
-    .dropdown-menu.open{display:block;animation:dropIn 150ms cubic-bezier(0.16,1,0.3,1);}
-    @keyframes dropIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-    .dropdown-section-label{font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-faint);padding:var(--space-2) var(--space-3) var(--space-1);}
-    .dropdown-item{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;color:var(--color-text);transition:background var(--transition);gap:var(--space-3);}
-    .dropdown-item:hover{background:var(--color-surface-offset);}
-    .dropdown-item-save{font-size:var(--text-xs);background:var(--color-success-surface);color:var(--color-success);border-radius:var(--radius-full);padding:1px var(--space-2);font-weight:600;}
-    .dropdown-divider{border:none;border-top:1px solid var(--color-divider);margin:var(--space-2) 0;}
-
-    /* BUTTONS */
-    .btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);transition:background var(--transition),box-shadow var(--transition),transform var(--transition);white-space:nowrap;cursor:pointer;}
-    .btn:active{transform:translateY(1px);}
-    .btn-primary{background:var(--color-primary);color:#fff;box-shadow:0 1px 3px oklch(0.3 0.08 192/.35);}
-    .btn-primary:hover{background:var(--color-primary-hover);box-shadow:0 3px 8px oklch(0.3 0.08 192/.4);}
-    .btn-secondary{background:var(--color-surface-offset);color:var(--color-text);border:1px solid var(--color-border);}
-    .btn-secondary:hover{background:var(--color-divider);}
-    .btn-sm{padding:var(--space-1) var(--space-3);font-size:var(--text-xs);}
-
-    /* ASSIGNMENT LIST */
-    .assignment-list{list-style:none;display:flex;flex-direction:column;gap:var(--space-2);}
-    .assignment-item{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);background:var(--color-surface-offset);transition:background var(--transition);}
-    .assignment-item:hover{background:var(--color-divider);}
-    .assignment-email{font-size:var(--text-sm);font-weight:500;color:var(--color-text);display:flex;align-items:center;gap:var(--space-2);}
-    .role-badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px var(--space-2);border-radius:var(--radius-full);}
-    .role-employee{background:var(--color-primary-surface);color:var(--color-primary);}
-    .role-supervisor{background:var(--color-blue-surface);color:var(--color-blue);}
-    .role-der{background:var(--color-purple-surface);color:var(--color-purple);}
-
-    /* FORM */
-    .form-group{display:flex;flex-direction:column;gap:var(--space-2);}
-    .form-label{font-size:var(--text-xs);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);}
-    .input-field{width:100%;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text);transition:border-color var(--transition),box-shadow var(--transition);outline:none;}
-    .input-field:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 15%,transparent);}
-    .input-field::placeholder{color:var(--color-text-faint);}
-    .assign-form{display:grid;grid-template-columns:1fr auto;gap:var(--space-3);align-items:end;}
-    .assign-actions{display:flex;gap:var(--space-2);flex-wrap:wrap;}
-
-    /* EMPTY */
-    .empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-12) var(--space-8);color:var(--color-text-muted);gap:var(--space-3);}
-    .empty-state-icon{width:44px;height:44px;border-radius:var(--radius-xl);background:var(--color-surface-offset);display:grid;place-items:center;color:var(--color-text-faint);}
-    .empty-state h4{font-size:var(--text-sm);font-weight:600;color:var(--color-text);}
-    .empty-state p{font-size:var(--text-sm);max-width:28ch;}
-
-    @media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:900px){.info-grid{grid-template-columns:1fr;}.seat-grid{grid-template-columns:1fr;}}
-    @media(max-width:768px){.sidebar{transform:translateX(-100);}.main{margin-left:0;}.topbar{padding:var(--space-4);}.page{padding:var(--space-4);}.stats-grid{grid-template-columns:1fr 1fr;}}
-  </style>
-</head>
-
-<body data-role="company-admin">
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="sidebar-logo-mark">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <div class="sidebar-brand">AMS<span>Training Portal</span></div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Overview</div>
-      <a class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
-        <i data-lucide="layout-dashboard"></i> Dashboard
-      </a>
-      <a class="nav-item" href="employees.html">
-        <i data-lucide="users"></i> Employees
-      </a>
-      <div class="nav-section-label" style="margin-top:var(--space-4);">Management</div>
-      <a class="nav-item" data-tab="training" onclick="switchTab('training')">
-        <i data-lucide="graduation-cap"></i> Training
-      </a>
-      <a class="nav-item" data-tab="billing" onclick="switchTab('billing')">
-        <i data-lucide="credit-card"></i> Billing
-      </a>
-      <a class="nav-item" href="settings.html">
-        <i data-lucide="settings"></i> Settings
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <button class="nav-item" style="width:100%;" onclick="logout()">
-        <i data-lucide="log-out"></i> Sign Out
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Company Dashboard</div>
-        <div class="topbar-breadcrumb">AMS Training Portal · Admin</div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </button>
-        <button class="icon-btn"><i data-lucide="bell" style="width:18px;height:18px;"></i></button>
-        <div class="avatar" title="Admin">AD</div>
-      </div>
-    </header>
-
-    <main class="page">
-
-      <!-- TAB: DASHBOARD -->
-      <div id="tab-dashboard">
-
-      <!-- COMPANY OVERVIEW + TRAINING PROGRAM -->
-      <div class="info-grid">
-        <div class="info-card">
-          <div class="info-card-label">
-            <i data-lucide="building-2" style="width:14px;height:14px;"></i>
-            Company Overview
-          </div>
-          <div class="info-row">
-            <span class="info-row-key">Company</span>
-            <span class="info-row-val" id="companyName">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-row-key">Admin Email</span>
-            <span class="info-row-val" id="companyAdmin" style="font-weight:500;color:var(--color-text-muted);">—</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-card-label">
-            <i data-lucide="graduation-cap" style="width:14px;height:14px;"></i>
-            Training Program
-          </div>
-          <div class="info-row">
-            <span class="info-row-key">Program</span>
-            <span class="info-row-val" id="companyProgram">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-row-key">Status</span>
-            <span class="info-row-val">
-              <span class="status-badge status-completed"><span class="status-dot"></span>Active</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- QUICK STATS ROW -->
-      <div class="section-header">
-        <h2 class="section-title">Employee Overview</h2>
-        <a class="card-link" href="employees.html">
-          View all <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-        </a>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-card-top">
-            <div class="stat-card-icon stat-icon-total">
-              <i data-lucide="users"></i>
-            </div>
-            <span class="stat-card-delta stat-delta-up" id="statTotalDelta">+0</span>
-          </div>
-          <div>
-            <div class="stat-card-num" id="statTotal">0</div>
-            <div class="stat-card-label">Total Employees</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top">
-            <div class="stat-card-icon stat-icon-completed">
-              <i data-lucide="check-circle"></i>
-            </div>
-            <span class="stat-card-delta stat-delta-up" id="statCompletedDelta">0%</span>
-          </div>
-          <div>
-            <div class="stat-card-num" id="statCompleted">0</div>
-            <div class="stat-card-label">Training Completed</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top">
-            <div class="stat-card-icon stat-icon-progress">
-              <i data-lucide="loader"></i>
-            </div>
-            <span class="stat-card-delta stat-delta-neutral" id="statProgressDelta">—</span>
-          </div>
-          <div>
-            <div class="stat-card-num" id="statInProgress">0</div>
-            <div class="stat-card-label">In Progress</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top">
-            <div class="stat-card-icon stat-icon-pending">
-              <i data-lucide="clock"></i>
-            </div>
-            <span class="stat-card-delta stat-delta-neutral" id="statPendingDelta">—</span>
-          </div>
-          <div>
-            <div class="stat-card-num" id="statPending">0</div>
-            <div class="stat-card-label">Not Started</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SEAT MANAGEMENT -->
-      <div class="section-header">
-        <h2 class="section-title">Seat Management</h2>
-        <div class="dropdown-wrap">
-          <button class="btn btn-primary" onclick="toggleSeatMenu()" id="purchaseBtn">
-            <i data-lucide="credit-card" style="width:15px;height:15px;"></i>
-            Purchase Seats
-            <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-          </button>
-          <div class="dropdown-menu" id="seatMenu">
-            <div class="dropdown-section-label">Employee</div>
-            <button class="dropdown-item" onclick="buyEmployeeSeats()">5-Pack <span class="dropdown-item-save">Save 10%</span></button>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-section-label">Supervisor</div>
-            <button class="dropdown-item" onclick="buySupervisorSeats(1)">1 Seat</button>
-            <button class="dropdown-item" onclick="buySupervisorSeats(3)">3 Seats <span class="dropdown-item-save">Save</span></button>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-section-label">DER</div>
-            <button class="dropdown-item" onclick="buyDerSeats(1)">1 Seat</button>
-            <button class="dropdown-item" onclick="buyDerSeats(3)">3 Seats <span class="dropdown-item-save">Save</span></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="seat-grid">
-        <div class="seat-card seat-card-employee">
-          <div class="seat-card-header">
-            <span class="seat-card-type">Employee</span>
-            <span class="seat-badge" id="empAvailBadge">— available</span>
-          </div>
-          <div class="seat-stat-row">
-            <div class="seat-stat"><span class="seat-stat-num" id="seatTotal">0</span><span class="seat-stat-label">Total</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="seatUsed">0</span><span class="seat-stat-label">Used</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="seatRemaining">0</span><span class="seat-stat-label">Free</span></div>
-          </div>
-          <div class="seat-progress-bar"><div class="seat-progress-fill" id="empProgress" style="width:0%"></div></div>
-        </div>
-        <div class="seat-card seat-card-supervisor">
-          <div class="seat-card-header">
-            <span class="seat-card-type">Supervisor</span>
-            <span class="seat-badge seat-badge-supervisor" id="supAvailBadge">— available</span>
-          </div>
-          <div class="seat-stat-row">
-            <div class="seat-stat"><span class="seat-stat-num" id="supervisorTotal">0</span><span class="seat-stat-label">Total</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="supervisorUsed">0</span><span class="seat-stat-label">Used</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="supervisorAvailable">0</span><span class="seat-stat-label">Free</span></div>
-          </div>
-          <div class="seat-progress-bar"><div class="seat-progress-fill" id="supProgress" style="width:0%"></div></div>
-        </div>
-        <div class="seat-card seat-card-der">
-          <div class="seat-card-header">
-            <span class="seat-card-type">DER</span>
-            <span class="seat-badge seat-badge-der" id="derAvailBadge">— available</span>
-          </div>
-          <div class="seat-stat-row">
-            <div class="seat-stat"><span class="seat-stat-num" id="derTotal">0</span><span class="seat-stat-label">Total</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="derUsed">0</span><span class="seat-stat-label">Used</span></div>
-            <div class="seat-stat"><span class="seat-stat-num" id="derAvailable">0</span><span class="seat-stat-label">Free</span></div>
-          </div>
-          <div class="seat-progress-bar"><div class="seat-progress-fill" id="derProgress" style="width:0%"></div></div>
-        </div>
-      </div>
-
-      <!-- ACTIVE ASSIGNMENTS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <i data-lucide="user-check" style="width:15px;height:15px;"></i>
-            Active Seat Assignments
-          </div>
-          <a class="card-link" href="employees.html">
-            Manage <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-          </a>
-        </div>
-        <div class="card-body" style="padding-top:var(--space-4);">
-          <ul class="assignment-list" id="seatUserList">
-            <li>
-              <div class="empty-state">
-                <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
-                <h4>No assignments yet</h4>
-                <p>Go to <a href="employees.html" style="color:var(--color-primary);font-weight:600;">Employees</a> to assign training.</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- RECENT ACTIVITY -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <i data-lucide="activity" style="width:15px;height:15px;"></i>
-            Recent Activity
-          </div>
-        </div>
-        <div id="activityFeed" class="activity-list">
-          <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="activity" style="width:22px;height:22px;"></i></div>
-            <h4>No activity yet</h4>
-            <p>Actions like seat purchases and assignments will appear here.</p>
-          </div>
-        </div>
-      </div>
-
-      </div> <!-- end #tab-dashboard -->
-
-      <!-- TAB: TRAINING -->
-      <div id="tab-training" style="display:none;">
-        <div class="section-header">
-          <h2 class="section-title">Training</h2>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <div class="empty-state">
-              <div class="empty-state-icon"><i data-lucide="graduation-cap" style="width:22px;height:22px;"></i></div>
-              <h4>Training Management</h4>
-              <p>Training configuration and progress reports coming soon.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB: BILLING -->
-      <div id="tab-billing" style="display:none;">
-        <div class="section-header">
-          <h2 class="section-title">Billing</h2>
-        </div>
-
-        <!-- Payment Method -->
-        <div class="card" style="margin-bottom:var(--space-6);">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="credit-card" style="width:15px;height:15px;"></i>
-              Payment Method
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="empty-state">
-              <div class="empty-state-icon"><i data-lucide="credit-card" style="width:22px;height:22px;"></i></div>
-              <h4>No payment method on file</h4>
-              <p>Add a card to enable automatic seat purchases.</p>
-              <button class="btn btn-primary" style="margin-top:var(--space-4);" onclick="alert('Stripe integration coming soon')">Add Card</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Billing History -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="receipt" style="width:15px;height:15px;"></i>
-              Billing History
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="empty-state">
-              <div class="empty-state-icon"><i data-lucide="receipt" style="width:22px;height:22px;"></i></div>
-              <h4>No invoices yet</h4>
-              <p>Past seat purchases and invoices will appear here.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-</div>
-
-<script>lucide.createIcons();</script>
-
-<script>
-(function(){
-  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
-  let d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  r.setAttribute('data-theme',d);
-  function upd(){if(!t)return;t.innerHTML=d==='dark'
-    ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-    :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
-  upd();t&&t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);upd();});
-})();
-</script>
-
-<script>
-function toggleSeatMenu(){document.getElementById('seatMenu').classList.toggle('open');}
-document.addEventListener('click',function(e){
-  const btn=document.getElementById('purchaseBtn'),menu=document.getElementById('seatMenu');
-  if(!btn.contains(e.target)&&!menu.contains(e.target))menu.classList.remove('open');
+document.addEventListener("DOMContentLoaded", () => {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  loadCompanyDashboard(user);
 });
-</script>
 
-<!-- Activity feed builder — called by company-dashboard.js after data loads -->
-<script>
-function buildActivityFeed(events){
-  const feed = document.getElementById('activityFeed');
-  if(!events||!events.length) return;
-  feed.innerHTML = '';
-  events.slice(0,8).forEach(function(ev){
-    const dotClass = {assign:'activity-dot-assign',complete:'activity-dot-complete',purchase:'activity-dot-purchase',remove:'activity-dot-remove'}[ev.type]||'activity-dot-assign';
-    const item = document.createElement('div');
-    item.className = 'activity-item';
-    item.innerHTML = `
-      <div class="activity-dot-wrap"><div class="activity-dot ${dotClass}"></div></div>
-      <div class="activity-content">
-        <div class="activity-text">${ev.text}</div>
-        <div class="activity-time">${ev.time||''}</div>
-      </div>`;
-    feed.appendChild(item);
+/* =========================================================
+   GLOBAL PROGRAM
+========================================================= */
+
+function getCompanyProgram() {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  return company.program || "FAA";
+}
+
+/* =========================================================
+   LOAD DASHBOARD
+========================================================= */
+
+function loadCompanyDashboard(user) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  /* =========================================================
+     ENSURE FULL SEAT STRUCTURE
+  ========================================================= */
+
+  let updated = false;
+
+  if (!company.seats) { company.seats = {}; updated = true; }
+  if (!company.usedSeats) { company.usedSeats = {}; updated = true; }
+
+  if (!company.seats.employee)   { company.seats.employee   = { total: 0 }; updated = true; }
+  if (!company.seats.supervisor) { company.seats.supervisor = { total: 0 }; updated = true; }
+  if (!company.seats.der)        { company.seats.der        = { total: 0 }; updated = true; }
+
+  if (!company.usedSeats.employee)   { company.usedSeats.employee   = {}; updated = true; }
+  if (!company.usedSeats.supervisor) { company.usedSeats.supervisor = {}; updated = true; }
+  if (!company.usedSeats.der)        { company.usedSeats.der        = {}; updated = true; }
+
+  /* Normalize employee seats */
+  Object.keys(company.usedSeats.employee).forEach(email => {
+    let seat = company.usedSeats.employee[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
+      seat = company.usedSeats.employee[email];
+      updated = true;
+    }
+    if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+    if (!company.employees) company.employees = {};
+    if (!company.employees[email]) {
+      company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
+      updated = true;
+    }
+  });
+
+  /* Normalize supervisor seats */
+  Object.keys(company.usedSeats.supervisor).forEach(email => {
+    const seat = company.usedSeats.supervisor[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
+
+  /* Normalize DER seats */
+  Object.keys(company.usedSeats.der).forEach(email => {
+    const seat = company.usedSeats.der[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
+
+  if (updated) localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  const programEl = document.getElementById("companyProgram");
+  if (programEl) {
+    programEl.textContent = company.program ? company.program.toUpperCase() : "—";
+  }
+
+  if (!company.id) { alert("Company profile missing"); return; }
+
+  const nameEl = document.getElementById("companyName");
+  const adminEl = document.getElementById("companyAdmin");
+  if (nameEl) nameEl.textContent = company.name || user?.company || "—";
+  if (adminEl) adminEl.textContent = user?.email || "—";
+
+  loadEmployees(company.id);
+  updateSeatCounts(company);
+  renderSeatAssignments(company);
+  updateEmployeeOverview(company);
+}
+
+/* =========================================================
+   EMPLOYEE OVERVIEW STATS
+========================================================= */
+
+function updateEmployeeOverview(company) {
+  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  /* All active (non-revoked) seat holders across all types */
+  const allSeatedEmails = new Set();
+  ["employee", "supervisor", "der"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([email, seat]) => {
+      if (!seat.revoked) allSeatedEmails.add(email.trim().toLowerCase());
+    });
+  });
+
+  /* Also count pending invites that haven't registered yet */
+  Object.values(company.invites || {}).forEach(inv => {
+    if (["pending", "resent", "assigned"].includes(inv.status)) {
+      allSeatedEmails.add(inv.email.trim().toLowerCase());
+    }
+  });
+
+  const total = allSeatedEmails.size;
+  let completed  = 0;
+  let inProgress = 0;
+  let notStarted = 0;
+
+  allSeatedEmails.forEach(email => {
+    const isRegistered = users.some(u => u.email === email);
+    const isDone =
+      localStorage.getItem(`fmcsaDERCompleted_${email}`)      === "true" ||
+      localStorage.getItem(`fmcsaModuleBCompleted_${email}`)  === "true" ||
+      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+    if (isDone)          completed++;
+    else if (isRegistered) inProgress++;
+    else                   notStarted++;
+  });
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("statTotal",     total);
+  set("statCompleted", completed);
+  set("statInProgress", inProgress);
+  set("statPending",   notStarted);
+
+  /* Delta badges — show change indicator if IDs exist */
+  set("statTotalDelta",     "");
+  set("statCompletedDelta", "");
+  set("statProgressDelta",  "");
+  set("statPendingDelta",   "");
+}
+
+/* =========================================================
+   SEAT COUNTS
+========================================================= */
+
+function getSeatStats(company) {
+  const total = company?.seats?.employee?.total ?? 0;
+  const used  = Object.values(company?.usedSeats?.employee || {}).filter(s => !s.revoked).length;
+  return { totalPurchased: total, usedSeats: used, remaining: Math.max(0, total - used) };
+}
+
+function updateSeatCounts(company) {
+  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const empTotal     = company?.seats?.employee?.total || 0;
+  const empUsed      = Object.values(company?.usedSeats?.employee   || {}).filter(s => !s.revoked).length;
+  const empAvailable = Math.max(0, empTotal - empUsed);
+
+  const supTotal     = company?.seats?.supervisor?.total || 0;
+  const supUsed      = Object.values(company?.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  const supAvailable = Math.max(0, supTotal - supUsed);
+
+  const derTotal     = company?.seats?.der?.total || 0;
+  const derUsed      = Object.values(company?.usedSeats?.der        || {}).filter(s => !s.revoked).length;
+  const derAvailable = Math.max(0, derTotal - derUsed);
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("seatTotal",           empTotal);
+  set("seatUsed",            empUsed);
+  set("seatRemaining",       empAvailable);
+  set("supervisorTotal",     supTotal);
+  set("supervisorUsed",      supUsed);
+  set("supervisorAvailable", supAvailable);
+  set("derTotal",            derTotal);
+  set("derUsed",             derUsed);
+  set("derAvailable",        derAvailable);
+}
+
+/* =========================================================
+   ASSIGN SEATS
+========================================================= */
+
+function assignEmployeeSeat(emailParam) {
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
+
+  const total = company.seats?.employee?.total || 0;
+  const used  = Object.values(company.usedSeats.employee || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No employee seats available");
+
+  company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email]) {
+    const code = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "employee", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "Employee");
+  }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("Employee seat assigned");
+  _refreshAll(company);
+}
+
+function assignSupervisorSeat(emailParam) {
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
+
+  const total = company.seats?.supervisor?.total || 0;
+  const used  = Object.values(company.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No supervisor seats available");
+
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: "supervisor", status: "assigned", addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email]) {
+    const code = "AMS-SUP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "supervisor", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "Supervisor");
+  }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("Supervisor seat assigned");
+  _refreshAll(company);
+}
+
+function assignDerSeat(emailParam) {
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
+
+  const total = company.seats?.der?.total || 0;
+  const used  = Object.values(company.usedSeats?.der || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No DER seats available");
+
+  if (!company.usedSeats.der) company.usedSeats.der = {};
+  company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: "der", status: "assigned", addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email]) {
+    const code = "AMS-DER-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "der", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "DER");
+  }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("DER seat assigned");
+  _refreshAll(company);
+}
+
+/* helpers */
+function _showInviteMsg(code, label) {
+  const msg = document.getElementById("inviteMsg");
+  if (!msg) return;
+  msg.innerHTML = `
+    ${label} Invite Code: <strong>${code}</strong>
+    <button onclick="copyInvite('${code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>
+  `;
+}
+
+function _refreshAll(company) {
+  renderSeatAssignments(company);
+  updateSeatCounts(company);
+  loadEmployees(company.id);
+  const input = document.getElementById("seatEmail");
+  if (input) input.value = "";
+}
+
+/* =========================================================
+   LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
+========================================================= */
+
+function loadEmployees(companyId) {
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) company.usedSeats = { employee: {}, supervisor: {}, der: {} };
+
+  const tbody = document.getElementById("employeeTable");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const employees = users.filter(u => u.companyId === companyId && u.role === "employee");
+  const invites   = Object.values(company.invites || {});
+
+  if (!employees.length && !invites.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+            <h4>No employees yet</h4>
+            <p>Assign training above to add employees to your roster.</p>
+          </div>
+        </td>
+      </tr>`;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  [...employees, ...invites].forEach(emp => {
+    const cleanEmail = emp.email.trim().toLowerCase();
+
+    const isInvite = ["pending", "resent", "assigned"].includes(emp.status);
+
+    /* Training type */
+    let trainingType = "None";
+    if      (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) trainingType = "Supervisor";
+    else if (company.usedSeats.der?.[cleanEmail]        && !company.usedSeats.der[cleanEmail].revoked)        trainingType = "DER";
+    else if (company.usedSeats.employee?.[cleanEmail]   && !company.usedSeats.employee[cleanEmail].revoked)   trainingType = "Employee";
+
+    /* Completion check */
+    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+    const trainingCompleted   = completedDER || completedSupervisor || completedEmployee;
+
+    /* Status label */
+    let statusLabel = "Invited";
+    if (!isInvite) statusLabel = trainingCompleted ? "Completed" : "In Progress";
+
+    /* Training badge colors */
+    const badgeColors = {
+      Supervisor: { bg: "#dbeafe", color: "#1d4ed8" },
+      DER:        { bg: "#dcfce7", color: "#15803d" },
+      Employee:   { bg: "#fef9c3", color: "#854d0e" },
+      None:       { bg: "#f3f4f6", color: "#6b7280" }
+    };
+    const badge = badgeColors[trainingType] || badgeColors.None;
+
+    /* Status badge */
+    const statusClass = trainingCompleted
+      ? "status-completed"
+      : isInvite
+        ? "status-pending"
+        : "status-in-progress";
+
+    /* Remove button — disabled + tooltip if training completed */
+    const removeBtn = trainingCompleted
+      ? `<button
+            disabled
+            title="Cannot remove — training completed. Record must be kept."
+            style="opacity:.4;cursor:not-allowed;"
+          >
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`
+      : `<button
+            onclick="removeEmployee('${cleanEmail}')"
+            style="color:var(--color-warning);"
+          >
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`;
+
+    /* View Cert — only show if completed */
+    const viewCertBtn = trainingCompleted
+      ? `<button onclick="viewEmployeeCert('${cleanEmail}')">
+            <i data-lucide="award" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            View Certificate
+          </button>`
+      : "";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="td-name">
+        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "—"}
+      </td>
+      <td class="td-email">${emp.email}</td>
+      <td>
+        <span class="role-badge role-${trainingType.toLowerCase() === "none" ? "employee" : trainingType.toLowerCase()}"
+              style="background:${badge.bg};color:${badge.color};">
+          ${trainingType}
+        </span>
+      </td>
+      <td>
+        <span class="status-badge ${statusClass}">
+          <span class="status-dot"></span>
+          ${statusLabel}
+        </span>
+      </td>
+      <td style="white-space:nowrap;">
+        <div style="display:inline-block;position:relative;">
+          <button class="btn btn-secondary btn-sm" onclick="toggleMenu('${cleanEmail}')">
+            Actions <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+          </button>
+          <div id="menu-${cleanEmail}" class="action-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:100;">
+            <button onclick="resendInvite('${cleanEmail}')">
+              <i data-lucide="send" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+              Resend Invite
+            </button>
+            ${viewCertBtn}
+            <hr>
+            ${removeBtn}
+          </div>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  if (window.lucide) lucide.createIcons();
+}
+
+/* =========================================================
+   REMOVE EMPLOYEE
+========================================================= */
+
+window.removeEmployee = function (email) {
+  const cleanEmail = email.toLowerCase().trim();
+  if (!confirm("Remove this employee from the company?")) return;
+
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (company.invites?.[cleanEmail]) delete company.invites[cleanEmail];
+
+  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+  if (completedDER || completedSupervisor || completedEmployee) {
+    alert("Cannot remove employee — training completed. Record must be kept.");
+    return;
+  }
+
+  const updatedUsers = users.filter(u => u.email !== cleanEmail);
+  localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
+
+  ["employee", "supervisor", "der"].forEach(type => {
+    if (company.usedSeats?.[type]?.[cleanEmail]) delete company.usedSeats[type][cleanEmail];
+  });
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  location.reload();
+};
+
+/* =========================================================
+   RENDER ACTIVE SEAT ASSIGNMENTS
+========================================================= */
+
+function renderSeatAssignments(company) {
+  const list = document.getElementById("seatUserList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const roleColors = {
+    employee:   { badge: "role-employee",   label: "Employee"   },
+    supervisor: { badge: "role-supervisor", label: "Supervisor" },
+    der:        { badge: "role-der",        label: "DER"        }
+  };
+
+  let items = [];
+  ["employee", "supervisor", "der"].forEach(type => {
+    const seats = company.usedSeats?.[type] || {};
+    Object.keys(seats).forEach(email => {
+      if (seats[email].revoked) return;
+      const r = roleColors[type];
+      items.push(`
+        <li class="assignment-item">
+          <span class="assignment-email">
+            <i data-lucide="mail"></i>
+            ${email}
+          </span>
+          <span class="role-badge ${r.badge}">${r.label}</span>
+        </li>
+      `);
+    });
+  });
+
+  if (!items.length) {
+    list.innerHTML = `
+      <li>
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+          <h4>No assignments yet</h4>
+          <p>Use the form above to assign training to employees.</p>
+        </div>
+      </li>`;
+  } else {
+    list.innerHTML = items.join("");
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+/* =========================================================
+   REVOKE SEAT
+========================================================= */
+
+window.revokeSeat = function (type, email) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats?.[type]?.[email]) return alert("Seat not found.");
+
+  const completionKeys = {
+    der:        `fmcsaDERCompleted_${email}`,
+    supervisor: `fmcsaModuleBCompleted_${email}`,
+    employee:   `fmcsaEmployeeCompleted_${email}`
+  };
+
+  if (localStorage.getItem(completionKeys[type]) === "true") {
+    return alert("Cannot revoke — training already completed.");
+  }
+
+  company.usedSeats[type][email] = {
+    revoked:    true,
+    assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
+  };
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  renderSeatAssignments(company);
+};
+
+/* =========================================================
+   BUY SEATS
+========================================================= */
+
+function buyEmployeeSeats(qty = 5) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.employee) company.seats.employee = { total: 0 };
+  company.seats.employee.total += qty;
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert(`${qty} Employee seat(s) purchased!`);
+  location.reload();
+}
+
+function buySupervisorSeats(qty = 1) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
+  company.seats.supervisor.total += qty;
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert(`${qty} Supervisor seat(s) purchased!`);
+  location.reload();
+}
+
+function buyDerSeats(qty = 1) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.der) company.seats.der = { total: 0 };
+  company.seats.der.total += qty;
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert(`${qty} DER seat(s) purchased!`);
+  location.reload();
+}
+
+/* =========================================================
+   INVITE / RESEND / COPY
+========================================================= */
+
+function inviteEmployee() {
+  const input = document.getElementById("inviteEmail");
+  const msg   = document.getElementById("inviteMsg");
+  if (!input) return;
+
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes("@")) { if (msg) msg.textContent = "Enter a valid email"; return; }
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  if (users.find(u => u.email === email)) {
+    if (msg) msg.textContent = "User already registered. Assign a seat instead.";
+    return;
+  }
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.invites)              company.invites              = {};
+  if (!company.usedSeats)            company.usedSeats            = {};
+  if (!company.usedSeats.employee)   company.usedSeats.employee   = {};
+
+  if (company.invites[email]) { if (msg) msg.textContent = "Already invited"; return; }
+
+  const hasActiveSeat =
+    (company.usedSeats?.employee?.[email]   && company.usedSeats.employee[email].revoked   !== true) ||
+    (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+    (company.usedSeats?.der?.[email]        && company.usedSeats.der[email].revoked        !== true);
+  if (hasActiveSeat) { if (msg) msg.textContent = "User already assigned"; return; }
+
+  const inviteCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: inviteCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "pending" };
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) msg.textContent = "Invite created: " + inviteCode;
+  input.value = "";
+}
+
+function resendInvite(email) {
+  email = email.toLowerCase().trim();
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.invites) company.invites = {};
+
+  const existing = company.invites[email];
+  const msg = document.getElementById("inviteMsg");
+
+  if (existing) {
+    if (msg) msg.innerHTML = `Invite Code: <strong>${existing.code}</strong> <button onclick="copyInvite('${existing.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+    return;
+  }
+
+  const newCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: newCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "resent" };
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) msg.innerHTML = `New Invite Code: <strong>${newCode}</strong> <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+}
+
+function copyInvite(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const msg = document.getElementById("inviteMsg");
+    if (msg) msg.innerHTML += " ✅ Copied!";
   });
 }
 
-/* Quick stats updater — call this from company-dashboard.js once employee data is loaded.
-   Example: updateEmployeeStats({ total:10, completed:4, inProgress:3, pending:3 }) */
-function updateEmployeeStats(data){
-  if(!data) return;
-  const t=data.total||0,c=data.completed||0,ip=data.inProgress||0,p=data.pending||0;
-  document.getElementById('statTotal').textContent=t;
-  document.getElementById('statCompleted').textContent=c;
-  document.getElementById('statInProgress').textContent=ip;
-  document.getElementById('statPending').textContent=p;
-  document.getElementById('statTotalDelta').textContent='+'+t;
-  document.getElementById('statCompletedDelta').textContent=t?Math.round(c/t*100)+'%':'0%';
-  document.getElementById('statProgressDelta').textContent=ip||'—';
-  document.getElementById('statPendingDelta').textContent=p||'—';
+/* =========================================================
+   VIEW CERTIFICATE
+========================================================= */
+
+function viewEmployeeCert(email) {
+  email = email.toLowerCase().trim();
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) { alert("No company data found"); return; }
+
+  const isAssigned =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+
+  if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
+
+  const certs = JSON.parse(localStorage.getItem(`amsCertificates_${email}`) || "[]");
+  if (!certs.length) { alert("No certificate found for this employee"); return; }
+
+  const latestCert = certs[certs.length - 1];
+  sessionStorage.setItem("adminViewing", "true");
+  window.location.href = `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
 }
-</script>
 
-<script>
-function logout(){localStorage.removeItem('amsUser');window.location.href='login.html';}
+/* =========================================================
+   TOGGLE MENUS
+========================================================= */
 
-function switchTab(tab) {
-  /* Hide all tabs */
-  ['dashboard','training','billing'].forEach(function(t){
-    const el = document.getElementById('tab-'+t);
-    if(el) el.style.display = 'none';
-  });
-  /* Show selected */
-  const active = document.getElementById('tab-'+tab);
-  if(active) active.style.display = '';
-  /* Update nav active state */
-  document.querySelectorAll('.nav-item[data-tab]').forEach(function(item){
-    item.classList.toggle('active', item.getAttribute('data-tab') === tab);
-  });
-  /* Update topbar title */
-  const titles = { dashboard:'Company Dashboard', training:'Training', billing:'Billing' };
-  const el = document.querySelector('.topbar-title');
-  if(el) el.textContent = titles[tab] || 'Company Dashboard';
+function toggleMenu(email) {
+  const menu = document.getElementById(`menu-${email}`);
+  if (!menu) return;
+  const isOpen = menu.style.display === "block";
+  document.querySelectorAll(".action-menu").forEach(m => m.style.display = "none");
+  menu.style.display = isOpen ? "none" : "block";
 }
-</script>
 
-<script src="/ams-training-portal/frontend/js/route-guard.js"></script>
-<script src="/ams-training-portal/frontend/js/company-dashboard.js"></script>
-</body>
-</html>
+function toggleSeatMenu() {
+  const menu = document.getElementById("seatMenu");
+  if (!menu) return;
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* Auto-close seat menu */
+document.addEventListener("click", function (e) {
+  const menu   = document.getElementById("seatMenu");
+  const button = document.querySelector("[onclick='toggleSeatMenu()']");
+  if (!menu || !button) return;
+  if (!menu.contains(e.target) && !button.contains(e.target)) menu.style.display = "none";
+});
+
+/* Auto-close manage menus */
+document.addEventListener("click", function (e) {
+  const menus   = document.querySelectorAll(".action-menu");
+  const buttons = document.querySelectorAll("[onclick^='toggleMenu']");
+  let inside = false;
+  menus.forEach(m   => { if (m.contains(e.target))   inside = true; });
+  buttons.forEach(b => { if (b.contains(e.target))   inside = true; });
+  if (!inside) menus.forEach(m => m.style.display = "none");
+});
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+  localStorage.removeItem("amsUser");
+  window.location.href = "/ams-training-portal/frontend/pages/login.html";
+}
