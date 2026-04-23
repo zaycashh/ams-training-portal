@@ -668,12 +668,18 @@ function viewEmployeeCert(email) {
 
   if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
 
-  const certs = JSON.parse(localStorage.getItem(`amsCertificates_${email}`) || "[]");
-  if (!certs.length) { alert("No certificate found for this employee"); return; }
+  /* Look up cert ID from the correct localStorage keys */
+  const empCertId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+  const derCertId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+  const supCertId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) ||
+                    localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
 
-  const latestCert = certs[certs.length - 1];
+  const certId = empCertId || derCertId || supCertId;
+
+  if (!certId) { alert("No certificate found for this employee."); return; }
+
   sessionStorage.setItem("adminViewing", "true");
-  window.location.href = `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
+  window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}`;
 }
 
 /* =========================================================
