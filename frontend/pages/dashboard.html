@@ -1,16 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8" />
-<title>AMS Training Portal – Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>Dashboard | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg:#f7f6f2;--color-surface:#faf9f7;--color-surface-2:#ffffff;
+      --color-surface-offset:#f0ede8;--color-divider:#e2dfd9;--color-border:#d6d3cc;
+      --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-surface:#e6f2f2;
+      --color-success:#437a22;--color-success-surface:#edf5e7;
+      --color-warning:#964219;--color-warning-surface:#fdf0e8;
+      --color-danger:#c0392b;--color-danger-surface:#fdecea;
+      --color-blue:#006494;--color-blue-surface:#e6f0f7;
+      --color-purple:#7a39bb;--color-purple-surface:#f2ecfb;
+      --radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+      --shadow-card:0 1px 3px oklch(0.2 0.01 80/.06),0 4px 14px oklch(0.2 0.01 80/.07);
+      --shadow-lg:0 12px 36px oklch(0.2 0.01 80/.12);
+      --transition:180ms cubic-bezier(0.16,1,0.3,1);
+      --font-body:'DM Sans','Helvetica Neue',sans-serif;--font-ui:'Inter',sans-serif;
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+      --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-12:3rem;
+      --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+      --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+      --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+      --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+      --text-xl:clamp(1.5rem,1.2rem + 1.5vw,2.25rem);
+    }
+    [data-theme="dark"] {
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#222120;
+      --color-surface-offset:#252422;--color-divider:#2e2d2b;--color-border:#393836;
+      --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+      --color-primary:#4f98a3;--color-primary-hover:#3a8490;--color-primary-surface:#1c3436;
+      --color-success:#6daa45;--color-success-surface:#1e2f16;
+      --color-warning:#bb653b;--color-warning-surface:#2e1f15;
+      --color-danger:#e05c4b;--color-danger-surface:#2e1a18;
+      --color-blue:#5591c7;--color-blue-surface:#1a2b38;
+      --color-purple:#a86fdf;--color-purple-surface:#2a1e3a;
+      --shadow-card:0 1px 3px oklch(0 0 0/.3),0 4px 14px oklch(0 0 0/.25);
+      --shadow-lg:0 12px 36px oklch(0 0 0/.4);
+    }
 
-<link rel="stylesheet" href="../css/main.css" />
-<link rel="icon" href="data:,">
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-font-smoothing:antialiased;}
+    body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);min-height:100dvh;display:flex;flex-direction:column;}
+    button{cursor:pointer;border:none;background:none;font:inherit;color:inherit;}
+    a{text-decoration:none;}
+
+    /* ── TOPBAR ── */
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:var(--space-4) var(--space-8);
+      background:var(--color-surface);
+      border-bottom:1px solid var(--color-divider);
+      position:sticky;top:0;z-index:50;
+    }
+    .topbar-brand{display:flex;align-items:center;gap:var(--space-3);}
+    .logo-mark{width:34px;height:34px;background:var(--color-primary);border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
+    .logo-mark svg{color:#fff;}
+    .brand-name{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text);}
+    .brand-name span{display:block;font-size:var(--text-xs);font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--color-text-muted);}
+    .topbar-right{display:flex;align-items:center;gap:var(--space-3);}
+    .icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-text-muted);transition:background var(--transition),color var(--transition);}
+    .icon-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
+    .avatar{width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-family:var(--font-ui);font-size:var(--text-xs);font-weight:700;display:grid;place-items:center;}
+
+    /* ── PAGE ── */
+    .page{max-width:1080px;margin:0 auto;padding:var(--space-8) var(--space-8) var(--space-12);width:100%;}
+
+    /* ── PAGE HEADER ── */
+    .page-header{margin-bottom:var(--space-8);}
+    .page-eyebrow{font-family:var(--font-ui);font-size:var(--text-xs);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:var(--space-2);}
+    .page-title{font-family:var(--font-ui);font-size:var(--text-xl);font-weight:700;color:var(--color-text);line-height:1.2;}
+    .page-sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-2);}
+
+    /* ── WELCOME BANNER ── */
+    .welcome-banner{
+      display:none;
+      align-items:flex-start;gap:var(--space-3);
+      padding:var(--space-4) var(--space-5);
+      background:var(--color-blue-surface);
+      border:1px solid color-mix(in oklab,var(--color-blue) 25%,transparent);
+      border-radius:var(--radius-lg);
+      margin-bottom:var(--space-6);
+      font-size:var(--text-sm);color:var(--color-blue);
+    }
+    .welcome-banner.show{display:flex;}
+
+    /* ── SECTION ── */
+    .training-section{margin-bottom:var(--space-8);}
+    .section-header{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);}
+    .section-icon{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
+    .section-icon-faa{background:var(--color-blue-surface);color:var(--color-blue);}
+    .section-icon-fmcsa{background:var(--color-purple-surface);color:var(--color-purple);}
+    .section-label{font-family:var(--font-ui);font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);}
+    .section-title{font-family:var(--font-ui);font-size:var(--text-base);font-weight:700;color:var(--color-text);}
+
+    /* ── MODULE GRID ── */
+    .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5);}
+    @media(max-width:768px){.modules-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:480px){.modules-grid{grid-template-columns:1fr;}}
+
+    /* ── MODULE CARD ── */
+    .module-card{
+      background:var(--color-surface-2);
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-card);
+      padding:var(--space-6);
+      display:flex;flex-direction:column;gap:var(--space-3);
+      transition:border-color var(--transition),box-shadow var(--transition);
+    }
+    .module-card:hover{border-color:var(--color-primary);box-shadow:var(--shadow-lg);}
+    .module-card-icon{width:40px;height:40px;border-radius:var(--radius-lg);display:grid;place-items:center;flex-shrink:0;}
+    .module-card-icon-faa{background:var(--color-blue-surface);color:var(--color-blue);}
+    .module-card-icon-fmcsa{background:var(--color-purple-surface);color:var(--color-purple);}
+    .module-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px var(--space-2);border-radius:var(--radius-full);}
+    .tag-faa{background:var(--color-blue-surface);color:var(--color-blue);}
+    .tag-fmcsa{background:var(--color-purple-surface);color:var(--color-purple);}
+    .module-title{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;color:var(--color-text);}
+    .module-desc{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.6;flex:1;}
+
+    /* ── SEAT STATUS (used by dashboard.js) ── */
+    .seat-status{font-size:var(--text-xs);color:var(--color-text-muted);min-height:1.2em;margin-top:2px;}
+
+    /* ── BUTTONS ── */
+    .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--color-primary);color:#fff;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);box-shadow:0 1px 3px oklch(0.3 0.08 192/.35);transition:background var(--transition),box-shadow var(--transition),transform var(--transition);white-space:nowrap;width:100%;}
+    .btn-primary:hover{background:var(--color-primary-hover);}
+    .btn-primary:active{transform:translateY(1px);}
+    .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--color-surface-offset);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);transition:background var(--transition),transform var(--transition);white-space:nowrap;}
+    .btn-secondary:hover{background:var(--color-divider);}
+    .btn-danger{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--color-danger-surface);color:var(--color-danger);border:1px solid color-mix(in oklab,var(--color-danger) 25%,transparent);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);transition:background var(--transition);white-space:nowrap;}
+    .btn-danger:hover{background:color-mix(in oklab,var(--color-danger) 15%,transparent);}
+
+    /* ── SECTION DIVIDER ── */
+    .section-divider{height:1px;background:var(--color-divider);border:none;margin:var(--space-8) 0;}
+
+    /* ── ADMIN PANEL ── */
+    .admin-panel{
+      display:none;
+      background:var(--color-surface-2);
+      border:1.5px solid var(--color-primary);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-card);
+      overflow:visible;
+    }
+    .admin-panel-header{
+      display:flex;align-items:center;gap:var(--space-3);
+      padding:var(--space-5) var(--space-6);
+      border-bottom:1px solid var(--color-divider);
+    }
+    .admin-panel-icon{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary-surface);color:var(--color-primary);display:grid;place-items:center;flex-shrink:0;}
+    .admin-panel-title{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;color:var(--color-text);}
+    .admin-panel-body{padding:var(--space-6);}
+    .admin-input-row{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-5);}
+    .admin-input{flex:1;min-width:220px;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text);font-family:var(--font-body);outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
+    .admin-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 15%,transparent);}
+    .admin-btn-row{display:flex;gap:var(--space-2);flex-wrap:wrap;}
+    #seatList{font-size:var(--text-sm);color:var(--color-text-muted);}
+  </style>
 </head>
-
 <body>
 
+<!-- LOGOUT — preserved exactly -->
 <script>
 function logout(){
   localStorage.removeItem("amsUser");
@@ -18,150 +175,246 @@ function logout(){
 }
 </script>
 
-<header class="portal-header">
-<div class="header-inner">
-<h1>AMS Training Portal</h1>
-<p>FAA & FMCSA Drug & Alcohol Compliance Training</p>
-</div>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="brand-name">AMS<span>Training Portal</span></div>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <div class="avatar" id="avatarInitial">?</div>
+    <button class="btn-secondary" style="padding:var(--space-2) var(--space-4);" onclick="logout()">
+      <i data-lucide="log-out" style="width:14px;height:14px;"></i>
+      Log Out
+    </button>
+  </div>
 </header>
 
-<main class="dashboard-container">
+<div class="page">
 
-<header class="dashboard-header">
-<h1>Welcome to AMS Training Portal</h1>
-<button class="btn-secondary" onclick="logout()">Log Out</button>
-</header>
-
-<!-- EMPLOYEE MESSAGE -->
-<div id="employeeWelcome"
-style="display:none;padding:12px;margin-bottom:12px;border:1px solid #d7e3ff;background:#f5f9ff;border-radius:6px;">
-<strong>Welcome!</strong>
-You’ve been invited by your company to complete required training.
-</div>
-
-<!-- =========================
-   FAA SECTION
-========================= -->
-<div id="faaSection" class="faa-section">
-
-<h2 class="section-title">FAA Training</h2>
-
-<div class="modules-grid">
-
-<!-- FAA SUPERVISOR -->
-<div class="module-card">
-<h3>FAA Supervisor Training</h3>
-<p>Drug & Alcohol Supervisor Training</p>
-
-<button id="supervisorBtn" class="btn-primary">Start Training</button>
-<div id="faaSupervisorBadge" class="seat-status"></div>
-</div>
-
-<!-- FAA DER -->
-<div class="module-card">
-<h3>FAA DER Training</h3>
-<p>Designated Employer Representative Training</p>
-
-<button id="derBtn" class="btn-primary">Start Training</button>
-<div id="faaDerBadge" class="seat-status"></div>
-</div>
-
-<!-- FAA EMPLOYEE -->
-<div class="module-card">
-<h3>FAA Employee Training</h3>
-<p>Drug & Alcohol Awareness Training</p>
-
-<button id="employeeBtn" class="btn-primary">Start Training</button>
-<div id="faaEmployeeBadge" class="seat-status"></div>
-</div>
-
-</div>
-</div>
-
-<hr class="section-divider">
-
-<!-- =========================
-   FMCSA SECTION
-========================= -->
-<div id="fmcsaSection" class="fmcsa-section">
-
-<h2 class="section-title">FMCSA Training</h2>
-
-<div class="modules-grid">
-
-<!-- FMCSA SUPERVISOR -->
-<div class="module-card">
-<h3>FMCSA Supervisor Training</h3>
-<p>Reasonable Suspicion + Drug & Alcohol Awareness</p>
-
-<button id="supervisorTrainingBtn" class="btn-primary">Start Training</button>
-<div id="supervisorSeatBadge" class="seat-status"></div>
-</div>
-
-<!-- FMCSA DER -->
-<div class="module-card">
-<h3>FMCSA DER Training</h3>
-<p>DOT DER Certification</p>
-
-<button id="derFmcsaBtn" class="btn-primary">Start Training</button>
-<div id="derSeatBadge" class="seat-status"></div>
-</div>
-
-<!-- FMCSA EMPLOYEE -->
-<div class="module-card">
-<h3>FMCSA Employee Training</h3>
-<p>DOT Employee Awareness Training</p>
-
-<button id="employeeTrainingBtn" class="btn-primary">Start Training</button>
-<div id="employeeSeatBadge" class="seat-status"></div>
-</div>
-
-</div>
-</div>
-  
-<!-- =========================
-   ADMIN PANEL
-========================= -->
-<div id="adminPanel" class="admin-panel" style="display:none; margin-top:30px;">
-
-  <h2>Company Admin Panel</h2>
-
-  <div style="display:flex; gap:10px; margin-bottom:15px;">
-    <input 
-      type="email" 
-      id="seatEmailInput" 
-      placeholder="Enter employee email"
-      style="padding:10px; flex:1;"
-    />
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-
-  <button class="btn-primary" onclick="assignSeat('employee')">
-    Assign Employee
-  </button>
-
-  <button class="btn-primary" onclick="assignSeat('supervisor')">
-    Assign Supervisor
-  </button>
-
-  <button class="btn-primary" onclick="assignSeat('der')">
-    Assign DER
-  </button>
-
-  <button class="btn-secondary" onclick="removeSeat()">
-    Remove
-  </button>
-
-</div>
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <p class="page-eyebrow">AMS Training Portal</p>
+    <h1 class="page-title">Welcome to Your Dashboard</h1>
+    <p class="page-sub">FAA &amp; FMCSA Drug &amp; Alcohol Compliance Training</p>
   </div>
 
-  <div id="seatList"></div>
+  <!-- EMPLOYEE WELCOME BANNER — id preserved -->
+  <div id="employeeWelcome" class="welcome-banner">
+    <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;margin-top:1px;"></i>
+    <span><strong>Welcome!</strong> You've been invited by your company to complete required training.</span>
+  </div>
 
-</div>
-</main>
+  <!-- ══════════════════════════════════════
+       FAA SECTION — all IDs preserved
+  ══════════════════════════════════════ -->
+  <div id="faaSection" class="training-section faa-section">
 
+    <div class="section-header">
+      <div class="section-icon section-icon-faa">
+        <i data-lucide="plane" style="width:18px;height:18px;"></i>
+      </div>
+      <div>
+        <div class="section-label">Federal Aviation Administration</div>
+        <div class="section-title">FAA Training</div>
+      </div>
+    </div>
+
+    <div class="modules-grid">
+
+      <!-- FAA SUPERVISOR -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-faa">
+          <i data-lucide="shield" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-faa">FAA · Supervisor</span>
+        <div class="module-title">FAA Supervisor Training</div>
+        <p class="module-desc">Drug &amp; Alcohol Supervisor Training under FAA regulations.</p>
+        <button id="supervisorBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="faaSupervisorBadge" class="seat-status"></div>
+      </div>
+
+      <!-- FAA DER -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-faa">
+          <i data-lucide="briefcase" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-faa">FAA · DER</span>
+        <div class="module-title">FAA DER Training</div>
+        <p class="module-desc">Designated Employer Representative Training under FAA regulations.</p>
+        <button id="derBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="faaDerBadge" class="seat-status"></div>
+      </div>
+
+      <!-- FAA EMPLOYEE -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-faa">
+          <i data-lucide="user" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-faa">FAA · Employee</span>
+        <div class="module-title">FAA Employee Training</div>
+        <p class="module-desc">Drug &amp; Alcohol Awareness Training under FAA regulations.</p>
+        <button id="employeeBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="faaEmployeeBadge" class="seat-status"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══════════════════════════════════════
+       FMCSA SECTION — all IDs preserved
+  ══════════════════════════════════════ -->
+  <div id="fmcsaSection" class="training-section fmcsa-section">
+
+    <div class="section-header">
+      <div class="section-icon section-icon-fmcsa">
+        <i data-lucide="truck" style="width:18px;height:18px;"></i>
+      </div>
+      <div>
+        <div class="section-label">Federal Motor Carrier Safety Administration</div>
+        <div class="section-title">FMCSA Training</div>
+      </div>
+    </div>
+
+    <div class="modules-grid">
+
+      <!-- FMCSA SUPERVISOR -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-fmcsa">
+          <i data-lucide="shield" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-fmcsa">FMCSA · Supervisor</span>
+        <div class="module-title">FMCSA Supervisor Training</div>
+        <p class="module-desc">Reasonable Suspicion + Drug &amp; Alcohol Awareness.</p>
+        <button id="supervisorTrainingBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="supervisorSeatBadge" class="seat-status"></div>
+      </div>
+
+      <!-- FMCSA DER -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-fmcsa">
+          <i data-lucide="briefcase" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-fmcsa">FMCSA · DER</span>
+        <div class="module-title">FMCSA DER Training</div>
+        <p class="module-desc">DOT DER Certification under FMCSA regulations.</p>
+        <button id="derFmcsaBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="derSeatBadge" class="seat-status"></div>
+      </div>
+
+      <!-- FMCSA EMPLOYEE -->
+      <div class="module-card">
+        <div class="module-card-icon module-card-icon-fmcsa">
+          <i data-lucide="user" style="width:20px;height:20px;"></i>
+        </div>
+        <span class="module-tag tag-fmcsa">FMCSA · Employee</span>
+        <div class="module-title">FMCSA Employee Training</div>
+        <p class="module-desc">DOT Employee Awareness Training under FMCSA regulations.</p>
+        <button id="employeeTrainingBtn" class="btn-primary">
+          <i data-lucide="play" style="width:14px;height:14px;"></i>
+          Start Training
+        </button>
+        <div id="employeeSeatBadge" class="seat-status"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       ADMIN PANEL — id + structure preserved
+  ══════════════════════════════════════ -->
+  <div id="adminPanel" class="admin-panel">
+    <div class="admin-panel-header">
+      <div class="admin-panel-icon">
+        <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      </div>
+      <div class="admin-panel-title">Company Admin Panel</div>
+    </div>
+    <div class="admin-panel-body">
+      <div class="admin-input-row">
+        <input
+          type="email"
+          id="seatEmailInput"
+          class="admin-input"
+          placeholder="Enter employee email"
+        />
+      </div>
+      <div class="admin-btn-row">
+        <button class="btn-primary" style="width:auto;" onclick="assignSeat('employee')">
+          <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
+          Assign Employee
+        </button>
+        <button class="btn-primary" style="width:auto;" onclick="assignSeat('supervisor')">
+          <i data-lucide="shield" style="width:14px;height:14px;"></i>
+          Assign Supervisor
+        </button>
+        <button class="btn-primary" style="width:auto;" onclick="assignSeat('der')">
+          <i data-lucide="briefcase" style="width:14px;height:14px;"></i>
+          Assign DER
+        </button>
+        <button class="btn-danger" onclick="removeSeat()">
+          <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+          Remove
+        </button>
+      </div>
+      <div id="seatList" style="margin-top:var(--space-5);"></div>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<!-- DARK MODE -->
+<script>
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.setAttribute('data-theme',d);
+  function upd(){if(!t)return;t.innerHTML=d==='dark'
+    ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+    :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
+  upd();t&&t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);upd();});
+})();
+</script>
+
+<!-- AVATAR INITIAL -->
+<script>
+(function(){
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const el   = document.getElementById("avatarInitial");
+  if (el && user) {
+    el.textContent = (user.firstName || user.email || "?")[0].toUpperCase();
+  }
+})();
+</script>
+
+<script>lucide.createIcons();</script>
 <script src="../js/route-guard.js"></script>
 <script src="../js/dashboard.js"></script>
-
 </body>
 </html>
