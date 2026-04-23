@@ -22,23 +22,31 @@ if (
     throw new Error("Redirecting...");
   }
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  const email   = user?.email;
+  /* Admins can always view certificates (they view on behalf of employees) */
+  if (user.role === "admin") {
+    console.log("✅ Admin — certificate access granted");
+    // allow through, no further checks
+  } else {
 
-  const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
-  const hasSupervisorSeat = company?.usedSeats?.supervisor?.[email];
-  const hasDerSeat        = company?.usedSeats?.der?.[email];
-  const hasAnySeat        = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
+    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    const email   = user?.email;
 
-  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-  const hasAnyCompletion    = completedEmployee || completedSupervisor || completedDER;
+    const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
+    const hasSupervisorSeat = company?.usedSeats?.supervisor?.[email];
+    const hasDerSeat        = company?.usedSeats?.der?.[email];
+    const hasAnySeat        = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
 
-  if (!hasAnySeat && !hasAnyCompletion) {
-    sessionStorage.setItem("ams_notice", "No certificate access.");
-    window.location.replace("dashboard.html");
-    throw new Error("Redirecting...");
+    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+    const hasAnyCompletion    = completedEmployee || completedSupervisor || completedDER;
+
+    if (!hasAnySeat && !hasAnyCompletion) {
+      sessionStorage.setItem("ams_notice", "No certificate access.");
+      window.location.replace("dashboard.html");
+      throw new Error("Redirecting...");
+    }
+
   }
 
 } else {
