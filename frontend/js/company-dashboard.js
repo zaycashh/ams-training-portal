@@ -12,10 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================================================= */
 
 function getCompanyProgram() {
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  return company.program || "FAA"; // default safe
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  return company.program || "FAA";
 }
 
 /* =========================================================
@@ -24,162 +22,71 @@ function getCompanyProgram() {
 
 function loadCompanyDashboard(user) {
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-   
-/* =========================================================
-   🔥 ENSURE FULL SEAT STRUCTURE (FINAL FIX)
-========================================================= */
 
-let updated = false;
+  /* =========================================================
+     ENSURE FULL SEAT STRUCTURE
+  ========================================================= */
 
-/* =========================
-   BASE STRUCTURE FIRST
-========================= */
+  let updated = false;
 
-if (!company.seats) {
-  company.seats = {};
-  updated = true;
-}
+  if (!company.seats) { company.seats = {}; updated = true; }
+  if (!company.usedSeats) { company.usedSeats = {}; updated = true; }
 
-if (!company.usedSeats) {
-  company.usedSeats = {};
-  updated = true;
-}
+  if (!company.seats.employee)   { company.seats.employee   = { total: 0 }; updated = true; }
+  if (!company.seats.supervisor) { company.seats.supervisor = { total: 0 }; updated = true; }
+  if (!company.seats.der)        { company.seats.der        = { total: 0 }; updated = true; }
 
-/* =========================
-   FORCE ALL SEAT TYPES
-========================= */
+  if (!company.usedSeats.employee)   { company.usedSeats.employee   = {}; updated = true; }
+  if (!company.usedSeats.supervisor) { company.usedSeats.supervisor = {}; updated = true; }
+  if (!company.usedSeats.der)        { company.usedSeats.der        = {}; updated = true; }
 
-if (!company.seats.employee) {
-  company.seats.employee = { total: 0 };
-  updated = true;
-}
+  /* Normalize employee seats */
+  Object.keys(company.usedSeats.employee).forEach(email => {
+    let seat = company.usedSeats.employee[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
+      seat = company.usedSeats.employee[email];
+      updated = true;
+    }
+    if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+    if (!company.employees) company.employees = {};
+    if (!company.employees[email]) {
+      company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
+      updated = true;
+    }
+  });
 
-if (!company.seats.supervisor) {
-  company.seats.supervisor = { total: 0 };
-  updated = true;
-}
+  /* Normalize supervisor seats */
+  Object.keys(company.usedSeats.supervisor).forEach(email => {
+    const seat = company.usedSeats.supervisor[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
 
-if (!company.seats.der) {
-  company.seats.der = { total: 0 };
-  updated = true;
-}
+  /* Normalize DER seats */
+  Object.keys(company.usedSeats.der).forEach(email => {
+    const seat = company.usedSeats.der[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
 
-/* =========================
-   FORCE USED SEAT STRUCTURE
-========================= */
+  if (updated) localStorage.setItem("companyProfile", JSON.stringify(company));
 
-if (!company.usedSeats.employee) {
-  company.usedSeats.employee = {};
-  updated = true;
-}
-
-if (!company.usedSeats.supervisor) {
-  company.usedSeats.supervisor = {};
-  updated = true;
-}
-
-if (!company.usedSeats.der) {
-  company.usedSeats.der = {};
-  updated = true;
-}
-
-/* =========================
-   🔥 NORMALIZE EMPLOYEE SEATS (FINAL FIX)
-========================= */
-
-Object.keys(company.usedSeats.employee).forEach(email => {
-  let seat = company.usedSeats.employee[email];
-
-  // 🔥 Normalize seat structure
-  if (typeof seat !== "object") {
-    company.usedSeats.employee[email] = {
-      assignedAt: Date.now(),
-      revoked: false
-    };
-    seat = company.usedSeats.employee[email];
-    updated = true;
-  }
-
-  if (!("revoked" in seat)) {
-    seat.revoked = false;
-    updated = true;
-  }
-
-  // 🔥 ALWAYS ensure employee exists in table
-  if (!company.employees) company.employees = {};
-
-  if (!company.employees[email]) {
-    company.employees[email] = {
-      email: email,
-      role: "employee",
-      status: "assigned",
-      addedAt: Date.now()
-    };
-    updated = true;
-  }
-});
-   /* =========================
-   🔥 NORMALIZE SUPERVISOR
-========================= */
-
-Object.keys(company.usedSeats.supervisor).forEach(email => {
-  const seat = company.usedSeats.supervisor[email];
-
-  if (typeof seat !== "object") {
-    company.usedSeats.supervisor[email] = {
-      assignedAt: Date.now(),
-      revoked: false
-    };
-     
-    updated = true;
-  } else if (!("revoked" in seat)) {
-    seat.revoked = false;
-    updated = true;
-  }
-});
-
-/* =========================
-   🔥 NORMALIZE DER
-========================= */
-
-Object.keys(company.usedSeats.der).forEach(email => {
-  const seat = company.usedSeats.der[email];
-
-  if (typeof seat !== "object") {
-    company.usedSeats.der[email] = {
-      assignedAt: Date.now(),
-      revoked: false
-    };
-    updated = true;
-  } else if (!("revoked" in seat)) {
-    seat.revoked = false;
-    updated = true;
-  }
-});
-
-/* =========================
-   🔥 SAVE FIX
-========================= */
-
-if (updated) {
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-}
   const programEl = document.getElementById("companyProgram");
-
-if (programEl) {
-  const program = company.program ? company.program.toUpperCase() : "—"; programEl.textContent = program;
-}
-
-  if (!company.id) {
-    alert("Company profile missing");
-    return;
+  if (programEl) {
+    programEl.textContent = company.program ? company.program.toUpperCase() : "—";
   }
 
-  document.getElementById("companyName").textContent =
-    company.name || user.company || "—";
+  if (!company.id) { alert("Company profile missing"); return; }
 
-  document.getElementById("companyAdmin").textContent =
-    user.email || "—";
+  const nameEl = document.getElementById("companyName");
+  const adminEl = document.getElementById("companyAdmin");
+  if (nameEl) nameEl.textContent = company.name || user?.company || "—";
+  if (adminEl) adminEl.textContent = user?.email || "—";
 
   loadEmployees(company.id);
   updateSeatCounts(company);
@@ -187,625 +94,298 @@ if (programEl) {
 }
 
 /* =========================================================
-   SEAT SYSTEM (EMPLOYEE ONLY)
+   SEAT COUNTS
 ========================================================= */
 
 function getSeatStats(company) {
-
   const total = company?.seats?.employee?.total ?? 0;
-
-  const used = Object.values(company?.usedSeats?.employee || {})
-  .filter(s => !s.revoked)
-  .length;
-
-  const remaining = total - used;
-
-  return {
-    totalPurchased: total,
-    usedSeats: used,
-    remaining: remaining < 0 ? 0 : remaining
-  };
+  const used  = Object.values(company?.usedSeats?.employee || {}).filter(s => !s.revoked).length;
+  return { totalPurchased: total, usedSeats: used, remaining: Math.max(0, total - used) };
 }
 
 function updateSeatCounts(company) {
+  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company) {
-    company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  }
-
-  /* =========================
-     EMPLOYEE
-  ========================= */
-
-  const empTotal = company?.seats?.employee?.total || 0;
-
-  const empUsed = Object.values(company?.usedSeats?.employee || {})
-  .filter(s => !s.revoked)
-  .length;
-
+  const empTotal     = company?.seats?.employee?.total || 0;
+  const empUsed      = Object.values(company?.usedSeats?.employee   || {}).filter(s => !s.revoked).length;
   const empAvailable = Math.max(0, empTotal - empUsed);
 
- /* =========================
-   SUPERVISOR
-========================= */
+  const supTotal     = company?.seats?.supervisor?.total || 0;
+  const supUsed      = Object.values(company?.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  const supAvailable = Math.max(0, supTotal - supUsed);
 
-const supTotal = company?.seats?.supervisor?.total || 0;
+  const derTotal     = company?.seats?.der?.total || 0;
+  const derUsed      = Object.values(company?.usedSeats?.der        || {}).filter(s => !s.revoked).length;
+  const derAvailable = Math.max(0, derTotal - derUsed);
 
-const supUsed = Object.values(company?.usedSeats?.supervisor || {})
-  .filter(s => !s.revoked)
-  .length;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
-const supAvailable = Math.max(0, supTotal - supUsed);
-   
-  /* =========================
-   DER
-========================= */
-
-const derTotal = company?.seats?.der?.total || 0;
-
-const derUsed = Object.values(company?.usedSeats?.der || {})
-  .filter(s => !s.revoked)
-  .length;
-
-const derAvailable = Math.max(0, derTotal - derUsed);
-
-  /* =========================
-     UPDATE UI — EMPLOYEE
-  ========================= */
-
-  const seatTotal = document.getElementById("seatTotal");
-  const seatUsed = document.getElementById("seatUsed");
-  const seatRemaining = document.getElementById("seatRemaining");
-
-  if (seatTotal) seatTotal.textContent = empTotal;
-  if (seatUsed) seatUsed.textContent = empUsed;
-  if (seatRemaining) seatRemaining.textContent = empAvailable;
-
-  /* =========================
-     UPDATE UI — SUPERVISOR
-  ========================= */
-
-  const supTotalEl = document.getElementById("supervisorTotal");
-  const supUsedEl = document.getElementById("supervisorUsed");
-  const supAvailEl = document.getElementById("supervisorAvailable");
-
-  if (supTotalEl) supTotalEl.textContent = supTotal;
-  if (supUsedEl) supUsedEl.textContent = supUsed;
-  if (supAvailEl) supAvailEl.textContent = supAvailable;
-
-  /* =========================
-     UPDATE UI — DER
-  ========================= */
-
-  const derTotalEl = document.getElementById("derTotal");
-  const derUsedEl = document.getElementById("derUsed");
-  const derAvailEl = document.getElementById("derAvailable");
-
-  if (derTotalEl) derTotalEl.textContent = derTotal;
-  if (derUsedEl) derUsedEl.textContent = derUsed;
-  if (derAvailEl) derAvailEl.textContent = derAvailable;
+  set("seatTotal",           empTotal);
+  set("seatUsed",            empUsed);
+  set("seatRemaining",       empAvailable);
+  set("supervisorTotal",     supTotal);
+  set("supervisorUsed",      supUsed);
+  set("supervisorAvailable", supAvailable);
+  set("derTotal",            derTotal);
+  set("derUsed",             derUsed);
+  set("derAvailable",        derAvailable);
 }
 
 /* =========================================================
-   ASSIGN EMPLOYEE SEAT (FINAL CLEAN VERSION)
+   ASSIGN SEATS
 ========================================================= */
+
 function assignEmployeeSeat(emailParam) {
-
-  const email = (emailParam ||
-    document.getElementById("seatEmail").value.trim()
-  ).toLowerCase();
-
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
   if (!email) return alert("Enter email");
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-   const hasAnySeat =
-  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
-  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
-  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
-
-if (hasAnySeat) {
-  alert("User already has a training assigned");
-  return;
-}
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
 
   const total = company.seats?.employee?.total || 0;
+  const used  = Object.values(company.usedSeats.employee || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No employee seats available");
 
-  const used = Object.values(company.usedSeats.employee || {})
-    .filter(s => !s.revoked)
-    .length;
-
-  if (used >= total) {
-    return alert("No employee seats available");
-  }
-
-  /* =========================
-     🔥 ASSIGN SEAT
-  ========================= */
-
-  company.usedSeats.employee[email] = {
-    assignedAt: Date.now(),
-    revoked: false
-  };
-
-  /* =========================
-     🔥 ADD TO TABLE IMMEDIATELY
-  ========================= */
-
+  company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
   if (!company.employees) company.employees = {};
-
-  company.employees[email] = {
-    email: email,
-    role: "employee",
-    status: "assigned",
-    addedAt: Date.now()
-  };
-
-  /* =========================
-     🔥 CREATE INVITE
-  ========================= */
+  company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
 
   if (!company.invites) company.invites = {};
-
   if (!company.invites[email]) {
-
-    const code =
-      "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    company.invites[email] = {
-      email,
-      code,
-      program: company.program || "fmcsa",
-      role: "employee",
-      createdAt: Date.now(),
-      status: "assigned"
-    };
-
-    const msg = document.getElementById("inviteMsg");
-
-    if (msg) {
-      msg.innerHTML = `
-        Invite Code: <strong>${code}</strong>
-        <button onclick="copyInvite('${code}')"
-          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-          Copy
-        </button>
-      `;
-    }
+    const code = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "employee", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "Employee");
   }
 
-  /* =========================
-     🔥 SAVE + LIVE UI UPDATE
-  ========================= */
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("Employee seat assigned");
+  _refreshAll(company);
+}
+
+function assignSupervisorSeat(emailParam) {
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
+  if (!email) return alert("Enter email");
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
+
+  const total = company.seats?.supervisor?.total || 0;
+  const used  = Object.values(company.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No supervisor seats available");
+
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: "supervisor", status: "assigned", addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email]) {
+    const code = "AMS-SUP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "supervisor", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "Supervisor");
+  }
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("Supervisor seat assigned");
+  _refreshAll(company);
+}
 
-  alert("Employee seat assigned");
+function assignDerSeat(emailParam) {
+  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
+  if (!email) return alert("Enter email");
 
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const hasAnySeat =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (hasAnySeat) return alert("User already has a training assigned");
+
+  const total = company.seats?.der?.total || 0;
+  const used  = Object.values(company.usedSeats?.der || {}).filter(s => !s.revoked).length;
+  if (used >= total) return alert("No DER seats available");
+
+  if (!company.usedSeats.der) company.usedSeats.der = {};
+  company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: "der", status: "assigned", addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email]) {
+    const code = "AMS-DER-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "der", createdAt: Date.now(), status: "assigned" };
+    _showInviteMsg(code, "DER");
+  }
+
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+  alert("DER seat assigned");
+  _refreshAll(company);
+}
+
+/* helpers */
+function _showInviteMsg(code, label) {
+  const msg = document.getElementById("inviteMsg");
+  if (!msg) return;
+  msg.innerHTML = `
+    ${label} Invite Code: <strong>${code}</strong>
+    <button onclick="copyInvite('${code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>
+  `;
+}
+
+function _refreshAll(company) {
   renderSeatAssignments(company);
   updateSeatCounts(company);
   loadEmployees(company.id);
-
   const input = document.getElementById("seatEmail");
   if (input) input.value = "";
 }
 
 /* =========================================================
-   ASSIGN SUPERVISOR SEAT (MATCH EMPLOYEE + DER SYSTEM)
-========================================================= */
-function assignSupervisorSeat(emailParam) {
-
-  const email = (emailParam ||
-    document.getElementById("seatEmail").value.trim()
-  ).toLowerCase();
-
-  if (!email) return alert("Enter email");
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-   const hasAnySeat =
-  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
-  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
-  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
-
-if (hasAnySeat) {
-  alert("User already has a training assigned");
-  return;
-}
-
-  const total = company.seats?.supervisor?.total || 0;
-
-  const used = Object.values(company.usedSeats?.supervisor || {})
-    .filter(s => !s.revoked)
-    .length;
-
-  if (used >= total) {
-    return alert("No supervisor seats available");
-  }
-
-  if (!company.usedSeats) company.usedSeats = {};
-  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
-
-  /* =========================
-     🔥 ASSIGN SEAT
-  ========================= */
-
-  company.usedSeats.supervisor[email] = {
-    assignedAt: Date.now(),
-    revoked: false
-  };
-
-  /* =========================
-     🔥 ADD TO TABLE IMMEDIATELY
-  ========================= */
-
-  if (!company.employees) company.employees = {};
-
-  company.employees[email] = {
-    email: email,
-    role: "supervisor",
-    status: "assigned",
-    addedAt: Date.now()
-  };
-
-  /* =========================
-     🔥 CREATE INVITE (SAME SYSTEM)
-  ========================= */
-
-  if (!company.invites) company.invites = {};
-
-  if (!company.invites[email]) {
-
-    const code =
-      "AMS-SUP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    company.invites[email] = {
-      email,
-      code,
-      program: company.program || "fmcsa",
-      role: "supervisor",
-      createdAt: Date.now(),
-      status: "assigned"
-    };
-
-    const msg = document.getElementById("inviteMsg");
-
-    if (msg) {
-      msg.innerHTML = `
-        Supervisor Invite Code: <strong>${code}</strong>
-        <button onclick="copyInvite('${code}')"
-          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-          Copy
-        </button>
-      `;
-    }
-  }
-
-  /* =========================
-     🔥 SAVE + REFRESH
-  ========================= */
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  alert("Supervisor seat assigned");
-
-renderSeatAssignments(company);
-updateSeatCounts(company);
-loadEmployees(company.id);
-
-const input = document.getElementById("seatEmail");
-if (input) input.value = "";
-}   
-
-/* =========================================================
-   ASSIGN DER SEAT (MATCH EMPLOYEE SYSTEM)
-========================================================= */
-function assignDerSeat(emailParam) {
-
-  const email = (emailParam ||
-    document.getElementById("seatEmail").value.trim()
-  ).toLowerCase();
-
-  if (!email) return alert("Enter email");
-
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-   const hasAnySeat =
-  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
-  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
-  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
-
-if (hasAnySeat) {
-  alert("User already has a training assigned");
-  return;
-}
-
-  const total = company.seats?.der?.total || 0;
-
-  const used = Object.values(company.usedSeats?.der || {})
-    .filter(s => !s.revoked)
-    .length;
-
-  if (used >= total) {
-    return alert("No DER seats available");
-  }
-
-  if (!company.usedSeats) company.usedSeats = {};
-  if (!company.usedSeats.der) company.usedSeats.der = {};
-
-  /* =========================
-     🔥 ASSIGN SEAT
-  ========================= */
-
-  company.usedSeats.der[email] = {
-    assignedAt: Date.now(),
-    revoked: false
-  };
-
-  /* =========================
-     🔥 ADD TO TABLE IMMEDIATELY
-  ========================= */
-
-  if (!company.employees) company.employees = {};
-
-  company.employees[email] = {
-    email: email,
-    role: "der",
-    status: "assigned",
-    addedAt: Date.now()
-  };
-
-  /* =========================
-     🔥 CREATE INVITE (SAME AS EMPLOYEE)
-  ========================= */
-
-  if (!company.invites) company.invites = {};
-
-  if (!company.invites[email]) {
-
-    const code =
-      "AMS-DER-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    company.invites[email] = {
-      email,
-      code,
-      program: company.program || "fmcsa",
-      role: "der",
-      createdAt: Date.now(),
-      status: "assigned"
-    };
-
-    const msg = document.getElementById("inviteMsg");
-
-    if (msg) {
-      msg.innerHTML = `
-        DER Invite Code: <strong>${code}</strong>
-        <button onclick="copyInvite('${code}')"
-          style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-          Copy
-        </button>
-      `;
-    }
-  }
-
-  /* =========================
-     🔥 SAVE + REFRESH
-  ========================= */
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  alert("DER seat assigned");
-
-renderSeatAssignments(company);
-updateSeatCounts(company);
-loadEmployees(company.id);
-
-const input = document.getElementById("seatEmail");
-if (input) input.value = "";
-}   
-
-/* =========================================================
-   LOAD EMPLOYEES (PROGRAM-AWARE + TRAINING TYPE)
+   LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
 ========================================================= */
 
 function loadEmployees(companyId) {
-
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) {
-    company.usedSeats = {
-      employee: {},
-      supervisor: {},
-      der: {}
-    };
-  }
+  if (!company.usedSeats) company.usedSeats = { employee: {}, supervisor: {}, der: {} };
 
   const tbody = document.getElementById("employeeTable");
   if (!tbody) return;
-
   tbody.innerHTML = "";
 
-  const program = getCompanyProgram();
+  const employees = users.filter(u => u.companyId === companyId && u.role === "employee");
+  const invites   = Object.values(company.invites || {});
 
-  const employees = users.filter(
-    u => u.companyId === companyId && u.role === "employee"
-  );
-
-  const invites = Object.values(company.invites || {});
-
-if (!employees.length && !invites.length) {
-  tbody.innerHTML = `
-    <tr>
-      <td colspan="6" style="opacity:.6;">No employees yet</td>
-    </tr>
-  `;
-  return;
-}
-
-  /* =========================================================
-     🔥 LOOP FIX (YOU WERE MISSING THIS)
-  ========================================================= */
-
-[...employees, ...invites].forEach(emp => {
-
-    const cleanEmail = emp.email.trim().toLowerCase(); // ✅ MUST BE FIRST
-
-    const isInvite =
-      emp.status === "pending" ||
-      emp.status === "resent" ||
-      emp.status === "assigned";
-
-    /* =========================
-       DETERMINE TRAINING TYPE
-    ========================= */
-
-    let trainingType = "None";
-
-    if (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) {
-  trainingType = "Supervisor";
-} 
-else if (company.usedSeats.der?.[cleanEmail] && !company.usedSeats.der[cleanEmail].revoked) {
-  trainingType = "DER";
-} 
-else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee[cleanEmail].revoked) {
-  trainingType = "Employee";
-}
-
-/* =========================
-   COMPLETION CHECK (FORCED FIX)
-========================= */
-
-const completedDER =
-  localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
-
-const completedSupervisor =
-  localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
-
-const completedEmployee =
-  localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-
-const trainingCompleted =
-  completedDER || completedSupervisor || completedEmployee;
-
-    let statusLabel = "Invited";
-
-if (!isInvite) {
-  statusLabel = "In Progress";
-}
-
-if (!isInvite && trainingCompleted) {
-  statusLabel = "Completed";
-}
-
-   /* =========================
-   RENDER ROW (FINAL CLEAN)
-========================= */
-
-const tr = document.createElement("tr");
-
-const hasAnyCert = trainingCompleted;
-
-tr.innerHTML = `
-  <td>
-  ${isInvite
-    ? "(Pending User)"
-    : `${emp.firstName || ""} ${emp.lastName || ""}`
+  if (!employees.length && !invites.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+            <h4>No employees yet</h4>
+            <p>Assign training above to add employees to your roster.</p>
+          </div>
+        </td>
+      </tr>`;
+    if (window.lucide) lucide.createIcons();
+    return;
   }
-</td>
 
-  <td>${emp.email}</td>
-  <td>${isInvite ? "Invited" : "Employee"}</td>
+  [...employees, ...invites].forEach(emp => {
+    const cleanEmail = emp.email.trim().toLowerCase();
 
-  <td>
-    <span style="
-      padding:4px 8px;
-      border-radius:6px;
-      background:${
-        trainingType === "Supervisor" ? "#dbeafe" :
-        trainingType === "DER" ? "#dcfce7" :
-        trainingType === "Employee" ? "#fef9c3" :
-        "#eee"
-      };
-      font-weight:600;
-    ">
-      ${trainingType}
-    </span>
-  </td>
+    const isInvite = ["pending", "resent", "assigned"].includes(emp.status);
 
-  <td>${statusLabel}</td>
+    /* Training type */
+    let trainingType = "None";
+    if      (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) trainingType = "Supervisor";
+    else if (company.usedSeats.der?.[cleanEmail]        && !company.usedSeats.der[cleanEmail].revoked)        trainingType = "DER";
+    else if (company.usedSeats.employee?.[cleanEmail]   && !company.usedSeats.employee[cleanEmail].revoked)   trainingType = "Employee";
 
-  <!-- ACTIONS -->
-<!-- ACTIONS -->
-<td style="white-space:nowrap;">
+    /* Completion check */
+    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+    const trainingCompleted   = completedDER || completedSupervisor || completedEmployee;
 
-  <div style="display:inline-block; position:relative;">
+    /* Status label */
+    let statusLabel = "Invited";
+    if (!isInvite) statusLabel = trainingCompleted ? "Completed" : "In Progress";
 
-    <!-- MANAGE BUTTON -->
-    <button class="btn-primary"
-      onclick="toggleMenu('${cleanEmail}')"
-      style="padding:6px 10px;">
-      Manage ▼
-    </button>
+    /* Training badge colors */
+    const badgeColors = {
+      Supervisor: { bg: "#dbeafe", color: "#1d4ed8" },
+      DER:        { bg: "#dcfce7", color: "#15803d" },
+      Employee:   { bg: "#fef9c3", color: "#854d0e" },
+      None:       { bg: "#f3f4f6", color: "#6b7280" }
+    };
+    const badge = badgeColors[trainingType] || badgeColors.None;
 
-    <!-- 🔥 KEEP YOUR DROPDOWN -->
-    <div id="menu-${cleanEmail}" class="action-menu" style="
-      display:none;
-      position:absolute;
-      background:white;
-      border:1px solid #ddd;
-      padding:10px;
-      margin-top:5px;
-      z-index:10;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      min-width:160px;
-    ">
+    /* Status badge */
+    const statusClass = trainingCompleted
+      ? "status-completed"
+      : isInvite
+        ? "status-pending"
+        : "status-in-progress";
 
-      ${
-        trainingType === "None" || isInvite
-          ? `
-            <button onclick="assignEmployeeSeat('${cleanEmail}')">Assign Employee</button><br>
-            <button onclick="assignSupervisorSeat('${cleanEmail}')">Assign Supervisor</button><br>
-            <button onclick="assignDerSeat('${cleanEmail}')">Assign DER</button><br>
+    /* Remove button — disabled + tooltip if training completed */
+    const removeBtn = trainingCompleted
+      ? `<button
+            disabled
+            title="Cannot remove — training completed. Record must be kept."
+            style="opacity:.4;cursor:not-allowed;"
+          >
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`
+      : `<button
+            onclick="removeEmployee('${cleanEmail}')"
+            style="color:var(--color-warning);"
+          >
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`;
 
-            <hr style="margin:6px 0;">
+    /* View Cert — only show if completed */
+    const viewCertBtn = trainingCompleted
+      ? `<button onclick="viewEmployeeCert('${cleanEmail}')">
+            <i data-lucide="award" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            View Certificate
+          </button>`
+      : "";
 
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="td-name">
+        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "—"}
+      </td>
+      <td class="td-email">${emp.email}</td>
+      <td>
+        <span class="role-badge role-${trainingType.toLowerCase() === "none" ? "employee" : trainingType.toLowerCase()}"
+              style="background:${badge.bg};color:${badge.color};">
+          ${trainingType}
+        </span>
+      </td>
+      <td>
+        <span class="status-badge ${statusClass}">
+          <span class="status-dot"></span>
+          ${statusLabel}
+        </span>
+      </td>
+      <td style="white-space:nowrap;">
+        <div style="display:inline-block;position:relative;">
+          <button class="btn btn-secondary btn-sm" onclick="toggleMenu('${cleanEmail}')">
+            Actions <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+          </button>
+          <div id="menu-${cleanEmail}" class="action-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:100;">
             <button onclick="resendInvite('${cleanEmail}')">
+              <i data-lucide="send" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
               Resend Invite
-            </button><br>
-          `
-          : `
-            <button onclick="revokeSeat('${trainingType.toLowerCase()}', '${cleanEmail}')">
-              Remove Seat
-            </button><br>
-          `
-      }
+            </button>
+            ${viewCertBtn}
+            <hr>
+            ${removeBtn}
+          </div>
+        </div>
+      </td>
+    `;
 
-      <button onclick="removeEmployee('${cleanEmail}')"
-        style="color:red;">
-        Delete Employee
-      </button>
+    tbody.appendChild(tr);
+  });
 
-    </div>
-
-  </div>
-
-  <!-- VIEW CERT BUTTON -->
-  ${hasAnyCert ? `
-    <button onclick="viewEmployeeCert('${cleanEmail}')"
-      class="btn-primary"
-      style="margin-left:6px; padding:6px 10px;">
-      🎓 View
-    </button>
-  ` : ""}
-
-</td>
-`;
-
-tbody.appendChild(tr);
-
-});
-   
+  if (window.lucide) lucide.createIcons();
 }
 
 /* =========================================================
@@ -813,230 +393,268 @@ tbody.appendChild(tr);
 ========================================================= */
 
 window.removeEmployee = function (email) {
-   
   const cleanEmail = email.toLowerCase().trim();
-   
   if (!confirm("Remove this employee from the company?")) return;
 
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  /* =========================
-     REMOVE INVITE
-  ========================= */
+  if (company.invites?.[cleanEmail]) delete company.invites[cleanEmail];
 
-  if (company.invites && company.invites[cleanEmail]) {
-    delete company.invites[cleanEmail];
-  }
+  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
 
-  /* =========================
-     CHECK COMPLETION (SAFE)
-  ========================= */
-
-  const completedDER =
-    localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
-
-  const completedSupervisor =
-    localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
-
-  const completedEmployee =
-    localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-
-  const trainingCompleted =
-    completedDER || completedSupervisor || completedEmployee;
-
-  if (trainingCompleted) {
-    alert("Cannot remove employee — training completed (record must be kept)");
+  if (completedDER || completedSupervisor || completedEmployee) {
+    alert("Cannot remove employee — training completed. Record must be kept.");
     return;
   }
-
-  /* =========================
-     REMOVE USER
-  ========================= */
 
   const updatedUsers = users.filter(u => u.email !== cleanEmail);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
 
-  /* =========================
-     REMOVE FROM ALL SEATS
-  ========================= */
-
   ["employee", "supervisor", "der"].forEach(type => {
-    if (company.usedSeats?.[type]?.[cleanEmail]) {
-      delete company.usedSeats[type][cleanEmail];
-    }
+    if (company.usedSeats?.[type]?.[cleanEmail]) delete company.usedSeats[type][cleanEmail];
   });
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  /* =========================
-     REFRESH
-  ========================= */
-
   location.reload();
 };
 
 /* =========================================================
-   RENDER ACTIVE SEATS (FIXED)
+   RENDER ACTIVE SEAT ASSIGNMENTS
 ========================================================= */
 
 function renderSeatAssignments(company) {
-
   const list = document.getElementById("seatUserList");
   if (!list) return;
-
   list.innerHTML = "";
 
-  const allSeats = company.usedSeats || {};
+  const roleColors = {
+    employee:   { badge: "role-employee",   label: "Employee"   },
+    supervisor: { badge: "role-supervisor", label: "Supervisor" },
+    der:        { badge: "role-der",        label: "DER"        }
+  };
 
   let items = [];
-
   ["employee", "supervisor", "der"].forEach(type => {
-
-    const users = allSeats[type] || {};
-
-    Object.keys(users).forEach(email => {
-
-  if (users[email].revoked) return;
-
-  items.push(`
-    <li>
-      ${email} — <strong>${type.toUpperCase()}</strong>
-    </li>
-  `);
-
-});
-
+    const seats = company.usedSeats?.[type] || {};
+    Object.keys(seats).forEach(email => {
+      if (seats[email].revoked) return;
+      const r = roleColors[type];
+      items.push(`
+        <li class="assignment-item">
+          <span class="assignment-email">
+            <i data-lucide="mail"></i>
+            ${email}
+          </span>
+          <span class="role-badge ${r.badge}">${r.label}</span>
+        </li>
+      `);
+    });
   });
 
   if (!items.length) {
-    list.innerHTML = "<li style='opacity:.6;'>No active seats</li>";
-    return;
+    list.innerHTML = `
+      <li>
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+          <h4>No assignments yet</h4>
+          <p>Use the form above to assign training to employees.</p>
+        </div>
+      </li>`;
+  } else {
+    list.innerHTML = items.join("");
   }
 
-  list.innerHTML = items.join("");
+  if (window.lucide) lucide.createIcons();
 }
 
 /* =========================================================
-   REVOKE SEAT (UNIVERSAL)
+   REVOKE SEAT
 ========================================================= */
 
 window.revokeSeat = function (type, email) {
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.usedSeats?.[type]?.[email]) return alert("Seat not found.");
 
-  if (!company.usedSeats) {
-    alert("Seat not found.");
-    return;
+  const completionKeys = {
+    der:        `fmcsaDERCompleted_${email}`,
+    supervisor: `fmcsaModuleBCompleted_${email}`,
+    employee:   `fmcsaEmployeeCompleted_${email}`
+  };
+
+  if (localStorage.getItem(completionKeys[type]) === "true") {
+    return alert("Cannot revoke — training already completed.");
   }
-
-  if (!company.usedSeats[type]) {
-    alert("Seat type not found.");
-    return;
-  }
-
-  if (!company.usedSeats[type][email]) {
-    alert("Seat not found.");
-    return;
-  }
-
-  /* 🚫 BLOCK IF COMPLETED */
-
-  let completed = false;
-
-  if (type === "der") {
-    completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-  }
-
-  if (type === "supervisor") {
-    completed = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-  }
-
-  if (type === "employee") {
-    completed = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-  }
-
-  if (completed) {
-    alert("Cannot revoke — training already completed");
-    return;
-  }
-
-  /* ✅ REMOVE CORRECTLY */
 
   company.usedSeats[type][email] = {
-  revoked: true,
-  assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
-};
+    revoked:    true,
+    assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
+  };
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  /* 🔥 RE-RENDER */
-
   renderSeatAssignments(company);
-}
+};
 
 /* =========================================================
-   BUY EMPLOYEE SEATS (5 PACK)
+   BUY SEATS
 ========================================================= */
 
 function buyEmployeeSeats(qty = 5) {
-
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.seats.employee) {
-    company.seats.employee = { total: 0 };
-  }
-
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.employee) company.seats.employee = { total: 0 };
   company.seats.employee.total += qty;
-
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  alert(`${qty} Employee seats purchased!`);
-
+  alert(`${qty} Employee seat(s) purchased!`);
   location.reload();
 }
 
-/* =========================================================
-   BUY SUPERVISOR SEAT
-========================================================= */
-
 function buySupervisorSeats(qty = 1) {
-
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.seats.supervisor) {
-    company.seats.supervisor = { total: 0 };
-  }
-
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
   company.seats.supervisor.total += qty;
-
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
   alert(`${qty} Supervisor seat(s) purchased!`);
-
   location.reload();
 }
 
 function buyDerSeats(qty = 1) {
-
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.seats.der) {
-    company.seats.der = { total: 0 };
-  }
-
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.seats.der) company.seats.der = { total: 0 };
   company.seats.der.total += qty;
-
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
   alert(`${qty} DER seat(s) purchased!`);
-
   location.reload();
 }
+
+/* =========================================================
+   INVITE / RESEND / COPY
+========================================================= */
+
+function inviteEmployee() {
+  const input = document.getElementById("inviteEmail");
+  const msg   = document.getElementById("inviteMsg");
+  if (!input) return;
+
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes("@")) { if (msg) msg.textContent = "Enter a valid email"; return; }
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  if (users.find(u => u.email === email)) {
+    if (msg) msg.textContent = "User already registered. Assign a seat instead.";
+    return;
+  }
+
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.invites)              company.invites              = {};
+  if (!company.usedSeats)            company.usedSeats            = {};
+  if (!company.usedSeats.employee)   company.usedSeats.employee   = {};
+
+  if (company.invites[email]) { if (msg) msg.textContent = "Already invited"; return; }
+
+  const hasActiveSeat =
+    (company.usedSeats?.employee?.[email]   && company.usedSeats.employee[email].revoked   !== true) ||
+    (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+    (company.usedSeats?.der?.[email]        && company.usedSeats.der[email].revoked        !== true);
+  if (hasActiveSeat) { if (msg) msg.textContent = "User already assigned"; return; }
+
+  const inviteCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: inviteCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "pending" };
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) msg.textContent = "Invite created: " + inviteCode;
+  input.value = "";
+}
+
+function resendInvite(email) {
+  email = email.toLowerCase().trim();
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company.invites) company.invites = {};
+
+  const existing = company.invites[email];
+  const msg = document.getElementById("inviteMsg");
+
+  if (existing) {
+    if (msg) msg.innerHTML = `Invite Code: <strong>${existing.code}</strong> <button onclick="copyInvite('${existing.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+    return;
+  }
+
+  const newCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: newCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "resent" };
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+
+  if (msg) msg.innerHTML = `New Invite Code: <strong>${newCode}</strong> <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+}
+
+function copyInvite(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const msg = document.getElementById("inviteMsg");
+    if (msg) msg.innerHTML += " ✅ Copied!";
+  });
+}
+
+/* =========================================================
+   VIEW CERTIFICATE
+========================================================= */
+
+function viewEmployeeCert(email) {
+  email = email.toLowerCase().trim();
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.usedSeats) { alert("No company data found"); return; }
+
+  const isAssigned =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+
+  if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
+
+  const certs = JSON.parse(localStorage.getItem(`amsCertificates_${email}`) || "[]");
+  if (!certs.length) { alert("No certificate found for this employee"); return; }
+
+  const latestCert = certs[certs.length - 1];
+  sessionStorage.setItem("adminViewing", "true");
+  window.location.href = `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
+}
+
+/* =========================================================
+   TOGGLE MENUS
+========================================================= */
+
+function toggleMenu(email) {
+  const menu = document.getElementById(`menu-${email}`);
+  if (!menu) return;
+  const isOpen = menu.style.display === "block";
+  document.querySelectorAll(".action-menu").forEach(m => m.style.display = "none");
+  menu.style.display = isOpen ? "none" : "block";
+}
+
+function toggleSeatMenu() {
+  const menu = document.getElementById("seatMenu");
+  if (!menu) return;
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* Auto-close seat menu */
+document.addEventListener("click", function (e) {
+  const menu   = document.getElementById("seatMenu");
+  const button = document.querySelector("[onclick='toggleSeatMenu()']");
+  if (!menu || !button) return;
+  if (!menu.contains(e.target) && !button.contains(e.target)) menu.style.display = "none";
+});
+
+/* Auto-close manage menus */
+document.addEventListener("click", function (e) {
+  const menus   = document.querySelectorAll(".action-menu");
+  const buttons = document.querySelectorAll("[onclick^='toggleMenu']");
+  let inside = false;
+  menus.forEach(m   => { if (m.contains(e.target))   inside = true; });
+  buttons.forEach(b => { if (b.contains(e.target))   inside = true; });
+  if (!inside) menus.forEach(m => m.style.display = "none");
+});
 
 /* =========================================================
    LOGOUT
@@ -1045,278 +663,4 @@ function buyDerSeats(qty = 1) {
 function logout() {
   localStorage.removeItem("amsUser");
   window.location.href = "/ams-training-portal/frontend/pages/login.html";
-}
-
-/* =========================================================
-   INVITE EMPLOYEE (REAL SYSTEM READY)
-========================================================= */
-
-function inviteEmployee() {
-
-  const input = document.getElementById("inviteEmail");
-  const msg = document.getElementById("inviteMsg");
-
-  if (!input) return;
-
-  const email = input.value.trim().toLowerCase();
-
-  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-
-  const exists = users.find(u => u.email === email);
-
-  if (exists) {
-    if (msg) msg.textContent = "User already registered. Assign a seat instead.";
-    return;
-  }
-   
-  /* =========================
-     VALIDATION
-  ========================= */
-
-  if (!email || !email.includes("@")) {
-    if (msg) msg.textContent = "Enter a valid email";
-    return;
-  }
-
-  let company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.invites) company.invites = {};
-  if (!company.usedSeats) company.usedSeats = {};
-  if (!company.usedSeats.employee) company.usedSeats.employee = {};
-
-  /* =========================
-     BLOCK DUPLICATES
-  ========================= */
-
-  if (company.invites[email]) {
-    if (msg) msg.textContent = "Already invited";
-    return;
-  }
-
-  /* 🚫 Already has seat */
-   
-const hasActiveSeat =
-  (company.usedSeats?.employee?.[email] && company.usedSeats.employee[email].revoked !== true) ||
-  (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
-  (company.usedSeats?.der?.[email] && company.usedSeats.der[email].revoked !== true);
-
-if (hasActiveSeat) {
-  msg.textContent = "User already assigned";
-  return;
-}
-
-  /* =========================
-     GENERATE INVITE CODE
-  ========================= */
-
-  const inviteCode =
-    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  company.invites[email] = {
-    email,
-    code: inviteCode,
-    program: company.program || "unknown",
-    role: "employee",
-    createdAt: Date.now(),
-    status: "pending"
-  };
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  /* =========================
-     UI FEEDBACK
-  ========================= */
-
-  if (msg) msg.textContent = "Invite created: " + inviteCode;
-
-  input.value = "";
-
-}
-
-function viewEmployeeCert(email) {
-
-  email = email.toLowerCase().trim(); // 🔥 FIX
-
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.usedSeats) {
-    alert("No company data found");
-    return;
-  }
-
-  /* =========================
-     🔒 SECURITY CHECK
-  ========================= */
-
-  const isAssigned =
-  (company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked) ||
-  (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
-  (company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked);
-
-  if (!isAssigned) {
-    alert("Access denied: This employee is not assigned to your company.");
-    return;
-  }
-
-  /* =========================
-     LOAD CERT
-  ========================= */
-
-  const key = `amsCertificates_${email}`;
-  const certs = JSON.parse(localStorage.getItem(key) || "[]");
-
-  if (!certs.length) {
-    alert("No certificate found for this employee");
-    return;
-  }
-
-  const latestCert = certs[certs.length - 1];
-
-  /* 🔥 FLAG ADMIN VIEW */
-  sessionStorage.setItem("adminViewing", "true");
-
-  /* ✅ REDIRECT */
-  window.location.href =
-    `fmcsa-certificates.html?id=${latestCert.id}&email=${email}`;
-}
-
-function toggleMenu(email) {
-
-  const menu = document.getElementById(`menu-${email}`);
-  if (!menu) return;
-
-  const isOpen = menu.style.display === "block";
-
-  // close all menus
-  document.querySelectorAll(".action-menu").forEach(m => {
-    m.style.display = "none";
-  });
-
-  // toggle current
-  menu.style.display = isOpen ? "none" : "block";
-}
-
-function toggleSeatMenu() {
-  const menu = document.getElementById("seatMenu");
-  if (!menu) return;
-
-  const isOpen = menu.style.display === "block";
-  menu.style.display = isOpen ? "none" : "block";
-}
-
-/* =========================
-   AUTO CLOSE SEAT MENU
-========================= */
-
-document.addEventListener("click", function (e) {
-
-  const menu = document.getElementById("seatMenu");
-  const button = document.querySelector("[onclick='toggleSeatMenu()']");
-
-  if (!menu || !button) return;
-
-  if (!menu.contains(e.target) && !button.contains(e.target)) {
-    menu.style.display = "none";
-  }
-
-});
-
-/* =========================
-   AUTO CLOSE MANAGE MENUS
-========================= */
-
-document.addEventListener("click", function (e) {
-
-  // ALL manage menus
-  const menus = document.querySelectorAll(".action-menu");
-
-  // ALL manage buttons
-  const buttons = document.querySelectorAll("[onclick^='toggleMenu']");
-
-  let clickedInsideMenu = false;
-
-  menus.forEach(menu => {
-    if (menu.contains(e.target)) {
-      clickedInsideMenu = true;
-    }
-  });
-
-  buttons.forEach(btn => {
-    if (btn.contains(e.target)) {
-      clickedInsideMenu = true;
-    }
-  });
-
-  if (!clickedInsideMenu) {
-    menus.forEach(menu => {
-      menu.style.display = "none";
-    });
-  }
-
-});
-
-function resendInvite(email) {
-
-   email = email.toLowerCase().trim();
-   
-  let company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
-  if (!company.invites) company.invites = {};
-
-  const existingInvite = company.invites[email];
-
-  const msg = document.getElementById("inviteMsg");
-
-  if (existingInvite) {
-  if (msg) {
-    msg.innerHTML = `
-      Invite Code: <strong>${existingInvite.code}</strong>
-      <button onclick="copyInvite('${existingInvite.code}')"
-        style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-        Copy
-      </button>
-    `;
-  }
-  return;
-}
-
-  const newCode =
-    "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  company.invites[email] = {
-    email,
-    code: newCode,
-    program: company.program || "unknown",
-    role: "employee",
-    createdAt: Date.now(),
-    status: "resent"
-  };
-
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-
-  if (msg) {
-  msg.innerHTML = `
-    New Invite Code: <strong>${newCode}</strong>
-    <button onclick="copyInvite('${newCode}')"
-      style="margin-left:10px; padding:4px 8px; cursor:pointer;">
-      Copy
-    </button>
-  `;
-}
-   
-}
-
-   /* =========================================================
-   COPY INVITE CODE (GLOBAL)
-========================================================= */
-function copyInvite(code) {
-  navigator.clipboard.writeText(code).then(() => {
-    const msg = document.getElementById("inviteMsg");
-    if (msg) {
-      msg.innerHTML += " ✅ Copied!";
-    }
-  });
 }
