@@ -497,6 +497,14 @@ function gradeAlcoholQuiz() {
       localStorage.setItem(MODULE_B_CERT_ID_KEY, certId);
     }
 
+    /* Save cert ID into companyProfile so admin can view it */
+    try {
+      const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+      if (!cp.certIds) cp.certIds = {};
+      cp.certIds[email] = { certId, type: "supervisor", date: Date.now() };
+      localStorage.setItem("companyProfile", JSON.stringify(cp));
+    } catch(e) {}
+
     if (typeof generateSupervisorCertificate === "function") generateSupervisorCertificate();
 
     localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
