@@ -13,10 +13,10 @@ const COURSE_KEYS = {
   employee: "paid_employee",
   fmcsa: "paid_fmcsa"
 };
+
 /* =========================
    FAA MODULE REGISTRY
 ========================= */
-
 const FAA_MODULES = {
 
   employee: {
@@ -41,6 +41,7 @@ const FAA_MODULES = {
   }
 
 };
+
 /* =========================
    FAA BUTTON ENGINE
 ========================= */
@@ -60,34 +61,27 @@ function updateFAAModuleButtons() {
       localStorage.getItem(config.completedKey(user.email)) === "true";
 
     if (completed) {
-
       btn.textContent = "🎓 View Certificate";
-
-   btn.onclick = () => {
-  window.location.href = "certificates.html#"+module;
-};
-
+      btn.onclick = () => {
+        window.location.href = "certificates.html#" + module;
+      };
       btn.disabled = false;
       return;
     }
-     
-const paidFAA =
-  localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
 
-if (paidFAA) {
+    const paidFAA =
+      localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
 
-  btn.textContent = "Start Training";
-
-  btn.onclick = () => {
-    window.location.href = config.start;
-  };
-
-  btn.disabled = false;
-  return;
-}
+    if (paidFAA) {
+      btn.textContent = "Start Training";
+      btn.onclick = () => {
+        window.location.href = config.start;
+      };
+      btn.disabled = false;
+      return;
+    }
 
     btn.textContent = "🔒 Locked — Purchase Required";
-
     btn.onclick = () => {
       window.location.href = `payment.html?module=${module}`;
     };
@@ -99,7 +93,6 @@ if (paidFAA) {
 /* =========================
    BADGE HELPERS
 ========================= */
-
 function setAssignedBadge(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -128,9 +121,7 @@ function logout() {
 function hasAccess(course) {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   if (!user) return false;
-
   const paidKey = COURSE_KEYS[course];
-
   return localStorage.getItem(`${paidKey}_${user.email}`) === "true";
 }
 
@@ -142,7 +133,6 @@ function updateFAACompletionDates() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   if (!user) return;
 
-  /* DER */
   const derDate = localStorage.getItem(`derTrainingDate_${user.email}`);
   if (derDate) {
     const el = document.getElementById("derCompletionDate");
@@ -154,7 +144,6 @@ function updateFAACompletionDates() {
     }
   }
 
-  /* SUPERVISOR */
   const supDate = localStorage.getItem(`supervisorTrainingDate_${user.email}`);
   if (supDate) {
     const el = document.getElementById("supervisorCompletionDate");
@@ -166,7 +155,6 @@ function updateFAACompletionDates() {
     }
   }
 
-  /* EMPLOYEE */
   const empDate = localStorage.getItem(`employeeTrainingDate_${user.email}`);
   if (empDate) {
     const el = document.getElementById("employeeCompletionDate");
@@ -179,6 +167,7 @@ function updateFAACompletionDates() {
   }
 
 }
+
 /* =========================
    EMPLOYEE SEAT STATUS
 ========================= */
@@ -196,15 +185,15 @@ function getEmployeeSeatStatus() {
   }
 
   if (
-  company.usedSeats?.employee?.[user.email] ||
-  company.usedSeats?.supervisor?.[user.email] ||
-  company.usedSeats?.der?.[user.email]
-) {
+    company.usedSeats?.employee?.[user.email] ||
+    company.usedSeats?.supervisor?.[user.email] ||
+    company.usedSeats?.der?.[user.email]
+  ) {
     return { type: "assigned", label: "🎟 Seat Assigned" };
   }
 
   const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
+  const used  = Object.keys(company?.usedSeats || {}).length;
   const remaining = total - used;
 
   if (remaining > 0) {
@@ -218,7 +207,7 @@ function getEmployeeSeatStatus() {
 }
 
 function handleEmployeeClick() {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (!user) {
@@ -226,60 +215,50 @@ function handleEmployeeClick() {
     return;
   }
 
-  // 🔵 INDIVIDUAL PURCHASE FLOW
-  if (
-    user.role === "individual" &&
-    localStorage.getItem("paid_employee") === "true"
-  ) {
+  if (user.role === "individual" && localStorage.getItem("paid_employee") === "true") {
     startFAA("employee");
     return;
   }
 
-  // 🔵 INDIVIDUAL NOT PAID
   if (user.role === "individual") {
     window.location.href = "../pages/payment.html?module=employee";
     return;
   }
 
-  // 🔵 COMPANY EMPLOYEE FLOW (Admin-Controlled Seats)
-if (user.role === "employee" && user.type === "company") {
+  if (user.role === "employee" && user.type === "company") {
 
-  if (!company) {
-    showToast("Company profile not found.", "error");
+    if (!company) {
+      showToast("Company profile not found.", "error");
+      return;
+    }
+
+    if (
+      company.usedSeats?.employee?.[user.email] ||
+      company.usedSeats?.supervisor?.[user.email] ||
+      company.usedSeats?.der?.[user.email]
+    ) {
+      startFAA("employee");
+      return;
+    }
+
+    showToast(
+      "You do not have a company seat assigned. Please contact your administrator.",
+      "warning"
+    );
     return;
   }
 
-  // Seat already assigned
-  if (
-  company.usedSeats?.employee?.[user.email] ||
-  company.usedSeats?.supervisor?.[user.email] ||
-  company.usedSeats?.der?.[user.email]
-) {
-    startFAA("employee");
+  const total     = company?.seats?.employee?.total ?? 0;
+  const used      = Object.keys(company?.usedSeats || {}).length;
+  const remaining = total - used;
+
+  if (remaining <= 0) {
+    showToast("No seats available.", "error");
     return;
   }
 
-  // 🔴 No seat assigned — show admin warning
-  showToast(
-    "You do not have a company seat assigned. Please contact your administrator.",
-    "warning"
-  );
-
+  showToast("You must be assigned a company seat by your administrator.", "warning");
   return;
-}
-   
-const total = company?.seats?.employee?.total ?? 0;
-const used = Object.keys(company?.usedSeats || {}).length;
-const remaining = total - used;
-
-if (remaining <= 0) {
-  showToast("No seats available.", "error");
-  return;
-}
-
-// ❌ Do NOT auto-assign seat anymore
-showToast("You must be assigned a company seat by your administrator.", "warning");
-return;
 
   // 🔴 FALLBACK BLOCK
   showToast(
@@ -292,12 +271,12 @@ return;
    START FAA COURSES
 ========================= */
 function startFAA(course) {
-   
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+
+  const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (course !== "employee" && !hasAccess(course)) {
-    alert(`${course.toUpperCase()} Training is locked.\n\nPlease purchase this course to continue.`);
+    showToast(`${course.toUpperCase()} Training is locked. Please purchase this course to continue.`, "warning");
     return;
   }
 
@@ -306,7 +285,7 @@ function startFAA(course) {
     !hasAccess("employee") &&
     !company?.usedSeats?.[user?.email]
   ) {
-    alert("Employee Training is locked.\n\nPurchase required or no company seats available.");
+    showToast("Employee Training is locked. Purchase required or no company seats available.", "warning");
     return;
   }
 
@@ -317,7 +296,7 @@ function startFAA(course) {
    CONSUME EMPLOYEE SEAT
 ========================= */
 function consumeEmployeeSeatAndStart(startUrl) {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
   if (!user || !company) {
@@ -325,17 +304,15 @@ function consumeEmployeeSeatAndStart(startUrl) {
     return;
   }
 
-  if (!company.usedSeats) {
-    company.usedSeats = {};
-  }
+  if (!company.usedSeats) company.usedSeats = {};
 
   if (company.usedSeats[user.email]) {
     window.location.href = startUrl;
     return;
   }
 
-  const total = company?.seats?.employee?.total ?? 0;
-  const used = Object.keys(company?.usedSeats || {}).length;
+  const total     = company?.seats?.employee?.total ?? 0;
+  const used      = Object.keys(company?.usedSeats || {}).length;
   const remaining = total - used;
 
   if (remaining <= 0) {
@@ -345,7 +322,6 @@ function consumeEmployeeSeatAndStart(startUrl) {
 
   company.usedSeats[user.email] = true;
   localStorage.setItem("companyProfile", JSON.stringify(company));
-
   window.location.href = startUrl;
 }
 
@@ -353,133 +329,84 @@ function updateFMCSATimer() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   if (!user) return;
 
-  const paid =
-    localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+  const paid = localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
+  if (!paid) return;
 
-  if (!paid) return; // ✅ THIS IS WHAT YOU WERE MISSING
-
-  const purchaseDate =
-    localStorage.getItem(`fmcsa_start_date_${user.email}`);
+  const purchaseDate = localStorage.getItem(`fmcsa_start_date_${user.email}`);
   if (!purchaseDate) return;
 
   const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-  const expiration = parseInt(purchaseDate) + THIRTY_DAYS;
-  const remaining = expiration - now;
+  const now         = Date.now();
+  const expiration  = parseInt(purchaseDate) + THIRTY_DAYS;
+  const remaining   = expiration - now;
 
   const fmcsaCard = document.getElementById("fmcsaCard");
   if (!fmcsaCard) return;
 
   if (remaining <= 0) {
-    // Expired
     localStorage.removeItem(`paid_fmcsa_${user.email}`);
     localStorage.removeItem(`fmcsa_start_date_${user.email}`);
-
     const btn = fmcsaCard.querySelector("button");
     if (btn) {
       btn.textContent = "Expired — Purchase Required";
-      btn.onclick = () =>
-        (window.location.href = "../pages/payment.html?type=fmcsa");
+      btn.onclick = () => (window.location.href = "../pages/payment.html?type=fmcsa");
     }
-
     return;
   }
 
   const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
-
   const info = fmcsaCard.querySelector(".fmcsa-timer");
   if (info) {
-    info.textContent = `Access expires in ${daysLeft} day${
-      daysLeft > 1 ? "s" : ""
-    }`;
+    info.textContent = `Access expires in ${daysLeft} day${daysLeft > 1 ? "s" : ""}`;
   }
 }
-/* =========================
-   GET USER ACCESS (FINAL FIX)
-========================= */
 
+/* =========================
+   GET USER ACCESS
+========================= */
 function getUserAccess(email) {
 
-  const company =
-    JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) {
-    return {
-      employee: false,
-      supervisor: false,
-      der: false
-    };
-  }
+  if (!company.usedSeats) return { employee: false, supervisor: false, der: false };
 
   function checkSeat(seat) {
-  if (seat === true) return true;
-  if (typeof seat === "object" && seat !== null && seat.revoked !== true) return true;
-  return false;
-}
-
-const employee = checkSeat(company.usedSeats?.employee?.[email]);
-const supervisor = checkSeat(company.usedSeats?.supervisor?.[email]);
-const der = checkSeat(company.usedSeats?.der?.[email]);
+    if (seat === true) return true;
+    if (typeof seat === "object" && seat !== null && seat.revoked !== true) return true;
+    return false;
+  }
 
   return {
-    employee,
-    supervisor,
-    der
+    employee:   checkSeat(company.usedSeats?.employee?.[email]),
+    supervisor: checkSeat(company.usedSeats?.supervisor?.[email]),
+    der:        checkSeat(company.usedSeats?.der?.[email])
   };
 }
+
 /* =========================
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  
-  const company =
-  JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-const storedProgram = localStorage.getItem("amsProgram");
+  const company      = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const storedProgram = localStorage.getItem("amsProgram");
+  const program      = (company.program || storedProgram || "").toLowerCase();
 
-const program = (
-  company.program ||
-  storedProgram ||
-  ""
-).toLowerCase();
+  console.log("PROGRAM:", program);
 
-console.log("PROGRAM:", program);
-   
-/* =========================
-   PROGRAM LOCK (FIXED)
-========================= */
+  /* PROGRAM LOCK */
+  if (program === "fmcsa") {
+    document.querySelectorAll(".faa-section").forEach(el => el.remove());
+  }
+  if (program === "faa") {
+    document.querySelectorAll(".fmcsa-section").forEach(el => el.remove());
+  }
 
-if (program === "fmcsa") {
-
-  document.querySelectorAll(".faa-section")
-    .forEach(el => el.remove());
-
-}
-
-if (program === "faa") {
-
-  document.querySelectorAll(".fmcsa-section")
-    .forEach(el => el.remove());
-
-}
-/* =========================
-   EMPLOYEE MODULE FILTER (FINAL FIX)
-========================= */
-  
-if (user?.role === "employee") {
-
-  const access = getUserAccess(user.email);
-
-  /* DO NOT REMOVE MODULES */
-  /* Let button logic handle access */
-
-  console.log("Employee Access:", access);
-
-}
-
-/* =========================
-   EMPLOYEE LOCK (CORRECT)
-========================= */
+  /* EMPLOYEE MODULE FILTER */
+  if (user?.role === "employee") {
+    const access = getUserAccess(user.email);
+    console.log("Employee Access:", access);
+  }
 
   /* Global Notice */
   const notice = sessionStorage.getItem("ams_notice");
@@ -491,7 +418,7 @@ if (user?.role === "employee") {
   /* Employee Welcome */
   if (user?.role === "employee") {
     const welcome = document.getElementById("employeeWelcome");
-    if (welcome) welcome.style.display = "block";
+    if (welcome) welcome.classList.add("show");
   }
 
   const status = getEmployeeSeatStatus();
@@ -501,96 +428,57 @@ if (user?.role === "employee") {
       el.innerHTML = `<span class="seat-badge ${status.type}">${status.label}</span>`;
     }
   }
-   
-/* =========================
-   SHOW ADMIN PANEL
-========================= */
 
-const currentUser = JSON.parse(localStorage.getItem("amsUser") || "{}");
-
-if (currentUser.role === "company_admin" || currentUser.role === "owner") {
-  const panel = document.getElementById("adminPanel");
-  if (panel) panel.style.display = "block";
-}
-   
-updateFAAModuleButtons();
-updateFAACompletionDates();
-
-updateFMCSAStatus();
-
-updateFMCSATimer();
-updateFMCSDERButtonState();
-updateFMCSAEmployeeButton();
-updateFMCSASupervisorButton();
-
-updateFMCSAProgress();
-renderSeatList();
-   
-/* =========================
-MODULE A COMPLETION DATE
-========================= */
-
-const modADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
-
-if (modADate) {
-
-  const el = document.getElementById("moduleACompletionDate");
-
-  if (el) {
-
-    const date = new Date(parseInt(modADate));
-
-    el.innerHTML = `
-  <span class="status-badge status-completed">✔ Completed</span>
-  ${date.toLocaleDateString("en-US")}
-`;
-
+  /* Show Admin Panel */
+  const currentUser = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  if (currentUser.role === "company_admin" || currentUser.role === "owner") {
+    const panel = document.getElementById("adminPanel");
+    if (panel) panel.style.display = "block";
   }
 
-}
-   /* =========================
-MODULE B COMPLETION DATE
-========================= */
+  updateFAAModuleButtons();
+  updateFAACompletionDates();
+  updateFMCSAStatus();
+  updateFMCSATimer();
+  updateFMCSDERButtonState();
+  updateFMCSAEmployeeButton();
+  updateFMCSASupervisorButton();
+  updateFMCSAProgress();
+  renderSeatList();
 
-const modBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
-
-if (modBDate) {
-
-  const el = document.getElementById("moduleBCompletionDate");
-
-  if (el) {
-
-    const date = new Date(parseInt(modBDate));
-
-    el.innerHTML = `
-  <span class="status-badge status-completed">✔ Completed</span>
-  ${date.toLocaleDateString("en-US")}
-`;
-
+  /* MODULE A COMPLETION DATE */
+  const modADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
+  if (modADate) {
+    const el = document.getElementById("moduleACompletionDate");
+    if (el) {
+      const date = new Date(parseInt(modADate));
+      el.innerHTML = `<span class="status-badge status-completed">✔ Completed</span> ${date.toLocaleDateString("en-US")}`;
+    }
   }
 
-}
-
-const empDate = localStorage.getItem(`fmcsaEmployeeDate_${email}`);
-
-if (empDate) {
-
-  const el = document.getElementById("employeeFmcsaCompletionDate")
-
-  if (el) {
-
-    const date = new Date(parseInt(empDate));
-
-    const formatted =
-      date.toLocaleDateString("en-US",{ timeZone:"America/New_York" });
-
-    el.innerHTML =
-      `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
-
+  /* MODULE B COMPLETION DATE */
+  const modBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
+  if (modBDate) {
+    const el = document.getElementById("moduleBCompletionDate");
+    if (el) {
+      const date = new Date(parseInt(modBDate));
+      el.innerHTML = `<span class="status-badge status-completed">✔ Completed</span> ${date.toLocaleDateString("en-US")}`;
+    }
   }
 
-}
+  /* FMCSA EMPLOYEE COMPLETION DATE */
+  const empDate = localStorage.getItem(`fmcsaEmployeeDate_${email}`);
+  if (empDate) {
+    const el = document.getElementById("employeeFmcsaCompletionDate");
+    if (el) {
+      const date      = new Date(parseInt(empDate));
+      const formatted = date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+      el.innerHTML    = `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
+    }
+  }
+
 });
+
 /* =========================
    TOAST
 ========================= */
@@ -598,9 +486,7 @@ function showToast(message, type = "info") {
   const toast = document.createElement("div");
   toast.className = `ams-toast ${type}`;
   toast.textContent = message;
-
   document.body.appendChild(toast);
-
   setTimeout(() => toast.classList.add("show"), 50);
   setTimeout(() => {
     toast.classList.remove("show");
@@ -611,7 +497,6 @@ function showToast(message, type = "info") {
 /* =========================
    FMCSA COMPLETION STATUS
 ========================= */
-
 function updateFMCSAStatus() {
 
   const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
@@ -622,65 +507,45 @@ function updateFMCSAStatus() {
   const certBadge = document.getElementById("certBadge");
 
   if (modABadge) {
-
-    if (modA) {
-      modABadge.textContent = "✔ Completed";
-      modABadge.className = "status-badge status-completed";
-    } else {
-      modABadge.textContent = "⏳ Not Started";
-      modABadge.className = "status-badge status-inprogress";
-    }
-
+    modABadge.textContent = modA ? "✔ Completed" : "⏳ Not Started";
+    modABadge.className   = modA ? "status-badge status-completed" : "status-badge status-inprogress";
   }
 
   if (modBBadge) {
-
     if (modB) {
       modBBadge.textContent = "✔ Completed";
-      modBBadge.className = "status-badge status-completed";
+      modBBadge.className   = "status-badge status-completed";
     } else if (modA) {
       modBBadge.textContent = "⏳ Ready to Start";
-      modBBadge.className = "status-badge status-inprogress";
+      modBBadge.className   = "status-badge status-inprogress";
     } else {
       modBBadge.textContent = "🔒 Locked";
-      modBBadge.className = "status-badge status-locked";
+      modBBadge.className   = "status-badge status-locked";
     }
-
   }
 
   if (certBadge) {
-
-    if (modA && modB) {
-      certBadge.textContent = "✔ Certificate Available";
-      certBadge.className = "status-badge status-completed";
-    } else {
-      certBadge.textContent = "🔒 Locked";
-      certBadge.className = "status-badge status-locked";
-    }
-
+    certBadge.textContent = (modA && modB) ? "✔ Certificate Available" : "🔒 Locked";
+    certBadge.className   = (modA && modB) ? "status-badge status-completed" : "status-badge status-locked";
   }
 
 }
 
 function handleDerFmcsa() {
 
-  const completed =
-  localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
   if (completed) {
     const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-
-if (certId) {
-  window.location.href = `fmcsa-certificates.html?id=${certId}`;
-} else {
-  alert("Certificate not found");
-}
+    if (certId) {
+      window.location.href = `fmcsa-certificates.html?id=${certId}`;
+    } else {
+      showToast("Certificate not found.", "error");
+    }
     return;
   }
 
-  if (
-  localStorage.getItem(`paid_der_fmcsa_${email}`) === "true"
-) {
+  if (localStorage.getItem(`paid_der_fmcsa_${email}`) === "true") {
     window.location.href = "fmcsa-der.html";
   } else {
     window.location.href = "payment.html?module=der_fmcsa";
@@ -699,14 +564,14 @@ function updateFMCSAProgress() {
   if (!fill || !text) return;
 
   let percent = 0;
-
   if (modA) percent = 50;
   if (modA && modB) percent = 100;
 
-  fill.style.width = percent + "%";
-  text.textContent = percent + "% Complete";
+  fill.style.width    = percent + "%";
+  text.textContent    = percent + "% Complete";
 
 }
+
 /* =========================
    GENERIC SEAT CHECK
 ========================= */
@@ -716,129 +581,76 @@ function hasCompanySeat(type) {
   if (!user) return false;
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const seat    = company?.usedSeats?.[type]?.[user.email];
 
-  const seat = company?.usedSeats?.[type]?.[user.email];
-
-  // ✅ supports BOTH formats
   if (seat === true) return true;
   if (typeof seat === "object" && seat !== null && seat.revoked !== true) return true;
-
   return false;
+
 }
 
 /* =========================
    DER COMPLETION STATUS
 ========================= */
-
 function updateFMCSDERButtonState() {
 
-const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-if (!user) return;
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) return;
 
-const email = user.email;
-  
+  const email = user.email;
+
   const derFmcsaBtn = document.getElementById("derFmcsaBtn");
   if (!derFmcsaBtn) return;
 
   const derDateEl = document.getElementById("derFmcsaCompletionDate");
+  const hasSeat   = hasCompanySeat("der");
+  const paid      = localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
+  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const derDate   = localStorage.getItem(`fmcsaDERDate_${email}`);
 
-  const hasSeat = hasCompanySeat("der");
-
-  const paid =
-    localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
-
-  const completed =
-    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-
-  const derDate =
-    localStorage.getItem(`fmcsaDERDate_${email}`);
-
-  /* =========================
-     COMPLETED
-  ========================= */
   if (completed) {
-
     derFmcsaBtn.textContent = "View DER Certificate";
-
     derFmcsaBtn.onclick = () => {
       const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-
-if (certId) {
-  window.location.href = `fmcsa-certificates.html?id=${certId}`;
-} else {
-  alert("Certificate not found");
-}
+      if (certId) {
+        window.location.href = `fmcsa-certificates.html?id=${certId}`;
+      } else {
+        showToast("Certificate not found.", "error");
+      }
     };
-
     if (derDate && derDateEl) {
       derDateEl.textContent =
-        "✔ Completed " +
-        new Date(Number(derDate)).toLocaleDateString("en-US");
+        "✔ Completed " + new Date(Number(derDate)).toLocaleDateString("en-US");
     }
-
     return;
   }
 
-/* =========================
-   ACCESS CONTROL (FINAL)
-========================= */
+  if (user.role === "employee") {
+    if (hasSeat) {
+      setAssignedBadge("derSeatBadge");
+      derFmcsaBtn.textContent    = "Start DER Training";
+      derFmcsaBtn.style.opacity  = "1";
+      derFmcsaBtn.style.cursor   = "pointer";
+      derFmcsaBtn.onclick = () => { window.location.href = "fmcsa-der.html"; };
+      return;
+    }
+    clearBadge("derSeatBadge");
+    derFmcsaBtn.textContent    = "🔒 Seat Required";
+    derFmcsaBtn.style.opacity  = "0.7";
+    derFmcsaBtn.style.cursor   = "not-allowed";
+    derFmcsaBtn.disabled       = true;
+    derFmcsaBtn.onclick = () => { showToast("No seat assigned. Contact your admin.", "warning"); };
+    return;
+  }
 
-// 👤 COMPANY EMPLOYEE → SEAT ONLY
-if (user.role === "employee") {
-
-  if (hasSeat) {
-
-    setAssignedBadge("derSeatBadge");
-
+  if (paid) {
     derFmcsaBtn.textContent = "Start DER Training";
-    derFmcsaBtn.style.opacity = "1";
-    derFmcsaBtn.style.cursor = "pointer";
-
-    derFmcsaBtn.onclick = () => {
-      window.location.href = "fmcsa-der.html";
-    };
-
+    derFmcsaBtn.onclick = () => { window.location.href = "fmcsa-der.html"; };
     return;
   }
 
-  clearBadge("derSeatBadge");
-
-  derFmcsaBtn.textContent = "🔒 Seat Required";
-  derFmcsaBtn.style.opacity = "0.7";
-  derFmcsaBtn.style.cursor = "not-allowed";
-  derFmcsaBtn.disabled = true;
-
-  derFmcsaBtn.onclick = () => {
-    showToast("No seat assigned. Contact your admin.", "warning");
-  };
-
-  return;
-}
-
-/* =========================
-   INDIVIDUAL USER → PURCHASE
-========================= */
-
-if (paid) {
-
-  derFmcsaBtn.textContent = "Start DER Training";
-
-  derFmcsaBtn.onclick = () => {
-    window.location.href = "fmcsa-der.html";
-  };
-
-  return;
-}
-
-/* =========================
-   LOCKED
-========================= */
-
-derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
-
-derFmcsaBtn.onclick = () => {
-  window.location.href = "payment.html?module=der_fmcsa";
-};
+  derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+  derFmcsaBtn.onclick = () => { window.location.href = "payment.html?module=der_fmcsa"; };
 
 }
 
@@ -850,245 +662,143 @@ function updateFMCSASupervisorButton() {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   if (!user) return;
 
-  const email = user.email;
-
+  const email   = user.email;
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const hasSeat = !!company?.usedSeats?.supervisor?.[email];
+  const paid    = localStorage.getItem(`paid_fmcsa_${email}`) === "true";
+  const modA    = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
+  const modB    = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
 
-  const hasSeat =
-    !!company?.usedSeats?.supervisor?.[email];
-
-  const paid =
-    localStorage.getItem(`paid_fmcsa_${email}`) === "true";
-
-  const modA =
-  localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-
-  const modB =
-  localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-/* =========================
-   COMPLETED (A + B)
-========================= */
-if (modA && modB) {
-
-  btn.textContent = "🎓 View Certificate";
-
-  btn.onclick = () => {
-
-    const certId =
-      localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
-      localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
-
-    if (certId) {
-      window.location.href = `fmcsa-certificates.html?id=${certId}`;
-    } else {
-      alert("Certificate not found");
-    }
-
-  };
-
-  return;
-}
-/* =========================
-   MODULE A DONE ONLY
-========================= */
-if (modA && !modB) {
-
-  btn.textContent = "⚠️ Continue Training (Module B Required)";
-  btn.style.backgroundColor = "#f0ad4e";
-
-  btn.onclick = () => {
-    window.location.href = "fmcsa-drug-alcohol.html";
-  };
-
-  return;
-}
-
-/* =========================
-   NOT STARTED
-========================= */
-btn.textContent = "Start Module A – Reasonable Suspicion";
-
-btn.onclick = () => {
-  window.location.href = "fmcsa-module-a.html";
-};
-  
-  /* COMPANY SEAT */
-  
-if (user.role === "employee") {
-
-  if (hasSeat) {
-
-    setAssignedBadge("supervisorSeatBadge");
-    btn.style.opacity = "1";
-
-    if (modA && !modB) {
-      btn.textContent = "Continue Training";
-      btn.onclick = () => {
-        window.location.href = "fmcsa-drug-alcohol.html";
-      };
-      return;
-    }
-
-    if (!modA) {
-      btn.textContent = "Start Training";
-      btn.onclick = () => {
-        window.location.href = "fmcsa-module-a.html";
-      };
-      return;
-    }
-
-  }
-
-  clearBadge("supervisorSeatBadge");
-
-  btn.textContent = "🔒 Seat Required";
-  btn.style.opacity = "0.7";
-
-  btn.onclick = () => {
-    showToast("No seat assigned. Contact your admin.", "warning");
-  };
-  return;
-}
-
-  /* INDIVIDUAL PURCHASE */
-  if (paid) {
-    btn.textContent = "Start Training";
-
+  if (modA && modB) {
+    btn.textContent = "🎓 View Certificate";
     btn.onclick = () => {
-      window.location.href = "fmcsa-module-a.html";
+      const certId =
+        localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
+        localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+      if (certId) {
+        window.location.href = `fmcsa-certificates.html?id=${certId}`;
+      } else {
+        showToast("Certificate not found.", "error");
+      }
     };
-
     return;
   }
 
-  /* LOCKED */
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => {
-    window.location.href = "payment.html?type=fmcsa";
-  };
-}
-/* =========================
-   FMCSA MODULE UNLOCK SYSTEM
-========================= */
+  if (modA && !modB) {
+    btn.textContent            = "⚠️ Continue Training (Module B Required)";
+    btn.style.backgroundColor  = "#f0ad4e";
+    btn.onclick = () => { window.location.href = "fmcsa-drug-alcohol.html"; };
+    return;
+  }
 
+  btn.textContent = "Start Module A – Reasonable Suspicion";
+  btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+
+  if (user.role === "employee") {
+    if (hasSeat) {
+      setAssignedBadge("supervisorSeatBadge");
+      btn.style.opacity = "1";
+      if (modA && !modB) {
+        btn.textContent = "Continue Training";
+        btn.onclick = () => { window.location.href = "fmcsa-drug-alcohol.html"; };
+        return;
+      }
+      if (!modA) {
+        btn.textContent = "Start Training";
+        btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+        return;
+      }
+    }
+    clearBadge("supervisorSeatBadge");
+    btn.textContent    = "🔒 Seat Required";
+    btn.style.opacity  = "0.7";
+    btn.onclick = () => { showToast("No seat assigned. Contact your admin.", "warning"); };
+    return;
+  }
+
+  if (paid) {
+    btn.textContent = "Start Training";
+    btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+    return;
+  }
+
+  btn.textContent = "🔒 Locked — Purchase Required";
+  btn.onclick = () => { window.location.href = "payment.html?type=fmcsa"; };
+
+}
+
+/* =========================
+   FMCSA EMPLOYEE BUTTON
+========================= */
 function updateFMCSAEmployeeButton() {
 
-  const btn = document.getElementById("employeeTrainingBtn");
+  const btn    = document.getElementById("employeeTrainingBtn");
   const dateEl = document.getElementById("employeeTrainingDate");
 
   if (!btn) return;
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const user    = JSON.parse(localStorage.getItem("amsUser") || "{}");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  const paid =
-    localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
+  const paid         = localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
+  const hasSeat      = !!company?.usedSeats?.employee?.[user.email];
+  const empCompleted = localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
+  const empDate      = localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
 
-  const hasSeat =
-    !!company?.usedSeats?.employee?.[user.email];
-
-  const empCompleted =
-    localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
-
-  const empDate =
-    localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
-
-  /* =========================
-     COMPLETED
-  ========================= */
   if (empCompleted) {
-
-  btn.textContent = "🎓 View Certificate";
-
-  btn.onclick = () => {
-
-    const certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
-
-    if (certId) {
-      window.location.href = `fmcsa-certificates.html?id=${certId}`;
-    } else {
-      alert("Certificate not found");
-    }
-
-  };
-
-  if (dateEl && empDate) {
-    dateEl.textContent =
-      "✔ Completed " +
-      new Date(Number(empDate)).toLocaleDateString("en-US");
-  }
-
-  return;
-}
-
-/* =========================
-   COMPANY EMPLOYEE (SEAT)
-========================= */
-if (user.role === "employee") {
-
-  if (hasSeat) {
-
-    setAssignedBadge("employeeSeatBadge"); // ✅ ADD THIS
-
-    btn.textContent = "Start Training";
-    btn.style.opacity = "1";
-    btn.style.cursor = "pointer";
-
+    btn.textContent = "🎓 View Certificate";
     btn.onclick = () => {
-
-  const route = getEmployeeTrainingRoute();
-
-  if (!route) {
-    alert("Training program not assigned.");
-    return;
-  }
-
-  window.location.href = route;
-};
-
-    return;
-  }
-
-  clearBadge("employeeSeatBadge"); // ✅ ADD THIS
-
-  btn.textContent = "🔒 Seat Required";
-  btn.style.opacity = "0.7";
-  btn.style.cursor = "not-allowed";
-
-  btn.onclick = () => {
-    showToast("No seat assigned. Contact your admin.", "warning");
-  };
-
-  return;
-}
-
-  /* =========================
-     INDIVIDUAL USER
-  ========================= */
-  if (paid) {
-
-    btn.textContent = "Start Training";
-
-    btn.onclick = () => {
-      window.location.href = "fmcsa-employee-training.html";
+      const certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
+      if (certId) {
+        window.location.href = `fmcsa-certificates.html?id=${certId}`;
+      } else {
+        showToast("Certificate not found.", "error");
+      }
     };
-
+    if (dateEl && empDate) {
+      dateEl.textContent =
+        "✔ Completed " + new Date(Number(empDate)).toLocaleDateString("en-US");
+    }
     return;
   }
 
-  /* =========================
-     LOCKED
-  ========================= */
-  btn.textContent = "🔒 Locked — Purchase Required";
+  if (user.role === "employee") {
+    if (hasSeat) {
+      setAssignedBadge("employeeSeatBadge");
+      btn.textContent       = "Start Training";
+      btn.style.opacity     = "1";
+      btn.style.cursor      = "pointer";
+      btn.onclick = () => {
+        const route = getEmployeeTrainingRoute();
+        if (!route) {
+          showToast("Training program not assigned.", "error");
+          return;
+        }
+        window.location.href = route;
+      };
+      return;
+    }
+    clearBadge("employeeSeatBadge");
+    btn.textContent   = "🔒 Seat Required";
+    btn.style.opacity = "0.7";
+    btn.style.cursor  = "not-allowed";
+    btn.onclick = () => { showToast("No seat assigned. Contact your admin.", "warning"); };
+    return;
+  }
 
-  btn.onclick = () => {
-    window.location.href = "payment.html?module=fmcsa_employee";
-  };
+  if (paid) {
+    btn.textContent = "Start Training";
+    btn.onclick = () => { window.location.href = "fmcsa-employee-training.html"; };
+    return;
+  }
+
+  btn.textContent = "🔒 Locked — Purchase Required";
+  btn.onclick = () => { window.location.href = "payment.html?module=fmcsa_employee"; };
 
 }
+
 /* =========================
-   ADMIN SEAT CONTROL (FINAL CLEAN VERSION)
+   ADMIN SEAT CONTROL
 ========================= */
 function assignSeat(type) {
 
@@ -1096,38 +806,33 @@ function assignSeat(type) {
   if (!input) return;
 
   const email = input.value.trim().toLowerCase();
-  if (!email) {
-    alert("Enter email");
-    return;
-  }
+  if (!email) { showToast("Enter an email address.", "error"); return; }
 
   let company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  /* 🔥 FORCE CLEAN STRUCTURE */
   company.usedSeats = {
-    employee: company.usedSeats?.employee || {},
+    employee:   company.usedSeats?.employee   || {},
     supervisor: company.usedSeats?.supervisor || {},
-    der: company.usedSeats?.der || {}
+    der:        company.usedSeats?.der        || {}
   };
 
   if (company.usedSeats[type][email]) {
-    alert("Already assigned");
+    showToast("This user is already assigned.", "warning");
     return;
   }
 
   company.usedSeats[type][email] = true;
-
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert(`${type.toUpperCase()} seat assigned`);
-
+  showToast(`${type.toUpperCase()} seat assigned to ${email}.`, "info");
   renderSeatList();
-  updateSeatCounts?.();
-
+  if (typeof updateSeatCounts === "function") updateSeatCounts();
   input.value = "";
+
 }
+
 /* =========================
-   REMOVE SEAT (FINAL CLEAN)
+   REMOVE SEAT
 ========================= */
 function removeSeat() {
 
@@ -1135,20 +840,13 @@ function removeSeat() {
   if (!input) return;
 
   const email = input.value.trim().toLowerCase();
-  if (!email) {
-    alert("Enter email");
-    return;
-  }
+  if (!email) { showToast("Enter an email address.", "error"); return; }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) {
-    alert("No seats exist");
-    return;
-  }
+  if (!company.usedSeats) { showToast("No seats exist.", "warning"); return; }
 
   let removed = false;
-
   ["employee", "supervisor", "der"].forEach(type => {
     if (company.usedSeats[type]?.[email]) {
       delete company.usedSeats[type][email];
@@ -1156,76 +854,57 @@ function removeSeat() {
     }
   });
 
-  if (!removed) {
-    alert("No seat found for this user");
-    return;
-  }
+  if (!removed) { showToast("No seat found for this user.", "warning"); return; }
 
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  alert("Seat removed");
-
+  showToast("Seat removed.", "info");
   renderSeatList();
-  updateSeatCounts?.();
-
+  if (typeof updateSeatCounts === "function") updateSeatCounts();
   input.value = "";
+
 }
 
-
 /* =========================
-   RENDER SEAT LIST (FINAL CLEAN)
+   RENDER SEAT LIST
 ========================= */
 function renderSeatList() {
 
   const container = document.getElementById("seatList");
   if (!container) return;
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company  = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   const allSeats = company.usedSeats || {};
-
   let rows = [];
 
   ["employee", "supervisor", "der"].forEach(type => {
-
     const users = allSeats[type] || {};
-
     Object.keys(users).forEach(email => {
       rows.push(`
-        <div style="padding:8px; border-bottom:1px solid #eee;">
+        <div style="padding:8px;border-bottom:1px solid var(--color-divider);">
           🎟 ${email} — <strong>${type.toUpperCase()}</strong>
         </div>
       `);
     });
-
   });
 
-  if (rows.length === 0) {
-    container.innerHTML = "<p>No assigned seats</p>";
-    return;
-  }
+  container.innerHTML = rows.length
+    ? rows.join("")
+    : "<p style='color:var(--color-text-muted);margin-top:8px;'>No assigned seats</p>";
 
-  container.innerHTML = rows.join("");
 }
 
-
 /* =========================
-   EMPLOYEE TRAINING ROUTE (FINAL SAFE)
+   EMPLOYEE TRAINING ROUTE
 ========================= */
 function getEmployeeTrainingRoute() {
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-
   if (!company.program) return null;
 
   const program = company.program.toUpperCase();
-
-  if (program === "FMCSA") {
-    return "fmcsa-employee-training.html";
-  }
-
-  if (program === "FAA") {
-    return "employee-training.html";
-  }
-
+  if (program === "FMCSA") return "fmcsa-employee-training.html";
+  if (program === "FAA")   return "employee-training.html";
   return null;
+
 }
