@@ -91,6 +91,62 @@ function loadCompanyDashboard(user) {
   loadEmployees(company.id);
   updateSeatCounts(company);
   renderSeatAssignments(company);
+  updateEmployeeOverview(company);
+}
+
+/* =========================================================
+   EMPLOYEE OVERVIEW STATS
+========================================================= */
+
+function updateEmployeeOverview(company) {
+  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  /* All active (non-revoked) seat holders across all types */
+  const allSeatedEmails = new Set();
+  ["employee", "supervisor", "der"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([email, seat]) => {
+      if (!seat.revoked) allSeatedEmails.add(email.trim().toLowerCase());
+    });
+  });
+
+  /* Also count pending invites that haven't registered yet */
+  Object.values(company.invites || {}).forEach(inv => {
+    if (["pending", "resent", "assigned"].includes(inv.status)) {
+      allSeatedEmails.add(inv.email.trim().toLowerCase());
+    }
+  });
+
+  const total = allSeatedEmails.size;
+  let completed  = 0;
+  let inProgress = 0;
+  let notStarted = 0;
+
+  allSeatedEmails.forEach(email => {
+    const isRegistered = users.some(u => u.email === email);
+    const isDone =
+      localStorage.getItem(`fmcsaDERCompleted_${email}`)      === "true" ||
+      localStorage.getItem(`fmcsaModuleBCompleted_${email}`)  === "true" ||
+      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+    if (isDone)          completed++;
+    else if (isRegistered) inProgress++;
+    else                   notStarted++;
+  });
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("statTotal",     total);
+  set("statCompleted", completed);
+  set("statInProgress", inProgress);
+  set("statPending",   notStarted);
+
+  /* Delta badges — show change indicator if IDs exist */
+  set("statTotalDelta",     "");
+  set("statCompletedDelta", "");
+  set("statProgressDelta",  "");
+  set("statPendingDelta",   "");
 }
 
 /* =========================================================
