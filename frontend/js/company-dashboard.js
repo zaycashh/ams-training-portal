@@ -308,26 +308,93 @@ function _refreshAll(company) {
 }
 
 /* =========================================================
+   CLEAN UP STALE INVITES
+========================================================= */
+
+function cleanupRegisteredInvites(companyId) {
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+  if (!company.invites) return company;
+
+  const registeredEmails = new Set(
+    users
+      .filter(u => u.companyId === companyId)
+      .map(u => (u.email || "").trim().toLowerCase())
+  );
+
+  let changed = false;
+
+  Object.keys(company.invites).forEach(email => {
+    const cleanEmail = (email || "").trim().toLowerCase();
+
+    if (registeredEmails.has(cleanEmail)) {
+      delete company.invites[email];
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+  }
+
+  return company;
+}
+
+/* =========================================================
    LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
 ========================================================= */
 
 function loadEmployees(companyId) {
-  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  let company = cleanupRegisteredInvites(companyId);
 
-  if (!company.usedSeats) company.usedSeats = { employee: {}, supervisor: {}, der: {} };
+  if (!company.usedSeats) {
+    company.usedSeats = { employee: {}, supervisor: {}, der: {} };
+  }
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  if (!company.usedSeats.der) company.usedSeats.der = {};
 
   const tbody = document.getElementById("employeeTable");
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  const employees = users.filter(u => u.companyId === companyId && u.role === "employee");
-  const invites   = Object.values(company.invites || {});
+  const employees = users.filter(
+    u => u.companyId === companyId && u.role === "employee"
+  );
+  const invites = Object.values(company.invites || {});
 
-  if (!employees.length && !invites.length) {
+  const rowMap = new Map();
+
+  // First add invites
+  invites.forEach(inv => {
+    const cleanEmail = (inv.email || "").trim().toLowerCase();
+    if (!cleanEmail) return;
+
+    rowMap.set(cleanEmail, {
+      source: "invite",
+      data: inv
+    });
+  });
+
+  // Then add registered users so they override invite rows
+  employees.forEach(emp => {
+    const cleanEmail = (emp.email || "").trim().toLowerCase();
+    if (!cleanEmail) return;
+
+    rowMap.set(cleanEmail, {
+      source: "user",
+      data: emp
+    });
+  });
+
+  const rows = Array.from(rowMap.values());
+
+  if (!rows.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">
+        <td colspan="5">
           <div class="empty-state">
             <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
             <h4>No employees yet</h4>
@@ -339,75 +406,84 @@ function loadEmployees(companyId) {
     return;
   }
 
-  [...employees, ...invites].forEach(emp => {
-    const cleanEmail = emp.email.trim().toLowerCase();
+  rows.forEach(entry => {
+    const emp = entry.data;
+    const cleanEmail = (emp.email || "").trim().toLowerCase();
+    const isInvite = entry.source === "invite";
 
-    const isInvite = ["pending", "resent", "assigned"].includes(emp.status);
-
-    /* Training type */
     let trainingType = "None";
-    if      (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) trainingType = "Supervisor";
-    else if (company.usedSeats.der?.[cleanEmail]        && !company.usedSeats.der[cleanEmail].revoked)        trainingType = "DER";
-    else if (company.usedSeats.employee?.[cleanEmail]   && !company.usedSeats.employee[cleanEmail].revoked)   trainingType = "Employee";
+    if (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) {
+      trainingType = "Supervisor";
+    } else if (company.usedSeats.der?.[cleanEmail] && !company.usedSeats.der[cleanEmail].revoked) {
+      trainingType = "DER";
+    } else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee[cleanEmail].revoked) {
+      trainingType = "Employee";
+    }
 
-    /* Completion check */
-    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
-    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
-    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-    const trainingCompleted   = completedDER || completedSupervisor || completedEmployee;
+    const completedDER =
+      localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
+    const completedSupervisor =
+      localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
+    const completedEmployee =
+      localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
 
-    /* Status label */
+    const trainingCompleted =
+      completedDER || completedSupervisor || completedEmployee;
+
     let statusLabel = "Invited";
-    if (!isInvite) statusLabel = trainingCompleted ? "Completed" : "In Progress";
+    if (!isInvite) {
+      statusLabel = trainingCompleted ? "Completed" : "In Progress";
+    }
 
-    /* Training badge colors */
     const badgeColors = {
       Supervisor: { bg: "#dbeafe", color: "#1d4ed8" },
       DER:        { bg: "#dcfce7", color: "#15803d" },
       Employee:   { bg: "#fef9c3", color: "#854d0e" },
       None:       { bg: "#f3f4f6", color: "#6b7280" }
     };
+
     const badge = badgeColors[trainingType] || badgeColors.None;
 
-    /* Status badge */
     const statusClass = trainingCompleted
       ? "status-completed"
       : isInvite
         ? "status-pending"
         : "status-in-progress";
 
-    /* Remove button — disabled + tooltip if training completed */
     const removeBtn = trainingCompleted
       ? `<button
             disabled
             title="Cannot remove — training completed. Record must be kept."
             style="opacity:.4;cursor:not-allowed;"
-          >
+         >
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
-          </button>`
+         </button>`
       : `<button
             onclick="removeEmployee('${cleanEmail}')"
             style="color:var(--color-warning);"
-          >
+         >
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
-          </button>`;
+         </button>`;
 
-    /* View Cert — only show if completed */
     const viewCertBtn = trainingCompleted
       ? `<button onclick="viewEmployeeCert('${cleanEmail}')">
             <i data-lucide="award" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             View Certificate
-          </button>`
+         </button>`
       : "";
+
+    const fullName = `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="td-name">
-        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "—"}
+        ${isInvite
+          ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>`
+          : (fullName || "—")}
       </td>
-      <td class="td-email">${emp.email}</td>
+      <td class="td-email">${cleanEmail}</td>
       <td>
         <span class="role-badge role-${trainingType.toLowerCase() === "none" ? "employee" : trainingType.toLowerCase()}"
               style="background:${badge.bg};color:${badge.color};">
@@ -595,53 +671,164 @@ function inviteEmployee() {
   if (!input) return;
 
   const email = input.value.trim().toLowerCase();
-  if (!email || !email.includes("@")) { if (msg) msg.textContent = "Enter a valid email"; return; }
+  if (!email || !email.includes("@")) {
+    if (msg) msg.textContent = "Enter a valid email";
+    return;
+  }
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
-  if (users.find(u => u.email === email)) {
+  if (users.find(u => (u.email || "").trim().toLowerCase() === email)) {
     if (msg) msg.textContent = "User already registered. Assign a seat instead.";
     return;
   }
 
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  if (!company.invites)              company.invites              = {};
-  if (!company.usedSeats)            company.usedSeats            = {};
-  if (!company.usedSeats.employee)   company.usedSeats.employee   = {};
+  if (!company.invites)            company.invites = {};
+  if (!company.usedSeats)          company.usedSeats = {};
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  if (!company.usedSeats.der) company.usedSeats.der = {};
 
-  if (company.invites[email]) { if (msg) msg.textContent = "Already invited"; return; }
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  if (completedDER || completedSupervisor || completedEmployee) {
+    if (msg) msg.textContent = "This employee already completed training.";
+    return;
+  }
 
   const hasActiveSeat =
-    (company.usedSeats?.employee?.[email]   && company.usedSeats.employee[email].revoked   !== true) ||
-    (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
-    (company.usedSeats?.der?.[email]        && company.usedSeats.der[email].revoked        !== true);
-  if (hasActiveSeat) { if (msg) msg.textContent = "User already assigned"; return; }
+    (company.usedSeats.employee[email] && company.usedSeats.employee[email].revoked !== true) ||
+    (company.usedSeats.supervisor[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+    (company.usedSeats.der[email] && company.usedSeats.der[email].revoked !== true);
+
+  const existingInvite = company.invites[email];
+
+  if (existingInvite) {
+    existingInvite.status = "resent";
+    existingInvite.resentAt = Date.now();
+    company.invites[email] = existingInvite;
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+
+    if (msg) {
+      msg.innerHTML =
+        `Invite Code: <strong>${existingInvite.code}</strong>` +
+        ` <button onclick="copyInvite('${existingInvite.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>` +
+        ` <span style="margin-left:8px;color:green;">Resent</span>`;
+    }
+
+    input.value = "";
+    return;
+  }
+
+  if (hasActiveSeat) {
+    if (msg) msg.textContent = "User already assigned";
+    return;
+  }
 
   const inviteCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-  company.invites[email] = { email, code: inviteCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "pending" };
+
+  company.invites[email] = {
+    email,
+    code: inviteCode,
+    program: company.program || "unknown",
+    role: "employee",
+    createdAt: Date.now(),
+    status: "pending"
+  };
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  if (msg) msg.textContent = "Invite created: " + inviteCode;
+  if (msg) {
+    msg.innerHTML =
+      `Invite created: <strong>${inviteCode}</strong>` +
+      ` <button onclick="copyInvite('${inviteCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+  }
+
   input.value = "";
 }
 
 function resendInvite(email) {
   email = email.toLowerCase().trim();
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  if (!company.invites) company.invites = {};
 
-  const existing = company.invites[email];
+  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   const msg = document.getElementById("inviteMsg");
 
+  if (!company.invites) company.invites = {};
+  if (!company.usedSeats) company.usedSeats = {};
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  if (!company.usedSeats.der) company.usedSeats.der = {};
+
+  const isRegistered = users.some(u => (u.email || "").trim().toLowerCase() === email);
+
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  if (completedDER || completedSupervisor || completedEmployee) {
+    if (msg) msg.textContent = "This employee already completed training.";
+    return;
+  }
+
+  const hasActiveSeat =
+    (company.usedSeats.employee[email] && company.usedSeats.employee[email].revoked !== true) ||
+    (company.usedSeats.supervisor[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+    (company.usedSeats.der[email] && company.usedSeats.der[email].revoked !== true);
+
+  const existing = company.invites[email];
+
   if (existing) {
-    if (msg) msg.innerHTML = `Invite Code: <strong>${existing.code}</strong> <button onclick="copyInvite('${existing.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+    existing.status = "resent";
+    existing.resentAt = Date.now();
+    company.invites[email] = existing;
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+
+    if (msg) {
+      msg.innerHTML =
+        `Invite Code: <strong>${existing.code}</strong>` +
+        ` <button onclick="copyInvite('${existing.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>` +
+        ` <span style="margin-left:8px;color:green;">Resent</span>`;
+    }
+    return;
+  }
+
+  if (isRegistered) {
+    if (msg) msg.textContent = "User already registered. No new invite needed.";
+    return;
+  }
+
+  if (hasActiveSeat) {
+    if (msg) msg.textContent = "User already assigned. No duplicate invite created.";
     return;
   }
 
   const newCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-  company.invites[email] = { email, code: newCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "resent" };
+  company.invites[email] = {
+    email,
+    code: newCode,
+    program: company.program || "unknown",
+    role: "employee",
+    createdAt: Date.now(),
+    resentAt: Date.now(),
+    status: "resent"
+  };
+
   localStorage.setItem("companyProfile", JSON.stringify(company));
 
-  if (msg) msg.innerHTML = `New Invite Code: <strong>${newCode}</strong> <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+  if (msg) {
+    msg.innerHTML =
+      `New Invite Code: <strong>${newCode}</strong>` +
+      ` <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+  }
 }
 
 function copyInvite(code) {
