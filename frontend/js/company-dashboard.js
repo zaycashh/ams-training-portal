@@ -344,9 +344,24 @@ function cleanupRegisteredInvites(companyId) {
 /* =========================================================
    LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
 ========================================================= */
+
 function getTrainingTypeForEmail(company, email) {
   const cleanEmail = (email || "").trim().toLowerCase();
 
+  // 1) COMPLETION FIRST — highest level wins
+  const completedDER =
+    localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
+  const completedSupervisor =
+    localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true";
+  const completedEmployee =
+    localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+  // Priority: DER > Supervisor > Employee
+  if (completedDER) return "DER";
+  if (completedSupervisor) return "Supervisor";
+  if (completedEmployee) return "Employee";
+
+  // 2) IF NO COMPLETION FLAGS, FALL BACK TO ACTIVE SEATS
   const hasSupervisorSeat =
     company.usedSeats?.supervisor?.[cleanEmail] &&
     company.usedSeats.supervisor[cleanEmail].revoked !== true;
@@ -359,24 +374,13 @@ function getTrainingTypeForEmail(company, email) {
     company.usedSeats?.employee?.[cleanEmail] &&
     company.usedSeats.employee[cleanEmail].revoked !== true;
 
-  if (hasSupervisorSeat) return "Supervisor";
   if (hasDerSeat) return "DER";
+  if (hasSupervisorSeat) return "Supervisor";
   if (hasEmployeeSeat) return "Employee";
-
-  if (localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true") {
-    return "DER";
-  }
-
-  if (localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true") {
-    return "Supervisor";
-  }
-
-  if (localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true") {
-    return "Employee";
-  }
 
   return "None";
 }
+
 function loadEmployees(companyId) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   let company = cleanupRegisteredInvites(companyId);
