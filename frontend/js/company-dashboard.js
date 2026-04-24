@@ -344,7 +344,39 @@ function cleanupRegisteredInvites(companyId) {
 /* =========================================================
    LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
 ========================================================= */
+function getTrainingTypeForEmail(company, email) {
+  const cleanEmail = (email || "").trim().toLowerCase();
 
+  const hasSupervisorSeat =
+    company.usedSeats?.supervisor?.[cleanEmail] &&
+    company.usedSeats.supervisor[cleanEmail].revoked !== true;
+
+  const hasDerSeat =
+    company.usedSeats?.der?.[cleanEmail] &&
+    company.usedSeats.der[cleanEmail].revoked !== true;
+
+  const hasEmployeeSeat =
+    company.usedSeats?.employee?.[cleanEmail] &&
+    company.usedSeats.employee[cleanEmail].revoked !== true;
+
+  if (hasSupervisorSeat) return "Supervisor";
+  if (hasDerSeat) return "DER";
+  if (hasEmployeeSeat) return "Employee";
+
+  if (localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true") {
+    return "DER";
+  }
+
+  if (localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`) === "true") {
+    return "Supervisor";
+  }
+
+  if (localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true") {
+    return "Employee";
+  }
+
+  return "None";
+}
 function loadEmployees(companyId) {
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
   let company = cleanupRegisteredInvites(companyId);
@@ -411,14 +443,7 @@ function loadEmployees(companyId) {
     const cleanEmail = (emp.email || "").trim().toLowerCase();
     const isInvite = entry.source === "invite";
 
-    let trainingType = "None";
-    if (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) {
-      trainingType = "Supervisor";
-    } else if (company.usedSeats.der?.[cleanEmail] && !company.usedSeats.der[cleanEmail].revoked) {
-      trainingType = "DER";
-    } else if (company.usedSeats.employee?.[cleanEmail] && !company.usedSeats.employee[cleanEmail].revoked) {
-      trainingType = "Employee";
-    }
+    const trainingType = getTrainingTypeForEmail(company, cleanEmail);
 
     const completedDER =
       localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`) === "true";
@@ -846,23 +871,47 @@ function viewEmployeeCert(email) {
   email = email.toLowerCase().trim();
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
-  if (!company.usedSeats) { alert("No company data found"); return; }
+  if (!company || !company.id) {
+    alert("Company profile not found.");
+    return;
+  }
 
-  const isAssigned =
-    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
-    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
-    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+  if (!company.certIds) {
+    alert("No certificates are linked to this company yet.");
+    return;
+  }
 
-  if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
+  // Cert entry written at completion time; must belong to this company
+  const certEntry = company.certIds[email];
 
-  /* Look up cert ID from companyProfile.certIds (written at completion time) */
-  const certEntry = company.certIds?.[email];
-  const certId = certEntry?.certId || null;
+  if (!certEntry || !certEntry.certId) {
+    alert("No certificate found for this employee. They may need to complete their training first.");
+    return;
+  }
 
-  if (!certId) { alert("No certificate found for this employee. They may need to complete their training first."); return; }
+  // Extra safety: ensure the cert entry is tied to this company
+  if (certEntry.companyId && certEntry.companyId !== company.id) {
+    alert("Access denied: This certificate is not associated with your company.");
+    return;
+  }
+
+  // Optional: double-check training completion flags
+  const completed =
+    localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true" ||
+    localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true" ||
+    localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+
+  if (!completed) {
+    const proceed = confirm(
+      "A certificate ID exists, but training is not marked complete. Continue to view the certificate?"
+    );
+    if (!proceed) return;
+  }
 
   sessionStorage.setItem("adminViewing", "true");
-  window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}`;
+  window.location.href = `fmcsa-certificates.html?id=${encodeURIComponent(
+    certEntry.certId
+  )}&email=${encodeURIComponent(email)}`;
 }
 
 /* =========================================================
