@@ -170,7 +170,38 @@ if (role === "supervisor") {
     return;
   }
 }
+   
+if (role === "der") {
+  const email = user?.email;
+  const hasDerSeat = !!company?.usedSeats?.der?.[email];
 
+  // Allow DER module only if DER seat exists
+  if ((module === "der" || module === "fmcsa-der") && !hasDerSeat) {
+    sessionStorage.setItem("ams_notice", "No DER seat assigned. Contact your administrator.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // Block supervisor modules
+  if (
+    module === "supervisor" ||
+    module === "fmcsa-module-a" ||
+    module === "fmcsa-supervisor" ||
+    module === "fmcsa-drug-alcohol"
+  ) {
+    sessionStorage.setItem("ams_notice", "You don't have access to the supervisor module.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // Block employee modules
+  if (module === "employee" || module === "fmcsa-employee") {
+    sessionStorage.setItem("ams_notice", "You don't have access to the employee module.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+}
+   
   /* =========================================================
      COMPANY EMPLOYEE — SEAT CHECK
   ========================================================= */
