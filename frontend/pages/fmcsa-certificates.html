@@ -518,24 +518,37 @@
        FIND WHICH CERT TO SHOW based on ?id= param
     ------------------------------------------------------- */
 
-    const empCertId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
-    const derCertId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-    const supCertId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) ||
-                      localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+    const companyProfile = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+const companyCert = companyProfile?.certIds?.[email] || null;
 
-    /* Match by cert ID if provided */
-    if (certId) {
-      if (certId === empCertId) {
-        renderEmployee(email, fullName, empCertId);
-      } else if (certId === derCertId) {
-        renderDER(email, fullName, derCertId);
-      } else if (certId === supCertId) {
-        renderSupervisor(email, fullName, supCertId);
-      } else {
-        showError("Certificate not found for this ID.");
-      }
-      return;
-    }
+const empCertId =
+  localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`) ||
+  (companyCert?.type === "employee" ? companyCert.certId : null);
+
+const derCertId =
+  localStorage.getItem(`fmcsaDERCertificateId_${email}`) ||
+  (companyCert?.type === "der" ? companyCert.certId : null);
+
+const supCertId =
+  localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
+  localStorage.getItem(`fmcsaModuleACertificateId_${email}`) ||
+  (companyCert?.type === "supervisor" ? companyCert.certId : null);
+
+/* Match by cert ID if provided */
+if (certId) {
+  const normalizedId = certId.trim();
+
+  if (empCertId && normalizedId === String(empCertId).trim()) {
+    renderEmployee(email, fullName, empCertId);
+  } else if (derCertId && normalizedId === String(derCertId).trim()) {
+    renderDER(email, fullName, derCertId);
+  } else if (supCertId && normalizedId === String(supCertId).trim()) {
+    renderSupervisor(email, fullName, supCertId);
+  } else {
+    showError("Certificate not found for this ID.");
+  }
+  return;
+}
 
     /* No ID — show whichever they completed */
     let shown = false;
