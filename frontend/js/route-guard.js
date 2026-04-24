@@ -12,7 +12,6 @@ if (
   path.includes("fmcsa-certificates") ||
   path.includes("faa-certificates")
 ) {
-
   console.log("✅ Certificate page — controlled access");
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -22,40 +21,44 @@ if (
     throw new Error("Redirecting...");
   }
 
-  /* Company admins (no role field) can always view certs on behalf of employees */
+  const role = (user.role || "").toLowerCase().trim();
+  const email = (user.email || "").toLowerCase().trim();
 
-   const isEmployee   = user.role === "employee";
-   const isSupervisor = user.role === "supervisor";
-   const isDer        = user.role === "der";
-   const isCompanyAdmin = user.type === "company" && !isEmployee && !isSupervisor && !isDer;
-   
-   if (isCompanyAdmin) {
-     console.log("✅ Company admin — certificate access granted");
-   } else {
-     // normal cert validation
-   }
+  const isEmployee = role === "employee";
+  const isSupervisor = role === "supervisor";
+  const isDer = role === "der";
+  const isCompanyAdmin =
+    user.type === "company" && !isEmployee && !isSupervisor && !isDer;
 
+  if (isCompanyAdmin) {
+    console.log("✅ Company admin — certificate access granted");
+  } else {
     const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-    const email   = user?.email;
 
-    const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
-    const hasSupervisorSeat = company?.usedSeats?.supervisor?.[email];
-    const hasDerSeat        = company?.usedSeats?.der?.[email];
-    const hasAnySeat        = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
+    const hasEmployeeSeat = !!company?.usedSeats?.employee?.[email];
+    const hasSupervisorSeat = !!company?.usedSeats?.supervisor?.[email];
+    const hasDerSeat = !!company?.usedSeats?.der?.[email];
+    const hasAnySeat = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
 
-    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
-    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-    const hasAnyCompletion    = completedEmployee || completedSupervisor || completedDER;
+    const completedEmployee =
+      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+    const completedSupervisor =
+      localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true" ||
+      localStorage.getItem(`fmcsaDrugAlcoholCompleted_${email}`) === "true";
+    const completedDER =
+      localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true" ||
+      localStorage.getItem(`der_fmcsa_quiz_passed_${email}`) === "true";
+
+    const hasAnyCompletion =
+      completedEmployee || completedSupervisor || completedDER;
 
     if (!hasAnySeat && !hasAnyCompletion) {
       sessionStorage.setItem("ams_notice", "No certificate access.");
       window.location.replace("dashboard.html");
       throw new Error("Redirecting...");
     }
-
   }
-
+   
 } else {
 
 /* =========================================================
