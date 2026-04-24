@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module  = document.body?.dataset?.module || "";
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  const program = company.program;
+  const program = (company.program || "").toUpperCase();
   const role    = user?.role;
 
   /* =========================================================
