@@ -101,31 +101,68 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
-     ROLE LOCK
-     Employees cannot access supervisor or DER modules (FAA or FMCSA)
-     Supervisors cannot access DER modules
-  ========================================================= */
-  if (role === "employee") {
-    if (
-      module === "supervisor"         ||
-      module === "der"                ||
-      module === "fmcsa-module-a"     ||
-      module === "fmcsa-drug-alcohol" ||
-      module === "fmcsa-der"
-    ) {
-      sessionStorage.setItem("ams_notice", "You don't have access to that module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
+   ROLE LOCK
+   Block only what is truly forbidden.
+   Company employees may access modules if they have the matching seat.
+========================================================= */
+if (role === "employee") {
+  const email = user?.email;
+
+  const hasEmployeeSeat   = !!company?.usedSeats?.employee?.[email];
+  const hasSupervisorSeat = !!company?.usedSeats?.supervisor?.[email];
+  const hasDerSeat        = !!company?.usedSeats?.der?.[email];
+
+  // FAA supervisor
+  if (module === "supervisor" && !hasSupervisorSeat) {
+    sessionStorage.setItem("ams_notice", "You don't have access to that module.");
+    window.location.href = "dashboard.html";
+    return;
   }
 
-  if (role === "supervisor") {
-    if (module === "der" || module === "fmcsa-der") {
-      sessionStorage.setItem("ams_notice", "You don't have access to the DER module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
+  // FAA DER
+  if (module === "der" && !hasDerSeat) {
+    sessionStorage.setItem("ams_notice", "You don't have access to that module.");
+    window.location.href = "dashboard.html";
+    return;
   }
+
+  // FMCSA Supervisor Module A + Module B
+  if (
+    (module === "fmcsa-module-a" ||
+     module === "fmcsa-supervisor" ||
+     module === "fmcsa-drug-alcohol") &&
+    !hasSupervisorSeat
+  ) {
+    sessionStorage.setItem("ams_notice", "No supervisor seat assigned. Contact your administrator.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // FMCSA DER
+  if (module === "fmcsa-der" && !hasDerSeat) {
+    sessionStorage.setItem("ams_notice", "No DER seat assigned. Contact your administrator.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // FMCSA employee / FAA employee
+  if (
+    (module === "employee" || module === "fmcsa-employee") &&
+    !hasEmployeeSeat
+  ) {
+    sessionStorage.setItem("ams_notice", "No employee seat assigned. Contact your administrator.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+}
+
+if (role === "supervisor") {
+  if (module === "der" || module === "fmcsa-der") {
+    sessionStorage.setItem("ams_notice", "You don't have access to the DER module.");
+    window.location.href = "dashboard.html";
+    return;
+  }
+}
 
   /* =========================================================
      COMPANY EMPLOYEE — SEAT CHECK
