@@ -23,13 +23,17 @@ if (
   }
 
   /* Company admins (no role field) can always view certs on behalf of employees */
-  const isEmployee   = user.role === "employee";
-  const isSupervisor = user.role === "supervisor";
 
-  if (!isEmployee && !isSupervisor) {
-    console.log("✅ Company admin — certificate access granted");
-    // allow through
-  } else {
+   const isEmployee   = user.role === "employee";
+   const isSupervisor = user.role === "supervisor";
+   const isDer        = user.role === "der";
+   const isCompanyAdmin = user.type === "company" && !isEmployee && !isSupervisor && !isDer;
+   
+   if (isCompanyAdmin) {
+     console.log("✅ Company admin — certificate access granted");
+   } else {
+     // normal cert validation
+   }
 
     const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
     const email   = user?.email;
