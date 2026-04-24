@@ -692,7 +692,7 @@ function updateFMCSASupervisorButton() {
   }
 
   btn.textContent = "Start Module A – Reasonable Suspicion";
-  btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+  btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
 
   if (user.role === "employee") {
     if (hasSeat) {
@@ -705,7 +705,7 @@ function updateFMCSASupervisorButton() {
       }
       if (!modA) {
         btn.textContent = "Start Training";
-        btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+        btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
         return;
       }
     }
@@ -718,7 +718,7 @@ function updateFMCSASupervisorButton() {
 
   if (paid) {
     btn.textContent = "Start Training";
-    btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+    btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
     return;
   }
 
