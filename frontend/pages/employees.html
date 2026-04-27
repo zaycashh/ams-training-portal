@@ -1,3 +1,5 @@
+
+employees
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -151,7 +153,12 @@
     .empty-state h4{font-size:var(--text-sm);font-weight:600;color:var(--color-text);}
     .empty-state p{font-size:var(--text-sm);max-width:28ch;}
 
-    @media(max-width:768px){.main{margin-left:0;}.sidebar{transform:translateX(-100%);}.topbar{padding:var(--space-4);}.page{padding:var(--space-4);}}
+    .hamburger{display:none;width:36px;height:36px;border-radius:var(--radius-md);place-items:center;color:var(--color-text-muted);background:none;border:none;cursor:pointer;transition:background var(--transition);}
+    .hamburger:hover{background:var(--color-surface-offset);color:var(--color-text);}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:oklch(0 0 0/.4);z-index:49;}
+    .sidebar-overlay.open{display:block;}
+    .sidebar.open{transform:translateX(0)!important;}
+    @media(max-width:768px){.main{margin-left:0;}.sidebar{transform:translateX(-100%);transition:transform var(--transition);}.topbar{padding:var(--space-4);}.page{padding:var(--space-4);}.hamburger{display:grid;}}
 
     /* MANAGE DROPDOWN — must be after :root variables */
     .action-menu {
@@ -181,6 +188,7 @@
   </style>
 </head>
 <body data-role="company-admin">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="layout">
 
   <!-- SIDEBAR -->
@@ -223,6 +231,9 @@
   <div class="main">
     <header class="topbar">
       <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <div class="topbar-title">Employees</div>
         <div class="topbar-breadcrumb">AMS Training Portal · Admin</div>
       </div>
@@ -370,6 +381,12 @@
 })();
 </script>
 <script>
+function toggleSidebar(){
+  const sidebar=document.querySelector('.sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
 function logout(){localStorage.removeItem('amsUser');window.location.href='login.html';}
 </script>
 <script src="/ams-training-portal/frontend/js/route-guard.js"></script>
