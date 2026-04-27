@@ -358,13 +358,35 @@ function loadEmployees(companyId) {
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  const employees = users.filter(u => u.companyId === companyId && u.role === "employee");
-  const invites   = Object.values(company.invites || {});
+  /* Build a map keyed by email — registered users override invite-only rows */
+  const rowMap = new Map();
 
-  if (!employees.length && !invites.length) {
+  /* Add invite-only rows first */
+  Object.values(company.invites || {}).forEach(inv => {
+    const e = (inv.email || "").trim().toLowerCase();
+    if (e) rowMap.set(e, { type: "invite", data: inv });
+  });
+
+  /* Registered employees override invite rows */
+  users.filter(u => u.companyId === companyId && u.role === "employee").forEach(u => {
+    const e = (u.email || "").trim().toLowerCase();
+    if (e) rowMap.set(e, { type: "user", data: u });
+  });
+
+  /* Also include anyone with an active seat who may not be in ams_users yet */
+  ["employee", "supervisor", "der"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([email, seat]) => {
+      const e = email.trim().toLowerCase();
+      if (!seat.revoked && !rowMap.has(e)) {
+        rowMap.set(e, { type: "seat", data: { email: e } });
+      }
+    });
+  });
+
+  if (!rowMap.size) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6">
+        <td colspan="5">
           <div class="empty-state">
             <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
             <h4>No employees yet</h4>
@@ -376,10 +398,12 @@ function loadEmployees(companyId) {
     return;
   }
 
-  [...employees, ...invites].forEach(emp => {
-    const cleanEmail = emp.email.trim().toLowerCase();
+  rowMap.forEach((entry, cleanEmail) => {
+    const emp      = entry.data;
+    const isInvite = entry.type === "invite";
 
-    const isInvite = ["pending", "resent", "assigned"].includes(emp.status);
+    /* Look up the registered user by exact email for name */
+    const registeredUser = users.find(u => (u.email || "").trim().toLowerCase() === cleanEmail);
 
     /* Training type */
     let trainingType = "None";
@@ -387,11 +411,12 @@ function loadEmployees(companyId) {
     else if (company.usedSeats.der?.[cleanEmail]        && !company.usedSeats.der[cleanEmail].revoked)        trainingType = "DER";
     else if (company.usedSeats.employee?.[cleanEmail]   && !company.usedSeats.employee[cleanEmail].revoked)   trainingType = "Employee";
 
-    /* Completion check */
+    /* Completion check — certIds is written at completion time on employee's browser */
+    const hasCert = !!company.certIds?.[cleanEmail]?.certId;
     const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
     const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
     const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-    const trainingCompleted   = completedDER || completedSupervisor || completedEmployee;
+    const trainingCompleted   = hasCert || completedDER || completedSupervisor || completedEmployee;
 
     /* Status label */
     let statusLabel = "Invited";
@@ -442,7 +467,7 @@ function loadEmployees(companyId) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="td-name">
-        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "—"}
+        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : (`${registeredUser?.firstName || ""} ${registeredUser?.lastName || ""}`.trim() || "—")}
       </td>
       <td class="td-email">${emp.email}</td>
       <td>
