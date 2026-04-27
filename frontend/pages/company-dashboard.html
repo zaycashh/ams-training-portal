@@ -1,3 +1,5 @@
+
+company-dashboard
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -238,11 +240,24 @@
 
     @media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:900px){.info-grid{grid-template-columns:1fr;}.seat-grid{grid-template-columns:1fr;}}
-    @media(max-width:768px){.sidebar{transform:translateX(-100);}.main{margin-left:0;}.topbar{padding:var(--space-4);}.page{padding:var(--space-4);}.stats-grid{grid-template-columns:1fr 1fr;}}
+    .hamburger{display:none;width:36px;height:36px;border-radius:var(--radius-md);place-items:center;color:var(--color-text-muted);background:none;border:none;cursor:pointer;transition:background var(--transition);}
+    .hamburger:hover{background:var(--color-surface-offset);color:var(--color-text);}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:oklch(0 0 0/.4);z-index:49;}
+    .sidebar-overlay.open{display:block;}
+    @media(max-width:768px){
+      .hamburger{display:grid;}
+      .sidebar{transform:translateX(-100%);transition:transform .25s cubic-bezier(0.16,1,0.3,1);}
+      .sidebar.open{transform:translateX(0);}
+      .main{margin-left:0;}
+      .topbar{padding:var(--space-3) var(--space-4);}
+      .page{padding:var(--space-4);}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+    }
   </style>
 </head>
 
 <body data-role="company-admin">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="layout">
 
   <!-- SIDEBAR -->
@@ -289,6 +304,9 @@
         <div class="topbar-breadcrumb">AMS Training Portal · Admin</div>
       </div>
       <div class="topbar-right">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -683,6 +701,13 @@ function updateEmployeeStats(data){
 </script>
 
 <script>
+function toggleSidebar(){
+  const sidebar=document.querySelector('.sidebar');
+  const overlay=document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
 function logout(){localStorage.removeItem('amsUser');window.location.href='login.html';}
 
 function showToast(msg, type, duration) {
