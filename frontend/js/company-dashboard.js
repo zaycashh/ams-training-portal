@@ -800,11 +800,18 @@ function viewEmployeeCert(email) {
 
   if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
 
-  /* Look up cert ID from companyProfile.certIds (written at completion time) */
-  const certEntry = company.certIds?.[email];
-  const certId = certEntry?.certId || null;
+  /* 1. Try companyProfile.certIds first */
+  let certId = company.certIds?.[email]?.certId || null;
 
-  if (!certId) { alert("No certificate found for this employee. They may need to complete their training first."); return; }
+  /* 2. Fallback — check direct localStorage keys written by each training module */
+  if (!certId) certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`)      || null;
+  if (!certId) certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`)  || null; // supervisor cert
+  if (!certId) certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`) || null;
+
+  if (!certId) {
+    showToast("No certificate found for this employee.", "error");
+    return;
+  }
 
   sessionStorage.setItem("adminViewing", "true");
   window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}`;
