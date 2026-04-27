@@ -5,9 +5,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   loadCompanyDashboard(user);
-});
 
- /* Auto-switch tab if ?tab= param is in the URL */
+  /* Auto-switch tab if ?tab= param is in the URL */
   const tabParam = new URLSearchParams(window.location.search).get("tab");
   if (tabParam) switchTab(tabParam);
 });
