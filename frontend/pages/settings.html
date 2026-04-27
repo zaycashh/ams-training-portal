@@ -473,14 +473,14 @@
       <a class="nav-item" href="company-dashboard.html">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
-      <a class="nav-item" href="company-dashboard.html">
+      <a class="nav-item" href="employees.html">
         <i data-lucide="users"></i> Employees
       </a>
       <div class="nav-section-label" style="margin-top:var(--space-4);">Management</div>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="company-dashboard.html?tab=training">
         <i data-lucide="graduation-cap"></i> Training
       </a>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="company-dashboard.html?tab=billing">
         <i data-lucide="credit-card"></i> Billing
       </a>
       <a class="nav-item active">
@@ -574,7 +574,7 @@
               <button class="btn btn-primary" onclick="changeEmail()">
                 <i data-lucide="save" style="width:14px;height:14px;"></i> Save Email
               </button>
-              <button class="btn btn-ghost" onclick="window.location.href='company-dashboard.html'">Cancel</button>
+              <button class="btn btn-ghost" onclick="clearEmailForm()">Cancel</button>
             </div>
             <div class="alert alert-success" id="emailSuccess">
               <i data-lucide="check-circle"></i> Email updated successfully.
@@ -643,7 +643,7 @@
               <button class="btn btn-primary" onclick="changePassword()">
                 <i data-lucide="lock" style="width:14px;height:14px;"></i> Update Password
               </button>
-              <button class="btn btn-ghost" onclick="window.location.href='company-dashboard.html'">Cancel</button>
+              <button class="btn btn-ghost" onclick="clearPasswordForm()">Cancel</button>
             </div>
             <div class="alert alert-success" id="pwSuccess">
               <i data-lucide="check-circle"></i> Password updated successfully.
