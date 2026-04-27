@@ -1,3 +1,5 @@
+
+company-dashboard
 /* =========================================================
    COMPANY ADMIN DASHBOARD — FINAL UPGRADED VERSION
 ========================================================= */
@@ -813,8 +815,7 @@ function viewEmployeeCert(email) {
     return;
   }
 
-  sessionStorage.setItem("adminViewing", "true");
-  window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}`;
+  window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}&admin=1`;
 }
 
 /* =========================================================
