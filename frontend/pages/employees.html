@@ -183,6 +183,13 @@
     .action-menu button[style*="color:red"] { color: var(--color-warning) !important; }
     .action-menu button[style*="color:red"]:hover { background: var(--color-warning-surface); }
     .action-menu hr { border: none; border-top: 1px solid var(--color-divider); margin: var(--space-2) 0; }
+
+    /* TOAST */
+    .ams-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;font-size:.875rem;font-weight:500;font-family:var(--font-ui);box-shadow:var(--shadow-lg);z-index:9999;display:flex;align-items:center;gap:.625rem;max-width:340px;animation:toastIn 220ms cubic-bezier(0.16,1,0.3,1);}
+    @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .toast-error{border-left:3px solid var(--color-warning);color:var(--color-warning);}
+    .toast-success{border-left:3px solid var(--color-success);color:var(--color-success);}
+    .toast-info{border-left:3px solid var(--color-primary);color:var(--color-primary);}
   </style>
 </head>
 <body data-role="company-admin">
