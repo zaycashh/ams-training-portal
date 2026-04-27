@@ -704,7 +704,7 @@
     const params = new URLSearchParams(window.location.search);
     const certId     = params.get("id");
     const emailParam = params.get("email") ? decodeURIComponent(params.get("email")).toLowerCase().trim() : null;
-    const adminViewing = sessionStorage.getItem("adminViewing") === "true";
+    const adminViewing = params.get("admin") === "1" || sessionStorage.getItem("adminViewing") === "true";
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
