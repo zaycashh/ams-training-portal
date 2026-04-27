@@ -214,127 +214,146 @@ function updateSeatCounts(company) {
    ASSIGN SEATS
 ========================================================= */
 
+/* ─────────────────────────────────────────────────────────
+   SEAT ASSIGNMENT RULES
+   • All 3 modules (Employee, Supervisor, DER) are INDEPENDENT
+   • A person can hold any combination simultaneously
+   • Block ONLY if:
+       - Same module is already active/assigned (not revoked)
+       - Same module was already COMPLETED (can't redo a done module)
+         EXCEPTION: Supervisor must redo annually (allow if completed
+         more than 365 days ago)
+   • No hierarchy — DER does not block Supervisor and vice versa
+───────────────────────────────────────────────────────── */
+
+function _moduleCompleted(email, role) {
+  /* Returns completion timestamp (ms) or null */
+  if (role === 'employee')   return localStorage.getItem('fmcsaEmployeeCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaEmployeeDate_' + email) || '0') || Date.now() : null;
+  if (role === 'supervisor') return localStorage.getItem('fmcsaModuleBCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaModuleBDate_' + email) || '0') || Date.now() : null;
+  if (role === 'der')        return localStorage.getItem('fmcsaDERCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaDERDate_' + email) || '0') || Date.now() : null;
+  return null;
+}
+
 function assignEmployeeSeat(emailParam) {
-  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
-  if (!email) return alert("Enter email");
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  if (!company.usedSeats) company.usedSeats = {};
 
-  /* Block if already has employee seat (same role) */
-  const alreadyEmployee = company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked;
-  if (alreadyEmployee) return showToast("This person already has an Employee seat assigned.", "error");
+  /* Block: already has active Employee seat */
+  const activeEmp = company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked;
+  if (activeEmp) return showToast('This person already has an Employee seat assigned.', 'error');
 
-  /* Block if already has a higher role */
-  const alreadySupervisor = company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked;
-  const alreadyDer        = company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked;
-  if (alreadySupervisor || alreadyDer) return showToast("This person already has a higher-level training assigned.", "error");
+  /* Block: Employee module already completed (no annual renewal for employees) */
+  const completedTs = _moduleCompleted(email, 'employee');
+  if (completedTs) return showToast('This person already completed the Employee module.', 'error');
 
   const total = company.seats?.employee?.total || 0;
   const used  = Object.values(company.usedSeats.employee || {}).filter(s => !s.revoked).length;
-  if (used >= total) return showToast("No employee seats available. Purchase more seats.", "error");
+  if (used >= total) return showToast('No employee seats available. Purchase more seats.', 'error');
 
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
   company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
   if (!company.employees) company.employees = {};
-  company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
+  company.employees[email] = { email, role: 'employee', status: 'assigned', addedAt: Date.now() };
 
   if (!company.invites) company.invites = {};
-  if (!company.invites[email]) {
-    const code = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "employee", createdAt: Date.now(), status: "assigned" };
-    _showInviteMsg(code, "Employee");
+  if (!company.invites[email] || company.invites[email].role !== 'employee') {
+    const code = 'AMS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || 'fmcsa', role: 'employee', createdAt: Date.now(), status: 'assigned' };
+    _showInviteMsg(code, 'Employee');
   }
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-  showToast("Employee seat assigned.", "success");
+  localStorage.setItem('companyProfile', JSON.stringify(company));
+  showToast('Employee seat assigned.', 'success');
   _refreshAll(company);
 }
 
 function assignSupervisorSeat(emailParam) {
-  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
-  if (!email) return showToast("Enter an email address.", "error");
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  if (!company.usedSeats) company.usedSeats = {};
 
-  /* Block if already has supervisor seat (same role) */
-  const alreadySupervisor = company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked;
-  if (alreadySupervisor) return showToast("This person already has a Supervisor seat assigned.", "error");
+  /* Block: already has active Supervisor seat */
+  const activeSup = company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked;
+  if (activeSup) return showToast('This person already has a Supervisor seat assigned.', 'error');
 
-  /* Block if already has DER (higher role) */
-  const alreadyDer = company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked;
-  if (alreadyDer) return showToast("This person already has a DER seat — a higher-level training.", "error");
-
-  /* Allow upgrade from employee — revoke old employee seat first */
-  const alreadyEmployee = company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked;
-  if (alreadyEmployee) {
-    company.usedSeats.employee[email].revoked = true;
-    delete company.invites?.[email]; /* clear old invite so a new one is generated */
+  /* Block: Supervisor module completed — UNLESS it was over 365 days ago (annual renewal) */
+  const completedTs = _moduleCompleted(email, 'supervisor');
+  if (completedTs) {
+    const daysSince = (Date.now() - completedTs) / (1000 * 60 * 60 * 24);
+    if (daysSince < 365) {
+      const renewDate = new Date(completedTs + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US');
+      return showToast('Supervisor module completed. Annual renewal due ' + renewDate + '.', 'info', 5000);
+    }
+    /* Over a year — clear old completion so they can redo it */
+    localStorage.removeItem('fmcsaModuleBCompleted_' + email);
+    localStorage.removeItem('fmcsaModuleACompleted_' + email);
+    localStorage.removeItem('fmcsaModuleACertificateId_' + email);
+    localStorage.removeItem('fmcsaModuleBDate_' + email);
+    if (company.usedSeats?.supervisor?.[email]) company.usedSeats.supervisor[email].revoked = true;
   }
 
   const total = company.seats?.supervisor?.total || 0;
   const used  = Object.values(company.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
-  if (used >= total) return showToast("No supervisor seats available. Purchase more seats.", "error");
+  if (used >= total) return showToast('No supervisor seats available. Purchase more seats.', 'error');
 
   if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
   company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
   if (!company.employees) company.employees = {};
-  company.employees[email] = { email, role: "supervisor", status: "assigned", addedAt: Date.now() };
+  /* Keep existing role label if they have other modules; only set supervisor if no other role */
+  if (!company.employees[email]) company.employees[email] = { email, role: 'supervisor', status: 'assigned', addedAt: Date.now() };
+  else company.employees[email].supervisorStatus = 'assigned';
 
   if (!company.invites) company.invites = {};
-  if (!company.invites[email]) {
-    const code = "AMS-SUP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "supervisor", createdAt: Date.now(), status: "assigned" };
-    _showInviteMsg(code, "Supervisor");
-  }
+  const supCode = 'AMS-SUP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  /* Always generate a new supervisor invite */
+  company.invites[email + '_supervisor'] = { email, code: supCode, program: company.program || 'fmcsa', role: 'supervisor', createdAt: Date.now(), status: 'assigned' };
+  _showInviteMsg(supCode, 'Supervisor');
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-  showToast(alreadyEmployee ? "Employee upgraded to Supervisor." : "Supervisor seat assigned.", "success");
+  localStorage.setItem('companyProfile', JSON.stringify(company));
+  showToast(completedTs ? 'Supervisor annual renewal assigned.' : 'Supervisor seat assigned.', 'success');
   _refreshAll(company);
 }
 
 function assignDerSeat(emailParam) {
-  const email = (emailParam || document.getElementById("seatEmail")?.value.trim() || "").toLowerCase();
-  if (!email) return showToast("Enter an email address.", "error");
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  if (!company.usedSeats) company.usedSeats = {};
 
-  /* Block if already has DER seat (same role) */
-  const alreadyDer = company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked;
-  if (alreadyDer) return showToast("This person already has a DER seat assigned.", "error");
+  /* Block: already has active DER seat */
+  const activeDer = company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked;
+  if (activeDer) return showToast('This person already has a DER seat assigned.', 'error');
 
-  /* Allow upgrade from employee or supervisor — revoke old seat first */
-  const alreadyEmployee   = company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked;
-  const alreadySupervisor = company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked;
-  let upgradeMsg = "DER seat assigned.";
-
-  if (alreadyEmployee) {
-    company.usedSeats.employee[email].revoked = true;
-    delete company.invites?.[email];
-    upgradeMsg = "Employee upgraded to DER.";
-  }
-  if (alreadySupervisor) {
-    company.usedSeats.supervisor[email].revoked = true;
-    delete company.invites?.[email];
-    upgradeMsg = "Supervisor upgraded to DER.";
-  }
+  /* Block: DER module already completed */
+  const completedTs = _moduleCompleted(email, 'der');
+  if (completedTs) return showToast('This person already completed the DER module.', 'error');
 
   const total = company.seats?.der?.total || 0;
   const used  = Object.values(company.usedSeats?.der || {}).filter(s => !s.revoked).length;
-  if (used >= total) return showToast("No DER seats available. Purchase more seats.", "error");
+  if (used >= total) return showToast('No DER seats available. Purchase more seats.', 'error');
 
   if (!company.usedSeats.der) company.usedSeats.der = {};
   company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
   if (!company.employees) company.employees = {};
-  company.employees[email] = { email, role: "der", status: "assigned", addedAt: Date.now() };
+  if (!company.employees[email]) company.employees[email] = { email, role: 'der', status: 'assigned', addedAt: Date.now() };
+  else company.employees[email].derStatus = 'assigned';
 
   if (!company.invites) company.invites = {};
-  if (!company.invites[email]) {
-    const code = "AMS-DER-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    company.invites[email] = { email, code, program: company.program || "fmcsa", role: "der", createdAt: Date.now(), status: "assigned" };
-    _showInviteMsg(code, "DER");
-  }
+  const derCode = 'AMS-DER-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email + '_der'] = { email, code: derCode, program: company.program || 'fmcsa', role: 'der', createdAt: Date.now(), status: 'assigned' };
+  _showInviteMsg(derCode, 'DER');
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
-  showToast(upgradeMsg, "success");
+  localStorage.setItem('companyProfile', JSON.stringify(company));
+  showToast('DER seat assigned.', 'success');
   _refreshAll(company);
 }
 
