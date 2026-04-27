@@ -2,6 +2,18 @@
    COMPANY ADMIN DASHBOARD — FINAL UPGRADED VERSION
 ========================================================= */
 
+/* showToast — defined here so it works on ALL pages that load this JS
+   (company-dashboard.html, employees.html, etc.) */
+function showToast(msg, type, duration) {
+  type = type || 'info'; duration = duration || 3500;
+  document.querySelectorAll('.ams-toast').forEach(function(t){ t.remove(); });
+  var toast = document.createElement('div');
+  toast.className = 'ams-toast toast-' + type;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, duration);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   loadCompanyDashboard(user);
