@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCompanyDashboard(user);
 });
 
+ /* Auto-switch tab if ?tab= param is in the URL */
+  const tabParam = new URLSearchParams(window.location.search).get("tab");
+  if (tabParam) switchTab(tabParam);
+});
+
 /* =========================================================
    GLOBAL PROGRAM
 ========================================================= */
