@@ -389,32 +389,43 @@ function loadEmployees(companyId) {
   if (!tbody) return;
   tbody.innerHTML = "";
 
-  /* Build a map keyed by email — registered users override invite-only rows */
-  const rowMap = new Map();
+  /* ── Build rows: ONE ROW PER MODULE PER PERSON ──────────────────────────
+     A person with Employee + DER seats gets 2 rows.
+     rowEntries = [ { email, module, isInvite }, ... ] */
+  const rowEntries = [];
+  const seen = new Set(); // track email+module combos to avoid duplicates
 
-  /* Add invite-only rows first */
-  Object.values(company.invites || {}).forEach(inv => {
-    const e = (inv.email || "").trim().toLowerCase();
-    if (e) rowMap.set(e, { type: "invite", data: inv });
-  });
+  const badgeColors = {
+    supervisor: { bg: "#dbeafe", color: "#1d4ed8", label: "Supervisor" },
+    der:        { bg: "#dcfce7", color: "#15803d", label: "DER"        },
+    employee:   { bg: "#fef9c3", color: "#854d0e", label: "Employee"   },
+    none:       { bg: "#f3f4f6", color: "#6b7280", label: "None"       }
+  };
 
-  /* Registered employees override invite rows */
-  users.filter(u => u.companyId === companyId && u.role === "employee").forEach(u => {
-    const e = (u.email || "").trim().toLowerCase();
-    if (e) rowMap.set(e, { type: "user", data: u });
-  });
-
-  /* Also include anyone with an active seat who may not be in ams_users yet */
-  ["employee", "supervisor", "der"].forEach(type => {
-    Object.entries(company.usedSeats?.[type] || {}).forEach(([email, seat]) => {
-      const e = email.trim().toLowerCase();
-      if (!seat.revoked && !rowMap.has(e)) {
-        rowMap.set(e, { type: "seat", data: { email: e } });
-      }
+  /* 1. Walk every active seat — one row per module */
+  ["supervisor", "der", "employee"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([rawEmail, seat]) => {
+      if (seat.revoked) return;
+      const e   = rawEmail.trim().toLowerCase();
+      const key = e + "__" + type;
+      if (seen.has(key)) return;
+      seen.add(key);
+      rowEntries.push({ email: e, module: type, isInvite: false });
     });
   });
 
-  if (!rowMap.size) {
+  /* 2. Walk pending invites — add a row only if no seat row exists for that module */
+  Object.values(company.invites || {}).forEach(inv => {
+    const e      = (inv.email || "").trim().toLowerCase();
+    const module = (inv.role  || "employee").toLowerCase();
+    const key    = e + "__" + module;
+    if (!e) return;
+    if (seen.has(key)) return; // already have a seat row for this combo
+    seen.add(key);
+    rowEntries.push({ email: e, module, isInvite: true });
+  });
+
+  if (!rowEntries.length) {
     tbody.innerHTML = `
       <tr>
         <td colspan="5">
@@ -429,65 +440,46 @@ function loadEmployees(companyId) {
     return;
   }
 
-  rowMap.forEach((entry, cleanEmail) => {
-    const emp      = entry.data;
-    const isInvite = entry.type === "invite";
-
-    /* Look up the registered user by exact email for name */
+  rowEntries.forEach(({ email: cleanEmail, module, isInvite }) => {
+    /* Registered user lookup for name */
     const registeredUser = users.find(u => (u.email || "").trim().toLowerCase() === cleanEmail);
 
-    /* Training type */
-    let trainingType = "None";
-    if      (company.usedSeats.supervisor?.[cleanEmail] && !company.usedSeats.supervisor[cleanEmail].revoked) trainingType = "Supervisor";
-    else if (company.usedSeats.der?.[cleanEmail]        && !company.usedSeats.der[cleanEmail].revoked)        trainingType = "DER";
-    else if (company.usedSeats.employee?.[cleanEmail]   && !company.usedSeats.employee[cleanEmail].revoked)   trainingType = "Employee";
-
-    /* Completion check — certIds is written at completion time on employee's browser */
-    const hasCert = !!company.certIds?.[cleanEmail]?.certId;
-    const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
-    const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
-    const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-    const trainingCompleted   = hasCert || completedDER || completedSupervisor || completedEmployee;
-
-    /* Status label */
-    let statusLabel = "Invited";
-    if (!isInvite) statusLabel = trainingCompleted ? "Completed" : "In Progress";
-
-    /* Training badge colors */
-    const badgeColors = {
-      Supervisor: { bg: "#dbeafe", color: "#1d4ed8" },
-      DER:        { bg: "#dcfce7", color: "#15803d" },
-      Employee:   { bg: "#fef9c3", color: "#854d0e" },
-      None:       { bg: "#f3f4f6", color: "#6b7280" }
+    /* Per-module completion check */
+    const completionFlags = {
+      supervisor: localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true",
+      der:        localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true",
+      employee:   localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true"
     };
-    const badge = badgeColors[trainingType] || badgeColors.None;
+    /* Also check certIds as fallback for the module's cert type */
+    const hasCert = !!company.certIds?.[cleanEmail]?.certId;
+    const trainingCompleted = completionFlags[module] || (hasCert && module === (company.certIds?.[cleanEmail]?.type || "").toLowerCase());
 
-    /* Status badge */
-    const statusClass = trainingCompleted
-      ? "status-completed"
-      : isInvite
-        ? "status-pending"
-        : "status-in-progress";
+    const badge = badgeColors[module] || badgeColors.none;
 
-    /* Remove button — disabled + tooltip if training completed */
+    /* Status */
+    let statusLabel  = "Invited";
+    let statusClass  = "status-pending";
+    if (!isInvite) {
+      statusLabel = trainingCompleted ? "Completed" : "In Progress";
+      statusClass = trainingCompleted ? "status-completed" : "status-in-progress";
+    }
+
+    /* Unique menu key so same email with 2 modules gets 2 separate menus */
+    const menuKey = cleanEmail.replace(/[@.]/g, "_") + "__" + module;
+
+    /* Remove button */
     const removeBtn = trainingCompleted
-      ? `<button
-            disabled
-            title="Cannot remove — training completed. Record must be kept."
-            style="opacity:.4;cursor:not-allowed;"
-          >
+      ? `<button disabled title="Cannot remove — training completed. Record must be kept."
+              style="opacity:.4;cursor:not-allowed;">
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
           </button>`
-      : `<button
-            onclick="removeEmployee('${cleanEmail}')"
-            style="color:var(--color-warning);"
-          >
+      : `<button onclick="removeEmployee('${cleanEmail}')" style="color:var(--color-warning);">
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
           </button>`;
 
-    /* View Cert — only show if completed */
+    /* View Cert — only if completed */
     const viewCertBtn = trainingCompleted
       ? `<button onclick="viewEmployeeCert('${cleanEmail}')">
             <i data-lucide="award" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
@@ -498,13 +490,15 @@ function loadEmployees(companyId) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="td-name">
-        ${isInvite ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>` : (`${registeredUser?.firstName || ""} ${registeredUser?.lastName || ""}`.trim() || "—")}
+        ${isInvite
+          ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>`
+          : (`${registeredUser?.firstName || ""} ${registeredUser?.lastName || ""}`.trim() || "—")}
       </td>
-      <td class="td-email">${emp.email}</td>
+      <td class="td-email">${cleanEmail}</td>
       <td>
-        <span class="role-badge role-${trainingType.toLowerCase() === "none" ? "employee" : trainingType.toLowerCase()}"
+        <span class="role-badge role-${module}"
               style="background:${badge.bg};color:${badge.color};">
-          ${trainingType}
+          ${badge.label}
         </span>
       </td>
       <td>
@@ -515,10 +509,10 @@ function loadEmployees(companyId) {
       </td>
       <td style="white-space:nowrap;">
         <div style="display:inline-block;position:relative;">
-          <button class="btn btn-secondary btn-sm" onclick="toggleMenu('${cleanEmail}')">
+          <button class="btn btn-secondary btn-sm" onclick="toggleMenu('${menuKey}')">
             Actions <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
           </button>
-          <div id="menu-${cleanEmail}" class="action-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:100;">
+          <div id="menu-${menuKey}" class="action-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:100;">
             <button onclick="resendInvite('${cleanEmail}')">
               <i data-lucide="send" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
               Resend Invite
