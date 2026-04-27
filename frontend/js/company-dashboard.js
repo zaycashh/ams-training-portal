@@ -467,14 +467,14 @@ function loadEmployees(companyId) {
     /* Unique menu key so same email with 2 modules gets 2 separate menus */
     const menuKey = cleanEmail.replace(/[@.]/g, "_") + "__" + module;
 
-    /* Remove button */
+    /* Remove button — pass module so only that module row is removed */
     const removeBtn = trainingCompleted
-      ? `<button disabled title="Cannot remove — training completed. Record must be kept."
+      ? `<button disabled title="Cannot remove — this module is already completed. Record must be kept."
               style="opacity:.4;cursor:not-allowed;">
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
           </button>`
-      : `<button onclick="removeEmployee('${cleanEmail}')" style="color:var(--color-warning);">
+      : `<button onclick="removeEmployee('${cleanEmail}', '${module}')" style="color:var(--color-warning);">
             <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
             Remove
           </button>`;
@@ -535,23 +535,68 @@ function loadEmployees(companyId) {
    REMOVE EMPLOYEE
 ========================================================= */
 
-window.removeEmployee = function (email) {
+window.removeEmployee = function (email, module) {
   const cleanEmail = email.toLowerCase().trim();
+
+  /* If a specific module is passed, remove only that module row */
+  if (module) {
+    const completionKeys = {
+      employee:   `fmcsaEmployeeCompleted_${cleanEmail}`,
+      supervisor: `fmcsaModuleBCompleted_${cleanEmail}`,
+      der:        `fmcsaDERCompleted_${cleanEmail}`
+    };
+    if (localStorage.getItem(completionKeys[module]) === "true") {
+      showToast("Cannot remove — this module is already completed. Record must be kept.", "error");
+      return;
+    }
+    if (!confirm(`Remove ${module} training for ${cleanEmail}?`)) return;
+
+    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+
+    /* Revoke the specific module seat */
+    if (company.usedSeats?.[module]?.[cleanEmail]) {
+      delete company.usedSeats[module][cleanEmail];
+    }
+
+    /* Remove the module-specific invite if present */
+    const inviteKey = module === "employee" ? cleanEmail : cleanEmail + "_" + module;
+    if (company.invites?.[inviteKey]) delete company.invites[inviteKey];
+
+    /* If the person has NO remaining active seats, also remove from ams_users */
+    const hasOtherSeats = ["employee", "supervisor", "der"].some(type => {
+      if (type === module) return false;
+      const seat = company.usedSeats?.[type]?.[cleanEmail];
+      return seat && !seat.revoked;
+    });
+
+    if (!hasOtherSeats) {
+      const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+      const updatedUsers = users.filter(u => u.email !== cleanEmail);
+      localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
+      if (company.employees?.[cleanEmail]) delete company.employees[cleanEmail];
+    }
+
+    localStorage.setItem("companyProfile", JSON.stringify(company));
+    location.reload();
+    return;
+  }
+
+  /* Legacy fallback: no module passed — block if ANY module completed */
+  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+  if (completedDER || completedSupervisor || completedEmployee) {
+    showToast("Cannot remove — training already completed. Record must be kept.", "error");
+    return;
+  }
+
   if (!confirm("Remove this employee from the company?")) return;
 
   const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
 
   if (company.invites?.[cleanEmail]) delete company.invites[cleanEmail];
-
-  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
-  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
-  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
-
-  if (completedDER || completedSupervisor || completedEmployee) {
-    alert("Cannot remove employee — training completed. Record must be kept.");
-    return;
-  }
 
   const updatedUsers = users.filter(u => u.email !== cleanEmail);
   localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
