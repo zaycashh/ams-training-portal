@@ -7,6 +7,12 @@
 /* -------------------------
    TOAST HELPER
 -------------------------- */
+function goDashboard() {
+  const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+  window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+}
+
 function showToast(msg, type, duration) {
   type = type || "info"; duration = duration || 3500;
   document.querySelectorAll(".ams-toast").forEach(function(t){t.remove();});
@@ -244,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (Date.now() < cooldownUntil) {
       const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
       showToast(`Quiz locked. Try again in ${minutesLeft} minute(s).`, "error", 5000);
-      setTimeout(() => window.location.href = "dashboard.html", 2000);
+      setTimeout(() => goDashboard(), 2000);
       return true;
     }
     return false;
@@ -395,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem(DER_COOLDOWN_KEY, cooldownUntil);
       localStorage.setItem(DER_ATTEMPTS_KEY, 0);
       showToast("Maximum attempts reached. Quiz locked for 15 minutes.", "error", 5000);
-      setTimeout(() => window.location.href = "dashboard.html", 2000);
+      setTimeout(() => goDashboard(), 2000);
       return;
     }
 
