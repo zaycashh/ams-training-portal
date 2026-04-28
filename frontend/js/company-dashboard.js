@@ -329,11 +329,38 @@ function assignSupervisorSeat(emailParam) {
       const renewDate = new Date(completedTs + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US');
       return showToast('Supervisor module completed. Annual renewal due ' + renewDate + '.', 'info', 5000);
     }
-    /* Over a year — clear old completion so they can redo it */
-    localStorage.removeItem('fmcsaModuleBCompleted_' + email);
-    localStorage.removeItem('fmcsaModuleACompleted_' + email);
-    localStorage.removeItem('fmcsaModuleACertificateId_' + email);
-    localStorage.removeItem('fmcsaModuleBDate_' + email);
+    /* Over a year — archive old cert before clearing, then reset for renewal */
+    const prog = (company.program || 'fmcsa').toLowerCase();
+    const oldCertId  = prog === 'faa'
+      ? localStorage.getItem(`faaSupervisorCertificateId_${email}`)
+      : localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+    const oldDate    = prog === 'faa'
+      ? localStorage.getItem(`faaSupervisorTrainingDate_${email}`)
+      : localStorage.getItem(`fmcsaModuleBDate_${email}`);
+
+    if (oldCertId) {
+      if (!company.certHistory)           company.certHistory = {};
+      if (!company.certHistory[email])    company.certHistory[email] = [];
+      company.certHistory[email].push({
+        module:      'supervisor',
+        program:     prog,
+        certId:      oldCertId,
+        completedAt: oldDate ? parseInt(oldDate) : completedTs,
+        archivedAt:  Date.now()
+      });
+    }
+
+    /* Clear current completion keys */
+    if (prog === 'faa') {
+      localStorage.removeItem(`faaSupervisorCompleted_${email}`);
+      localStorage.removeItem(`faaSupervisorCertificateId_${email}`);
+      localStorage.removeItem(`faaSupervisorTrainingDate_${email}`);
+    } else {
+      localStorage.removeItem('fmcsaModuleBCompleted_' + email);
+      localStorage.removeItem('fmcsaModuleACompleted_' + email);
+      localStorage.removeItem('fmcsaModuleACertificateId_' + email);
+      localStorage.removeItem('fmcsaModuleBDate_' + email);
+    }
     if (company.usedSeats?.supervisor?.[email]) company.usedSeats.supervisor[email].revoked = true;
   }
 
@@ -586,7 +613,15 @@ window.removeEmployee = function (email, module) {
       showToast("Cannot remove — this module is already completed. Record must be kept.", "error");
       return;
     }
-    if (!confirm(`Remove ${module} training for ${cleanEmail}?`)) return;
+    /* Two-click confirmation — first click sets a pending flag */
+    const confirmKey = `_pendingRemove_${cleanEmail}_${module}`;
+    if (!sessionStorage.getItem(confirmKey)) {
+      sessionStorage.setItem(confirmKey, "1");
+      showToast(`Click Remove again to confirm removing ${module} training for ${cleanEmail}.`, "warning", 4000);
+      setTimeout(() => sessionStorage.removeItem(confirmKey), 4000);
+      return;
+    }
+    sessionStorage.removeItem(confirmKey);
 
     const company = getCompanyProfile();
 
@@ -628,7 +663,15 @@ window.removeEmployee = function (email, module) {
     return;
   }
 
-  if (!confirm("Remove this employee from the company?")) return;
+  /* Two-click confirmation */
+  const confirmEmpKey = `_pendingRemoveEmp_${cleanEmail}`;
+  if (!sessionStorage.getItem(confirmEmpKey)) {
+    sessionStorage.setItem(confirmEmpKey, "1");
+    showToast(`Click Remove again to confirm removing ${cleanEmail} from the company.`, "warning", 4000);
+    setTimeout(() => sessionStorage.removeItem(confirmEmpKey), 4000);
+    return;
+  }
+  sessionStorage.removeItem(confirmEmpKey);
 
   const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
   const company = getCompanyProfile();
