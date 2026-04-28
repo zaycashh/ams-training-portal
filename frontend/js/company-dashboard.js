@@ -1,503 +1,902 @@
 
+company-dashboard
+/* =========================================================
+   COMPANY ADMIN DASHBOARD — FINAL UPGRADED VERSION
+========================================================= */
 
-dashboard.js
-JavaScript
-dashboard
-const user  = JSON.parse(localStorage.getItem("amsUser") || "null");
-const email = user?.email;
-
-/* =========================
-   COURSE KEYS
-========================= */
-const COURSE_KEYS = {
-  der: "paid_der",
-  supervisor: "paid_supervisor",
-  employee: "paid_employee",
-  fmcsa: "paid_fmcsa"
-};
-
-/* =========================
-   FAA MODULE REGISTRY
-========================= */
-const FAA_MODULES = {
-
-  employee: {
-    btn: "employeeBtn",
-    paidKey: "paid_employee",
-    completedKey: (email) => `faaEmployeeCompleted_${email}`,
-    start: "faa-employee.html"
-  },
-
-  supervisor: {
-    btn: "supervisorBtn",
-    paidKey: "paid_supervisor",
-    completedKey: (email) => `faaSupervisorCompleted_${email}`,
-    start: "faa-supervisor.html"
-  },
-
-  der: {
-    btn: "derBtn",
-    paidKey: "paid_der",
-    completedKey: (email) => `faaDERCompleted_${email}`,
-    start: "faa-der.html"
-  }
-
-};
-
-/* =========================
-   FAA BUTTON ENGINE
-========================= */
-function updateFAAModuleButtons() {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  Object.keys(FAA_MODULES).forEach(module => {
-
-    const config = FAA_MODULES[module];
-    const btn = document.getElementById(config.btn);
-
-    if (!btn) return;
-
-    const completed =
-      localStorage.getItem(config.completedKey(user.email)) === "true";
-
-    if (completed) {
-      btn.textContent = "🎓 View Certificate";
-      btn.onclick = () => {
-        window.location.href = "certificates.html#" + module;
-      };
-      btn.disabled = false;
-      return;
-    }
-
-    const paidFAA =
-      localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
-
-    /* Check company seat for employees */
-    const _faaProf  = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
-    const _faaSeat  = _faaProf?.usedSeats?.[module]?.[user.email];
-    const hasFAASeat = _faaSeat && !_faaSeat.revoked;
-
-    if (paidFAA || hasFAASeat) {
-      btn.textContent = "Start Training";
-      btn.onclick = () => {
-        window.location.href = config.start;
-      };
-      btn.disabled = false;
-      return;
-    }
-
-    btn.textContent = "🔒 Locked — Purchase Required";
-    btn.onclick = () => {
-      window.location.href = `payment.html?module=${module}`;
-    };
-
-  });
-
+/* showToast — defined here so it works on ALL pages that load this JS
+   (company-dashboard.html, employees.html, etc.) */
+function showToast(msg, type, duration) {
+  type = type || 'info'; duration = duration || 3500;
+  document.querySelectorAll('.ams-toast').forEach(function(t){ t.remove(); });
+  var toast = document.createElement('div');
+  toast.className = 'ams-toast toast-' + type;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, duration);
 }
 
-/* =========================
-   LOGOUT
-========================= */
-function logout() {
-  localStorage.removeItem("amsUser");
-  window.location.replace("login.html");
-}
-
-/* =========================
-   ACCESS CHECK
-========================= */
-function hasAccess(course) {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return false;
-  const paidKey = COURSE_KEYS[course];
-  return localStorage.getItem(`${paidKey}_${user.email}`) === "true";
-}
-
-/* =========================
-   COMPLETION DATES
-========================= */
-function updateFAACompletionDates() {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  const derDate = localStorage.getItem(`derTrainingDate_${user.email}`);
-  if (derDate) {
-    const el = document.getElementById("derCompletionDate");
-    if (el) {
-      el.innerHTML = `
-        <span class="status-badge status-completed">✔ Completed</span>
-        ${new Date(Number(derDate)).toLocaleDateString("en-US")}
-      `;
-    }
-  }
-
-  const supDate = localStorage.getItem(`supervisorTrainingDate_${user.email}`);
-  if (supDate) {
-    const el = document.getElementById("supervisorCompletionDate");
-    if (el) {
-      el.innerHTML = `
-        <span class="status-badge status-completed">✔ Completed</span>
-        ${new Date(Number(supDate)).toLocaleDateString("en-US")}
-      `;
-    }
-  }
-
-  const empDate = localStorage.getItem(`employeeTrainingDate_${user.email}`);
-  if (empDate) {
-    const el = document.getElementById("employeeCompletionDate");
-    if (el) {
-      el.innerHTML = `
-        <span class="status-badge status-completed">✔ Completed</span>
-        ${new Date(Number(empDate)).toLocaleDateString("en-US")}
-      `;
-    }
-  }
-
-}
-
-function updateFMCSATimer() {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  const paid = localStorage.getItem(`paid_fmcsa_${user.email}`) === "true";
-  if (!paid) return;
-
-  const purchaseDate = localStorage.getItem(`fmcsa_start_date_${user.email}`);
-  if (!purchaseDate) return;
-
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const now         = Date.now();
-  const expiration  = parseInt(purchaseDate) + THIRTY_DAYS;
-  const remaining   = expiration - now;
-
-  const fmcsaCard = document.getElementById("fmcsaCard");
-  if (!fmcsaCard) return;
-
-  if (remaining <= 0) {
-    localStorage.removeItem(`paid_fmcsa_${user.email}`);
-    localStorage.removeItem(`fmcsa_start_date_${user.email}`);
-    const btn = fmcsaCard.querySelector("button");
-    if (btn) {
-      btn.textContent = "Expired — Purchase Required";
-      btn.onclick = () => (window.location.href = "../pages/payment.html?type=fmcsa");
-    }
-    return;
-  }
-
-  const daysLeft = Math.ceil(remaining / (1000 * 60 * 60 * 24));
-  const info = fmcsaCard.querySelector(".fmcsa-timer");
-  if (info) {
-    info.textContent = `Access expires in ${daysLeft} day${daysLeft > 1 ? "s" : ""}`;
-  }
-}
-
-/* =========================
-   INIT
-========================= */
 document.addEventListener("DOMContentLoaded", () => {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  loadCompanyDashboard(user);
 
-  const company      = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  const storedProgram = localStorage.getItem("amsProgram");
-  const program      = (company.program || storedProgram || "").toLowerCase();
-
-  console.log("PROGRAM:", program);
-
-  /* PROGRAM LOCK */
-  if (program === "fmcsa") {
-    document.querySelectorAll(".faa-section").forEach(el => el.remove());
-  }
-  if (program === "faa") {
-    document.querySelectorAll(".fmcsa-section").forEach(el => el.remove());
-  }
-
-  /* Global Notice */
-  const notice = sessionStorage.getItem("ams_notice");
-  if (notice) {
-    showToast(notice);
-    sessionStorage.removeItem("ams_notice");
-  }
-
-  updateFAAModuleButtons();
-  updateFAACompletionDates();
-  updateFMCSAStatus();
-  updateFMCSATimer();
-  updateFMCSDERButtonState();
-  updateFMCSAEmployeeButton();
-  updateFMCSASupervisorButton();
-  updateFMCSAProgress();
-  /* MODULE A COMPLETION DATE */
-  const modADate = localStorage.getItem(`fmcsaModuleADate_${email}`);
-  if (modADate) {
-    const el = document.getElementById("moduleACompletionDate");
-    if (el) {
-      const date = new Date(parseInt(modADate));
-      el.innerHTML = `<span class="status-badge status-completed">✔ Completed</span> ${date.toLocaleDateString("en-US")}`;
-    }
-  }
-
-  /* MODULE B COMPLETION DATE */
-  const modBDate = localStorage.getItem(`fmcsaModuleBDate_${email}`);
-  if (modBDate) {
-    const el = document.getElementById("moduleBCompletionDate");
-    if (el) {
-      const date = new Date(parseInt(modBDate));
-      el.innerHTML = `<span class="status-badge status-completed">✔ Completed</span> ${date.toLocaleDateString("en-US")}`;
-    }
-  }
-
-  /* FMCSA EMPLOYEE COMPLETION DATE */
-  const empDate = localStorage.getItem(`fmcsaEmployeeDate_${email}`);
-  if (empDate) {
-    const el = document.getElementById("employeeFmcsaCompletionDate");
-    if (el) {
-      const date      = new Date(parseInt(empDate));
-      const formatted = date.toLocaleDateString("en-US", { timeZone: "America/New_York" });
-      el.innerHTML    = `<span class="status-badge status-completed">✔ Completed</span> ${formatted}`;
-    }
-  }
-
+  /* Auto-switch tab if ?tab= param is in the URL */
+  const tabParam = new URLSearchParams(window.location.search).get("tab");
+  if (tabParam) switchTab(tabParam);
 });
 
-/* =========================
-   TOAST
-========================= */
-function showToast(message, type = "info") {
-  const toast = document.createElement("div");
-  toast.className = `ams-toast ${type}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add("show"), 50);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+/* =========================================================
+   GLOBAL PROGRAM — program-scoped profile helpers
+   Each program (FAA / FMCSA) stores its own companyProfile
+   so seats, usedSeats, and invites never bleed across programs.
+   Key format:  companyProfile_faa  |  companyProfile_fmcsa
+   The legacy key "companyProfile" is kept in sync for any
+   legacy code that still reads it directly.
+========================================================= */
+
+function _profileKey(program) {
+  const p = (program || "").toLowerCase();
+  if (p === "fmcsa") return "companyProfile_fmcsa";
+  return "companyProfile_faa"; // default
 }
 
-/* =========================
-   FMCSA COMPLETION STATUS
-========================= */
-function updateFMCSAStatus() {
+function getCompanyProfile() {
+  /* 1. Try to detect program from amsUser or amsProgram */
+  const user    = JSON.parse(localStorage.getItem("amsUser")  || "null");
+  const program = (user?.program || localStorage.getItem("amsProgram") || "").toLowerCase();
+  const key     = _profileKey(program);
 
-  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+  /* 2. Try scoped key first */
+  let profile = JSON.parse(localStorage.getItem(key) || "null");
 
-  const modABadge = document.getElementById("modABadge");
-  const modBBadge = document.getElementById("modBBadge");
-  const certBadge = document.getElementById("certBadge");
+  /* 3. Fall back to legacy key if scoped key is empty */
+  if (!profile) profile = JSON.parse(localStorage.getItem("companyProfile") || "null");
 
-  if (modABadge) {
-    modABadge.textContent = modA ? "✔ Completed" : "⏳ Not Started";
-    modABadge.className   = modA ? "status-badge status-completed" : "status-badge status-inprogress";
-  }
-
-  if (modBBadge) {
-    if (modB) {
-      modBBadge.textContent = "✔ Completed";
-      modBBadge.className   = "status-badge status-completed";
-    } else if (modA) {
-      modBBadge.textContent = "⏳ Ready to Start";
-      modBBadge.className   = "status-badge status-inprogress";
-    } else {
-      modBBadge.textContent = "🔒 Locked";
-      modBBadge.className   = "status-badge status-locked";
-    }
-  }
-
-  if (certBadge) {
-    certBadge.textContent = (modA && modB) ? "✔ Certificate Available" : "🔒 Locked";
-    certBadge.className   = (modA && modB) ? "status-badge status-completed" : "status-badge status-locked";
-  }
-
+  return profile || {};
 }
 
-function handleDerFmcsa() {
+function saveCompanyProfile(company) {
+  const key = _profileKey(company.program);
+  localStorage.setItem(key, JSON.stringify(company));
+  /* Keep legacy key in sync so any page that still reads
+     "companyProfile" directly gets the right data */
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+}
 
-  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
+function getCompanyProgram() {
+  const company = getCompanyProfile();
+  return company.program || "FAA";
+}
 
-  if (completed) {
-    const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-    if (certId) {
-      window.location.href = `fmcsa-certificates.html?id=${certId}`;
-    } else {
-      showToast("Certificate not found.", "error");
+/* =========================================================
+   LOAD DASHBOARD
+========================================================= */
+
+function loadCompanyDashboard(user) {
+  const company = getCompanyProfile();
+
+  /* =========================================================
+     ENSURE FULL SEAT STRUCTURE
+  ========================================================= */
+
+  let updated = false;
+
+  if (!company.seats) { company.seats = {}; updated = true; }
+  if (!company.usedSeats) { company.usedSeats = {}; updated = true; }
+
+  if (!company.seats.employee)   { company.seats.employee   = { total: 0 }; updated = true; }
+  if (!company.seats.supervisor) { company.seats.supervisor = { total: 0 }; updated = true; }
+  if (!company.seats.der)        { company.seats.der        = { total: 0 }; updated = true; }
+
+  if (!company.usedSeats.employee)   { company.usedSeats.employee   = {}; updated = true; }
+  if (!company.usedSeats.supervisor) { company.usedSeats.supervisor = {}; updated = true; }
+  if (!company.usedSeats.der)        { company.usedSeats.der        = {}; updated = true; }
+
+  /* Normalize employee seats */
+  Object.keys(company.usedSeats.employee).forEach(email => {
+    let seat = company.usedSeats.employee[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
+      seat = company.usedSeats.employee[email];
+      updated = true;
     }
+    if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+    if (!company.employees) company.employees = {};
+    if (!company.employees[email]) {
+      company.employees[email] = { email, role: "employee", status: "assigned", addedAt: Date.now() };
+      updated = true;
+    }
+  });
+
+  /* Normalize supervisor seats */
+  Object.keys(company.usedSeats.supervisor).forEach(email => {
+    const seat = company.usedSeats.supervisor[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
+
+  /* Normalize DER seats */
+  Object.keys(company.usedSeats.der).forEach(email => {
+    const seat = company.usedSeats.der[email];
+    if (typeof seat !== "object") {
+      company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+      updated = true;
+    } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
+  });
+
+  if (updated) saveCompanyProfile(company);
+
+  const programEl = document.getElementById("companyProgram");
+  if (programEl) {
+    programEl.textContent = company.program ? company.program.toUpperCase() : "—";
+  }
+
+  if (!company.id) { showToast("Company profile missing", "error"); return; }
+
+  const nameEl = document.getElementById("companyName");
+  const adminEl = document.getElementById("companyAdmin");
+  if (nameEl) nameEl.textContent = company.name || user?.company || "—";
+  if (adminEl) adminEl.textContent = user?.email || "—";
+
+  loadEmployees(company.id);
+  updateSeatCounts(company);
+  renderSeatAssignments(company);
+  updateEmployeeOverview(company);
+}
+
+/* =========================================================
+   EMPLOYEE OVERVIEW STATS
+========================================================= */
+
+function updateEmployeeOverview(company) {
+  if (!company) company = getCompanyProfile();
+
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+
+  /* All active (non-revoked) seat holders across all types */
+  const allSeatedEmails = new Set();
+  ["employee", "supervisor", "der"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([email, seat]) => {
+      if (!seat.revoked) allSeatedEmails.add(email.trim().toLowerCase());
+    });
+  });
+
+  /* Also count pending invites that haven't registered yet */
+  Object.values(company.invites || {}).forEach(inv => {
+    if (["pending", "resent", "assigned"].includes(inv.status)) {
+      allSeatedEmails.add(inv.email.trim().toLowerCase());
+    }
+  });
+
+  const total = allSeatedEmails.size;
+  let completed  = 0;
+  let inProgress = 0;
+  let notStarted = 0;
+
+  allSeatedEmails.forEach(email => {
+    const isRegistered = users.some(u => u.email === email);
+
+    /* Check companyProfile.certIds first (set when employee completes on their browser) */
+    const hasCert = !!company.certIds?.[email]?.certId;
+
+    /* Also check local storage as fallback (works when admin = same browser as employee) */
+    const localDone =
+      localStorage.getItem(`fmcsaDERCompleted_${email}`)      === "true" ||
+      localStorage.getItem(`fmcsaModuleBCompleted_${email}`)  === "true" ||
+      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true" ||
+      localStorage.getItem(`faaDERCompleted_${email}`)        === "true" ||
+      localStorage.getItem(`faaSupervisorCompleted_${email}`) === "true" ||
+      localStorage.getItem(`faaEmployeeCompleted_${email}`)   === "true";
+
+    const isDone = hasCert || localDone;
+
+    if (isDone)            completed++;
+    else if (isRegistered) inProgress++;
+    else                   notStarted++;
+  });
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("statTotal",     total);
+  set("statCompleted", completed);
+  set("statInProgress", inProgress);
+  set("statPending",   notStarted);
+
+  /* Delta badges — show change indicator if IDs exist */
+  set("statTotalDelta",     "");
+  set("statCompletedDelta", "");
+  set("statProgressDelta",  "");
+  set("statPendingDelta",   "");
+}
+
+/* =========================================================
+   SEAT COUNTS
+========================================================= */
+
+function getSeatStats(company) {
+  const total = company?.seats?.employee?.total ?? 0;
+  const used  = Object.values(company?.usedSeats?.employee || {}).filter(s => !s.revoked).length;
+  return { totalPurchased: total, usedSeats: used, remaining: Math.max(0, total - used) };
+}
+
+function updateSeatCounts(company) {
+  if (!company) company = getCompanyProfile();
+
+  const empTotal     = company?.seats?.employee?.total || 0;
+  const empUsed      = Object.values(company?.usedSeats?.employee   || {}).filter(s => !s.revoked).length;
+  const empAvailable = Math.max(0, empTotal - empUsed);
+
+  const supTotal     = company?.seats?.supervisor?.total || 0;
+  const supUsed      = Object.values(company?.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  const supAvailable = Math.max(0, supTotal - supUsed);
+
+  const derTotal     = company?.seats?.der?.total || 0;
+  const derUsed      = Object.values(company?.usedSeats?.der        || {}).filter(s => !s.revoked).length;
+  const derAvailable = Math.max(0, derTotal - derUsed);
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("seatTotal",           empTotal);
+  set("seatUsed",            empUsed);
+  set("seatRemaining",       empAvailable);
+  set("supervisorTotal",     supTotal);
+  set("supervisorUsed",      supUsed);
+  set("supervisorAvailable", supAvailable);
+  set("derTotal",            derTotal);
+  set("derUsed",             derUsed);
+  set("derAvailable",        derAvailable);
+}
+
+/* =========================================================
+   ASSIGN SEATS
+========================================================= */
+
+/* ─────────────────────────────────────────────────────────
+   SEAT ASSIGNMENT RULES
+   • All 3 modules (Employee, Supervisor, DER) are INDEPENDENT
+   • A person can hold any combination simultaneously
+   • Block ONLY if:
+       - Same module is already active/assigned (not revoked)
+       - Same module was already COMPLETED (can't redo a done module)
+         EXCEPTION: Supervisor must redo annually (allow if completed
+         more than 365 days ago)
+   • No hierarchy — DER does not block Supervisor and vice versa
+───────────────────────────────────────────────────────── */
+
+function _moduleCompleted(email, role) {
+  /* Returns completion timestamp (ms) or null */
+  if (role === 'employee')   return localStorage.getItem('fmcsaEmployeeCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaEmployeeDate_' + email) || '0') || Date.now() : null;
+  if (role === 'supervisor') return localStorage.getItem('fmcsaModuleBCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaModuleBDate_' + email) || '0') || Date.now() : null;
+  if (role === 'der')        return localStorage.getItem('fmcsaDERCompleted_' + email) === 'true'
+                               ? parseInt(localStorage.getItem('fmcsaDERDate_' + email) || '0') || Date.now() : null;
+  return null;
+}
+
+function assignEmployeeSeat(emailParam) {
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
+
+  const company = getCompanyProfile();
+  if (!company.usedSeats) company.usedSeats = {};
+
+  /* Block: already has active Employee seat */
+  const activeEmp = company.usedSeats?.employee?.[email] && !company.usedSeats.employee[email].revoked;
+  if (activeEmp) return showToast('This person already has an Employee seat assigned.', 'error');
+
+  /* Block: Employee module already completed (no annual renewal for employees) */
+  const completedTs = _moduleCompleted(email, 'employee');
+  if (completedTs) return showToast('This person already completed the Employee module.', 'error');
+
+  const total = company.seats?.employee?.total || 0;
+  const used  = Object.values(company.usedSeats.employee || {}).filter(s => !s.revoked).length;
+  if (used >= total) return showToast('No employee seats available. Purchase more seats.', 'error');
+
+  if (!company.usedSeats.employee) company.usedSeats.employee = {};
+  company.usedSeats.employee[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  company.employees[email] = { email, role: 'employee', status: 'assigned', addedAt: Date.now() };
+
+  if (!company.invites) company.invites = {};
+  if (!company.invites[email] || company.invites[email].role !== 'employee') {
+    const code = 'AMS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code, program: company.program || 'fmcsa', role: 'employee', createdAt: Date.now(), status: 'assigned' };
+    _showInviteMsg(code, 'Employee');
+  }
+
+  saveCompanyProfile(company);
+  showToast('Employee seat assigned.', 'success');
+  _refreshAll(company);
+}
+
+function assignSupervisorSeat(emailParam) {
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
+
+  const company = getCompanyProfile();
+  if (!company.usedSeats) company.usedSeats = {};
+
+  /* Block: already has active Supervisor seat */
+  const activeSup = company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked;
+  if (activeSup) return showToast('This person already has a Supervisor seat assigned.', 'error');
+
+  /* Block: Supervisor module completed — UNLESS it was over 365 days ago (annual renewal) */
+  const completedTs = _moduleCompleted(email, 'supervisor');
+  if (completedTs) {
+    const daysSince = (Date.now() - completedTs) / (1000 * 60 * 60 * 24);
+    if (daysSince < 365) {
+      const renewDate = new Date(completedTs + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US');
+      return showToast('Supervisor module completed. Annual renewal due ' + renewDate + '.', 'info', 5000);
+    }
+    /* Over a year — clear old completion so they can redo it */
+    localStorage.removeItem('fmcsaModuleBCompleted_' + email);
+    localStorage.removeItem('fmcsaModuleACompleted_' + email);
+    localStorage.removeItem('fmcsaModuleACertificateId_' + email);
+    localStorage.removeItem('fmcsaModuleBDate_' + email);
+    if (company.usedSeats?.supervisor?.[email]) company.usedSeats.supervisor[email].revoked = true;
+  }
+
+  const total = company.seats?.supervisor?.total || 0;
+  const used  = Object.values(company.usedSeats?.supervisor || {}).filter(s => !s.revoked).length;
+  if (used >= total) return showToast('No supervisor seats available. Purchase more seats.', 'error');
+
+  if (!company.usedSeats.supervisor) company.usedSeats.supervisor = {};
+  company.usedSeats.supervisor[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  /* Keep existing role label if they have other modules; only set supervisor if no other role */
+  if (!company.employees[email]) company.employees[email] = { email, role: 'supervisor', status: 'assigned', addedAt: Date.now() };
+  else company.employees[email].supervisorStatus = 'assigned';
+
+  if (!company.invites) company.invites = {};
+  const supCode = 'AMS-SUP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  /* Always generate a new supervisor invite */
+  company.invites[email + '_supervisor'] = { email, code: supCode, program: company.program || 'fmcsa', role: 'supervisor', createdAt: Date.now(), status: 'assigned' };
+  _showInviteMsg(supCode, 'Supervisor');
+
+  saveCompanyProfile(company);
+  showToast(completedTs ? 'Supervisor annual renewal assigned.' : 'Supervisor seat assigned.', 'success');
+  _refreshAll(company);
+}
+
+function assignDerSeat(emailParam) {
+  const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
+  if (!email) return showToast('Enter an email address.', 'error');
+
+  const company = getCompanyProfile();
+  if (!company.usedSeats) company.usedSeats = {};
+
+  /* Block: already has active DER seat */
+  const activeDer = company.usedSeats?.der?.[email] && !company.usedSeats.der[email].revoked;
+  if (activeDer) return showToast('This person already has a DER seat assigned.', 'error');
+
+  /* Block: DER module already completed */
+  const completedTs = _moduleCompleted(email, 'der');
+  if (completedTs) return showToast('This person already completed the DER module.', 'error');
+
+  const total = company.seats?.der?.total || 0;
+  const used  = Object.values(company.usedSeats?.der || {}).filter(s => !s.revoked).length;
+  if (used >= total) return showToast('No DER seats available. Purchase more seats.', 'error');
+
+  if (!company.usedSeats.der) company.usedSeats.der = {};
+  company.usedSeats.der[email] = { assignedAt: Date.now(), revoked: false };
+  if (!company.employees) company.employees = {};
+  if (!company.employees[email]) company.employees[email] = { email, role: 'der', status: 'assigned', addedAt: Date.now() };
+  else company.employees[email].derStatus = 'assigned';
+
+  if (!company.invites) company.invites = {};
+  const derCode = 'AMS-DER-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email + '_der'] = { email, code: derCode, program: company.program || 'fmcsa', role: 'der', createdAt: Date.now(), status: 'assigned' };
+  _showInviteMsg(derCode, 'DER');
+
+  saveCompanyProfile(company);
+  showToast('DER seat assigned.', 'success');
+  _refreshAll(company);
+}
+
+/* helpers */
+function _showInviteMsg(code, label) {
+  const msg = document.getElementById("inviteMsg");
+  if (!msg) return;
+  msg.innerHTML = `
+    ${label} Invite Code: <strong>${code}</strong>
+    <button onclick="copyInvite('${code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>
+  `;
+}
+
+function _refreshAll(company) {
+  renderSeatAssignments(company);
+  updateSeatCounts(company);
+  loadEmployees(company.id);
+  const input = document.getElementById("seatEmail");
+  if (input) input.value = "";
+}
+
+/* =========================================================
+   LOAD EMPLOYEES — CLEAN DROPDOWN (Resend / View Cert / Remove)
+========================================================= */
+
+function loadEmployees(companyId) {
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
+  const company = getCompanyProfile();
+
+  if (!company.usedSeats) company.usedSeats = { employee: {}, supervisor: {}, der: {} };
+
+  const tbody = document.getElementById("employeeTable");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  /* ── Build rows: ONE ROW PER MODULE PER PERSON ──────────────────────────
+     A person with Employee + DER seats gets 2 rows.
+     rowEntries = [ { email, module, isInvite }, ... ] */
+  const rowEntries = [];
+  const seen = new Set(); // track email+module combos to avoid duplicates
+
+  const badgeColors = {
+    supervisor: { bg: "#dbeafe", color: "#1d4ed8", label: "Supervisor" },
+    der:        { bg: "#dcfce7", color: "#15803d", label: "DER"        },
+    employee:   { bg: "#fef9c3", color: "#854d0e", label: "Employee"   },
+    none:       { bg: "#f3f4f6", color: "#6b7280", label: "None"       }
+  };
+
+  /* 1. Walk every active seat — one row per module */
+  ["supervisor", "der", "employee"].forEach(type => {
+    Object.entries(company.usedSeats?.[type] || {}).forEach(([rawEmail, seat]) => {
+      if (seat.revoked) return;
+      const e   = rawEmail.trim().toLowerCase();
+      const key = e + "__" + type;
+      if (seen.has(key)) return;
+      seen.add(key);
+      rowEntries.push({ email: e, module: type, isInvite: false });
+    });
+  });
+
+  /* 2. Walk pending invites — add a row only if no seat row exists for that module */
+  Object.values(company.invites || {}).forEach(inv => {
+    const e      = (inv.email || "").trim().toLowerCase();
+    const module = (inv.role  || "employee").toLowerCase();
+    const key    = e + "__" + module;
+    if (!e) return;
+    if (seen.has(key)) return; // already have a seat row for this combo
+    seen.add(key);
+    rowEntries.push({ email: e, module, isInvite: true });
+  });
+
+  if (!rowEntries.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+            <h4>No employees yet</h4>
+            <p>Assign training above to add employees to your roster.</p>
+          </div>
+        </td>
+      </tr>`;
+    if (window.lucide) lucide.createIcons();
     return;
   }
 
-  if (localStorage.getItem(`paid_der_fmcsa_${email}`) === "true") {
-    window.location.href = "fmcsa-der.html";
+  rowEntries.forEach(({ email: cleanEmail, module, isInvite }) => {
+    /* Registered user lookup for name */
+    const registeredUser = users.find(u => (u.email || "").trim().toLowerCase() === cleanEmail);
+
+    /* Per-module completion check */
+    const completionFlags = {
+      supervisor: localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true",
+      der:        localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true",
+      employee:   localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true"
+    };
+    /* Also check certIds as fallback for the module's cert type */
+    const hasCert = !!company.certIds?.[cleanEmail]?.certId;
+    const trainingCompleted = completionFlags[module] || (hasCert && module === (company.certIds?.[cleanEmail]?.type || "").toLowerCase());
+
+    const badge = badgeColors[module] || badgeColors.none;
+
+    /* Status */
+    let statusLabel  = "Invited";
+    let statusClass  = "status-pending";
+    if (!isInvite) {
+      statusLabel = trainingCompleted ? "Completed" : "In Progress";
+      statusClass = trainingCompleted ? "status-completed" : "status-in-progress";
+    }
+
+    /* Unique menu key so same email with 2 modules gets 2 separate menus */
+    const menuKey = cleanEmail.replace(/[@.]/g, "_") + "__" + module;
+
+    /* Remove button — pass module so only that module row is removed */
+    const removeBtn = trainingCompleted
+      ? `<button disabled title="Cannot remove — this module is already completed. Record must be kept."
+              style="opacity:.4;cursor:not-allowed;">
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`
+      : `<button onclick="removeEmployee('${cleanEmail}', '${module}')" style="color:var(--color-warning);">
+            <i data-lucide="trash-2" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            Remove
+          </button>`;
+
+    /* View Cert — only if completed */
+    const viewCertBtn = trainingCompleted
+      ? `<button onclick="viewEmployeeCert('${cleanEmail}')">
+            <i data-lucide="award" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+            View Certificate
+          </button>`
+      : "";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="td-name">
+        ${isInvite
+          ? `<span style="color:var(--color-text-muted);font-style:italic;">Pending</span>`
+          : (`${registeredUser?.firstName || ""} ${registeredUser?.lastName || ""}`.trim() || "—")}
+      </td>
+      <td class="td-email">${cleanEmail}</td>
+      <td>
+        <span class="role-badge role-${module}"
+              style="background:${badge.bg};color:${badge.color};">
+          ${badge.label}
+        </span>
+      </td>
+      <td>
+        <span class="status-badge ${statusClass}">
+          <span class="status-dot"></span>
+          ${statusLabel}
+        </span>
+      </td>
+      <td style="white-space:nowrap;">
+        <div style="display:inline-block;position:relative;">
+          <button class="btn btn-secondary btn-sm" onclick="toggleMenu('${menuKey}')">
+            Actions <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+          </button>
+          <div id="menu-${menuKey}" class="action-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:100;">
+            <button onclick="resendInvite('${cleanEmail}')">
+              <i data-lucide="send" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+              Resend Invite
+            </button>
+            ${viewCertBtn}
+            <hr>
+            ${removeBtn}
+          </div>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  if (window.lucide) lucide.createIcons();
+}
+
+/* =========================================================
+   REMOVE EMPLOYEE
+========================================================= */
+
+window.removeEmployee = function (email, module) {
+  const cleanEmail = email.toLowerCase().trim();
+
+  /* If a specific module is passed, remove only that module row */
+  if (module) {
+    const completionKeys = {
+      employee:   `fmcsaEmployeeCompleted_${cleanEmail}`,
+      supervisor: `fmcsaModuleBCompleted_${cleanEmail}`,
+      der:        `fmcsaDERCompleted_${cleanEmail}`
+    };
+    if (localStorage.getItem(completionKeys[module]) === "true") {
+      showToast("Cannot remove — this module is already completed. Record must be kept.", "error");
+      return;
+    }
+    if (!confirm(`Remove ${module} training for ${cleanEmail}?`)) return;
+
+    const company = getCompanyProfile();
+
+    /* Revoke the specific module seat */
+    if (company.usedSeats?.[module]?.[cleanEmail]) {
+      delete company.usedSeats[module][cleanEmail];
+    }
+
+    /* Remove the module-specific invite if present */
+    const inviteKey = module === "employee" ? cleanEmail : cleanEmail + "_" + module;
+    if (company.invites?.[inviteKey]) delete company.invites[inviteKey];
+
+    /* If the person has NO remaining active seats, also remove from ams_users */
+    const hasOtherSeats = ["employee", "supervisor", "der"].some(type => {
+      if (type === module) return false;
+      const seat = company.usedSeats?.[type]?.[cleanEmail];
+      return seat && !seat.revoked;
+    });
+
+    if (!hasOtherSeats) {
+      const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+      const updatedUsers = users.filter(u => u.email !== cleanEmail);
+      localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
+      if (company.employees?.[cleanEmail]) delete company.employees[cleanEmail];
+    }
+
+    saveCompanyProfile(company);
+    location.reload();
+    return;
+  }
+
+  /* Legacy fallback: no module passed — block if ANY module completed */
+  const completedDER        = localStorage.getItem(`fmcsaDERCompleted_${cleanEmail}`)      === "true";
+  const completedSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${cleanEmail}`)  === "true";
+  const completedEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${cleanEmail}`) === "true";
+
+  if (completedDER || completedSupervisor || completedEmployee) {
+    showToast("Cannot remove — training already completed. Record must be kept.", "error");
+    return;
+  }
+
+  if (!confirm("Remove this employee from the company?")) return;
+
+  const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
+  const company = getCompanyProfile();
+
+  if (company.invites?.[cleanEmail]) delete company.invites[cleanEmail];
+
+  const updatedUsers = users.filter(u => u.email !== cleanEmail);
+  localStorage.setItem("ams_users", JSON.stringify(updatedUsers));
+
+  ["employee", "supervisor", "der"].forEach(type => {
+    if (company.usedSeats?.[type]?.[cleanEmail]) delete company.usedSeats[type][cleanEmail];
+  });
+
+  saveCompanyProfile(company);
+  location.reload();
+};
+
+/* =========================================================
+   RENDER ACTIVE SEAT ASSIGNMENTS
+========================================================= */
+
+function renderSeatAssignments(company) {
+  const list = document.getElementById("seatUserList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const roleColors = {
+    employee:   { badge: "role-employee",   label: "Employee"   },
+    supervisor: { badge: "role-supervisor", label: "Supervisor" },
+    der:        { badge: "role-der",        label: "DER"        }
+  };
+
+  let items = [];
+  ["employee", "supervisor", "der"].forEach(type => {
+    const seats = company.usedSeats?.[type] || {};
+    Object.keys(seats).forEach(email => {
+      if (seats[email].revoked) return;
+      const r = roleColors[type];
+      items.push(`
+        <li class="assignment-item">
+          <span class="assignment-email">
+            <i data-lucide="mail"></i>
+            ${email}
+          </span>
+          <span class="role-badge ${r.badge}">${r.label}</span>
+        </li>
+      `);
+    });
+  });
+
+  if (!items.length) {
+    list.innerHTML = `
+      <li>
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-lucide="users" style="width:22px;height:22px;"></i></div>
+          <h4>No assignments yet</h4>
+          <p>Use the form above to assign training to employees.</p>
+        </div>
+      </li>`;
   } else {
-    window.location.href = "payment.html?module=der_fmcsa";
+    list.innerHTML = items.join("");
   }
 
+  if (window.lucide) lucide.createIcons();
 }
 
-function updateFMCSAProgress() {
+/* =========================================================
+   REVOKE SEAT
+========================================================= */
 
-  const modA = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-  const modB = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+window.revokeSeat = function (type, email) {
+  const company = getCompanyProfile();
 
-  const fill = document.getElementById("fmcsaProgressFill");
-  const text = document.getElementById("fmcsaProgressText");
+  if (!company.usedSeats?.[type]?.[email]) { showToast("Seat not found.", "error"); return; }
 
-  if (!fill || !text) return;
+  const completionKeys = {
+    der:        `fmcsaDERCompleted_${email}`,
+    supervisor: `fmcsaModuleBCompleted_${email}`,
+    employee:   `fmcsaEmployeeCompleted_${email}`
+  };
 
-  let percent = 0;
-  if (modA) percent = 50;
-  if (modA && modB) percent = 100;
+  if (localStorage.getItem(completionKeys[type]) === "true") {
+    { showToast("Cannot revoke — training already completed.", "warning"); return; }
+  }
 
-  fill.style.width    = percent + "%";
-  text.textContent    = percent + "% Complete";
+  company.usedSeats[type][email] = {
+    revoked:    true,
+    assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
+  };
 
+  saveCompanyProfile(company);
+  renderSeatAssignments(company);
+};
+
+/* =========================================================
+   BUY SEATS
+========================================================= */
+
+function buyEmployeeSeats(qty = 5) {
+  const company = getCompanyProfile();
+  if (!company.seats.employee) company.seats.employee = { total: 0 };
+  company.seats.employee.total += qty;
+  saveCompanyProfile(company);
+  showToast(`${qty} Employee seat(s) purchased!`, "success");
+  location.reload();
 }
 
-/* =========================
-   DER COMPLETION STATUS
-========================= */
-function updateFMCSDERButtonState() {
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  const email = user.email;
-
-  const derFmcsaBtn = document.getElementById("derFmcsaBtn");
-  if (!derFmcsaBtn) return;
-
-  const derDateEl = document.getElementById("derFmcsaCompletionDate");
-  const paid      = localStorage.getItem(`paid_der_fmcsa_${email}`) === "true";
-  const completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
-  const derDate   = localStorage.getItem(`fmcsaDERDate_${email}`);
-
-  if (completed) {
-    derFmcsaBtn.textContent = "View DER Certificate";
-    derFmcsaBtn.onclick = () => {
-      const certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-      if (certId) {
-        window.location.href = `fmcsa-certificates.html?id=${certId}`;
-      } else {
-        showToast("Certificate not found.", "error");
-      }
-    };
-    if (derDate && derDateEl) {
-      derDateEl.textContent =
-        "✔ Completed " + new Date(Number(derDate)).toLocaleDateString("en-US");
-    }
-    return;
-  }
-
-  const _fmcsaProf = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
-  const _derSeat    = _fmcsaProf?.usedSeats?.der?.[email];
-  const hasDERSeat  = _derSeat && !_derSeat.revoked;
-
-  if (paid || hasDERSeat) {
-    derFmcsaBtn.textContent = "Start DER Training";
-    derFmcsaBtn.onclick = () => { window.location.href = "fmcsa-der.html"; };
-    return;
-  }
-
-  derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
-  derFmcsaBtn.onclick = () => { window.location.href = "payment.html?module=der_fmcsa"; };
-
+function buySupervisorSeats(qty = 1) {
+  const company = getCompanyProfile();
+  if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
+  company.seats.supervisor.total += qty;
+  saveCompanyProfile(company);
+  showToast(`${qty} Supervisor seat(s) purchased!`, "success");
+  location.reload();
 }
 
-function updateFMCSASupervisorButton() {
-
-  const btn = document.getElementById("supervisorTrainingBtn");
-  if (!btn) return;
-
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  if (!user) return;
-
-  const email = user.email;
-  const paid  = localStorage.getItem(`paid_fmcsa_${email}`) === "true";
-  const modA  = localStorage.getItem(`fmcsaModuleACompleted_${email}`) === "true";
-  const modB  = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
-
-  if (modA && modB) {
-    btn.textContent = "🎓 View Certificate";
-    btn.onclick = () => {
-      const certId =
-        localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
-        localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
-      if (certId) {
-        window.location.href = `fmcsa-certificates.html?id=${certId}`;
-      } else {
-        showToast("Certificate not found.", "error");
-      }
-    };
-    return;
-  }
-
-  if (modA && !modB) {
-    btn.textContent            = "⚠️ Continue Training (Module B Required)";
-    btn.style.backgroundColor  = "#f0ad4e";
-    btn.onclick = () => { window.location.href = "fmcsa-drug-alcohol.html"; };
-    return;
-  }
-
-  const _fmcsaProf2 = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
-  const _supSeat     = _fmcsaProf2?.usedSeats?.supervisor?.[email];
-  const hasSupSeat   = _supSeat && !_supSeat.revoked;
-
-  if (paid || hasSupSeat) {
-    btn.textContent = "Start Training";
-    btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
-    return;
-  }
-
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => { window.location.href = "payment.html?type=fmcsa"; };
-
+function buyDerSeats(qty = 1) {
+  const company = getCompanyProfile();
+  if (!company.seats.der) company.seats.der = { total: 0 };
+  company.seats.der.total += qty;
+  saveCompanyProfile(company);
+  showToast(`${qty} DER seat(s) purchased!`, "success");
+  location.reload();
 }
 
-/* =========================
-   FMCSA EMPLOYEE BUTTON
-========================= */
-function updateFMCSAEmployeeButton() {
+/* =========================================================
+   INVITE / RESEND / COPY
+========================================================= */
 
-  const btn    = document.getElementById("employeeTrainingBtn");
-  const dateEl = document.getElementById("employeeTrainingDate");
+function inviteEmployee() {
+  const input = document.getElementById("inviteEmail");
+  const msg   = document.getElementById("inviteMsg");
+  if (!input) return;
 
-  if (!btn) return;
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes("@")) { if (msg) msg.textContent = "Enter a valid email"; return; }
 
-  const user = JSON.parse(localStorage.getItem("amsUser") || "{}");
-
-  const paid         = localStorage.getItem(`paid_employee_fmcsa_${user.email}`) === "true";
-  const empCompleted = localStorage.getItem(`fmcsaEmployeeCompleted_${user.email}`) === "true";
-  const empDate      = localStorage.getItem(`fmcsaEmployeeDate_${user.email}`);
-
-  if (empCompleted) {
-    btn.textContent = "🎓 View Certificate";
-    btn.onclick = () => {
-      const certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${user.email}`);
-      if (certId) {
-        window.location.href = `fmcsa-certificates.html?id=${certId}`;
-      } else {
-        showToast("Certificate not found.", "error");
-      }
-    };
-    if (dateEl && empDate) {
-      dateEl.textContent =
-        "✔ Completed " + new Date(Number(empDate)).toLocaleDateString("en-US");
-    }
+  const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+  if (users.find(u => u.email === email)) {
+    if (msg) msg.textContent = "User already registered. Assign a seat instead.";
     return;
   }
 
-  const _fmcsaProf3 = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
-  const _empSeat     = _fmcsaProf3?.usedSeats?.employee?.[user.email];
-  const hasEmpSeat   = _empSeat && !_empSeat.revoked;
+  const company = getCompanyProfile();
+  if (!company.invites)              company.invites              = {};
+  if (!company.usedSeats)            company.usedSeats            = {};
+  if (!company.usedSeats.employee)   company.usedSeats.employee   = {};
 
-  if (paid || hasEmpSeat) {
-    btn.textContent = "Start Training";
-    btn.onclick = () => { window.location.href = "fmcsa-employee-training.html"; };
+  if (company.invites[email]) { if (msg) msg.textContent = "Already invited"; return; }
+
+  const hasActiveSeat =
+    (company.usedSeats?.employee?.[email]   && company.usedSeats.employee[email].revoked   !== true) ||
+    (company.usedSeats?.supervisor?.[email] && company.usedSeats.supervisor[email].revoked !== true) ||
+    (company.usedSeats?.der?.[email]        && company.usedSeats.der[email].revoked        !== true);
+  if (hasActiveSeat) { if (msg) msg.textContent = "User already assigned"; return; }
+
+  const inviteCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: inviteCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "pending" };
+  saveCompanyProfile(company);
+
+  if (msg) msg.textContent = "Invite created: " + inviteCode;
+  input.value = "";
+}
+
+function resendInvite(email) {
+  email = email.toLowerCase().trim();
+  const company = getCompanyProfile();
+  if (!company.invites) company.invites = {};
+
+  const existing = company.invites[email];
+  const msg = document.getElementById("inviteMsg");
+
+  if (existing) {
+    if (msg) msg.innerHTML = `Invite Code: <strong>${existing.code}</strong> <button onclick="copyInvite('${existing.code}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
     return;
   }
 
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => { window.location.href = "payment.html?module=fmcsa_employee"; };
+  const newCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  company.invites[email] = { email, code: newCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "resent" };
+  saveCompanyProfile(company);
 
+  if (msg) msg.innerHTML = `New Invite Code: <strong>${newCode}</strong> <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
+}
+
+function copyInvite(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const msg = document.getElementById("inviteMsg");
+    if (msg) msg.innerHTML += " ✅ Copied!";
+  });
+}
+
+/* =========================================================
+   VIEW CERTIFICATE
+========================================================= */
+
+function viewEmployeeCert(email) {
+  email = email.toLowerCase().trim();
+  const company = getCompanyProfile();
+
+  if (!company.usedSeats) { showToast("No company data found", "error"); return; }
+
+  const isAssigned =
+    (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
+    (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
+    (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
+
+  if (!isAssigned) { showToast("Access denied: This employee is not assigned to your company.", "error"); return; }
+
+  /* 1. Try companyProfile.certIds first */
+  let certId = company.certIds?.[email]?.certId || null;
+
+  /* 2. Fallback — check direct localStorage keys written by each training module */
+  if (!certId) certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`)       || null;
+  if (!certId) certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`)   || null; // supervisor cert (module B)
+  if (!certId) certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`)   || null; // supervisor cert (module A fallback)
+  if (!certId) certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`)  || null;
+
+  if (!certId) {
+    showToast("No certificate found for this employee.", "error");
+    return;
+  }
+
+  window.location.href = `fmcsa-certificates.html?id=${certId}&email=${encodeURIComponent(email)}&admin=1`;
+}
+
+/* =========================================================
+   TOGGLE MENUS
+========================================================= */
+
+function toggleMenu(email) {
+  const menu = document.getElementById(`menu-${email}`);
+  if (!menu) return;
+  const isOpen = menu.style.display === "block";
+  document.querySelectorAll(".action-menu").forEach(m => m.style.display = "none");
+  menu.style.display = isOpen ? "none" : "block";
+}
+
+function toggleSeatMenu() {
+  const menu = document.getElementById("seatMenu");
+  if (!menu) return;
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* Auto-close seat menu */
+document.addEventListener("click", function (e) {
+  const menu   = document.getElementById("seatMenu");
+  const button = document.querySelector("[onclick='toggleSeatMenu()']");
+  if (!menu || !button) return;
+  if (!menu.contains(e.target) && !button.contains(e.target)) menu.style.display = "none";
+});
+
+/* Auto-close manage menus */
+document.addEventListener("click", function (e) {
+  const menus   = document.querySelectorAll(".action-menu");
+  const buttons = document.querySelectorAll("[onclick^='toggleMenu']");
+  let inside = false;
+  menus.forEach(m   => { if (m.contains(e.target))   inside = true; });
+  buttons.forEach(b => { if (b.contains(e.target))   inside = true; });
+  if (!inside) menus.forEach(m => m.style.display = "none");
+});
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+  localStorage.removeItem("amsUser");
+  window.location.href = "/ams-training-portal/frontend/pages/login.html";
 }
