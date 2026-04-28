@@ -1,8 +1,3 @@
-
-JavaScript
-
-
-register-employee
 document.addEventListener("DOMContentLoaded", function () {
 
   const form = document.getElementById("employeeRegisterForm");
