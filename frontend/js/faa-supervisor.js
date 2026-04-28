@@ -103,7 +103,10 @@ function showSection(section) {
   }
 }
 
-function goDashboard() { window.location.href = "dashboard.html"; }
+function goDashboard() {
+  const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+  window.location.href = (u && u.role === "employee") ? "company-dashboard.html" : "dashboard.html";
+}
 
 /* =========================
    PAGE LOAD
