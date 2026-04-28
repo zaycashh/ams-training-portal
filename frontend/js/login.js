@@ -2,8 +2,6 @@
    LOGIN FLOW — CLEAN TYPE-AWARE VERSION
 ========================================================= */
 
-const DEV_PASSWORD = "AMS!Dev2026";
-
 document.getElementById("loginForm")
   .addEventListener("submit", function (e) {
     e.preventDefault();
@@ -19,11 +17,6 @@ document.getElementById("loginForm")
       return;
     }
 
-    if (password !== DEV_PASSWORD) {
-      showMsg("Invalid email or password.", "error");
-      return;
-    }
-
     const users = JSON.parse(
       localStorage.getItem("ams_users") || "[]"
     );
@@ -32,6 +25,11 @@ document.getElementById("loginForm")
 
     if (!user || !user.email || !user.role) {
       showMsg("Account not found. Please register first.", "error");
+      return;
+    }
+
+    if (user.password && user.password !== password) {
+      showMsg("Invalid email or password.", "error");
       return;
     }
 
