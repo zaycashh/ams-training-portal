@@ -300,31 +300,13 @@ function gradeQuiz() {
     localStorage.removeItem(PROGRESS_KEY);
 
     document.getElementById("quizResult").innerHTML =
-      `<div class="result-box pass">You passed! Generating certificate...</div>`;
+  `<div class="result-box pass">Module A complete! Loading Module B...</div>`;
 
-    showToast("Quiz passed! Certificate generated.", "success");
+showToast("Module A passed! Proceeding to Module B.", "success");
 
-    /* Unlock cert nav btn */
-    const certBtn = document.getElementById("btnCertificate");
-    if (certBtn) { certBtn.disabled = false; certBtn.classList.add("done"); }
-
-    setTimeout(() => {
-      document.getElementById("quizSection")?.classList.add("hidden");
-      document.getElementById("certificateSection")?.classList.remove("hidden");
-
-      const u = JSON.parse(localStorage.getItem("amsUser") || "null");
-      const fullName = u?.fullName ||
-        `${u?.firstName || ""} ${u?.lastName || ""}`.trim() ||
-        u?.email || "User";
-
-      document.getElementById("certName").textContent = fullName;
-      document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US");
-      document.getElementById("certId").textContent   = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) || "";
-
-      if (typeof generateQR === "function") {
-        generateQR(localStorage.getItem(`fmcsaModuleACertificateId_${email}`), "certQR");
-      }
-    }, 1500);
+setTimeout(() => {
+  window.location.href = "fmcsa-drug-alcohol.html";
+}, 1500);
 
     return;
   }
