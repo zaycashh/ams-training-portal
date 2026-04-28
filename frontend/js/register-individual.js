@@ -46,6 +46,7 @@ document
       fullName:  firstName + " " + lastName,
       phone,
       email,
+      password,
       role:      "individual",
       type:      "individual",
       createdAt: new Date().toISOString()
