@@ -69,6 +69,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const payBtn = document.getElementById("payNowBtn");
   if (!payBtn) return;
 
+  /* Helper — go back to the right dashboard after purchase */
+  function goAfterPurchase() {
+    const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+    const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+    window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+  }
+
   payBtn.addEventListener("click", () => {
     if (payBtn.disabled) return;
     payBtn.disabled = true;
@@ -87,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem(`paid_der_fmcsa_${email}`, "true");
       localStorage.setItem(`paid_der_fmcsa_date_${email}`, Date.now());
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
@@ -96,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem(`paid_fmcsa_${email}`, "true");
       localStorage.setItem(`fmcsa_start_date_${email}`, Date.now());
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
@@ -104,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (module === "der") {
       localStorage.setItem(`paid_der_${email}`, "true");
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
@@ -112,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (module === "supervisor") {
       localStorage.setItem(`paid_supervisor_${email}`, "true");
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
@@ -120,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (module === "employee") {
       localStorage.setItem(`paid_employee_${email}`, "true");
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
@@ -129,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem(`paid_employee_fmcsa_${email}`, "true");
       localStorage.setItem(`paid_employee_fmcsa_date_${email}`, Date.now());
       showToast("Purchase successful! Redirecting...", "success");
-      setTimeout(() => window.location.href = "dashboard.html", 1500);
+      setTimeout(() => goAfterPurchase(), 1500);
       return;
     }
 
