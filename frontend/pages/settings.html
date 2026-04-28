@@ -747,23 +747,25 @@ function var_warning() { return getComputedStyle(document.documentElement).getPr
 
 <!-- Clear forms -->
 <script>
-function clearPasswordForm() {
-  ['currentPassword','newPassword','confirmPassword'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('strengthFill').style.width = '0%';
-  document.getElementById('strengthLabel').textContent = 'Enter a password';
-  hideAlerts(['pwSuccess','pwError']);
-  clearErrors(['currentPwErr','newPwErr','confirmPwErr']);
-}
 function clearEmailForm() {
   ['newEmail','confirmEmail','emailPassword'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = '';
+    if (el) { el.value = ''; el.classList.remove('error'); }
   });
   hideAlerts(['emailSuccess','emailError']);
   clearErrors(['newEmailErr','confirmEmailErr']);
+}
+
+function clearPasswordForm() {
+  ['currentPassword','newPassword','confirmPassword'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('error'); }
+  });
+  document.getElementById('strengthFill').style.width = '0%';
+  document.getElementById('strengthLabel').textContent = 'Enter a password';
+  document.getElementById('strengthLabel').style.color = 'var(--color-text-faint)';
+  hideAlerts(['pwSuccess','pwError']);
+  clearErrors(['currentPwErr','newPwErr','confirmPwErr']);
 }
 function hideAlerts(ids) { ids.forEach(id => document.getElementById(id).classList.remove('show')); }
 function clearErrors(ids) { ids.forEach(id => { document.getElementById(id).classList.remove('show'); }); }
