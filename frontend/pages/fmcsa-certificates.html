@@ -661,13 +661,13 @@
 
   function returnToDashboard() {
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-    const isAdmin = user && user.role !== "employee" && user.role !== "supervisor";
-    if (isAdmin || sessionStorage.getItem("adminViewing") === "true") {
+    if (sessionStorage.getItem("adminViewing") === "true") {
       sessionStorage.removeItem("adminViewing");
       window.location.href = "employees.html";
-    } else {
-      window.location.href = "dashboard.html";
+      return;
     }
+    const isCompanyAdmin = user && (user.role === "company_admin" || user.role === "owner" || user.role === "admin");
+    window.location.href = isCompanyAdmin ? "company-dashboard.html" : "dashboard.html";
   }
 
   function showError(msg) {
