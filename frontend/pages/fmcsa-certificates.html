@@ -1,3 +1,5 @@
+
+fmcsa-certificates
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -736,8 +738,8 @@
 
     const empCertId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
     const derCertId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-    const supCertId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) ||
-                      localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+    const supCertId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`) ||
+                      localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
 
     /* Match by cert ID if provided */
     if (certId) {
