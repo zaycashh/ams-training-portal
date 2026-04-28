@@ -24,11 +24,45 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================
-   GLOBAL PROGRAM
+   GLOBAL PROGRAM — program-scoped profile helpers
+   Each program (FAA / FMCSA) stores its own companyProfile
+   so seats, usedSeats, and invites never bleed across programs.
+   Key format:  companyProfile_faa  |  companyProfile_fmcsa
+   The legacy key "companyProfile" is kept in sync for any
+   legacy code that still reads it directly.
 ========================================================= */
 
+function _profileKey(program) {
+  const p = (program || "").toLowerCase();
+  if (p === "fmcsa") return "companyProfile_fmcsa";
+  return "companyProfile_faa"; // default
+}
+
+function getCompanyProfile() {
+  /* 1. Try to detect program from amsUser or amsProgram */
+  const user    = JSON.parse(localStorage.getItem("amsUser")  || "null");
+  const program = (user?.program || localStorage.getItem("amsProgram") || "").toLowerCase();
+  const key     = _profileKey(program);
+
+  /* 2. Try scoped key first */
+  let profile = JSON.parse(localStorage.getItem(key) || "null");
+
+  /* 3. Fall back to legacy key if scoped key is empty */
+  if (!profile) profile = JSON.parse(localStorage.getItem("companyProfile") || "null");
+
+  return profile || {};
+}
+
+function saveCompanyProfile(company) {
+  const key = _profileKey(company.program);
+  localStorage.setItem(key, JSON.stringify(company));
+  /* Keep legacy key in sync so any page that still reads
+     "companyProfile" directly gets the right data */
+  localStorage.setItem("companyProfile", JSON.stringify(company));
+}
+
 function getCompanyProgram() {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   return company.program || "FAA";
 }
 
@@ -37,7 +71,7 @@ function getCompanyProgram() {
 ========================================================= */
 
 function loadCompanyDashboard(user) {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
 
   /* =========================================================
      ENSURE FULL SEAT STRUCTURE
@@ -90,7 +124,7 @@ function loadCompanyDashboard(user) {
     } else if (!("revoked" in seat)) { seat.revoked = false; updated = true; }
   });
 
-  if (updated) localStorage.setItem("companyProfile", JSON.stringify(company));
+  if (updated) saveCompanyProfile(company);
 
   const programEl = document.getElementById("companyProgram");
   if (programEl) {
@@ -115,7 +149,7 @@ function loadCompanyDashboard(user) {
 ========================================================= */
 
 function updateEmployeeOverview(company) {
-  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company) company = getCompanyProfile();
 
   const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
@@ -186,7 +220,7 @@ function getSeatStats(company) {
 }
 
 function updateSeatCounts(company) {
-  if (!company) company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  if (!company) company = getCompanyProfile();
 
   const empTotal     = company?.seats?.employee?.total || 0;
   const empUsed      = Object.values(company?.usedSeats?.employee   || {}).filter(s => !s.revoked).length;
@@ -244,7 +278,7 @@ function assignEmployeeSeat(emailParam) {
   const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
   if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  const company = getCompanyProfile();
   if (!company.usedSeats) company.usedSeats = {};
 
   /* Block: already has active Employee seat */
@@ -271,7 +305,7 @@ function assignEmployeeSeat(emailParam) {
     _showInviteMsg(code, 'Employee');
   }
 
-  localStorage.setItem('companyProfile', JSON.stringify(company));
+  saveCompanyProfile(company);
   showToast('Employee seat assigned.', 'success');
   _refreshAll(company);
 }
@@ -280,7 +314,7 @@ function assignSupervisorSeat(emailParam) {
   const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
   if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  const company = getCompanyProfile();
   if (!company.usedSeats) company.usedSeats = {};
 
   /* Block: already has active Supervisor seat */
@@ -320,7 +354,7 @@ function assignSupervisorSeat(emailParam) {
   company.invites[email + '_supervisor'] = { email, code: supCode, program: company.program || 'fmcsa', role: 'supervisor', createdAt: Date.now(), status: 'assigned' };
   _showInviteMsg(supCode, 'Supervisor');
 
-  localStorage.setItem('companyProfile', JSON.stringify(company));
+  saveCompanyProfile(company);
   showToast(completedTs ? 'Supervisor annual renewal assigned.' : 'Supervisor seat assigned.', 'success');
   _refreshAll(company);
 }
@@ -329,7 +363,7 @@ function assignDerSeat(emailParam) {
   const email = (emailParam || document.getElementById('seatEmail')?.value.trim() || '').toLowerCase();
   if (!email) return showToast('Enter an email address.', 'error');
 
-  const company = JSON.parse(localStorage.getItem('companyProfile') || '{}');
+  const company = getCompanyProfile();
   if (!company.usedSeats) company.usedSeats = {};
 
   /* Block: already has active DER seat */
@@ -355,7 +389,7 @@ function assignDerSeat(emailParam) {
   company.invites[email + '_der'] = { email, code: derCode, program: company.program || 'fmcsa', role: 'der', createdAt: Date.now(), status: 'assigned' };
   _showInviteMsg(derCode, 'DER');
 
-  localStorage.setItem('companyProfile', JSON.stringify(company));
+  saveCompanyProfile(company);
   showToast('DER seat assigned.', 'success');
   _refreshAll(company);
 }
@@ -384,7 +418,7 @@ function _refreshAll(company) {
 
 function loadEmployees(companyId) {
   const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
 
   if (!company.usedSeats) company.usedSeats = { employee: {}, supervisor: {}, der: {} };
 
@@ -554,7 +588,7 @@ window.removeEmployee = function (email, module) {
     }
     if (!confirm(`Remove ${module} training for ${cleanEmail}?`)) return;
 
-    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    const company = getCompanyProfile();
 
     /* Revoke the specific module seat */
     if (company.usedSeats?.[module]?.[cleanEmail]) {
@@ -579,7 +613,7 @@ window.removeEmployee = function (email, module) {
       if (company.employees?.[cleanEmail]) delete company.employees[cleanEmail];
     }
 
-    localStorage.setItem("companyProfile", JSON.stringify(company));
+    saveCompanyProfile(company);
     location.reload();
     return;
   }
@@ -597,7 +631,7 @@ window.removeEmployee = function (email, module) {
   if (!confirm("Remove this employee from the company?")) return;
 
   const users   = JSON.parse(localStorage.getItem("ams_users")      || "[]");
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
 
   if (company.invites?.[cleanEmail]) delete company.invites[cleanEmail];
 
@@ -608,7 +642,7 @@ window.removeEmployee = function (email, module) {
     if (company.usedSeats?.[type]?.[cleanEmail]) delete company.usedSeats[type][cleanEmail];
   });
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
   location.reload();
 };
 
@@ -666,7 +700,7 @@ function renderSeatAssignments(company) {
 ========================================================= */
 
 window.revokeSeat = function (type, email) {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
 
   if (!company.usedSeats?.[type]?.[email]) return alert("Seat not found.");
 
@@ -685,7 +719,7 @@ window.revokeSeat = function (type, email) {
     assignedAt: company.usedSeats[type][email]?.assignedAt || Date.now()
   };
 
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
   renderSeatAssignments(company);
 };
 
@@ -694,28 +728,28 @@ window.revokeSeat = function (type, email) {
 ========================================================= */
 
 function buyEmployeeSeats(qty = 5) {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   if (!company.seats.employee) company.seats.employee = { total: 0 };
   company.seats.employee.total += qty;
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
   alert(`${qty} Employee seat(s) purchased!`);
   location.reload();
 }
 
 function buySupervisorSeats(qty = 1) {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
   company.seats.supervisor.total += qty;
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
   alert(`${qty} Supervisor seat(s) purchased!`);
   location.reload();
 }
 
 function buyDerSeats(qty = 1) {
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   if (!company.seats.der) company.seats.der = { total: 0 };
   company.seats.der.total += qty;
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
   alert(`${qty} DER seat(s) purchased!`);
   location.reload();
 }
@@ -738,7 +772,7 @@ function inviteEmployee() {
     return;
   }
 
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   if (!company.invites)              company.invites              = {};
   if (!company.usedSeats)            company.usedSeats            = {};
   if (!company.usedSeats.employee)   company.usedSeats.employee   = {};
@@ -753,7 +787,7 @@ function inviteEmployee() {
 
   const inviteCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
   company.invites[email] = { email, code: inviteCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "pending" };
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
 
   if (msg) msg.textContent = "Invite created: " + inviteCode;
   input.value = "";
@@ -761,7 +795,7 @@ function inviteEmployee() {
 
 function resendInvite(email) {
   email = email.toLowerCase().trim();
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
   if (!company.invites) company.invites = {};
 
   const existing = company.invites[email];
@@ -774,7 +808,7 @@ function resendInvite(email) {
 
   const newCode = "AMS-" + Math.random().toString(36).substring(2, 8).toUpperCase();
   company.invites[email] = { email, code: newCode, program: company.program || "unknown", role: "employee", createdAt: Date.now(), status: "resent" };
-  localStorage.setItem("companyProfile", JSON.stringify(company));
+  saveCompanyProfile(company);
 
   if (msg) msg.innerHTML = `New Invite Code: <strong>${newCode}</strong> <button onclick="copyInvite('${newCode}')" style="margin-left:10px;padding:4px 8px;cursor:pointer;">Copy</button>`;
 }
@@ -792,7 +826,7 @@ function copyInvite(code) {
 
 function viewEmployeeCert(email) {
   email = email.toLowerCase().trim();
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const company = getCompanyProfile();
 
   if (!company.usedSeats) { alert("No company data found"); return; }
 
