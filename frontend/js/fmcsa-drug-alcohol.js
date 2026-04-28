@@ -29,6 +29,9 @@ const DRUG_CONTENT_KEY       = `fmcsaDrugContentCompleted_${email}`;
 const DRUG_QUIZ_KEY          = `fmcsaDrugQuizPassed_${email}`;
 const ALCOHOL_CONTENT_KEY    = `fmcsaAlcoholContentCompleted_${email}`;
 const ALCOHOL_QUIZ_KEY       = `fmcsaAlcoholQuizPassed_${email}`;
+const DRUG_PROGRESS_KEY      = `fmcsaDrugQuizProgress_${email}`;
+const ALCOHOL_PROGRESS_KEY   = `fmcsaAlcoholQuizProgress_${email}`;
+const SECTION_KEY            = `fmcsaModBSection_${email}`;
 
 /* -------------------------
    ATTEMPTS + COOLDOWN
@@ -90,6 +93,9 @@ function showSection(id) {
     moduleBCertificateSection: "btnCertificate"
   };
   setNavActive(navMap[id] || "btnDrugContent");
+
+  /* Save active section so user returns to same place */
+  if (email) localStorage.setItem(SECTION_KEY, id);
 }
 
 /* =========================================================
@@ -130,6 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem(`fmcsaAlcoholQuizPassed_${email}`);
     localStorage.removeItem(`fmcsaDrugContentCompleted_${email}`);
     localStorage.removeItem(`fmcsaAlcoholContentCompleted_${email}`);
+    localStorage.removeItem(`fmcsaDrugQuizProgress_${email}`);
+    localStorage.removeItem(`fmcsaAlcoholQuizProgress_${email}`);
+    localStorage.removeItem(`fmcsaModBSection_${email}`);
     localStorage.removeItem(`fmcsaModuleADate_${email}`);
     localStorage.removeItem(`fmcsaModuleBDate_${email}`);
     localStorage.removeItem(`fmcsaModuleACertificateId_${email}`);
@@ -335,7 +344,19 @@ let drugAnswers = new Array(drugQuestions.length).fill(null);
 
 function calculateDrugPassScore() { return Math.ceil(drugQuestions.length * 0.8); }
 
-function initDrugQuiz() { drugPage = 0; renderDrugQuiz(); }
+function initDrugQuiz() {
+  const saved = localStorage.getItem(DRUG_PROGRESS_KEY);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      drugPage    = data.drugPage    ?? 0;
+      drugAnswers = data.drugAnswers ?? drugAnswers;
+    } catch(e) { drugPage = 0; }
+  } else {
+    drugPage = 0;
+  }
+  renderDrugQuiz();
+}
 
 function renderDrugQuiz() {
   const container = document.getElementById("drugQuizQuestions");
@@ -374,6 +395,7 @@ document.getElementById("drugPrevBtn")?.addEventListener("click", () => {
 function saveDrugAnswer() {
   const sel = document.querySelector("input[name='drugQ']:checked");
   if (sel) drugAnswers[drugPage] = sel.value;
+  localStorage.setItem(DRUG_PROGRESS_KEY, JSON.stringify({ drugPage, drugAnswers }));
 }
 
 function gradeDrugQuiz() {
@@ -395,6 +417,7 @@ function gradeDrugQuiz() {
     localStorage.setItem(DRUG_QUIZ_KEY, "true");
     localStorage.removeItem(DRUG_ATTEMPT_KEY);
     localStorage.removeItem(DRUG_COOLDOWN_KEY);
+    localStorage.removeItem(DRUG_PROGRESS_KEY);
     resultBox.innerHTML = `<div class="result-box pass">Drug Quiz Passed! Unlocking Alcohol Training...</div>`;
     enableNav("btnAlcoholContent");
     setTimeout(() => showSection("alcoholContentSection"), 1500);
@@ -432,7 +455,19 @@ const PASS_SCORE_ALCOHOL = 5;
 let alcoholPage = 0;
 let alcoholAnswers = new Array(alcoholQuestions.length).fill(null);
 
-function initAlcoholQuiz() { alcoholPage = 0; renderAlcoholQuiz(); }
+function initAlcoholQuiz() {
+  const saved = localStorage.getItem(ALCOHOL_PROGRESS_KEY);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      alcoholPage    = data.alcoholPage    ?? 0;
+      alcoholAnswers = data.alcoholAnswers ?? alcoholAnswers;
+    } catch(e) { alcoholPage = 0; }
+  } else {
+    alcoholPage = 0;
+  }
+  renderAlcoholQuiz();
+}
 
 function renderAlcoholQuiz() {
   const container = document.getElementById("alcoholQuizQuestions");
@@ -471,6 +506,7 @@ document.getElementById("alcoholPrevBtn")?.addEventListener("click", () => {
 function saveAlcoholAnswer() {
   const sel = document.querySelector("input[name='alcoholQ']:checked");
   if (sel) alcoholAnswers[alcoholPage] = sel.value;
+  localStorage.setItem(ALCOHOL_PROGRESS_KEY, JSON.stringify({ alcoholPage, alcoholAnswers }));
 }
 
 function gradeAlcoholQuiz() {
@@ -497,18 +533,25 @@ function gradeAlcoholQuiz() {
       localStorage.setItem(MODULE_B_CERT_ID_KEY, certId);
     }
 
-    /* Save cert ID into companyProfile so admin can view it */
+    /* Save cert ID into companyProfile keys — only update keys that already have company data */
     try {
-      const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-      if (!cp.certIds) cp.certIds = {};
-      cp.certIds[email] = { certId, type: "supervisor", date: Date.now() };
-      localStorage.setItem("companyProfile", JSON.stringify(cp));
+      const _certEntry = { certId, type: "supervisor", date: Date.now() };
+      ["companyProfile_fmcsa", "companyProfile"].forEach(key => {
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+        const cp = JSON.parse(raw);
+        if (!cp.id && !cp.name) return;
+        if (!cp.certIds) cp.certIds = {};
+        cp.certIds[email] = _certEntry;
+        localStorage.setItem(key, JSON.stringify(cp));
+      });
     } catch(e) {}
 
     if (typeof generateSupervisorCertificate === "function") generateSupervisorCertificate();
 
     localStorage.removeItem(ALCOHOL_ATTEMPT_KEY);
     localStorage.removeItem(ALCOHOL_COOLDOWN_KEY);
+    localStorage.removeItem(ALCOHOL_PROGRESS_KEY);
 
     resultBox.innerHTML = `<div class="result-box pass">You passed the Alcohol Quiz! Generating certificate...</div>`;
     showToast("Module B complete! Certificate generated.", "success");
