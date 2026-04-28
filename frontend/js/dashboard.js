@@ -1,3 +1,5 @@
+
+dashboard
 const user  = JSON.parse(localStorage.getItem("amsUser") || "null");
 const email = user?.email;
 
@@ -69,7 +71,12 @@ function updateFAAModuleButtons() {
     const paidFAA =
       localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
 
-    if (paidFAA) {
+    /* Check company seat for employees */
+    const _faaProf  = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
+    const _faaSeat  = _faaProf?.usedSeats?.[module]?.[user.email];
+    const hasFAASeat = _faaSeat && !_faaSeat.revoked;
+
+    if (paidFAA || hasFAASeat) {
       btn.textContent = "Start Training";
       btn.onclick = () => {
         window.location.href = config.start;
@@ -379,7 +386,11 @@ function updateFMCSDERButtonState() {
     return;
   }
 
-  if (paid) {
+  const _fmcsaProf = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
+  const _derSeat    = _fmcsaProf?.usedSeats?.der?.[email];
+  const hasDERSeat  = _derSeat && !_derSeat.revoked;
+
+  if (paid || hasDERSeat) {
     derFmcsaBtn.textContent = "Start DER Training";
     derFmcsaBtn.onclick = () => { window.location.href = "fmcsa-der.html"; };
     return;
@@ -425,7 +436,11 @@ function updateFMCSASupervisorButton() {
     return;
   }
 
-  if (paid) {
+  const _fmcsaProf2 = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
+  const _supSeat     = _fmcsaProf2?.usedSeats?.supervisor?.[email];
+  const hasSupSeat   = _supSeat && !_supSeat.revoked;
+
+  if (paid || hasSupSeat) {
     btn.textContent = "Start Training";
     btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
     return;
@@ -469,7 +484,11 @@ function updateFMCSAEmployeeButton() {
     return;
   }
 
-  if (paid) {
+  const _fmcsaProf3 = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
+  const _empSeat     = _fmcsaProf3?.usedSeats?.employee?.[user.email];
+  const hasEmpSeat   = _empSeat && !_empSeat.revoked;
+
+  if (paid || hasEmpSeat) {
     btn.textContent = "Start Training";
     btn.onclick = () => { window.location.href = "fmcsa-employee-training.html"; };
     return;
@@ -479,4 +498,3 @@ function updateFMCSAEmployeeButton() {
   btn.onclick = () => { window.location.href = "payment.html?module=fmcsa_employee"; };
 
 }
-
