@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showMsg("Account created successfully. Redirecting...", "success");
 
-    setTimeout(() => window.location.replace("company-dashboard.html"), 1000);
+    setTimeout(() => window.location.replace("dashboard.html"), 1000);
 
   });
 
