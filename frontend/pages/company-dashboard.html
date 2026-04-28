@@ -1,3 +1,5 @@
+
+company-dashboard
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -523,12 +525,60 @@
         <div class="section-header">
           <h2 class="section-title">Training</h2>
         </div>
+
+        <!-- Current Training Status -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-body">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="list-checks" style="width:18px;height:18px;color:var(--color-primary);"></i>
+              Current Training Status
+            </h3>
+            <div class="table-wrap">
+              <table id="trainingStatusTable">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Email</th>
+                    <th>Module</th>
+                    <th>Program</th>
+                    <th>Status</th>
+                    <th>Completed</th>
+                    <th>Certificate</th>
+                  </tr>
+                </thead>
+                <tbody id="trainingStatusBody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:2rem;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certificate History (Renewals / Audit Archive) -->
         <div class="card">
           <div class="card-body">
-            <div class="empty-state">
-              <div class="empty-state-icon"><i data-lucide="graduation-cap" style="width:22px;height:22px;"></i></div>
-              <h4>Training Management</h4>
-              <p>Training configuration and progress reports coming soon.</p>
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="archive" style="width:18px;height:18px;color:var(--color-primary);"></i>
+              Certificate History
+              <span style="font-size:0.75rem;font-weight:400;color:var(--color-text-muted);margin-left:4px;">— archived records for audit purposes</span>
+            </h3>
+            <div class="table-wrap">
+              <table id="certHistoryTable">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Email</th>
+                    <th>Module</th>
+                    <th>Program</th>
+                    <th>Completed</th>
+                    <th>Archived On</th>
+                    <th>Certificate</th>
+                  </tr>
+                </thead>
+                <tbody id="certHistoryBody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:2rem;">No archived certificates yet.</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -740,6 +790,152 @@ function switchTab(tab) {
   const titles = { dashboard:'Company Dashboard', training:'Training', billing:'Billing' };
   const el = document.querySelector('.topbar-title');
   if(el) el.textContent = titles[tab] || 'Company Dashboard';
+  /* Render training tables when tab opens */
+  if (tab === 'training') {
+    renderTrainingStatus();
+    renderCertHistory();
+  }
+}
+
+/* =========================================================
+   TRAINING TAB — Current Status Table
+========================================================= */
+function renderTrainingStatus() {
+  const company = typeof getCompanyProfile === 'function' ? getCompanyProfile() : null;
+  const tbody = document.getElementById('trainingStatusBody');
+  if (!tbody || !company) return;
+
+  const prog   = (company.program || 'fmcsa').toLowerCase();
+  const seats  = company.usedSeats || {};
+  const rows   = [];
+
+  const modules = ['employee', 'supervisor', 'der'];
+  modules.forEach(function(mod) {
+    const modSeats = seats[mod] || {};
+    Object.entries(modSeats).forEach(function([email, seat]) {
+      if (seat.revoked) return;
+      const users   = JSON.parse(localStorage.getItem('ams_users') || '[]');
+      const user    = users.find(function(u){ return u.email === email; });
+      const name    = user ? (user.firstName + ' ' + user.lastName) : email;
+
+      /* Resolve completion + cert based on program + module */
+      let completed = false, certId = null, completedDate = null;
+      if (prog === 'faa') {
+        if (mod === 'employee')   { completed = localStorage.getItem(`faaEmployeeCompleted_${email}`) === 'true';   certId = localStorage.getItem(`faaEmployeeCertificateId_${email}`);   completedDate = localStorage.getItem(`faaEmployeeTrainingDate_${email}`); }
+        if (mod === 'supervisor') { completed = localStorage.getItem(`faaSupervisorCompleted_${email}`) === 'true'; certId = localStorage.getItem(`faaSupervisorCertificateId_${email}`); completedDate = localStorage.getItem(`faaSupervisorTrainingDate_${email}`); }
+        if (mod === 'der')        { completed = localStorage.getItem(`faaDERCompleted_${email}`) === 'true';        certId = localStorage.getItem(`faaDERCertificateId_${email}`);        completedDate = localStorage.getItem(`faaDERTrainingDate_${email}`); }
+      } else {
+        if (mod === 'employee')   { completed = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === 'true';   certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);   completedDate = localStorage.getItem(`fmcsaEmployeeDate_${email}`); }
+        if (mod === 'supervisor') { completed = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === 'true';    certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);    completedDate = localStorage.getItem(`fmcsaModuleBDate_${email}`); }
+        if (mod === 'der')        { completed = localStorage.getItem(`fmcsaDERCompleted_${email}`) === 'true';        certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);        completedDate = localStorage.getItem(`fmcsaDERDate_${email}`); }
+      }
+
+      const statusHtml = completed
+        ? '<span class="status-badge status-completed">Completed</span>'
+        : '<span class="status-badge status-in-progress">In Progress</span>';
+
+      const dateStr = completedDate
+        ? new Date(parseInt(completedDate)).toLocaleDateString('en-US')
+        : '—';
+
+      const certBtn = (completed && certId)
+        ? `<button class="btn btn-sm" onclick="viewEmployeeCert('${email}','${mod}')">View</button>
+           <button class="btn btn-sm" style="margin-left:4px;" onclick="printEmployeeCert('${email}','${mod}')">Print</button>`
+        : '—';
+
+      rows.push(`<tr>
+        <td>${name}</td>
+        <td>${email}</td>
+        <td style="text-transform:capitalize;">${mod}</td>
+        <td style="text-transform:uppercase;">${prog}</td>
+        <td>${statusHtml}</td>
+        <td>${dateStr}</td>
+        <td>${certBtn}</td>
+      </tr>`);
+    });
+  });
+
+  tbody.innerHTML = rows.length
+    ? rows.join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:2rem;">No training assigned yet.</td></tr>';
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* =========================================================
+   TRAINING TAB — Certificate History (Audit Archive)
+========================================================= */
+function renderCertHistory() {
+  const company = typeof getCompanyProfile === 'function' ? getCompanyProfile() : null;
+  const tbody = document.getElementById('certHistoryBody');
+  if (!tbody || !company) return;
+
+  const history = company.certHistory || {};
+  const rows = [];
+
+  Object.entries(history).forEach(function([email, entries]) {
+    const users = JSON.parse(localStorage.getItem('ams_users') || '[]');
+    const user  = users.find(function(u){ return u.email === email; });
+    const name  = user ? (user.firstName + ' ' + user.lastName) : email;
+
+    entries.forEach(function(entry) {
+      const completedStr = entry.completedAt
+        ? new Date(entry.completedAt).toLocaleDateString('en-US') : '—';
+      const archivedStr = entry.archivedAt
+        ? new Date(entry.archivedAt).toLocaleDateString('en-US') : '—';
+
+      const prog = (entry.program || 'fmcsa').toUpperCase();
+      const certPageBase = entry.program === 'faa' ? 'faa-certificates.html' : 'fmcsa-certificates.html';
+      const certBtn = entry.certId
+        ? `<button class="btn btn-sm" onclick="window.location.href='${certPageBase}?id=${entry.certId}&email=${encodeURIComponent(email)}&admin=1'">View</button>
+           <button class="btn btn-sm" style="margin-left:4px;" onclick="printCertDirect('${certPageBase}','${entry.certId}','${encodeURIComponent(email)}')">Print</button>`
+        : '—';
+
+      rows.push(`<tr>
+        <td>${name}</td>
+        <td>${email}</td>
+        <td style="text-transform:capitalize;">${entry.module}</td>
+        <td>${prog}</td>
+        <td>${completedStr}</td>
+        <td>${archivedStr}</td>
+        <td>${certBtn}</td>
+      </tr>`);
+    });
+  });
+
+  tbody.innerHTML = rows.length
+    ? rows.join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:2rem;">No archived certificates yet.</td></tr>';
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* =========================================================
+   PRINT HELPERS — Training Tab
+========================================================= */
+function printEmployeeCert(email, mod) {
+  const company = typeof getCompanyProfile === 'function' ? getCompanyProfile() : null;
+  if (!company) return;
+  const prog = (company.program || 'fmcsa').toLowerCase();
+  let certId = null;
+  if (prog === 'faa') {
+    if (mod === 'employee')   certId = localStorage.getItem(`faaEmployeeCertificateId_${email}`);
+    if (mod === 'supervisor') certId = localStorage.getItem(`faaSupervisorCertificateId_${email}`);
+    if (mod === 'der')        certId = localStorage.getItem(`faaDERCertificateId_${email}`);
+  } else {
+    if (mod === 'employee')   certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+    if (mod === 'supervisor') certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+    if (mod === 'der')        certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+  }
+  if (!certId) { showToast('Certificate not found.', 'error'); return; }
+  const certPage = prog === 'faa' ? 'faa-certificates.html' : 'fmcsa-certificates.html';
+  const win = window.open(`${certPage}?id=${certId}&email=${encodeURIComponent(email)}&admin=1&print=1`, '_blank');
+  if (win) win.focus();
+}
+
+function printCertDirect(certPage, certId, encodedEmail) {
+  const win = window.open(`${certPage}?id=${certId}&email=${encodedEmail}&admin=1&print=1`, '_blank');
+  if (win) win.focus();
 }
 </script>
 
