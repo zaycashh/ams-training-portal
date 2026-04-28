@@ -104,7 +104,8 @@ function showSection(section) {
 
 function goDashboard() {
   const u = JSON.parse(localStorage.getItem("amsUser") || "null");
-  window.location.href = (u && u.role === "employee") ? "company-dashboard.html" : "dashboard.html";
+  const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+  window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
 }
 
 /* =========================
