@@ -118,14 +118,26 @@ document.addEventListener("DOMContentLoaded", function () {
      Employees cannot access supervisor or DER modules (FAA or FMCSA)
      Supervisors cannot access DER modules
   ========================================================= */
-  if (role === "employee") {
+  if (role === "employee" && user?.type === "company") {
+    const _rgEmail   = user.email;
+    const _rgProfKey = (localStorage.getItem("amsProgram") || "").toLowerCase() === "fmcsa"
+      ? "companyProfile_fmcsa" : "companyProfile_faa";
+    const _rgCompany = JSON.parse(localStorage.getItem(_rgProfKey) || localStorage.getItem("companyProfile") || "{}");
+    const _hasSup    = _rgCompany?.usedSeats?.supervisor?.[_rgEmail] && !_rgCompany.usedSeats.supervisor[_rgEmail].revoked;
+    const _hasDer    = _rgCompany?.usedSeats?.der?.[_rgEmail]        && !_rgCompany.usedSeats.der[_rgEmail].revoked;
+
+    /* Block supervisor modules unless supervisor seat assigned */
     if (
-      module === "fmcsa-module-a"     ||
-      module === "fmcsa-drug-alcohol" ||
-      module === "fmcsa-der"          ||
-      module === "faa-supervisor"     ||
-      module === "faa-der"
+      (module === "fmcsa-drug-alcohol" || module === "fmcsa-module-a" || module === "faa-supervisor") &&
+      !_hasSup
     ) {
+      sessionStorage.setItem("ams_notice", "You don't have access to that module.");
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* Block DER modules unless DER seat assigned */
+    if ((module === "fmcsa-der" || module === "faa-der") && !_hasDer) {
       sessionStorage.setItem("ams_notice", "You don't have access to that module.");
       window.location.href = "dashboard.html";
       return;
