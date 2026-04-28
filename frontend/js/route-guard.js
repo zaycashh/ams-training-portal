@@ -12,6 +12,7 @@ if (
   path.includes("fmcsa-certificates") ||
   path.includes("faa-certificates")
 ) {
+
   console.log("✅ Certificate page — controlled access");
 
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
@@ -21,47 +22,42 @@ if (
     throw new Error("Redirecting...");
   }
 
-  const role = (user.role || "").toLowerCase().trim();
-  const email = (user.email || "").toLowerCase().trim();
+  /* Company admins (no role field) can always view certs on behalf of employees */
+  const isEmployee   = user.role === "employee";
+  const isSupervisor = user.role === "supervisor";
 
-  const isEmployee = role === "employee";
-  const isSupervisor = role === "supervisor";
-  const isDer = role === "der";
-  const isCompanyAdmin =
-    user.type === "company" && !isEmployee && !isSupervisor && !isDer;
-
-  if (isCompanyAdmin) {
+  if (!isEmployee && !isSupervisor) {
     console.log("✅ Company admin — certificate access granted");
+    // allow through
   } else {
+
     const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    const email   = user?.email;
 
-    const hasEmployeeSeat = !!company?.usedSeats?.employee?.[email];
-    const hasSupervisorSeat = !!company?.usedSeats?.supervisor?.[email];
-    const hasDerSeat = !!company?.usedSeats?.der?.[email];
-    const hasAnySeat = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
+    const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
+    const hasSupervisorSeat = company?.usedSeats?.supervisor?.[email];
+    const hasDerSeat        = company?.usedSeats?.der?.[email];
+    const hasAnySeat        = hasEmployeeSeat || hasSupervisorSeat || hasDerSeat;
 
-    const completedEmployee =
-      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true" ||
-      localStorage.getItem(`faaEmployeeCompleted_${email}`) === "true";
+    /* FMCSA completions */
+    const completedFmcsaEmployee   = localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+    const completedFmcsaSupervisor = localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true";
+    const completedFmcsaDER        = localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true";
 
-    const completedSupervisor =
-      localStorage.getItem(`fmcsaModuleBCompleted_${email}`) === "true" ||
-      localStorage.getItem(`fmcsaDrugAlcoholCompleted_${email}`) === "true" ||
-      localStorage.getItem(`faaSupervisorCompleted_${email}`) === "true";
+    /* FAA completions */
+    const completedFaaEmployee   = localStorage.getItem(`faaEmployeeCompleted_${email}`) === "true";
+    const completedFaaSupervisor = localStorage.getItem(`faaSupervisorCompleted_${email}`) === "true";
+    const completedFaaDER        = localStorage.getItem(`faaDERCompleted_${email}`) === "true";
 
-    const completedDER =
-      localStorage.getItem(`fmcsaDERCompleted_${email}`) === "true" ||
-      localStorage.getItem(`der_fmcsa_quiz_passed_${email}`) === "true" ||
-      localStorage.getItem(`faaDERCompleted_${email}`) === "true";
-
-    const hasAnyCompletion =
-      completedEmployee || completedSupervisor || completedDER;
+    const hasAnyCompletion = completedFmcsaEmployee || completedFmcsaSupervisor || completedFmcsaDER ||
+                             completedFaaEmployee   || completedFaaSupervisor   || completedFaaDER;
 
     if (!hasAnySeat && !hasAnyCompletion) {
       sessionStorage.setItem("ams_notice", "No certificate access.");
       window.location.replace("dashboard.html");
       throw new Error("Redirecting...");
     }
+
   }
 
 } else {
@@ -71,11 +67,12 @@ if (
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-  const module = document.body?.dataset?.module || "";
+
+  const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const module  = document.body?.dataset?.module || "";
   const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-  const program = (company.program || "").toUpperCase();
-  const role = (user?.role || "").toLowerCase().trim();
+  const program = company.program;
+  const role    = user?.role;
 
   /* =========================================================
      REQUIRE LOGIN
@@ -86,27 +83,20 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
-     NON-MODULE PAGES — stop here
-  ========================================================= */
-  if (!module) return;
-
-  const email = (user?.email || "").toLowerCase().trim();
-
-  /* =========================================================
      PROGRAM LOCK (FAA vs FMCSA)
+     — FAA companies cannot access FMCSA modules and vice versa
   ========================================================= */
   const fmcsaModules = [
     "fmcsa-employee",
     "fmcsa-module-a",
-    "fmcsa-supervisor",
     "fmcsa-drug-alcohol",
     "fmcsa-der"
   ];
 
   const faaModules = [
-    "employee",
-    "supervisor",
-    "der"
+    "faa-employee",
+    "faa-supervisor",
+    "faa-der"
   ];
 
   if (program === "FAA" && fmcsaModules.includes(module)) {
@@ -121,83 +111,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* =========================================================
      ROLE LOCK
-     Block only what is truly forbidden.
-     Company employees may access modules if they have matching seats.
+     Employees cannot access supervisor or DER modules (FAA or FMCSA)
+     Supervisors cannot access DER modules
   ========================================================= */
   if (role === "employee") {
-    const hasEmployeeSeat = !!company?.usedSeats?.employee?.[email];
-    const hasSupervisorSeat = !!company?.usedSeats?.supervisor?.[email];
-    const hasDerSeat = !!company?.usedSeats?.der?.[email];
-
-    if (module === "supervisor" && !hasSupervisorSeat) {
-      sessionStorage.setItem("ams_notice", "You don't have access to that module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    if (module === "der" && !hasDerSeat) {
-      sessionStorage.setItem("ams_notice", "You don't have access to that module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
     if (
-      (module === "fmcsa-module-a" ||
-       module === "fmcsa-supervisor" ||
-       module === "fmcsa-drug-alcohol") &&
-      !hasSupervisorSeat
+      module === "fmcsa-module-a"     ||
+      module === "fmcsa-drug-alcohol" ||
+      module === "fmcsa-der"          ||
+      module === "faa-supervisor"     ||
+      module === "faa-der"
     ) {
-      sessionStorage.setItem("ams_notice", "No supervisor seat assigned. Contact your administrator.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    if (module === "fmcsa-der" && !hasDerSeat) {
-      sessionStorage.setItem("ams_notice", "No DER seat assigned. Contact your administrator.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    if (
-      (module === "employee" || module === "fmcsa-employee") &&
-      !hasEmployeeSeat
-    ) {
-      sessionStorage.setItem("ams_notice", "No employee seat assigned. Contact your administrator.");
+      sessionStorage.setItem("ams_notice", "You don't have access to that module.");
       window.location.href = "dashboard.html";
       return;
     }
   }
 
   if (role === "supervisor") {
-    if (module === "der" || module === "fmcsa-der") {
+    if (module === "fmcsa-der" || module === "faa-der") {
       sessionStorage.setItem("ams_notice", "You don't have access to the DER module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-  }
-
-  if (role === "der") {
-    const hasDerSeat = !!company?.usedSeats?.der?.[email];
-
-    if ((module === "der" || module === "fmcsa-der") && !hasDerSeat) {
-      sessionStorage.setItem("ams_notice", "No DER seat assigned. Contact your administrator.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    if (
-      module === "supervisor" ||
-      module === "fmcsa-module-a" ||
-      module === "fmcsa-supervisor" ||
-      module === "fmcsa-drug-alcohol"
-    ) {
-      sessionStorage.setItem("ams_notice", "You don't have access to the supervisor module.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-
-    if (module === "employee" || module === "fmcsa-employee") {
-      sessionStorage.setItem("ams_notice", "You don't have access to the employee module.");
       window.location.href = "dashboard.html";
       return;
     }
@@ -206,13 +139,17 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================================================
      COMPANY EMPLOYEE — SEAT CHECK
   ========================================================= */
-  if (user?.type === "company" && role === "employee") {
-    const hasEmployeeSeat = !!company?.usedSeats?.employee?.[email];
-    const hasSupervisorSeat = !!company?.usedSeats?.supervisor?.[email];
-    const hasDerSeat = !!company?.usedSeats?.der?.[email];
+  if (user?.role === "employee" && user?.type === "company") {
 
+    const email = user.email;
+
+    const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
+    const hasSupervisorSeat = company?.usedSeats?.supervisor?.[email];
+    const hasDerSeat        = company?.usedSeats?.der?.[email];
+
+    // EMPLOYEE modules (FMCSA + FAA)
     if (
-      (path.includes("fmcsa-employee") || path.includes("employee")) &&
+      (path.includes("fmcsa-employee") || path.includes("faa-employee")) &&
       !hasEmployeeSeat
     ) {
       sessionStorage.setItem("ams_notice", "No employee seat assigned. Contact your administrator.");
@@ -220,11 +157,12 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // SUPERVISOR modules (FMCSA + FAA)
     if (
-      (path.includes("supervisor") ||
-       path.includes("fmcsa-module-a") ||
-       path.includes("fmcsa-supervisor") ||
-       path.includes("fmcsa-drug-alcohol")) &&
+      (path.includes("fmcsa-module-a")    ||
+       path.includes("fmcsa-supervisor")  ||
+       path.includes("fmcsa-drug-alcohol") ||
+       path.includes("faa-supervisor")) &&
       !hasSupervisorSeat
     ) {
       sessionStorage.setItem("ams_notice", "No supervisor seat assigned. Contact your administrator.");
@@ -232,8 +170,9 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // DER modules (FMCSA + FAA)
     if (
-      (path.includes("fmcsa-der") || path.includes("der")) &&
+      (path.includes("fmcsa-der") || path.includes("faa-der")) &&
       !hasDerSeat
     ) {
       sessionStorage.setItem("ams_notice", "No DER seat assigned. Contact your administrator.");
@@ -241,6 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // BLOCK PAYMENT PAGE for company employees
     if (path.includes("payment")) {
       window.location.replace("dashboard.html");
       return;
@@ -248,18 +188,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================================================
+     NON-MODULE PAGES — stop here
+  ========================================================= */
+  if (!module) return;
+
+  const email = user?.email;
+
+  /* =========================================================
      INDIVIDUAL PAYMENT CHECK (non-company users)
   ========================================================= */
   if (user?.type !== "company") {
+
     const paymentMap = {
-      "fmcsa-der": "paid_der_fmcsa",
-      "fmcsa-module-a": "paid_fmcsa",
-      "fmcsa-supervisor": "paid_fmcsa",
+      /* FMCSA */
+      "fmcsa-der":          "paid_der_fmcsa",
+      "fmcsa-module-a":     "paid_fmcsa",
       "fmcsa-drug-alcohol": "paid_fmcsa",
-      "fmcsa-employee": "paid_employee_fmcsa",
-      "employee": "paid_employee_faa",
-      "supervisor": "paid_supervisor_faa",
-      "der": "paid_der_faa"
+      "fmcsa-employee":     "paid_employee_fmcsa",
+      /* FAA */
+      "faa-supervisor":     "paid_supervisor_faa",
+      "faa-der":            "paid_der_faa",
+      "faa-employee":       "paid_employee_faa"
     };
 
     const key = paymentMap[module];
@@ -273,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
+
 });
 
 } // end else
