@@ -1,111 +1,628 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+  <meta charset="UTF-8" />
+  <title>Certificate Verification | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&display=swap" rel="stylesheet" />
 
-<meta charset="UTF-8">
-<title>AMS Certificate Verification</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root,[data-theme="light"]{
+      --color-bg:#f7f6f2;--color-surface:#faf9f7;--color-surface-2:#ffffff;
+      --color-surface-offset:#f0ede8;--color-divider:#e2dfd9;--color-border:#d6d3cc;
+      --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-surface:#e6f2f2;
+      --color-warning:#964219;--color-warning-surface:#fdf0e8;
+      --color-success:#166534;--color-success-surface:#dcfce7;--color-success-border:#86efac;
+      --radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+      --shadow-card:0 1px 3px oklch(0.2 0.01 80/.06),0 4px 14px oklch(0.2 0.01 80/.07);
+      --shadow-lg:0 8px 30px oklch(0.2 0.01 80/.12);
+      --transition:180ms cubic-bezier(0.16,1,0.3,1);
+      --font-body:'DM Sans','Helvetica Neue',sans-serif;
+      --font-ui:'Inter',sans-serif;
+      --font-cert:'IM Fell English',Georgia,serif;
+      --font-title:'Cinzel',Georgia,serif;
+    }
+    [data-theme="dark"]{
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#222120;
+      --color-surface-offset:#252422;--color-divider:#2e2d2b;--color-border:#393836;
+      --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+      --color-primary:#4f98a3;--color-primary-hover:#3a8490;--color-primary-surface:#1c3436;
+      --color-success:#166534;--color-success-surface:#14532d;--color-success-border:#166534;
+      --shadow-card:0 1px 3px oklch(0 0 0/.3),0 4px 14px oklch(0 0 0/.25);
+      --shadow-lg:0 8px 30px oklch(0 0 0/.4);
+    }
 
-<style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-font-smoothing:antialiased;}
+    body{font-family:var(--font-body);color:var(--color-text);background:var(--color-bg);min-height:100dvh;display:flex;flex-direction:column;}
 
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#f5f7fb;
-text-align:center;
-padding:60px;
-}
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:.875rem 2rem;background:var(--color-surface);border-bottom:1px solid var(--color-divider);position:sticky;top:0;z-index:40;}
+    .topbar-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+    .topbar-logo{width:30px;height:30px;background:var(--color-primary);border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
+    .topbar-logo svg{color:#fff;}
+    .topbar-name{font-family:var(--font-ui);font-size:.8125rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text);}
+    .topbar-name span{display:block;font-size:.7rem;font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--color-text-muted);}
+    .topbar-right{display:flex;align-items:center;gap:.75rem;}
+    .icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-text-muted);background:none;border:none;cursor:pointer;transition:background var(--transition),color var(--transition);}
+    .icon-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;font-family:var(--font-ui);cursor:pointer;border:none;transition:background var(--transition);}
+    .btn-primary{background:var(--color-primary);color:#fff;}
+    .btn-primary:hover{background:var(--color-primary-hover);}
 
-.verify-container{
-max-width:700px;
-margin:auto;
-}
+    /* PAGE */
+    .page{flex:1;padding:2.5rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
 
-.verify-card{
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 4px 20px rgba(0,0,0,0.08);
-margin-top:25px;
-}
+    /* VERIFIED BANNER */
+    .verified-banner{
+      width:100%;max-width:900px;
+      background:var(--color-success-surface);
+      border:1.5px solid var(--color-success-border);
+      border-radius:var(--radius-lg);
+      padding:1rem 1.5rem;
+      display:none;
+      align-items:center;
+      gap:.875rem;
+    }
+    .verified-banner.show{display:flex;}
+    .verified-icon{
+      width:40px;height:40px;border-radius:50%;
+      background:#166534;display:grid;place-items:center;flex-shrink:0;
+    }
+    .verified-icon svg{color:#fff;}
+    .verified-text h3{font-family:var(--font-ui);font-size:1rem;font-weight:700;color:#166534;margin-bottom:.15rem;}
+    .verified-text p{font-size:.85rem;color:#166534;opacity:.85;}
 
-</style>
+    /* NOT FOUND BANNER */
+    .notfound-banner{
+      width:100%;max-width:900px;
+      background:var(--color-warning-surface);
+      border:1.5px solid #f5c6a0;
+      border-radius:var(--radius-lg);
+      padding:1rem 1.5rem;
+      display:none;
+      align-items:center;
+      gap:.875rem;
+    }
+    .notfound-banner.show{display:flex;}
+    .notfound-icon{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--color-warning);display:grid;place-items:center;flex-shrink:0;
+    }
+    .notfound-icon svg{color:#fff;}
+    .notfound-text h3{font-family:var(--font-ui);font-size:1rem;font-weight:700;color:var(--color-warning);margin-bottom:.15rem;}
+    .notfound-text p{font-size:.85rem;color:var(--color-warning);opacity:.85;}
 
+    /* LOADING */
+    .loading-state{
+      width:100%;max-width:900px;
+      background:var(--color-surface-2);
+      border:1px solid var(--color-border);
+      border-radius:var(--radius-lg);
+      padding:2.5rem;
+      text-align:center;
+      color:var(--color-text-muted);
+      font-size:.95rem;
+    }
+
+    /* PAGE ACTIONS */
+    .page-actions{display:flex;gap:.625rem;width:100%;max-width:900px;justify-content:flex-end;}
+
+    /* CERTIFICATE */
+    .cert-outer{
+      width:100%;max-width:900px;background:#fff;color:#1a1a1a;
+      border:none;box-shadow:var(--shadow-lg);border-radius:2px;
+      position:relative;padding:72px 88px 64px;display:none;
+    }
+    .cert-outer.visible{display:block;}
+    .cert-border-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+    .cert-body,.cert-corner-bl,.cert-corner-br{position:relative;z-index:1;}
+    .cert-corner-bl,.cert-corner-br{display:none;}
+    .cert-body{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;}
+    .cert-main-title{font-family:var(--font-title);font-size:2.6rem;font-weight:600;color:#1a1a1a;letter-spacing:.02em;line-height:1.2;margin-bottom:1rem;}
+    .cert-subtitle{font-family:var(--font-cert);font-size:1.15rem;color:#333;margin-bottom:1.25rem;font-style:italic;}
+    .cert-name{font-family:var(--font-cert);font-size:2rem;font-weight:700;color:#1a1a1a;letter-spacing:.03em;border-bottom:1.5px solid #1a3a8f;padding-bottom:.375rem;min-width:320px;margin-bottom:1.25rem;}
+    .cert-completed-line{font-family:var(--font-cert);font-size:1.05rem;color:#444;font-style:italic;margin-bottom:.75rem;}
+    .cert-course-name{font-family:var(--font-cert);font-size:1.35rem;font-weight:700;color:#1a1a1a;margin-bottom:.5rem;line-height:1.4;}
+    .cert-regulation{font-family:var(--font-cert);font-size:.95rem;color:#555;font-style:italic;margin-bottom:.5rem;}
+    .cert-modules{font-family:var(--font-cert);font-size:.95rem;font-weight:700;font-style:italic;color:#1a1a1a;line-height:1.7;margin-bottom:.5rem;}
+    .cert-awarded{font-family:var(--font-cert);font-size:1.05rem;color:#444;font-style:italic;margin-top:.75rem;margin-bottom:1rem;}
+    .cert-awarded span{font-weight:700;font-style:normal;color:#1a1a1a;}
+    .cert-bottom{display:flex;align-items:flex-end;justify-content:space-between;width:100%;margin-top:.5rem;gap:1rem;}
+    .cert-seal{width:120px;height:120px;flex-shrink:0;opacity:.95;}
+    .cert-seal img{width:100%;height:100%;object-fit:contain;transform:rotate(-15deg);}
+    .cert-id-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.25rem;padding-bottom:.25rem;}
+    .cert-id{font-family:var(--font-ui);font-size:.72rem;color:#888;letter-spacing:.04em;}
+    .cert-qr{width:100px;height:100px;flex-shrink:0;}
+    .cert-qr canvas,.cert-qr img{width:100%!important;height:100%!important;}
+
+    /* PRINT */
+    @media print {
+      body{background:#fff;}
+      .topbar,.page-actions,.verified-banner,.notfound-banner,.loading-state,.no-print{display:none!important;}
+      .page{padding:0;}
+      .cert-outer{display:block!important;max-width:100%;box-shadow:none;margin:0;page-break-inside:avoid;}
+    }
+
+    @media(max-width:768px){
+      .cert-outer{padding:32px 28px 28px;}
+      .cert-main-title{font-size:1.8rem;}
+      .cert-name{font-size:1.4rem;min-width:200px;}
+      .cert-course-name{font-size:1.1rem;}
+      .cert-seal{width:80px;height:80px;}
+      .cert-qr{width:75px;height:75px;}
+      .topbar{padding:.875rem 1rem;}
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="verify-container">
+  <!-- TOPBAR -->
+  <header class="topbar no-print">
+    <a class="topbar-brand" href="login.html">
+      <div class="topbar-logo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="topbar-name">AMS<span>Training Portal</span></div>
+    </a>
+    <div class="topbar-right">
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
 
-<h1>AMS Training Portal</h1>
-<h2>Certificate Verification</h2>
+  <!-- PAGE -->
+  <div class="page">
 
-<div id="result" class="verify-card">
-  <p>🔎 Checking certificate...</p>
-</div>
+    <!-- LOADING -->
+    <div class="loading-state" id="loadingState">
+      🔎 Verifying certificate...
+    </div>
 
-</div>
+    <!-- VERIFIED BANNER -->
+    <div class="verified-banner" id="verifiedBanner">
+      <div class="verified-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="verified-text">
+        <h3>Certificate Verified</h3>
+        <p>This certificate was issued by AMS Training Portal and is authentic.</p>
+      </div>
+    </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+    <!-- NOT FOUND BANNER -->
+    <div class="notfound-banner" id="notfoundBanner">
+      <div class="notfound-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <div class="notfound-text">
+        <h3>Certificate Not Found</h3>
+        <p>This certificate ID could not be verified. It may be invalid or not yet registered on this device.</p>
+      </div>
+    </div>
 
-  const result = document.getElementById("result");
+    <!-- PRINT BUTTON (only shown when cert found) -->
+    <div class="page-actions" id="pageActions" style="display:none;">
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+    </div>
 
-  const params = new URLSearchParams(window.location.search);
-  const certId = params.get("id");
+    <!-- =============================================
+         EMPLOYEE CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="employeeCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-emp" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-emp" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-emp" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-emp)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-emp)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-emp)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-emp)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-emp)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="empCertStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">FMCSA - Employee Drug &amp; Alcohol Regulations Training</div>
+        <div class="cert-awarded">Awarded on: <span id="empCertCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="empCertCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="empCertQR"></div>
+        </div>
+      </div>
+    </div>
 
-  if (!certId) {
-    result.innerHTML = "<h2>No certificate ID provided</h2>";
-    return;
+    <!-- =============================================
+         DER CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="derCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-der" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-der" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-der" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-der)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-der)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-der)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-der)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-der)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="derCertStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">FMCSA - DER Drug &amp; Alcohol Regulations Training</div>
+        <div class="cert-awarded">Awarded on: <span id="derCertCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="derCertCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="derCertQR"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         SUPERVISOR CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="supCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-sup" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-sup" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-sup" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-sup)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-sup)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-sup)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-sup)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-sup)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="certStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">DOT Supervisor Reasonable Suspicion Training</div>
+        <div class="cert-regulation">In accordance with 49 CFR Part 382.603</div>
+        <div class="cert-modules">
+          Signs &amp; Symptoms of Drug Use (60 Min)<br>
+          Signs &amp; Symptoms of Alcohol Misuse (60 Min)
+        </div>
+        <div class="cert-awarded">Awarded on: <span id="certCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="certCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="certQR" style="margin-bottom:20px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .page -->
+
+  <!-- DARK MODE -->
+  <script>
+  (function(){
+    const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+    let d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+    r.setAttribute('data-theme',d);
+    function upd(){if(!t)return;t.innerHTML=d==='dark'
+      ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
+    upd();t&&t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);upd();});
+  })();
+  </script>
+
+  <!-- QR CODE LIB -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+  function makeQR(containerId, certId) {
+    const el = document.getElementById(containerId);
+    if (!el || !certId) return;
+    el.innerHTML = "";
+    new QRCode(el, {
+      text: window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId,
+      width: 100, height: 100
+    });
   }
 
-  let foundCert = null;
+  function showCert(templateId) {
+    ["employeeCertTemplate","derCertTemplate","supCertTemplate"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("visible");
+    });
+    const target = document.getElementById(templateId);
+    if (target) target.classList.add("visible");
+  }
 
-  /* 🔥 SEARCH ALL LOCALSTORAGE CERT REGISTRIES */
-  for (const key of Object.keys(localStorage)) {
+  function formatDate(ts) {
+    if (!ts) return new Date().toLocaleDateString("en-US");
+    const d = new Date(Number(ts));
+    return isNaN(d) ? new Date().toLocaleDateString("en-US") : d.toLocaleDateString("en-US");
+  }
 
-    if (key.startsWith("amsCertificates_")) {
+  function renderEmployee(name, certId, email) {
+    const date = formatDate(localStorage.getItem(`fmcsaEmployeeDate_${email}`) || Date.now());
+    document.getElementById("empCertStudentName").textContent    = name;
+    document.getElementById("empCertCompletionDate").textContent = date;
+    document.getElementById("empCertCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("employeeCertTemplate");
+    makeQR("empCertQR", certId);
+  }
 
-      const registry =
-        JSON.parse(localStorage.getItem(key) || "[]");
+  function renderDER(name, certId, email) {
+    const date = formatDate(localStorage.getItem(`fmcsaDERDate_${email}`) || Date.now());
+    document.getElementById("derCertStudentName").textContent    = name;
+    document.getElementById("derCertCompletionDate").textContent = date;
+    document.getElementById("derCertCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("derCertTemplate");
+    makeQR("derCertQR", certId);
+  }
 
-      const match = registry.find(c => c.id === certId);
+  function renderSupervisor(name, certId, email) {
+    const date = formatDate(
+      localStorage.getItem(`fmcsaModuleBDate_${email}`) ||
+      localStorage.getItem(`fmcsaModuleADate_${email}`) ||
+      Date.now()
+    );
+    document.getElementById("certStudentName").textContent    = name;
+    document.getElementById("certCompletionDate").textContent = date;
+    document.getElementById("certCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("supCertTemplate");
+    makeQR("certQR", certId);
+  }
 
-      if (match) {
-        foundCert = match;
-        break;
-      }
+  document.addEventListener("DOMContentLoaded", () => {
 
+    const params  = new URLSearchParams(window.location.search);
+    const certId  = (params.get("id") || "").trim();
+    const loading = document.getElementById("loadingState");
+    const verBanner  = document.getElementById("verifiedBanner");
+    const notBanner  = document.getElementById("notfoundBanner");
+    const actions    = document.getElementById("pageActions");
+
+    if (!certId) {
+      loading.textContent = "No certificate ID provided in this URL.";
+      return;
     }
 
-  }
+    /* ── Search ALL localStorage keys across every user ─────────────
+       Keys we check per user email:
+         fmcsaModuleBCertificateId_<email>   → Supervisor
+         fmcsaModuleACertificateId_<email>   → Supervisor (fallback)
+         fmcsaDERCertificateId_<email>       → DER
+         fmcsaEmployeeCertificateId_<email>  → Employee
+         amsCertificates_<email>             → registry array fallback
+    ─────────────────────────────────────────────────────────────── */
 
-  /* ✅ MUST BE INSIDE EVENT */
-  if (foundCert) {
+    let found = null; // { name, certId, type, email }
 
-    const formattedDate =
-      foundCert.displayDate ||
-      new Date(Number(foundCert.date)).toLocaleDateString("en-US");
+    /* Collect all unique emails from localStorage keys */
+    const emails = new Set();
+    for (const key of Object.keys(localStorage)) {
+      const match = key.match(/^fmcsa(?:ModuleA|ModuleB|DER|Employee)CertificateId_(.+)$/) ||
+                    key.match(/^amsCertificates_(.+)$/);
+      if (match) emails.add(match[1]);
+    }
 
-    result.innerHTML = `
-      <h2 style="color:#0a7d2c;">✔ Certificate Verified</h2>
-      <p><strong>Name:</strong> ${foundCert.name}</p>
-      <p><strong>Course:</strong> ${foundCert.course}</p>
-      <p><strong>Date Completed:</strong> ${formattedDate}</p>
-      <p><strong>Certificate ID:</strong> ${foundCert.id}</p>
-    `;
+    /* Also pull from ams_users for name lookup */
+    const allUsers = JSON.parse(localStorage.getItem("ams_users") || "[]");
 
-  } else {
+    function getNameForEmail(email) {
+      const u = allUsers.find(u => (u.email || "").toLowerCase().trim() === email);
+      if (u) return (u.fullName || `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.email);
+      return email;
+    }
 
-    result.innerHTML = `
-  <h2 style="color:red;">❌ Certificate NOT FOUND</h2>
-  <p>This certificate could not be verified on this device.</p>
-  <p>Please ensure the certificate was issued by AMS or contact support.</p>
-`;
+    for (const email of emails) {
+      if (found) break;
 
-  }
+      const supB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+      const supA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+      const der  = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+      const emp  = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
 
-});
-</script>
+      if (supB === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor", email }; break; }
+      if (supA === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor", email }; break; }
+      if (der  === certId) { found = { name: getNameForEmail(email), certId, type: "der",        email }; break; }
+      if (emp  === certId) { found = { name: getNameForEmail(email), certId, type: "employee",   email }; break; }
+
+      /* Check amsCertificates registry array */
+      try {
+        const registry = JSON.parse(localStorage.getItem(`amsCertificates_${email}`) || "[]");
+        const match = registry.find(c => c.id === certId);
+        if (match) {
+          found = { name: match.name || getNameForEmail(email), certId, type: match.type || "employee", email };
+          break;
+        }
+      } catch(e) {}
+    }
+
+    loading.style.display = "none";
+
+    if (found) {
+      verBanner.classList.add("show");
+      actions.style.display = "flex";
+
+      if (found.type === "supervisor") {
+        renderSupervisor(found.name, found.certId, found.email);
+      } else if (found.type === "der") {
+        renderDER(found.name, found.certId, found.email);
+      } else {
+        renderEmployee(found.name, found.certId, found.email);
+      }
+    } else {
+      notBanner.classList.add("show");
+    }
+
+  });
+  </script>
 
 </body>
 </html>
