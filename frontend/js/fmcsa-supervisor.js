@@ -67,7 +67,11 @@ function showSection(section) {
   }
 }
 
-function goDashboard() { window.location.href = "dashboard.html"; }
+function goDashboard() {
+  const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+  window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+}
 
 /* =========================================================
    COOLDOWN CHECK
@@ -77,7 +81,7 @@ function checkCooldown() {
   if (Date.now() < cooldownUntil) {
     const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
     showToast(`Quiz locked. Try again in ${minutesLeft} minute(s).`, "error", 5000);
-    setTimeout(() => window.location.href = "dashboard.html", 2000);
+    setTimeout(() => goDashboard(), 2000);
     return true;
   }
   return false;
@@ -288,25 +292,49 @@ function gradeQuiz() {
       localStorage.setItem(`fmcsaModuleACertificateId_${email}`, certId);
     }
 
-    /* Save cert ID into companyProfile so admin can view it */
+    /* Save cert ID into companyProfile keys — only update keys that already have company data */
     try {
-      const cp = JSON.parse(localStorage.getItem("companyProfile") || "{}");
-      if (!cp.certIds) cp.certIds = {};
-      cp.certIds[email] = { certId, type: "supervisor", date: Date.now() };
-      localStorage.setItem("companyProfile", JSON.stringify(cp));
+      const _certEntry = { certId, type: "supervisor", date: Date.now() };
+      ["companyProfile_fmcsa", "companyProfile"].forEach(key => {
+        const raw = localStorage.getItem(key);
+        if (!raw) return; /* don't create from scratch */
+        const cp = JSON.parse(raw);
+        if (!cp.id && !cp.name) return; /* skip if not a real company profile */
+        if (!cp.certIds) cp.certIds = {};
+        cp.certIds[email] = _certEntry;
+        localStorage.setItem(key, JSON.stringify(cp));
+      });
     } catch(e) {}
 
     localStorage.removeItem(ATTEMPT_KEY);
     localStorage.removeItem(PROGRESS_KEY);
 
     document.getElementById("quizResult").innerHTML =
-  `<div class="result-box pass">Module A complete! Loading Module B...</div>`;
+      `<div class="result-box pass">You passed! Generating certificate...</div>`;
 
-showToast("Module A passed! Proceeding to Module B.", "success");
+    showToast("Quiz passed! Certificate generated.", "success");
 
-setTimeout(() => {
-  window.location.href = "fmcsa-drug-alcohol.html";
-}, 1500);
+    /* Unlock cert nav btn */
+    const certBtn = document.getElementById("btnCertificate");
+    if (certBtn) { certBtn.disabled = false; certBtn.classList.add("done"); }
+
+    setTimeout(() => {
+      document.getElementById("quizSection")?.classList.add("hidden");
+      document.getElementById("certificateSection")?.classList.remove("hidden");
+
+      const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+      const fullName = u?.fullName ||
+        `${u?.firstName || ""} ${u?.lastName || ""}`.trim() ||
+        u?.email || "User";
+
+      document.getElementById("certName").textContent = fullName;
+      document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US");
+      document.getElementById("certId").textContent   = localStorage.getItem(`fmcsaModuleACertificateId_${email}`) || "";
+
+      if (typeof generateQR === "function") {
+        generateQR(localStorage.getItem(`fmcsaModuleACertificateId_${email}`), "certQR");
+      }
+    }, 1500);
 
     return;
   }
@@ -319,7 +347,7 @@ setTimeout(() => {
     localStorage.setItem(COOLDOWN_KEY, Date.now() + COOLDOWN_MINUTES * 60000);
     localStorage.setItem(ATTEMPT_KEY, 0);
     showToast("Maximum attempts reached. Quiz locked for 15 minutes.", "error", 5000);
-    setTimeout(() => window.location.href = "dashboard.html", 2000);
+    setTimeout(() => goDashboard(), 2000);
     return;
   }
 
