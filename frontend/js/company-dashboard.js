@@ -149,7 +149,10 @@ function updateEmployeeOverview(company) {
     const localDone =
       localStorage.getItem(`fmcsaDERCompleted_${email}`)      === "true" ||
       localStorage.getItem(`fmcsaModuleBCompleted_${email}`)  === "true" ||
-      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true";
+      localStorage.getItem(`fmcsaEmployeeCompleted_${email}`) === "true" ||
+      localStorage.getItem(`faaDERCompleted_${email}`)        === "true" ||
+      localStorage.getItem(`faaSupervisorCompleted_${email}`) === "true" ||
+      localStorage.getItem(`faaEmployeeCompleted_${email}`)   === "true";
 
     const isDone = hasCert || localDone;
 
