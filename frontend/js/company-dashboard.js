@@ -804,9 +804,10 @@ function viewEmployeeCert(email) {
   let certId = company.certIds?.[email]?.certId || null;
 
   /* 2. Fallback — check direct localStorage keys written by each training module */
-  if (!certId) certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`)      || null;
-  if (!certId) certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`)  || null; // supervisor cert
-  if (!certId) certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`) || null;
+  if (!certId) certId = localStorage.getItem(`fmcsaDERCertificateId_${email}`)       || null;
+  if (!certId) certId = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`)   || null; // supervisor cert (module B)
+  if (!certId) certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`)   || null; // supervisor cert (module A fallback)
+  if (!certId) certId = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`)  || null;
 
   if (!certId) {
     showToast("No certificate found for this employee.", "error");
