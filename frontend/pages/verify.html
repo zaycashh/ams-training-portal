@@ -463,6 +463,253 @@
       </div>
     </div>
 
+    <!-- =============================================
+         FAA EMPLOYEE CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="faaVerifyEmpCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-faaVEmp" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-faaVEmp" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-faaVEmp" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-faaVEmp)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-faaVEmp)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-faaVEmp)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-faaVEmp)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-faaVEmp)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="faaVerifyEmpStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">FAA - Employee Drug &amp; Alcohol Awareness Training</div>
+        <div class="cert-regulation">In accordance with 14 CFR Part 120</div>
+        <div class="cert-awarded">Awarded on: <span id="faaVerifyEmpCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="faaVerifyEmpCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="faaVerifyEmpQR"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         FAA DER CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="faaVerifyDERCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-faaVDER" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-faaVDER" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-faaVDER" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-faaVDER)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-faaVDER)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-faaVDER)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-faaVDER)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-faaVDER)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="faaVerifyDERStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">FAA - Designated Employer Representative (DER) Training</div>
+        <div class="cert-regulation">In accordance with 14 CFR Part 120</div>
+        <div class="cert-awarded">Awarded on: <span id="faaVerifyDERCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="faaVerifyDERCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="faaVerifyDERQR"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         FAA SUPERVISOR CERTIFICATE
+    ============================================= -->
+    <div class="cert-outer" id="faaVerifySupCertTemplate">
+      <span class="cert-corner-bl">✦</span>
+      <span class="cert-corner-br">✦</span>
+      <svg class="cert-border-svg" viewBox="0 0 900 640" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navyG-faaVSup" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#1e3070"/>
+            <stop offset="50%"  stop-color="#0d1f55"/>
+            <stop offset="100%" stop-color="#1e3070"/>
+          </linearGradient>
+          <pattern id="laceH-faaVSup" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+          </pattern>
+          <pattern id="laceV-faaVSup" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M10,0 L20,10 L10,20 L0,10 Z" fill="none" stroke="#8899cc" stroke-width="0.7"/>
+            <circle cx="10" cy="10" r="2"   fill="#aabbdd"/>
+            <circle cx="10" cy="0"  r="1.2" fill="#8899cc"/>
+            <circle cx="10" cy="20" r="1.2" fill="#8899cc"/>
+            <circle cx="0"  cy="10" r="1.2" fill="#8899cc"/>
+            <circle cx="20" cy="10" r="1.2" fill="#8899cc"/>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="900" height="640" fill="url(#navyG-faaVSup)"/>
+        <rect x="0"   y="0"   width="900" height="60"  fill="url(#laceH-faaVSup)" opacity="0.75"/>
+        <rect x="0"   y="580" width="900" height="60"  fill="url(#laceH-faaVSup)" opacity="0.75"/>
+        <rect x="0"   y="0"   width="60"  height="640" fill="url(#laceV-faaVSup)" opacity="0.75"/>
+        <rect x="840" y="0"   width="60"  height="640" fill="url(#laceV-faaVSup)" opacity="0.75"/>
+        <rect x="2"  y="2"  width="896" height="636" fill="none" stroke="#4a6aaa" stroke-width="1.2"/>
+        <rect x="8"  y="8"  width="884" height="624" fill="none" stroke="#2a4a90" stroke-width="0.6"/>
+        <rect x="60" y="60" width="780" height="520" fill="#ffffff"/>
+        <rect x="60" y="60" width="780" height="520" fill="none" stroke="#1e3070" stroke-width="2.5"/>
+        <rect x="66" y="66" width="768" height="508" fill="none" stroke="#4a6aaa" stroke-width="0.9"/>
+        <g stroke="#aabbdd" stroke-width="1.3" fill="none">
+          <circle cx="60"  cy="60"  r="22"/><circle cx="60"  cy="60"  r="13"/>
+          <circle cx="840" cy="60"  r="22"/><circle cx="840" cy="60"  r="13"/>
+          <circle cx="60"  cy="580" r="22"/><circle cx="60"  cy="580" r="13"/>
+          <circle cx="840" cy="580" r="22"/><circle cx="840" cy="580" r="13"/>
+        </g>
+        <g fill="#aabbdd">
+          <circle cx="60"  cy="60"  r="5"/>
+          <circle cx="840" cy="60"  r="5"/>
+          <circle cx="60"  cy="580" r="5"/>
+          <circle cx="840" cy="580" r="5"/>
+        </g>
+        <g stroke="#c8d4ee" stroke-width="0.8">
+          <line x1="60"  y1="38"  x2="60"  y2="50"/> <line x1="38"  y1="60"  x2="50"  y2="60"/>
+          <line x1="840" y1="38"  x2="840" y2="50"/> <line x1="830" y1="60"  x2="842" y2="60"/>
+          <line x1="60"  y1="570" x2="60"  y2="582"/> <line x1="38"  y1="580" x2="50"  y2="580"/>
+          <line x1="840" y1="570" x2="840" y2="582"/> <line x1="830" y1="580" x2="842" y2="580"/>
+        </g>
+        <g fill="#aabbdd">
+          <polygon points="450,2  456,10  450,18  444,10"/>
+          <polygon points="450,622 456,630 450,638 444,630"/>
+          <polygon points="2,320   10,326  18,320  10,314"/>
+          <polygon points="882,320 890,326 898,320 890,314"/>
+        </g>
+      </svg>
+      <div class="cert-body">
+        <div class="cert-main-title">Certificate of Completion</div>
+        <div class="cert-subtitle">This is to certify that</div>
+        <div class="cert-name" id="faaVerifySupStudentName">—</div>
+        <div class="cert-completed-line">has successfully completed the</div>
+        <div class="cert-course-name">FAA Supervisor Reasonable Suspicion Training</div>
+        <div class="cert-regulation">In accordance with 14 CFR Part 120</div>
+        <div class="cert-modules">
+          Signs &amp; Symptoms of Drug Use (60 Min)<br>
+          Signs &amp; Symptoms of Alcohol Misuse (60 Min)
+        </div>
+        <div class="cert-awarded">Awarded on: <span id="faaVerifySupCompletionDate">—</span></div>
+        <div class="cert-bottom">
+          <div class="cert-seal"><img src="../assets/certificates/ams-seal.png" alt="AMS Certified Seal" /></div>
+          <div class="cert-id-wrap"><div class="cert-id" id="faaVerifySupCertificateId">Certificate ID: —</div></div>
+          <div class="cert-qr" id="faaVerifySupQR" style="margin-bottom:20px;"></div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end .page -->
 
   <!-- DARK MODE -->
@@ -493,7 +740,9 @@
   }
 
   function showCert(templateId) {
-    ["employeeCertTemplate","derCertTemplate","supCertTemplate"].forEach(id => {
+    ["employeeCertTemplate","derCertTemplate","supCertTemplate",
+     "faaVerifyEmpCertTemplate","faaVerifyDERCertTemplate","faaVerifySupCertTemplate"
+    ].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.remove("visible");
     });
@@ -538,6 +787,34 @@
     makeQR("certQR", certId);
   }
 
+  /* ── FAA render functions ──────────────────────────────────── */
+  function renderFAAEmployee(name, certId, email) {
+    const date = formatDate(localStorage.getItem(`faaEmployeeTrainingDate_${email}`) || Date.now());
+    document.getElementById("faaVerifyEmpStudentName").textContent    = name;
+    document.getElementById("faaVerifyEmpCompletionDate").textContent = date;
+    document.getElementById("faaVerifyEmpCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("faaVerifyEmpCertTemplate");
+    makeQR("faaVerifyEmpQR", certId);
+  }
+
+  function renderFAADER(name, certId, email) {
+    const date = formatDate(localStorage.getItem(`faaDERTrainingDate_${email}`) || Date.now());
+    document.getElementById("faaVerifyDERStudentName").textContent    = name;
+    document.getElementById("faaVerifyDERCompletionDate").textContent = date;
+    document.getElementById("faaVerifyDERCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("faaVerifyDERCertTemplate");
+    makeQR("faaVerifyDERQR", certId);
+  }
+
+  function renderFAASupervisor(name, certId, email) {
+    const date = formatDate(localStorage.getItem(`faaSupervisorTrainingDate_${email}`) || Date.now());
+    document.getElementById("faaVerifySupStudentName").textContent    = name;
+    document.getElementById("faaVerifySupCompletionDate").textContent = date;
+    document.getElementById("faaVerifySupCertificateId").textContent  = "Certificate ID: " + certId;
+    showCert("faaVerifySupCertTemplate");
+    makeQR("faaVerifySupQR", certId);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
 
     const params  = new URLSearchParams(window.location.search);
@@ -567,6 +844,7 @@
     const emails = new Set();
     for (const key of Object.keys(localStorage)) {
       const match = key.match(/^fmcsa(?:ModuleA|ModuleB|DER|Employee)CertificateId_(.+)$/) ||
+                    key.match(/^faa(?:Supervisor|Employee|DER)CertificateId_(.+)$/) ||
                     key.match(/^amsCertificates_(.+)$/);
       if (match) emails.add(match[1]);
     }
@@ -583,15 +861,21 @@
     for (const email of emails) {
       if (found) break;
 
-      const supB = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
-      const supA = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
-      const der  = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
-      const emp  = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+      const supB     = localStorage.getItem(`fmcsaModuleBCertificateId_${email}`);
+      const supA     = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
+      const der      = localStorage.getItem(`fmcsaDERCertificateId_${email}`);
+      const emp      = localStorage.getItem(`fmcsaEmployeeCertificateId_${email}`);
+      const faaSup   = localStorage.getItem(`faaSupervisorCertificateId_${email}`);
+      const faaDer   = localStorage.getItem(`faaDERCertificateId_${email}`);
+      const faaEmp   = localStorage.getItem(`faaEmployeeCertificateId_${email}`);
 
-      if (supB === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor", email }; break; }
-      if (supA === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor", email }; break; }
-      if (der  === certId) { found = { name: getNameForEmail(email), certId, type: "der",        email }; break; }
-      if (emp  === certId) { found = { name: getNameForEmail(email), certId, type: "employee",   email }; break; }
+      if (supB   === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor",   email }; break; }
+      if (supA   === certId) { found = { name: getNameForEmail(email), certId, type: "supervisor",   email }; break; }
+      if (der    === certId) { found = { name: getNameForEmail(email), certId, type: "der",          email }; break; }
+      if (emp    === certId) { found = { name: getNameForEmail(email), certId, type: "employee",     email }; break; }
+      if (faaSup === certId) { found = { name: getNameForEmail(email), certId, type: "faa_supervisor", email }; break; }
+      if (faaDer === certId) { found = { name: getNameForEmail(email), certId, type: "faa_der",      email }; break; }
+      if (faaEmp === certId) { found = { name: getNameForEmail(email), certId, type: "faa_employee", email }; break; }
 
       /* Check amsCertificates registry array */
       try {
@@ -610,13 +894,12 @@
       verBanner.classList.add("show");
       actions.style.display = "flex";
 
-      if (found.type === "supervisor") {
-        renderSupervisor(found.name, found.certId, found.email);
-      } else if (found.type === "der") {
-        renderDER(found.name, found.certId, found.email);
-      } else {
-        renderEmployee(found.name, found.certId, found.email);
-      }
+      if      (found.type === "supervisor")     { renderSupervisor(found.name, found.certId, found.email); }
+      else if (found.type === "der")             { renderDER(found.name, found.certId, found.email); }
+      else if (found.type === "faa_supervisor")  { renderFAASupervisor(found.name, found.certId, found.email); }
+      else if (found.type === "faa_der")         { renderFAADER(found.name, found.certId, found.email); }
+      else if (found.type === "faa_employee")    { renderFAAEmployee(found.name, found.certId, found.email); }
+      else                                       { renderEmployee(found.name, found.certId, found.email); }
     } else {
       notBanner.classList.add("show");
     }
