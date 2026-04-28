@@ -222,9 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
       "fmcsa-drug-alcohol": "paid_fmcsa",
       "fmcsa-employee":     "paid_employee_fmcsa",
       /* FAA */
-      "faa-supervisor":     "paid_supervisor_faa",
-      "faa-der":            "paid_der_faa",
-      "faa-employee":       "paid_employee_faa"
+      "faa-supervisor":     "paid_supervisor",
+      "faa-der":            "paid_der",
+      "faa-employee":       "paid_employee"
     };
 
     const key = paymentMap[module];
