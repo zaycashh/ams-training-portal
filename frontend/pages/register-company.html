@@ -147,6 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
       employees: {}
     };
 
+    const _progKey = program.toLowerCase() === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+    localStorage.setItem(_progKey, JSON.stringify(companyProfile));
     localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
 
     /* =========================
