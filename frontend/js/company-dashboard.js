@@ -131,7 +131,7 @@ function loadCompanyDashboard(user) {
     programEl.textContent = company.program ? company.program.toUpperCase() : "—";
   }
 
-  if (!company.id) { alert("Company profile missing"); return; }
+  if (!company.id) { showToast("Company profile missing", "error"); return; }
 
   const nameEl = document.getElementById("companyName");
   const adminEl = document.getElementById("companyAdmin");
@@ -702,7 +702,7 @@ function renderSeatAssignments(company) {
 window.revokeSeat = function (type, email) {
   const company = getCompanyProfile();
 
-  if (!company.usedSeats?.[type]?.[email]) return alert("Seat not found.");
+  if (!company.usedSeats?.[type]?.[email]) { showToast("Seat not found.", "error"); return; }
 
   const completionKeys = {
     der:        `fmcsaDERCompleted_${email}`,
@@ -711,7 +711,7 @@ window.revokeSeat = function (type, email) {
   };
 
   if (localStorage.getItem(completionKeys[type]) === "true") {
-    return alert("Cannot revoke — training already completed.");
+    { showToast("Cannot revoke — training already completed.", "warning"); return; }
   }
 
   company.usedSeats[type][email] = {
@@ -732,7 +732,7 @@ function buyEmployeeSeats(qty = 5) {
   if (!company.seats.employee) company.seats.employee = { total: 0 };
   company.seats.employee.total += qty;
   saveCompanyProfile(company);
-  alert(`${qty} Employee seat(s) purchased!`);
+  showToast(`${qty} Employee seat(s) purchased!`, "success");
   location.reload();
 }
 
@@ -741,7 +741,7 @@ function buySupervisorSeats(qty = 1) {
   if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
   company.seats.supervisor.total += qty;
   saveCompanyProfile(company);
-  alert(`${qty} Supervisor seat(s) purchased!`);
+  showToast(`${qty} Supervisor seat(s) purchased!`, "success");
   location.reload();
 }
 
@@ -750,7 +750,7 @@ function buyDerSeats(qty = 1) {
   if (!company.seats.der) company.seats.der = { total: 0 };
   company.seats.der.total += qty;
   saveCompanyProfile(company);
-  alert(`${qty} DER seat(s) purchased!`);
+  showToast(`${qty} DER seat(s) purchased!`, "success");
   location.reload();
 }
 
@@ -828,14 +828,14 @@ function viewEmployeeCert(email) {
   email = email.toLowerCase().trim();
   const company = getCompanyProfile();
 
-  if (!company.usedSeats) { alert("No company data found"); return; }
+  if (!company.usedSeats) { showToast("No company data found", "error"); return; }
 
   const isAssigned =
     (company.usedSeats?.employee?.[email]   && !company.usedSeats.employee[email].revoked)   ||
     (company.usedSeats?.supervisor?.[email] && !company.usedSeats.supervisor[email].revoked) ||
     (company.usedSeats?.der?.[email]        && !company.usedSeats.der[email].revoked);
 
-  if (!isAssigned) { alert("Access denied: This employee is not assigned to your company."); return; }
+  if (!isAssigned) { showToast("Access denied: This employee is not assigned to your company.", "error"); return; }
 
   /* 1. Try companyProfile.certIds first */
   let certId = company.certIds?.[email]?.certId || null;
