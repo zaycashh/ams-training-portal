@@ -31,7 +31,9 @@ if (
     // allow through
   } else {
 
-    const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+    const _rg_program = (user?.program || localStorage.getItem("amsProgram") || "").toLowerCase();
+    const _rg_profKey  = _rg_program === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+    const company = JSON.parse(localStorage.getItem(_rg_profKey) || localStorage.getItem("companyProfile") || "{}");
     const email   = user?.email;
 
     const hasEmployeeSeat   = company?.usedSeats?.employee?.[email];
@@ -70,7 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const user    = JSON.parse(localStorage.getItem("amsUser") || "null");
   const module  = document.body?.dataset?.module || "";
-  const company = JSON.parse(localStorage.getItem("companyProfile") || "{}");
+  const _rg_program2 = (user?.program || localStorage.getItem("amsProgram") || "").toLowerCase();
+  const _rg_profKey2  = _rg_program2 === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+  const company = JSON.parse(localStorage.getItem(_rg_profKey2) || localStorage.getItem("companyProfile") || "{}");
   const program = company.program;
   const role    = user?.role;
 
