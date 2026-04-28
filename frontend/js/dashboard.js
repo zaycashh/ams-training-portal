@@ -22,22 +22,22 @@ const FAA_MODULES = {
   employee: {
     btn: "employeeBtn",
     paidKey: "paid_employee",
-    completedKey: (email) => `employeeTrainingCompleted_${email}`,
-    start: "employee-training.html"
+    completedKey: (email) => `faaEmployeeCompleted_${email}`,
+    start: "faa-employee.html"
   },
 
   supervisor: {
     btn: "supervisorBtn",
     paidKey: "paid_supervisor",
-    completedKey: (email) => `supervisorTrainingCompleted_${email}`,
-    start: "supervisor-training.html"
+    completedKey: (email) => `faaSupervisorCompleted_${email}`,
+    start: "faa-supervisor.html"
   },
 
   der: {
     btn: "derBtn",
     paidKey: "paid_der",
-    completedKey: (email) => `derTrainingCompleted_${email}`,
-    start: "der-training.html"
+    completedKey: (email) => `faaDERCompleted_${email}`,
+    start: "faa-der.html"
   }
 
 };
@@ -692,7 +692,7 @@ function updateFMCSASupervisorButton() {
   }
 
   btn.textContent = "Start Module A – Reasonable Suspicion";
-  btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
+  btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
 
   if (user.role === "employee") {
     if (hasSeat) {
@@ -705,7 +705,7 @@ function updateFMCSASupervisorButton() {
       }
       if (!modA) {
         btn.textContent = "Start Training";
-        btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
+        btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
         return;
       }
     }
@@ -718,7 +718,7 @@ function updateFMCSASupervisorButton() {
 
   if (paid) {
     btn.textContent = "Start Training";
-    btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
+    btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
     return;
   }
 
@@ -904,7 +904,7 @@ function getEmployeeTrainingRoute() {
 
   const program = company.program.toUpperCase();
   if (program === "FMCSA") return "fmcsa-employee-training.html";
-  if (program === "FAA")   return "employee-training.html";
+  if (program === "FAA")   return "faa-employee.html";
   return null;
 
 }
