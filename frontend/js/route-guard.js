@@ -103,13 +103,18 @@ document.addEventListener("DOMContentLoaded", function () {
     "faa-der"
   ];
 
+  function _guardRedirect() {
+    const isAdmin = user && (user.role === "company_admin" || user.role === "owner" || user.role === "admin");
+    window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+  }
+
   if (program === "FAA" && fmcsaModules.includes(module)) {
-    window.location.href = "dashboard.html";
+    _guardRedirect();
     return;
   }
 
   if (program === "FMCSA" && faaModules.includes(module)) {
-    window.location.href = "dashboard.html";
+    _guardRedirect();
     return;
   }
 
