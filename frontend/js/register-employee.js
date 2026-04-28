@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
       lastName,
       phone,
       email,
+      password,
       role:       "employee",
       type:       "company",
       companyId:  company.id,
