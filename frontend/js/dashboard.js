@@ -1,5 +1,3 @@
-
-dashboard
 const user  = JSON.parse(localStorage.getItem("amsUser") || "null");
 const email = user?.email;
 
