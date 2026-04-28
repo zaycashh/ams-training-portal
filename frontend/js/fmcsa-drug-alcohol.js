@@ -432,7 +432,7 @@ function gradeDrugQuiz() {
     localStorage.setItem(DRUG_COOLDOWN_KEY, Date.now() + COOLDOWN_MINUTES * 60000);
     localStorage.setItem(DRUG_ATTEMPT_KEY, 0);
     showToast("Maximum attempts reached. Quiz locked for 15 minutes.", "error", 5000);
-    setTimeout(() => window.location.href = "dashboard.html", 2000);
+    setTimeout(() => returnToDashboard(), 2000);
     return;
   }
 
@@ -567,11 +567,15 @@ function gradeAlcoholQuiz() {
     localStorage.setItem(ALCOHOL_COOLDOWN_KEY, Date.now() + COOLDOWN_MINUTES * 60000);
     localStorage.setItem(ALCOHOL_ATTEMPT_KEY, 0);
     showToast("Maximum attempts reached. Quiz locked for 15 minutes.", "error", 5000);
-    setTimeout(() => window.location.href = "dashboard.html", 2000);
+    setTimeout(() => returnToDashboard(), 2000);
     return;
   }
 
   resultBox.innerHTML = `<div class="result-box fail">You scored ${score}/${alcoholQuestions.length}. Attempts remaining: ${remaining}</div>`;
 }
 
-function returnToDashboard() { window.location.href = "dashboard.html"; }
+function returnToDashboard() {
+  const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+  window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+}
