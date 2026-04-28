@@ -69,9 +69,9 @@ function updateFAAModuleButtons() {
     const paidFAA =
       localStorage.getItem(`${config.paidKey}_${user.email}`) === "true";
 
-    /* Check company seat for employees */
-    const _faaProf  = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
-    const _faaSeat  = _faaProf?.usedSeats?.[module]?.[user.email];
+    /* Check company seat for employees — only unlock the specific assigned module */
+    const _faaProf   = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
+    const _faaSeat   = _faaProf?.usedSeats?.[module]?.[user.email];
     const hasFAASeat = _faaSeat && !_faaSeat.revoked;
 
     if (paidFAA || hasFAASeat) {
@@ -196,7 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const company      = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   const storedProgram = localStorage.getItem("amsProgram");
-  const program      = (company.program || storedProgram || "").toLowerCase();
+  const _currentUser  = JSON.parse(localStorage.getItem("amsUser") || "{}");
+  const program       = (_currentUser.program || company.program || storedProgram || "").toLowerCase();
 
   console.log("PROGRAM:", program);
 
