@@ -431,7 +431,7 @@ function updateFMCSASupervisorButton() {
   if (modA && !modB) {
     btn.textContent            = "⚠️ Continue Training (Module B Required)";
     btn.style.backgroundColor  = "#f0ad4e";
-    btn.onclick = () => { window.location.href = "fmcsa-supervisor.html"; };
+    btn.onclick = () => { window.location.href = "fmcsa-drug-alcohol.html"; };
     return;
   }
 
