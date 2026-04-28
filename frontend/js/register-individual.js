@@ -14,6 +14,7 @@ document
     const email           = document.getElementById("email").value.trim().toLowerCase();
     const password        = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+    const program         = (new URLSearchParams(window.location.search).get("program") || "faa").toLowerCase();
 
     if (!firstName || !lastName || !phone || !email || !password || !confirmPassword) {
       showMsg("Please complete all fields.", "error");
@@ -47,6 +48,7 @@ document
       phone,
       email,
       password,
+      program,
       role:      "individual",
       type:      "individual",
       createdAt: new Date().toISOString()
