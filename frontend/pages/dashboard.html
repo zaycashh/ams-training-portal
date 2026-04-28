@@ -126,9 +126,6 @@
     .module-title{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;color:var(--color-text);}
     .module-desc{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.6;flex:1;}
 
-    /* ── SEAT STATUS (used by dashboard.js) ── */
-    .seat-status{font-size:var(--text-xs);color:var(--color-text-muted);min-height:1.2em;margin-top:2px;}
-
     /* ── BUTTONS ── */
     .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);background:var(--color-primary);color:#fff;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);box-shadow:0 1px 3px oklch(0.3 0.08 192/.35);transition:background var(--transition),box-shadow var(--transition),transform var(--transition);white-space:nowrap;width:100%;}
     .btn-primary:hover{background:var(--color-primary-hover);}
@@ -141,28 +138,6 @@
     /* ── SECTION DIVIDER ── */
     .section-divider{height:1px;background:var(--color-divider);border:none;margin:var(--space-8) 0;}
 
-    /* ── ADMIN PANEL ── */
-    .admin-panel{
-      display:none;
-      background:var(--color-surface-2);
-      border:1.5px solid var(--color-primary);
-      border-radius:var(--radius-xl);
-      box-shadow:var(--shadow-card);
-      overflow:visible;
-    }
-    .admin-panel-header{
-      display:flex;align-items:center;gap:var(--space-3);
-      padding:var(--space-5) var(--space-6);
-      border-bottom:1px solid var(--color-divider);
-    }
-    .admin-panel-icon{width:36px;height:36px;border-radius:var(--radius-md);background:var(--color-primary-surface);color:var(--color-primary);display:grid;place-items:center;flex-shrink:0;}
-    .admin-panel-title{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;color:var(--color-text);}
-    .admin-panel-body{padding:var(--space-6);}
-    .admin-input-row{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-5);}
-    .admin-input{flex:1;min-width:220px;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text);font-family:var(--font-body);outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
-    .admin-input:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 15%,transparent);}
-    .admin-btn-row{display:flex;gap:var(--space-2);flex-wrap:wrap;}
-    #seatList{font-size:var(--text-sm);color:var(--color-text-muted);}
   </style>
 </head>
 <body>
@@ -243,7 +218,6 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="faaSupervisorBadge" class="seat-status"></div>
       </div>
 
       <!-- FAA DER -->
@@ -258,7 +232,6 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="faaDerBadge" class="seat-status"></div>
       </div>
 
       <!-- FAA EMPLOYEE -->
@@ -273,7 +246,6 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="faaEmployeeBadge" class="seat-status"></div>
       </div>
 
     </div>
@@ -310,7 +282,6 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="supervisorSeatBadge" class="seat-status"></div>
       </div>
 
       <!-- FMCSA DER -->
@@ -325,7 +296,6 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="derSeatBadge" class="seat-status"></div>
       </div>
 
       <!-- FMCSA EMPLOYEE -->
@@ -340,50 +310,8 @@ function logout(){
           <i data-lucide="play" style="width:14px;height:14px;"></i>
           Start Training
         </button>
-        <div id="employeeSeatBadge" class="seat-status"></div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       ADMIN PANEL — id + structure preserved
-  ══════════════════════════════════════ -->
-  <div id="adminPanel" class="admin-panel">
-    <div class="admin-panel-header">
-      <div class="admin-panel-icon">
-        <i data-lucide="settings" style="width:18px;height:18px;"></i>
-      </div>
-      <div class="admin-panel-title">Company Admin Panel</div>
-    </div>
-    <div class="admin-panel-body">
-      <div class="admin-input-row">
-        <input
-          type="email"
-          id="seatEmailInput"
-          class="admin-input"
-          placeholder="Enter employee email"
-        />
-      </div>
-      <div class="admin-btn-row">
-        <button class="btn-primary" style="width:auto;" onclick="assignSeat('employee')">
-          <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
-          Assign Employee
-        </button>
-        <button class="btn-primary" style="width:auto;" onclick="assignSeat('supervisor')">
-          <i data-lucide="shield" style="width:14px;height:14px;"></i>
-          Assign Supervisor
-        </button>
-        <button class="btn-primary" style="width:auto;" onclick="assignSeat('der')">
-          <i data-lucide="briefcase" style="width:14px;height:14px;"></i>
-          Assign DER
-        </button>
-        <button class="btn-danger" onclick="removeSeat()">
-          <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-          Remove
-        </button>
-      </div>
-      <div id="seatList" style="margin-top:var(--space-5);"></div>
     </div>
   </div>
 
