@@ -1,3 +1,5 @@
+
+faa-certificates
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -654,6 +656,7 @@
     const certId      = params.get("id");
     const emailParam  = params.get("email") ? decodeURIComponent(params.get("email")).toLowerCase().trim() : null;
     const adminViewing = params.get("admin") === "1" || sessionStorage.getItem("adminViewing") === "true";
+    const autoPrint   = params.get("print") === "1";
 
     const user = JSON.parse(localStorage.getItem("amsUser") || "null");
 
@@ -711,6 +714,11 @@
     }
     if (!shown) {
       showError("No completed FAA certificates found. Complete your training first.");
+    }
+
+    /* Auto-print when opened from Training tab with ?print=1 */
+    if (autoPrint && shown) {
+      setTimeout(() => window.print(), 800);
     }
   });
 
