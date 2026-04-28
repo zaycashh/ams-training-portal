@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+function goDashboard() {
+  const u = JSON.parse(localStorage.getItem("amsUser") || "null");
+  const isAdmin = u && (u.role === "company_admin" || u.role === "owner" || u.role === "admin");
+  window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+}
+
 const user  = JSON.parse(localStorage.getItem("amsUser") || "{}");
 const email = user.email;
 let questions = [];
@@ -278,7 +284,7 @@ function checkCooldown() {
   if (Date.now() < cooldownUntil) {
     const minutesLeft = Math.ceil((cooldownUntil - Date.now()) / 60000);
     showToast(`Quiz locked. Try again in ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""}.`, "warning");
-    setTimeout(() => window.location.href = "dashboard.html", 2000);
+    setTimeout(() => goDashboard(), 2000);
   }
 }
 
@@ -465,7 +471,7 @@ if (submitBtn) {
       const cooldownUntil = Date.now() + (COOLDOWN_MINUTES * 60000);
       localStorage.setItem(COOLDOWN_KEY, cooldownUntil);
       showToast("Maximum attempts reached. Quiz locked for 15 minutes.", "error");
-      setTimeout(() => window.location.href = "dashboard.html", 2000);
+      setTimeout(() => goDashboard(), 2000);
       return;
     }
 
