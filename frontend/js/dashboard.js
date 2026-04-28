@@ -441,7 +441,7 @@ function updateFMCSASupervisorButton() {
 
   if (paid || hasSupSeat) {
     btn.textContent = "Start Training";
-    btn.onclick = () => { window.location.href = "fmcsa-module-a.html"; };
+    btn.onclick = () => { window.location.href = "fmcsa-drug-alcohol.html"; };
     return;
   }
 
