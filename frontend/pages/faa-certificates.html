@@ -81,7 +81,7 @@
       box-shadow: var(--shadow-lg);
       border-radius:2px;
       position:relative;
-      padding:72px 88px 64px;
+      padding:48px 88px 40px;
       display:none;
     }
     .cert-outer.visible{display:block;}
@@ -114,14 +114,14 @@
       color:#1a1a1a;
       letter-spacing:.02em;
       line-height:1.2;
-      margin-bottom:1rem;
+      margin-bottom:.6rem;
     }
 
     .cert-subtitle{
       font-family:var(--font-cert);
       font-size:1.15rem;
       color:#333;
-      margin-bottom:1.25rem;
+      margin-bottom:.75rem;
       font-style:italic;
     }
 
@@ -134,7 +134,7 @@
       border-bottom:1.5px solid #1a3a8f;
       padding-bottom:.375rem;
       min-width:320px;
-      margin-bottom:1.25rem;
+      margin-bottom:.75rem;
     }
 
     .cert-completed-line{
@@ -142,7 +142,7 @@
       font-size:1.05rem;
       color:#444;
       font-style:italic;
-      margin-bottom:.75rem;
+      margin-bottom:.4rem;
     }
 
     .cert-course-name{
@@ -177,8 +177,8 @@
       font-size:1.05rem;
       color:#444;
       font-style:italic;
-      margin-top:.75rem;
-      margin-bottom:1rem;
+      margin-top:.4rem;
+      margin-bottom:.6rem;
     }
     .cert-awarded span{
       font-weight:700;
@@ -189,10 +189,10 @@
     /* BOTTOM ROW */
     .cert-bottom{
       display:flex;
-      align-items:flex-end;
+      align-items:center;
       justify-content:space-between;
       width:100%;
-      margin-top:.5rem;
+      margin-top:.25rem;
       gap:1rem;
     }
     .cert-seal{
@@ -268,7 +268,7 @@
         height: 8.5in !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 1.05in 1.1in 0.85in !important;
+        padding: 0.9in 1.0in !important;
         transform: none !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -282,8 +282,7 @@
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.13in !important;
-        padding-top: 0.15in !important;
+        gap: 0.12in !important;
       }
       .cert-main-title { font-size: 2.8rem !important; }
       .cert-subtitle { font-size: 1.35rem !important; }
@@ -292,19 +291,20 @@
       .cert-course-name { font-size: 1.55rem !important; }
       .cert-regulation { font-size: 1.1rem !important; }
       .cert-modules { font-size: 1.1rem !important; line-height: 1.8 !important; }
-      .cert-awarded { font-size: 1.25rem !important; margin-top: 0.08in !important; margin-bottom: 0 !important; }
+      .cert-awarded { font-size: 1.25rem !important; margin-top: 0.06in !important; margin-bottom: 0 !important; }
       .cert-bottom {
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
         width: 100% !important;
-        margin-top: 0.12in !important;
+        flex-shrink: 0 !important;
+        padding-bottom: 0.15in !important;
       }
-      .cert-seal { width: 160px !important; height: 160px !important; }
+      .cert-seal { width: 170px !important; height: 170px !important; flex-shrink: 0 !important; }
       .cert-id-wrap { flex: 1 !important; text-align: center !important; }
       .cert-id { font-size: 0.85rem !important; color: #555 !important; }
-      .cert-qr { width: 140px !important; height: 140px !important; display: block !important; }
-      .cert-qr canvas, .cert-qr img { width: 140px !important; height: 140px !important; }
+      .cert-qr { width: 155px !important; height: 155px !important; display: block !important; flex-shrink: 0 !important; }
+      .cert-qr canvas, .cert-qr img { width: 155px !important; height: 155px !important; }
       .cert-qr-print { display: none !important; }
     }
 
@@ -354,7 +354,7 @@
         <h1 class="page-title">FAA Training Certificates</h1>
       </div>
       <div class="page-actions">
-        <button class="btn btn-primary" onclick="window.print()">
+        <button type="button" class="btn btn-primary" onclick="printCert()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print
         </button>
@@ -627,7 +627,7 @@
           <div class="cert-id-wrap">
             <div class="cert-id" id="faaSupCertCertificateId">Certificate ID: —</div>
           </div>
-          <div class="cert-qr" id="faaSupCertQR" style="margin-bottom:20px;"></div>
+          <div class="cert-qr" id="faaSupCertQR"></div>
         </div>
       </div>
     </div>
@@ -648,6 +648,8 @@
   })();
   </script>
 
+  <!-- HTML2CANVAS for pixel-perfect print -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- QR CODE -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- CERTIFICATE ENGINE -->
@@ -787,6 +789,12 @@
     if (!ts) return new Date().toLocaleDateString("en-US");
     const d = new Date(Number(ts));
     return isNaN(d) ? new Date().toLocaleDateString("en-US") : d.toLocaleDateString("en-US");
+  }
+
+  function printCert() {
+    const visible = document.querySelector('.cert-outer.visible');
+    if (!visible) { showToast('No certificate to print.', 'error'); return; }
+    setTimeout(function(){ window.print(); }, 100);
   }
 
   function renderFAAEmployee(email, name, certId) {
