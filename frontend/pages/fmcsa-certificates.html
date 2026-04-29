@@ -260,14 +260,9 @@
     /* PRINT */
     @media print {
       @page { size: 11in 8.5in landscape; margin: 0; }
-      html, body { margin: 0; padding: 0; background: #fff; width: 11in; height: 8.5in; overflow: hidden; }
+      html, body { margin: 0; padding: 0; background: #fff; }
       .topbar, .page-header, .no-print { display: none !important; }
-      .page {
-        padding: 0; margin: 0;
-        display: flex;
-        align-items: center; justify-content: center;
-        width: 11in; height: 8.5in;
-      }
+      .page { padding: 0; margin: 0; }
       .cert-outer:not(.visible) { display: none !important; }
       .cert-outer {
         width: 11in !important;
@@ -275,7 +270,7 @@
         height: 8.5in !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 0.55in 0.75in 0.5in !important;
+        padding: 0.65in 0.9in 0.6in !important;
         transform: none !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -289,28 +284,30 @@
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.14in !important;
+        gap: 0.16in !important;
       }
-      .cert-main-title { font-size: 2.6rem !important; }
-      .cert-subtitle { font-size: 1.05rem !important; }
-      .cert-name { font-size: 2rem !important; min-width: 0 !important; }
-      .cert-completed-line { font-size: 0.95rem !important; }
-      .cert-course-name { font-size: 1.25rem !important; }
-      .cert-regulation { font-size: 0.9rem !important; }
-      .cert-modules { font-size: 0.9rem !important; line-height: 1.6 !important; }
-      .cert-awarded { font-size: 0.95rem !important; margin-top: 0.08in !important; margin-bottom: 0 !important; }
+      .cert-main-title { font-size: 3rem !important; }
+      .cert-subtitle { font-size: 1.15rem !important; }
+      .cert-name { font-size: 2.3rem !important; min-width: 0 !important; }
+      .cert-completed-line { font-size: 1.05rem !important; }
+      .cert-course-name { font-size: 1.4rem !important; }
+      .cert-regulation { font-size: 0.95rem !important; }
+      .cert-modules { font-size: 0.95rem !important; line-height: 1.7 !important; }
+      .cert-awarded { font-size: 1.05rem !important; margin-top: 0.1in !important; margin-bottom: 0 !important; }
       .cert-bottom {
         display: flex !important;
-        align-items: center !important;
+        align-items: flex-end !important;
         justify-content: space-between !important;
         width: 100% !important;
         margin-top: 0.15in !important;
+        padding: 0 0.1in !important;
       }
-      .cert-seal { width: 130px !important; height: 130px !important; }
-      .cert-qr { width: 120px !important; height: 120px !important; display: block !important; }
-      .cert-qr canvas, .cert-qr img { width: 120px !important; height: 120px !important; }
+      .cert-seal { width: 150px !important; height: 150px !important; }
+      .cert-id-wrap { flex: 1 !important; text-align: center !important; padding-bottom: 0.15in !important; }
+      .cert-id { font-size: 0.75rem !important; }
+      .cert-qr { width: 140px !important; height: 140px !important; display: block !important; }
+      .cert-qr canvas, .cert-qr img { width: 140px !important; height: 140px !important; }
       .cert-qr-print { display: none !important; }
-      .cert-id { font-size: 0.72rem !important; }
     }
 
     @media(max-width:768px){
