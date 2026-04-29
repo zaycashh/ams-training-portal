@@ -233,6 +233,22 @@
       height:100% !important;
     }
 
+    /* Print-only QR block */
+    .cert-qr-print {
+      display: none;
+      text-align: center;
+      margin-top: 0.18in;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      color: #888;
+      letter-spacing: .04em;
+    }
+    .cert-qr-print canvas,
+    .cert-qr-print img {
+      width: 90px !important;
+      height: 90px !important;
+    }
+
     /* TOAST */
     .ams-toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;font-size:.9rem;font-weight:500;box-shadow:var(--shadow-lg);z-index:9999;display:flex;align-items:center;gap:.625rem;max-width:340px;animation:toastIn 220ms cubic-bezier(0.16,1,0.3,1);}
     @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -241,30 +257,59 @@
 
     /* PRINT */
     @media print {
-      @page { size: landscape; margin: 0.3in; }
-      html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #fff; }
+      @page { size: 8.5in 11in; margin: 0; }
+      html, body { margin: 0; padding: 0; background: #fff; width: 8.5in; height: 11in; overflow: hidden; }
       .topbar, .page-header, .no-print { display: none !important; }
-      .page { padding: 0; margin: 0; display: block; }
+      .page {
+        padding: 0; margin: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        width: 8.5in; height: 11in;
+      }
       .cert-outer:not(.visible) { display: none !important; }
       .cert-outer {
         display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: 0 !important;
+        width: 8.5in !important;
+        max-width: 8.5in !important;
+        height: 11in !important;
         box-shadow: none !important;
-        margin: 0 auto !important;
-        page-break-inside: avoid;
+        margin: 0 !important;
+        padding: 0.6in 0.7in 0.55in !important;
         transform: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
       }
-      .cert-inner {
-        width: 100% !important;
-        min-height: 0 !important;
+      .cert-body {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.18in !important;
       }
-      .cert-main-title { font-size: 2.4rem !important; }
-      .cert-name { font-size: 2rem !important; }
+      .cert-main-title { font-size: 2.8rem !important; }
+      .cert-subtitle { font-size: 1.1rem !important; }
+      .cert-name { font-size: 2.1rem !important; min-width: 0 !important; }
+      .cert-completed-line { font-size: 1rem !important; }
       .cert-course-name { font-size: 1.3rem !important; }
-      .cert-seal { width: 110px !important; height: 110px !important; }
-      .cert-qr { width: 110px !important; height: 110px !important; }
+      .cert-regulation { font-size: 0.95rem !important; }
+      .cert-modules { font-size: 0.95rem !important; }
+      .cert-awarded { font-size: 1rem !important; margin-top: 0.1in !important; margin-bottom: 0 !important; }
+      .cert-bottom {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        margin-top: 0.2in !important;
+      }
+      .cert-seal { width: 150px !important; height: 150px !important; }
+      .cert-qr { width: 140px !important; height: 140px !important; display: block !important; }
+      .cert-qr canvas, .cert-qr img { width: 140px !important; height: 140px !important; }
+      .cert-qr-print { display: none !important; }
+      .cert-id { font-size: 0.75rem !important; }
     }
 
     @media(max-width:768px){
@@ -414,6 +459,7 @@
         </div>
       </div>
     </div>
+    <div class="cert-qr-print" id="faaEmpCertQR_print"></div>
 
     <!-- =============================================
          FAA DER CERTIFICATE
@@ -499,6 +545,7 @@
         </div>
       </div>
     </div>
+    <div class="cert-qr-print" id="faaDERCertQR_print"></div>
 
     <!-- =============================================
          FAA SUPERVISOR CERTIFICATE
@@ -588,6 +635,7 @@
         </div>
       </div>
     </div>
+    <div class="cert-qr-print" id="faaSupCertQR_print"></div>
 
   </div><!-- end .page -->
 
@@ -646,11 +694,13 @@
     const el = document.getElementById(containerId);
     if (!el || !certId) return;
     el.innerHTML = "";
-    new QRCode(el, {
-      text: window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId,
-      width: 100,
-      height: 100
-    });
+    const url = window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId;
+    new QRCode(el, { text: url, width: 100, height: 100 });
+    const printEl = document.getElementById(containerId + "_print");
+    if (printEl) {
+      printEl.innerHTML = "";
+      new QRCode(printEl, { text: url, width: 90, height: 90 });
+    }
   }
 
   function showCert(templateId) {
