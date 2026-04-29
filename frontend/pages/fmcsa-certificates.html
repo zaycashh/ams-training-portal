@@ -356,7 +356,7 @@
         <h1 class="page-title">FMCSA Training Certificates</h1>
       </div>
       <div class="page-actions">
-        <button class="btn btn-primary" onclick="printCert()">
+        <button type="button" class="btn btn-primary" onclick="printCert()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print
         </button>
@@ -868,19 +868,7 @@
   function printCert() {
     const visible = document.querySelector('.cert-outer.visible');
     if (!visible) { showToast('No certificate to print.', 'error'); return; }
-    showToast('Preparing print...', 'info', 2000);
-    html2canvas(visible, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
-      const img = canvas.toDataURL('image/png');
-      const w = window.open('', '_blank');
-      w.document.write(`<!DOCTYPE html><html><head><style>
-        @page { size: landscape; margin: 0; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; background:#fff; }
-        img { max-width:100%; max-height:100%; object-fit:contain; }
-      </style></head><body><img src="${img}"/></body></html>`);
-      w.document.close();
-      w.onload = () => { w.focus(); w.print(); };
-    });
+    setTimeout(function(){ window.print(); }, 100);
   }
 
   function renderSupervisor(email, name, certId) {
