@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = user.email;
 
     /* FMCSA DER */
-    if (module === "fmcsa-der" || type === "der_fmcsa") {
+    if (module === "fmcsa-der" || module === "der_fmcsa" || type === "der_fmcsa") {
       localStorage.setItem(`paid_der_fmcsa_${email}`, "true");
       localStorage.setItem(`paid_der_fmcsa_date_${email}`, Date.now());
       showToast("Purchase successful! Redirecting...", "success");
