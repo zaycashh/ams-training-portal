@@ -20,15 +20,15 @@ function showToast(msg, type = "info", duration = 3500) {
    Add prices + labels here — swap amounts for real Stripe prices later
 -------------------------- */
 const MODULE_CONFIG = {
-  "fmcsa-der":        { title: "FMCSA DER Training",              desc: "Designated Employer Representative drug & alcohol regulations.",  program: "FMCSA", role: "DER",        price: "$299" },
-  "der_fmcsa":        { title: "FMCSA DER Training",              desc: "Designated Employer Representative drug & alcohol regulations.",  program: "FMCSA", role: "DER",        price: "$299" },
-  "fmcsa-module-a":   { title: "FMCSA Supervisor Bundle",         desc: "Supervisor drug & alcohol awareness training bundle.",            program: "FMCSA", role: "Supervisor",  price: "$199" },
-  "fmcsa":            { title: "FMCSA Supervisor Bundle",         desc: "Supervisor drug & alcohol awareness training bundle.",            program: "FMCSA", role: "Supervisor",  price: "$199" },
-  "fmcsa-drug-alcohol":{ title: "FMCSA Drug & Alcohol Training",  desc: "Complete FMCSA drug and alcohol compliance training.",           program: "FMCSA", role: "Employee",   price: "$149" },
-  "fmcsa_employee":   { title: "FMCSA Employee Training",         desc: "Employee drug & alcohol regulations training.",                  program: "FMCSA", role: "Employee",   price: "$149" },
-  "der":              { title: "FAA DER Training",                desc: "Designated Employer Representative training for FAA programs.",   program: "FAA",   role: "DER",        price: "$299" },
-  "supervisor":       { title: "FAA Supervisor Training",         desc: "Supervisor drug & alcohol awareness for FAA programs.",          program: "FAA",   role: "Supervisor",  price: "$199" },
-  "employee":         { title: "FAA Employee Training",           desc: "Employee drug & alcohol compliance training for FAA programs.",  program: "FAA",   role: "Employee",   price: "$149" },
+  "fmcsa-der":        { title: "FMCSA DER Training",              desc: "Designated Employer Representative drug & alcohol regulations.",  program: "FMCSA", role: "DER",        price: "$51" },
+  "der_fmcsa":        { title: "FMCSA DER Training",              desc: "Designated Employer Representative drug & alcohol regulations.",  program: "FMCSA", role: "DER",        price: "$51" },
+  "fmcsa-module-a":   { title: "FMCSA Supervisor Bundle",         desc: "Supervisor drug & alcohol awareness training bundle.",            program: "FMCSA", role: "Supervisor",  price: "$31" },
+  "fmcsa":            { title: "FMCSA Supervisor Bundle",         desc: "Supervisor drug & alcohol awareness training bundle.",            program: "FMCSA", role: "Supervisor",  price: "$31" },
+  "fmcsa-drug-alcohol":{ title: "FMCSA Drug & Alcohol Training",  desc: "Complete FMCSA drug and alcohol compliance training.",           program: "FMCSA", role: "Employee",   price: "$21" },
+  "fmcsa_employee":   { title: "FMCSA Employee Training",         desc: "Employee drug & alcohol regulations training.",                  program: "FMCSA", role: "Employee",   price: "$21" },
+  "der":              { title: "FAA DER Training",                desc: "Designated Employer Representative training for FAA programs.",   program: "FAA",   role: "DER",        price: "$51" },
+  "supervisor":       { title: "FAA Supervisor Training",         desc: "Supervisor drug & alcohol awareness for FAA programs.",          program: "FAA",   role: "Supervisor",  price: "$31" },
+  "employee":         { title: "FAA Employee Training",           desc: "Employee drug & alcohol compliance training for FAA programs.",  program: "FAA",   role: "Employee",   price: "$21" },
 };
 
 /* -------------------------
