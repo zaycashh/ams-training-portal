@@ -243,32 +243,30 @@
 
     /* PRINT */
     @media print {
-      @page { size: landscape; margin: 0.3in; }
-      html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #fff; }
-      .topbar, .page-header, .no-print { display: none !important; }
-      .page { padding: 0; margin: 0; display: block; }
-      .cert-outer:not(.visible) { display: none !important; }
-      .cert-outer {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: 0 !important;
-        box-shadow: none !important;
-        margin: 0 auto !important;
-        page-break-inside: avoid;
-        transform: none !important;
-      }
-      .cert-inner {
-        width: 100% !important;
-        min-height: 0 !important;
-      }
-      .cert-main-title { font-size: 2.4rem !important; }
-      .cert-name { font-size: 2rem !important; }
-      .cert-course-name { font-size: 1.3rem !important; }
-      .cert-seal { width: 110px !important; height: 110px !important; }
-      .cert-qr { width: 110px !important; height: 110px !important; }
-    }
-
+      @page { size: 11in 8.5in; margin: 0; }
+html, body { width: 11in; height: 8.5in; margin: 0; padding: 0; background: #fff; overflow: hidden; }
+.topbar, .page-header, .no-print { display: none !important; }
+.page { padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; width: 11in; height: 8.5in; }
+.cert-outer:not(.visible) { display: none !important; }
+.cert-outer {
+  display: block !important;
+  width: 10.4in !important;
+  max-width: 10.4in !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
+  margin: 0 auto !important;
+  page-break-inside: avoid;
+  transform: none !important;
+  padding: 0.55in 0.65in 0.5in !important;
+}
+.cert-inner { width: 100% !important; min-height: 0 !important; }
+.cert-main-title { font-size: 2.6rem !important; }
+.cert-name { font-size: 2rem !important; }
+.cert-course-name { font-size: 1.35rem !important; }
+.cert-seal { width: 120px !important; height: 120px !important; }
+.cert-qr { width: 100px !important; height: 100px !important; }
+      
     @media(max-width:768px){
       .cert-outer{padding:32px 28px 28px;border-width:12px;}
       .cert-main-title{font-size:1.8rem;}
