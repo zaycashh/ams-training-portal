@@ -939,5 +939,5 @@ document.addEventListener("click", function (e) {
 
 function logout() {
   localStorage.removeItem("amsUser");
-  window.location.href = "/ams-training-portal/frontend/pages/login.html";
+  window.location.href = "/frontend/pages/login.html";
 }
