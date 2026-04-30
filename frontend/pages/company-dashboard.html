@@ -431,7 +431,6 @@
             <div class="dropdown-divider"></div>
             <div class="dropdown-section-label">DER</div>
             <button class="dropdown-item" onclick="buyDerSeats(1)">1 Seat</button>
-            <button class="dropdown-item" onclick="buyDerSeats(3)">3 Seats <span class="dropdown-item-save">$10 Off</span></button>
           </div>
         </div>
       </div>
@@ -653,8 +652,7 @@
                 </div>
                 <div style="font-size:var(--text-xl);font-weight:700;font-family:var(--font-ui);color:var(--color-text);">$51<span style="font-size:var(--text-sm);font-weight:400;color:var(--color-text-muted);">/seat</span></div>
                 <div style="display:flex;flex-direction:column;gap:var(--space-2);">
-                  <button class="btn btn-secondary btn-sm" onclick="billingBuySeat('der',1)">Buy 1 Seat — $51</button>
-                  <button class="btn btn-primary btn-sm" onclick="billingBuySeat('der',3)">3-Pack — $95 <span style="font-size:10px;background:var(--color-success-surface);color:var(--color-success);border-radius:var(--radius-full);padding:1px 6px;margin-left:4px;">$10 Off</span></button>
+                  <button class="btn btn-primary btn-sm" onclick="billingBuySeat('der',1)">Buy 1 Seat — $51</button>
                 </div>
               </div>
 
@@ -937,7 +935,7 @@ function printCertDirect(certPage, certId, encodedEmail) {
 }
 </script>
 
-<script src="/ams-training-portal/frontend/js/route-guard.js"></script>
-<script src="/ams-training-portal/frontend/js/company-dashboard.js"></script>
+<script src="/frontend/js/route-guard.js"></script>
+<script src="/frontend/js/company-dashboard.js"></script>
 </body>
 </html>
