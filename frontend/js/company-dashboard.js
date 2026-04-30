@@ -767,35 +767,81 @@ window.revokeSeat = function (type, email) {
 };
 
 /* =========================================================
-   BUY SEATS
+   BUY SEATS — Stripe Checkout
 ========================================================= */
 
-function buyEmployeeSeats(qty = 5) {
-  const company = getCompanyProfile();
-  if (!company.seats.employee) company.seats.employee = { total: 0 };
-  company.seats.employee.total += qty;
-  saveCompanyProfile(company);
-  showToast(`${qty} Employee seat(s) purchased!`, "success");
-  location.reload();
+const _WORKER_URL = "https://ams-checkout.josealfonsodejesus.workers.dev";
+
+const _PRICE_IDS = {
+  faa: {
+    employee_1:   "price_1TRcIUA4HGfN9UFoN75QElMy",
+    employee_5:   "price_1TRcN3A4HGfN9UFoebVZv4z2",
+    supervisor_1: "price_1TRcHNA4HGfN9UFok8syT6gz",
+    supervisor_3: "price_1TRcM2A4HGfN9UFoE273FN1V",
+    der_1:        "price_1TRcJaA4HGfN9UFoZ2r0b0xZ"
+  },
+  fmcsa: {
+    employee_1:   "price_1TRcIzA4HGfN9UFoLnBaSUxq",
+    employee_5:   "price_1TRcOXA4HGfN9UFojg2sqrza",
+    supervisor_1: "price_1TRcI2A4HGfN9UFoPGuOLfXB",
+    supervisor_3: "price_1TRcPbA4HGfN9UFoIKTasyKQ",
+    der_1:        "price_1TRcJzA4HGfN9UFojcUkXTxw"
+  }
+};
+
+function _stripeBuySeat(type, qty) {
+  const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+  if (!user) { showToast("Please log in to continue.", "error"); return; }
+
+  const program = (user.program || localStorage.getItem("amsProgram") || "").toLowerCase();
+  if (program !== "faa" && program !== "fmcsa") {
+    showToast("Program not set on your account. Contact support.", "error");
+    return;
+  }
+
+  const key     = type + "_" + qty;
+  const priceId = _PRICE_IDS[program][key];
+  if (!priceId) { showToast("Invalid purchase option.", "error"); return; }
+
+  /* Build module key for payment-success.html */
+  let modKey;
+  if (qty === 1) {
+    if (type === "employee")   modKey = program === "fmcsa" ? "fmcsa_employee"   : "employee";
+    if (type === "supervisor") modKey = program === "fmcsa" ? "fmcsa"            : "supervisor";
+    if (type === "der")        modKey = program === "fmcsa" ? "der_fmcsa"        : "der";
+  } else {
+    if (type === "employee")   modKey = program === "fmcsa" ? "fmcsa_employee_5pack"   : "employee_5pack";
+    if (type === "supervisor") modKey = program === "fmcsa" ? "fmcsa_supervisor_3pack" : "supervisor_3pack";
+  }
+
+  const origin     = window.location.origin;
+  const successUrl = origin + "/frontend/pages/payment-success.html?module=" + modKey + "&email=" + encodeURIComponent(user.email) + "&seats=" + qty;
+  const cancelUrl  = origin + "/frontend/pages/company-dashboard.html";
+
+  showToast("Redirecting to checkout...", "info");
+
+  fetch(_WORKER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ priceId, quantity: 1, customerEmail: user.email, successUrl, cancelUrl })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || "No checkout URL");
+    }
+  })
+  .catch(err => {
+    console.error("Checkout error:", err);
+    showToast("Payment error. Please try again.", "error");
+  });
 }
 
-function buySupervisorSeats(qty = 1) {
-  const company = getCompanyProfile();
-  if (!company.seats.supervisor) company.seats.supervisor = { total: 0 };
-  company.seats.supervisor.total += qty;
-  saveCompanyProfile(company);
-  showToast(`${qty} Supervisor seat(s) purchased!`, "success");
-  location.reload();
-}
-
-function buyDerSeats(qty = 1) {
-  const company = getCompanyProfile();
-  if (!company.seats.der) company.seats.der = { total: 0 };
-  company.seats.der.total += qty;
-  saveCompanyProfile(company);
-  showToast(`${qty} DER seat(s) purchased!`, "success");
-  location.reload();
-}
+function buyEmployeeSeats(qty = 5)   { _stripeBuySeat("employee",   qty); }
+function buySupervisorSeats(qty = 1) { _stripeBuySeat("supervisor", qty); }
+function buyDerSeats(qty = 1)        { _stripeBuySeat("der",        qty); }
 
 /* =========================================================
    INVITE / RESEND / COPY
