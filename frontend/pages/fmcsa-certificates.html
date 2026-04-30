@@ -743,7 +743,7 @@
     const el = document.getElementById(containerId);
     if (!el || !certId) return;
     el.innerHTML = "";
-    const url = window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId;
+    const url = window.location.origin + "/frontend/pages/verify.html?id=" + certId;
     new QRCode(el, { text: url, width: 100, height: 100 });
     // Also populate the print-only QR below the cert
     const printEl = document.getElementById(containerId + "_print");
