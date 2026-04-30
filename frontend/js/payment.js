@@ -12,7 +12,7 @@ const STRIPE_PK = "pk_live_51TRbqQA4HGfN9UFoafdYDGiqXEhQsFTxWTXuzynWVnvGHMJtPucG
    CLOUDFLARE WORKER URL
    (handles secure Checkout session creation)
 -------------------------- */
-const WORKER_URL = "https://ams-checkout.amstrainingportal.workers.dev";
+const WORKER_URL = "https://ams-checkout.josealfonsodejesus.workers.dev";
 
 /* -------------------------
    PRICE IDs MAP
