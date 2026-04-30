@@ -83,10 +83,18 @@ function updateFAAModuleButtons() {
       return;
     }
 
-    btn.textContent = "🔒 Locked — Purchase Required";
-    btn.onclick = () => {
-      window.location.href = `payment.html?module=${module}`;
-    };
+    /* Company employees cannot purchase — show hard lock */
+    const isCompanyEmployee = user.type === "company" && user.role === "employee";
+    if (isCompanyEmployee) {
+      btn.textContent = "🔒 Not Assigned";
+      btn.disabled = true;
+      btn.onclick = null;
+    } else {
+      btn.textContent = "🔒 Locked — Purchase Required";
+      btn.onclick = () => {
+        window.location.href = `payment.html?module=${module}`;
+      };
+    }
 
   });
 
@@ -395,8 +403,14 @@ function updateFMCSDERButtonState() {
     return;
   }
 
-  derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
-  derFmcsaBtn.onclick = () => { window.location.href = "payment.html?module=der_fmcsa"; };
+  if (user.type === "company" && user.role === "employee") {
+    derFmcsaBtn.textContent = "🔒 Not Assigned";
+    derFmcsaBtn.disabled = true;
+    derFmcsaBtn.onclick = null;
+  } else {
+    derFmcsaBtn.textContent = "🔒 Locked — Purchase Required";
+    derFmcsaBtn.onclick = () => { window.location.href = "payment.html?module=der_fmcsa"; };
+  }
 
 }
 
@@ -445,8 +459,14 @@ function updateFMCSASupervisorButton() {
     return;
   }
 
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => { window.location.href = "payment.html?type=fmcsa"; };
+  if (user.type === "company" && user.role === "employee") {
+    btn.textContent = "🔒 Not Assigned";
+    btn.disabled = true;
+    btn.onclick = null;
+  } else {
+    btn.textContent = "🔒 Locked — Purchase Required";
+    btn.onclick = () => { window.location.href = "payment.html?type=fmcsa"; };
+  }
 
 }
 
@@ -493,7 +513,13 @@ function updateFMCSAEmployeeButton() {
     return;
   }
 
-  btn.textContent = "🔒 Locked — Purchase Required";
-  btn.onclick = () => { window.location.href = "payment.html?module=fmcsa_employee"; };
+  if (user.type === "company" && user.role === "employee") {
+    btn.textContent = "🔒 Not Assigned";
+    btn.disabled = true;
+    btn.onclick = null;
+  } else {
+    btn.textContent = "🔒 Locked — Purchase Required";
+    btn.onclick = () => { window.location.href = "payment.html?module=fmcsa_employee"; };
+  }
 
 }
