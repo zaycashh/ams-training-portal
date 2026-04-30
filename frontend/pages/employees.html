@@ -270,13 +270,13 @@
               <input id="seatEmail" class="input-field" placeholder="name@company.com" type="email" />
             </div>
             <div class="assign-actions">
-              <button class="btn btn-primary btn-sm" onclick="assignEmployeeSeat()">
+              <button id="btnEmployee" class="btn btn-secondary btn-sm" onclick="setModuleTab('employee'); assignEmployeeSeat()">
                 <i data-lucide="user" style="width:13px;height:13px;"></i> Employee
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="assignSupervisorSeat()">
+              <button id="btnSupervisor" class="btn btn-secondary btn-sm" onclick="setModuleTab('supervisor'); assignSupervisorSeat()">
                 <i data-lucide="shield" style="width:13px;height:13px;"></i> Supervisor
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="assignDerSeat()">
+              <button id="btnDer" class="btn btn-secondary btn-sm" onclick="setModuleTab('der'); assignDerSeat()">
                 <i data-lucide="briefcase" style="width:13px;height:13px;"></i> DER
               </button>
             </div>
@@ -386,6 +386,20 @@
 })();
 </script>
 <script>
+function setModuleTab(mod) {
+  ['employee','supervisor','der'].forEach(function(m) {
+    const btn = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
+    if (btn) {
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-secondary');
+    }
+  });
+  const active = document.getElementById('btn' + mod.charAt(0).toUpperCase() + mod.slice(1));
+  if (active) {
+    active.classList.remove('btn-secondary');
+    active.classList.add('btn-primary');
+  }
+}
 function toggleSidebar(){
   const sidebar=document.querySelector('.sidebar');
   const overlay=document.getElementById('sidebarOverlay');
