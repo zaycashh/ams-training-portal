@@ -1,3 +1,5 @@
+
+verify
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -734,7 +736,7 @@
     if (!el || !certId) return;
     el.innerHTML = "";
     new QRCode(el, {
-      text: window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId,
+      text: window.location.origin + "/frontend/pages/verify.html?id=" + certId,
       width: 100, height: 100
     });
   }
