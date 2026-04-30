@@ -740,6 +740,9 @@
         user.email || "—";
     }
 
+      // force uppercase ONLY for the certificate render
+      fullName = fullName.toUpperCase();
+
     /* -------------------------------------------------------
        FIND WHICH FAA CERT TO SHOW based on ?id= param
     ------------------------------------------------------- */
