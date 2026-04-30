@@ -421,7 +421,7 @@ function populateFAASupervisorCertificate() {
   if (qrBox && typeof QRCode !== "undefined") {
     qrBox.innerHTML = "";
     new QRCode(qrBox, {
-      text: window.location.origin + "/ams-training-portal/frontend/pages/verify.html?id=" + certId,
+      text: window.location.origin + "/frontend/pages/verify.html?id=" + certId,
       width: 128, height: 128
     });
   }
