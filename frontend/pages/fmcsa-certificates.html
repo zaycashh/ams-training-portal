@@ -794,6 +794,9 @@
         user.email || "—";
     }
 
+// FMCSA: force uppercase ONLY for certificate rendering
+      fullName = fullName.toUpperCase();
+
     /* -------------------------------------------------------
        FIND WHICH CERT TO SHOW based on ?id= param
     ------------------------------------------------------- */
