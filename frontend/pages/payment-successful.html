@@ -1,0 +1,174 @@
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful | AMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-primary: #01696f;
+      --color-bg: #f7f6f2;
+      --color-surface: #ffffff;
+      --color-text: #1a1a1a;
+      --color-text-muted: #6b7280;
+      --color-success: #16a34a;
+      --color-success-surface: #dcfce7;
+      --font-body: 'DM Sans', sans-serif;
+      --font-ui: 'Inter', sans-serif;
+    }
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: var(--color-surface);
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .icon {
+      width: 72px;
+      height: 72px;
+      background: var(--color-success-surface);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .icon svg { color: var(--color-success); }
+    h1 {
+      font-family: var(--font-ui);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 12px;
+    }
+    p {
+      color: var(--color-text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .redirecting {
+      margin-top: 32px;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+    }
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #d1d5db;
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h1>Payment Successful!</h1>
+    <p>Your training access has been activated.</p>
+    <p>You will be redirected to your dashboard shortly.</p>
+    <div class="redirecting">
+      <span class="spinner"></span> Redirecting...
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const params  = new URLSearchParams(window.location.search);
+    const module  = params.get("module");
+    const email   = params.get("email");
+    const seats   = parseInt(params.get("seats") || "1", 10);
+
+    if (!email || !module) {
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    /* Grant access based on module */
+    const now = Date.now();
+
+    if (module === "employee") {
+      localStorage.setItem(`paid_employee_${email}`, "true");
+    } else if (module === "supervisor") {
+      localStorage.setItem(`paid_supervisor_${email}`, "true");
+    } else if (module === "der") {
+      localStorage.setItem(`paid_der_${email}`, "true");
+    } else if (module === "fmcsa_employee" || module === "fmcsa-drug-alcohol") {
+      localStorage.setItem(`paid_employee_fmcsa_${email}`, "true");
+      localStorage.setItem(`paid_employee_fmcsa_date_${email}`, now);
+    } else if (module === "fmcsa" || module === "fmcsa-module-a") {
+      localStorage.setItem(`paid_fmcsa_${email}`, "true");
+      localStorage.setItem(`fmcsa_start_date_${email}`, now);
+    } else if (module === "der_fmcsa" || module === "fmcsa-der") {
+      localStorage.setItem(`paid_der_fmcsa_${email}`, "true");
+      localStorage.setItem(`paid_der_fmcsa_date_${email}`, now);
+    }
+
+    /* Company bundle seat grants */
+    if (module === "employee_5pack") {
+      const prof = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
+      if (prof.seats) {
+        prof.seats.employee = prof.seats.employee || { total: 0, used: 0 };
+        prof.seats.employee.total += 5;
+        localStorage.setItem("companyProfile_faa", JSON.stringify(prof));
+        localStorage.setItem("companyProfile", JSON.stringify(prof));
+      }
+    } else if (module === "supervisor_3pack") {
+      const prof = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
+      if (prof.seats) {
+        prof.seats.supervisor = prof.seats.supervisor || { total: 0, used: 0 };
+        prof.seats.supervisor.total += 3;
+        localStorage.setItem("companyProfile_faa", JSON.stringify(prof));
+        localStorage.setItem("companyProfile", JSON.stringify(prof));
+      }
+    } else if (module === "fmcsa_employee_5pack") {
+      const prof = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
+      if (prof.seats) {
+        prof.seats.employee = prof.seats.employee || { total: 0, used: 0 };
+        prof.seats.employee.total += 5;
+        localStorage.setItem("companyProfile_fmcsa", JSON.stringify(prof));
+        localStorage.setItem("companyProfile", JSON.stringify(prof));
+      }
+    } else if (module === "fmcsa_supervisor_3pack") {
+      const prof = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
+      if (prof.seats) {
+        prof.seats.supervisor = prof.seats.supervisor || { total: 0, used: 0 };
+        prof.seats.supervisor.total += 3;
+        localStorage.setItem("companyProfile_fmcsa", JSON.stringify(prof));
+        localStorage.setItem("companyProfile", JSON.stringify(prof));
+      }
+    }
+
+    /* Redirect to correct dashboard */
+    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
+    const isAdmin = user && (user.role === "company_admin" || user.role === "owner" || user.role === "admin");
+    setTimeout(() => {
+      window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
+    }, 2000);
+
+  })();
+  </script>
+</body>
+</html>
