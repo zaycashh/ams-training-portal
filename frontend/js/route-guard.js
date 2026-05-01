@@ -81,10 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================================================
      REQUIRE LOGIN
   ========================================================= */
-  if (!user && !path.includes("login")) {
+  /* Public pages — no login required */
+  const publicPages = ["login", "forgot-password", "reset-password", "register"];
+  if (!user && !publicPages.some(p => path.includes(p))) {
     window.location.replace("login.html");
     return;
   }
+  /* If on a public page, stop here — no further checks needed */
+  if (!user) return;
 
   /* =========================================================
      PROGRAM LOCK (FAA vs FMCSA)
