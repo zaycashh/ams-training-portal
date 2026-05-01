@@ -1,11 +1,10 @@
 /* =========================================================
-   INDIVIDUAL REGISTRATION — FULL PROFILE VERSION
+   INDIVIDUAL REGISTRATION — Supabase-backed
 ========================================================= */
 
 document
   .getElementById("individualRegisterForm")
-  .addEventListener("submit", function (e) {
-
+  .addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const firstName       = document.getElementById("firstName").value.trim();
@@ -20,46 +19,59 @@ document
       showMsg("Please complete all fields.", "error");
       return;
     }
-
     if (password !== confirmPassword) {
       showMsg("Passwords do not match.", "error");
       return;
     }
-
     if (password.length < 8) {
       showMsg("Password must be at least 8 characters.", "error");
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+    showMsg("Creating your account...", "info");
 
-    const existingUser = users.find(u => u.email === email);
+    try {
+      /* 1. Check if email already exists */
+      const { data: existing } = await db.from("users").select("id").eq("email", email);
+      if (existing && existing.length > 0) {
+        showMsg("An account with this email already exists.", "error");
+        return;
+      }
 
-    if (existingUser) {
-      showMsg("An account with this email already exists.", "error");
-      return;
+      /* 2. Create user in Supabase */
+      const { data: newUser, error } = await db.from("users").insert([{
+        email,
+        password_hash: password,
+        name:          firstName + " " + lastName,
+        type:          "individual",
+        role:          "individual",
+        program,
+        verified:      true
+      }]).select().single();
+
+      if (error) throw error;
+
+      /* 3. Set session */
+      const sessionUser = {
+        id:        newUser.id,
+        email:     newUser.email,
+        firstName,
+        lastName,
+        fullName:  firstName + " " + lastName,
+        phone,
+        role:      "individual",
+        type:      "individual",
+        program
+      };
+
+      localStorage.setItem("amsUser",    JSON.stringify(sessionUser));
+      localStorage.setItem("amsProgram", program);
+
+      showMsg("Account created successfully. Redirecting...", "success");
+      setTimeout(() => window.location.replace("dashboard.html"), 1000);
+
+    } catch (err) {
+      console.error("Register error:", err);
+      showMsg("Something went wrong. Please try again.", "error");
     }
-
-    const individualUser = {
-      id:        "ind-" + email,
-      firstName,
-      lastName,
-      fullName:  firstName + " " + lastName,
-      phone,
-      email,
-      password,
-      program,
-      role:      "individual",
-      type:      "individual",
-      createdAt: new Date().toISOString()
-    };
-
-    users.push(individualUser);
-
-    localStorage.setItem("ams_users",  JSON.stringify(users));
-    localStorage.setItem("amsUser",    JSON.stringify(individualUser));
-
-    showMsg("Account created successfully. Redirecting...", "success");
-
-    setTimeout(() => window.location.replace("dashboard.html"), 1000);
   });
