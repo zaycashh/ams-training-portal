@@ -17,6 +17,7 @@ function showToast(msg, type, duration) {
 document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("amsUser") || "null");
   loadCompanyDashboard(user);
+  renderActivityFeed();
 
   /* Auto-switch tab if ?tab= param is in the URL */
   const tabParam = new URLSearchParams(window.location.search).get("tab");
@@ -905,6 +906,102 @@ async function renderBillingHistory() {
   } catch(err) {
     console.error('Billing history error:', err);
     el.innerHTML = '<p style="color:var(--color-text-muted);font-size:14px;padding:8px 0;">Could not load billing history.</p>';
+  }
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY — pulls from Supabase activity_log table
+========================================================= */
+async function renderActivityFeed() {
+  const el = document.getElementById('activityFeed');
+  if (!el) return;
+
+  const user = JSON.parse(localStorage.getItem('amsUser') || 'null');
+  if (!user || !user.companyId) return;
+
+  el.innerHTML = '<p style="padding:16px;color:var(--color-text-muted);font-size:14px;">Loading...</p>';
+
+  try {
+    const { data: logs, error } = await db
+      .from('activity_log')
+      .select('*')
+      .eq('company_id', user.companyId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (error) throw error;
+
+    if (!logs || logs.length === 0) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-lucide="activity" style="width:22px;height:22px;"></i></div>
+          <h4>No activity yet</h4>
+          <p>Actions like seat purchases and assignments will appear here.</p>
+        </div>`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      return;
+    }
+
+    const ACTION_CONFIG = {
+      'seat_purchased':    { label: 'Seat Purchased',   dot: 'activity-dot-purchase', icon: '💳' },
+      'seat_assigned':     { label: 'Seat Assigned',    dot: 'activity-dot-assign',   icon: '👤' },
+      'seat_revoked':      { label: 'Seat Revoked',     dot: 'activity-dot-remove',   icon: '🚫' },
+      'employee_registered':{ label: 'Employee Joined', dot: 'activity-dot-complete', icon: '✅' },
+      'employee_invited':  { label: 'Invite Sent',      dot: 'activity-dot-assign',   icon: '📧' },
+      'module_completed':  { label: 'Training Complete',dot: 'activity-dot-complete', icon: '🎓' }
+    };
+
+    const MODULE_LABELS = {
+      'employee': 'Employee', 'supervisor': 'Supervisor', 'der': 'DER',
+      'fmcsa_employee': 'FMCSA Employee', 'fmcsa': 'FMCSA Supervisor', 'der_fmcsa': 'FMCSA DER',
+      'employee_5pack': 'Employee 5-Pack', 'supervisor_3pack': 'Supervisor 3-Pack',
+      'fmcsa_employee_5pack': 'FMCSA Employee 5-Pack', 'fmcsa_supervisor_3pack': 'FMCSA Supervisor 3-Pack'
+    };
+
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      const days = Math.floor(hrs / 24);
+      return days + 'd ago';
+    }
+
+    function buildText(log) {
+      const email = log.user_email || 'Someone';
+      const d = log.details || {};
+      const mod = MODULE_LABELS[d.module] || d.module || '';
+      switch(log.action) {
+        case 'seat_purchased':   return '<strong>' + email + '</strong> purchased <strong>' + mod + '</strong>' + (d.seats > 1 ? ' (' + d.seats + ' seats)' : '');
+        case 'seat_assigned':    return '<strong>' + mod + '</strong> seat assigned to <strong>' + email + '</strong>';
+        case 'seat_revoked':     return '<strong>' + mod + '</strong> seat revoked from <strong>' + email + '</strong>';
+        case 'employee_registered': return '<strong>' + (d.name || email) + '</strong> joined as <strong>' + mod + '</strong>';
+        case 'employee_invited': return 'Invite sent to <strong>' + email + '</strong> for <strong>' + mod + '</strong>';
+        case 'module_completed': return '<strong>' + email + '</strong> completed <strong>' + mod + '</strong> training';
+        default: return '<strong>' + email + '</strong> performed an action';
+      }
+    }
+
+    el.innerHTML = logs.map(function(log) {
+      const cfg = ACTION_CONFIG[log.action] || { dot: 'activity-dot-assign', icon: '•' };
+      return `
+        <div class="activity-item">
+          <div class="activity-dot-wrap">
+            <div class="activity-dot ${cfg.dot}"></div>
+          </div>
+          <div class="activity-content">
+            <div class="activity-text">${buildText(log)}</div>
+            <div class="activity-time">${timeAgo(log.created_at)}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(err) {
+    console.error('Activity feed error:', err);
+    el.innerHTML = '<p style="padding:16px;color:var(--color-text-muted);font-size:14px;">Could not load activity.</p>';
   }
 }
 
