@@ -1,3 +1,24 @@
+/* bcrypt helpers via Cloudflare Worker */
+async function hashPassword(password) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/hash", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password })
+  });
+  const data = await res.json();
+  if (!data.hash) throw new Error("Hashing failed");
+  return data.hash;
+}
+
+async function verifyPassword(password, hash) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, hash })
+  });
+  const data = await res.json();
+  return data.match === true;
+}
 /* =========================================================
    RESET PASSWORD — Supabase-backed
 ========================================================= */
@@ -59,8 +80,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       /* Update password and clear reset token */
+      const newHash = await hashPassword(password);
+
+      /* Safety check — never save a plain-text password */
+      if (!newHash || !newHash.startsWith('pbkdf2:')) {
+        showMsg("Password hashing failed. Please try again.", "error");
+        return;
+      }
+
       const { error } = await db.from("users").update({
-        password_hash:       password,
+        password_hash:       newHash,
         reset_token:         null,
         reset_token_expires: null
       }).eq("email", email).eq("reset_token", token);
