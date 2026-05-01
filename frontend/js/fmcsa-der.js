@@ -1,3 +1,18 @@
+/* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt) {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+    await db.from('training_progress').upsert([{
+      user_id:      u.id,
+      module,
+      program,
+      completed:    true,
+      completed_at: completedAt || new Date().toISOString()
+    }], { onConflict: 'user_id,module,program' });
+  } catch(e) { console.warn('Supabase progress save failed:', e); }
+}
+
 /* =========================================================
    FMCSA DER – COMPLETE ENGINE (PDF + QUIZ)
    All alert() replaced with showToast()
@@ -348,6 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = user?.email;
 
       localStorage.setItem(`fmcsaDERCompleted_${email}`, "true");
+      saveTrainingProgress("fmcsa-der", "fmcsa", new Date().toISOString());
       localStorage.setItem(`fmcsaDERDate_${email}`, Date.now());
       localStorage.setItem(DER_QUIZ_PASSED_KEY, "true");
 
