@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
@@ -5,6 +6,8 @@
   <title>Payment Successful | AMS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -37,45 +40,17 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     }
     .icon {
-      width: 72px;
-      height: 72px;
+      width: 72px; height: 72px;
       background: var(--color-success-surface);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin: 0 auto 24px;
     }
     .icon svg { color: var(--color-success); }
-    h1 {
-      font-family: var(--font-ui);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 12px;
-    }
-    p {
-      color: var(--color-text-muted);
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 8px;
-    }
-    .redirecting {
-      margin-top: 32px;
-      font-size: 0.9rem;
-      color: var(--color-text-muted);
-    }
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #d1d5db;
-      border-top-color: var(--color-primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+    h1 { font-family: var(--font-ui); font-size: 1.6rem; font-weight: 700; color: var(--color-text); margin-bottom: 12px; }
+    p { color: var(--color-text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 8px; }
+    .redirecting { margin-top: 32px; font-size: 0.9rem; color: var(--color-text-muted); }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #d1d5db; border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -95,75 +70,133 @@
   </div>
 
   <script>
-  (function() {
-    const params  = new URLSearchParams(window.location.search);
-    const module  = params.get("module");
-    const email   = params.get("email");
-    const seats   = parseInt(params.get("seats") || "1", 10);
+  (async function() {
+    const params = new URLSearchParams(window.location.search);
+    const module = params.get("module");
+    const email  = params.get("email");
+    const seats  = parseInt(params.get("seats") || "1", 10);
+    const user   = JSON.parse(localStorage.getItem("amsUser") || "null");
 
     if (!email || !module) {
       window.location.href = "dashboard.html";
       return;
     }
 
-    /* Grant access based on module */
+    /* =============================================
+       1. KEEP localStorage grants (app still reads these)
+    ============================================= */
     const now = Date.now();
+    if (module === "employee")            localStorage.setItem(`paid_employee_${email}`, "true");
+    else if (module === "supervisor")     localStorage.setItem(`paid_supervisor_${email}`, "true");
+    else if (module === "der")            localStorage.setItem(`paid_der_${email}`, "true");
+    else if (module === "fmcsa_employee") { localStorage.setItem(`paid_employee_fmcsa_${email}`, "true"); localStorage.setItem(`paid_employee_fmcsa_date_${email}`, now); }
+    else if (module === "fmcsa")          { localStorage.setItem(`paid_fmcsa_${email}`, "true"); localStorage.setItem(`fmcsa_start_date_${email}`, now); }
+    else if (module === "der_fmcsa")      { localStorage.setItem(`paid_der_fmcsa_${email}`, "true"); localStorage.setItem(`paid_der_fmcsa_date_${email}`, now); }
 
-    if (module === "employee") {
-      localStorage.setItem(`paid_employee_${email}`, "true");
-    } else if (module === "supervisor") {
-      localStorage.setItem(`paid_supervisor_${email}`, "true");
-    } else if (module === "der") {
-      localStorage.setItem(`paid_der_${email}`, "true");
-    } else if (module === "fmcsa_employee" || module === "fmcsa-drug-alcohol") {
-      localStorage.setItem(`paid_employee_fmcsa_${email}`, "true");
-      localStorage.setItem(`paid_employee_fmcsa_date_${email}`, now);
-    } else if (module === "fmcsa" || module === "fmcsa-module-a") {
-      localStorage.setItem(`paid_fmcsa_${email}`, "true");
-      localStorage.setItem(`fmcsa_start_date_${email}`, now);
-    } else if (module === "der_fmcsa" || module === "fmcsa-der") {
-      localStorage.setItem(`paid_der_fmcsa_${email}`, "true");
-      localStorage.setItem(`paid_der_fmcsa_date_${email}`, now);
+    /* Company bundle localStorage grants */
+    const _grantCompanySeats = (storageKey, type, qty) => {
+      const prof = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if (prof && prof.seats) {
+        prof.seats[type] = prof.seats[type] || { total: 0, used: 0 };
+        prof.seats[type].total += qty;
+        localStorage.setItem(storageKey, JSON.stringify(prof));
+        localStorage.setItem("companyProfile", JSON.stringify(prof));
+      }
+    };
+    if (module === "employee_5pack")         _grantCompanySeats("companyProfile_faa",   "employee",   5);
+    else if (module === "supervisor_3pack")  _grantCompanySeats("companyProfile_faa",   "supervisor", 3);
+    else if (module === "fmcsa_employee_5pack")   _grantCompanySeats("companyProfile_fmcsa", "employee",   5);
+    else if (module === "fmcsa_supervisor_3pack") _grantCompanySeats("companyProfile_fmcsa", "supervisor", 3);
+
+    /* Single company seat localStorage grants */
+    if (module === "employee" || module === "fmcsa_employee") {
+      const key = module === "fmcsa_employee" ? "companyProfile_fmcsa" : "companyProfile_faa";
+      _grantCompanySeats(key, "employee", 1);
+    } else if (module === "supervisor" || module === "fmcsa") {
+      const key = module === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+      _grantCompanySeats(key, "supervisor", 1);
+    } else if (module === "der" || module === "der_fmcsa") {
+      const key = module === "der_fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+      _grantCompanySeats(key, "der", 1);
     }
 
-    /* Company bundle seat grants */
-    if (module === "employee_5pack") {
-      const prof = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
-      if (prof.seats) {
-        prof.seats.employee = prof.seats.employee || { total: 0, used: 0 };
-        prof.seats.employee.total += 5;
-        localStorage.setItem("companyProfile_faa", JSON.stringify(prof));
-        localStorage.setItem("companyProfile", JSON.stringify(prof));
+    /* =============================================
+       2. WRITE TO SUPABASE
+    ============================================= */
+    try {
+      /* Determine program from module key */
+      const program = module.includes("fmcsa") ? "fmcsa" : "faa";
+
+      /* a. Log purchase */
+      await db.from("purchases").insert([{
+        email,
+        module,
+        program,
+        seats,
+        stripe_session_id: params.get("session_id") || null,
+        company_id: user && user.companyId ? user.companyId : null,
+        status: "completed"
+      }]);
+
+      /* b. Grant module access (for individual users) */
+      const isAdmin = user && (user.role === "company_admin" || user.role === "owner");
+      if (!isAdmin) {
+        await db.from("module_access").upsert([{
+          email,
+          module,
+          program,
+          granted_by: "purchase"
+        }], { onConflict: "email,module,program" });
       }
-    } else if (module === "supervisor_3pack") {
-      const prof = JSON.parse(localStorage.getItem("companyProfile_faa") || localStorage.getItem("companyProfile") || "{}");
-      if (prof.seats) {
-        prof.seats.supervisor = prof.seats.supervisor || { total: 0, used: 0 };
-        prof.seats.supervisor.total += 3;
-        localStorage.setItem("companyProfile_faa", JSON.stringify(prof));
-        localStorage.setItem("companyProfile", JSON.stringify(prof));
+
+      /* c. Update company seats in Supabase (for company admins) */
+      if (isAdmin && user.companyId) {
+        const { data: company } = await db.from("companies").select("seats").eq("id", user.companyId).single();
+        if (company) {
+          const updatedSeats = JSON.parse(JSON.stringify(company.seats));
+
+          if (module === "employee_5pack" || module === "fmcsa_employee_5pack") {
+            updatedSeats.employee.total += 5;
+          } else if (module === "supervisor_3pack" || module === "fmcsa_supervisor_3pack") {
+            updatedSeats.supervisor.total += 3;
+          } else if (module === "employee" || module === "fmcsa_employee") {
+            updatedSeats.employee.total += 1;
+          } else if (module === "supervisor" || module === "fmcsa") {
+            updatedSeats.supervisor.total += 1;
+          } else if (module === "der" || module === "der_fmcsa") {
+            updatedSeats.der.total += 1;
+          }
+
+          await db.from("companies").update({ seats: updatedSeats }).eq("id", user.companyId);
+
+          /* Update localStorage profile to match */
+          const profileKey = program === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+          const prof = JSON.parse(localStorage.getItem(profileKey) || "{}");
+          if (prof.seats) {
+            prof.seats = updatedSeats;
+            localStorage.setItem(profileKey, JSON.stringify(prof));
+            localStorage.setItem("companyProfile", JSON.stringify(prof));
+          }
+        }
+
+        /* d. Log activity */
+        await db.from("activity_log").insert([{
+          company_id: user.companyId,
+          user_email: email,
+          action:     "seat_purchased",
+          details:    { module, seats, program }
+        }]);
       }
-    } else if (module === "fmcsa_employee_5pack") {
-      const prof = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
-      if (prof.seats) {
-        prof.seats.employee = prof.seats.employee || { total: 0, used: 0 };
-        prof.seats.employee.total += 5;
-        localStorage.setItem("companyProfile_fmcsa", JSON.stringify(prof));
-        localStorage.setItem("companyProfile", JSON.stringify(prof));
-      }
-    } else if (module === "fmcsa_supervisor_3pack") {
-      const prof = JSON.parse(localStorage.getItem("companyProfile_fmcsa") || localStorage.getItem("companyProfile") || "{}");
-      if (prof.seats) {
-        prof.seats.supervisor = prof.seats.supervisor || { total: 0, used: 0 };
-        prof.seats.supervisor.total += 3;
-        localStorage.setItem("companyProfile_fmcsa", JSON.stringify(prof));
-        localStorage.setItem("companyProfile", JSON.stringify(prof));
-      }
+
+    } catch (err) {
+      console.error("Supabase post-payment error:", err);
+      /* Non-fatal — localStorage grants already applied above */
     }
 
-    /* Redirect to correct dashboard */
-    const user = JSON.parse(localStorage.getItem("amsUser") || "null");
-    const isAdmin = user && (user.role === "company_admin" || user.role === "owner" || user.role === "admin");
+    /* =============================================
+       3. REDIRECT
+    ============================================= */
+    const isAdmin = user && (user.role === "company_admin" || user.role === "owner");
     setTimeout(() => {
       window.location.href = isAdmin ? "company-dashboard.html" : "dashboard.html";
     }, 2000);
