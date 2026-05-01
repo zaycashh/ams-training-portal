@@ -867,6 +867,10 @@ function switchTab(tab) {
     renderTrainingStatus();
     renderCertHistory();
   }
+  /* Render billing history when billing tab opens */
+  if (tab === 'billing') {
+    renderBillingHistory();
+  }
 }
 
 /* =========================================================
