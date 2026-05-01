@@ -198,9 +198,71 @@ function updateFMCSATimer() {
 }
 
 /* =========================
+   SUPABASE SYNC
+   Pull training_progress from Supabase → write to localStorage
+   so all existing button logic works unchanged
+========================= */
+async function syncProgressFromSupabase() {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+
+    const { data: rows } = await db.from('training_progress')
+      .select('module, program, completed, completed_at')
+      .eq('user_id', u.id)
+      .eq('completed', true);
+
+    if (!rows || rows.length === 0) return;
+
+    const email = u.email;
+    const now   = Date.now();
+
+    rows.forEach(row => {
+      const ts = row.completed_at ? new Date(row.completed_at).getTime() : now;
+      switch (row.module) {
+        /* FMCSA */
+        case 'fmcsa-employee':
+          localStorage.setItem(`fmcsaEmployeeCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`fmcsaEmployeeDate_${email}`)) localStorage.setItem(`fmcsaEmployeeDate_${email}`, ts);
+          break;
+        case 'fmcsa-supervisor-a':
+          localStorage.setItem(`fmcsaModuleACompleted_${email}`, 'true');
+          if (!localStorage.getItem(`fmcsaModuleADate_${email}`)) localStorage.setItem(`fmcsaModuleADate_${email}`, ts);
+          break;
+        case 'fmcsa-supervisor-b':
+          localStorage.setItem(`fmcsaModuleBCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`fmcsaModuleBDate_${email}`)) localStorage.setItem(`fmcsaModuleBDate_${email}`, ts);
+          break;
+        case 'fmcsa-der':
+          localStorage.setItem(`fmcsaDERCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`fmcsaDERDate_${email}`)) localStorage.setItem(`fmcsaDERDate_${email}`, ts);
+          break;
+        /* FAA */
+        case 'faa-employee':
+          localStorage.setItem(`faaEmployeeCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`employeeTrainingDate_${email}`)) localStorage.setItem(`employeeTrainingDate_${email}`, ts);
+          break;
+        case 'faa-supervisor':
+          localStorage.setItem(`faaSupervisorCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`supervisorTrainingDate_${email}`)) localStorage.setItem(`supervisorTrainingDate_${email}`, ts);
+          break;
+        case 'faa-der':
+          localStorage.setItem(`faaDERCompleted_${email}`, 'true');
+          if (!localStorage.getItem(`derTrainingDate_${email}`)) localStorage.setItem(`derTrainingDate_${email}`, ts);
+          break;
+      }
+    });
+
+  } catch(e) { console.warn('Supabase sync failed:', e); }
+}
+
+/* =========================
    INIT
 ========================= */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+
+  /* Sync from Supabase first, then render */
+  await syncProgressFromSupabase();
 
   const company      = JSON.parse(localStorage.getItem("companyProfile") || "{}");
   const storedProgram = localStorage.getItem("amsProgram");
