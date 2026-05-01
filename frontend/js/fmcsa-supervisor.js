@@ -1,3 +1,18 @@
+/* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt) {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+    await db.from('training_progress').upsert([{
+      user_id:      u.id,
+      module,
+      program,
+      completed:    true,
+      completed_at: completedAt || new Date().toISOString()
+    }], { onConflict: 'user_id,module,program' });
+  } catch(e) { console.warn('Supabase progress save failed:', e); }
+}
+
 /* =========================================================
    FMCSA SUPERVISOR MODULE A
    Extracted from inline script — all IDs + logic preserved
@@ -284,6 +299,7 @@ function gradeQuiz() {
     if (typeof generateSupervisorCertificate === "function") generateSupervisorCertificate();
 
     localStorage.setItem(`fmcsaModuleACompleted_${email}`, "true");
+    saveTrainingProgress("fmcsa-supervisor-a", "fmcsa", new Date().toISOString());
     localStorage.setItem(`fmcsaModuleADate_${email}`, Date.now());
 
     let certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
