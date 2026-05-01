@@ -1,3 +1,18 @@
+* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt) {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+    await db.from('training_progress').upsert([{
+      user_id:      u.id,
+      module,
+      program,
+      completed:    true,
+      completed_at: completedAt || new Date().toISOString()
+    }], { onConflict: 'user_id,module,program' });
+  } catch(e) { console.warn('Supabase progress save failed:', e); }
+}
+
 /* =========================================================
    FAA SUPERVISOR TRAINING LOGIC
    Fully independent from FMCSA — zero key collision
@@ -346,6 +361,7 @@ function handleFAASupervisorQuizResult(score, total) {
 ========================= */
 function finishFAASupervisorTraining() {
   localStorage.setItem(FAA_SUP_COMPLETED_KEY, "true");
+  saveTrainingProgress("faa-supervisor", "faa", new Date().toISOString());
   localStorage.setItem(FAA_SUP_DATE_KEY, Date.now());
   lockToFAASupervisorCertificate();
 }
