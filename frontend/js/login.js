@@ -1,3 +1,24 @@
+/* bcrypt helpers via Cloudflare Worker */
+async function hashPassword(password) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/hash", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password })
+  });
+  const data = await res.json();
+  if (!data.hash) throw new Error("Hashing failed");
+  return data.hash;
+}
+
+async function verifyPassword(password, hash) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, hash })
+  });
+  const data = await res.json();
+  return data.match === true;
+}
 /* =========================================================
    LOGIN — Supabase-backed
 ========================================================= */
@@ -32,8 +53,9 @@ document.getElementById("loginForm")
 
       const user = users[0];
 
-      /* 2. Simple password check (plain text for now — upgrade to bcrypt later) */
-      if (user.password_hash !== password) {
+      /* 2. bcrypt password verification */
+      const passwordMatch = await verifyPassword(password, user.password_hash);
+      if (!passwordMatch) {
         showMsg("Invalid email or password.", "error");
         return;
       }
