@@ -299,15 +299,21 @@ function assignEmployeeSeat(emailParam) {
   company.employees[email] = { email, role: 'employee', status: 'assigned', addedAt: Date.now() };
 
   if (!company.invites) company.invites = {};
+  let empCode;
   if (!company.invites[email] || company.invites[email].role !== 'employee') {
-    const code = 'AMS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-    company.invites[email] = { email, code, program: company.program || 'fmcsa', role: 'employee', createdAt: Date.now(), status: 'assigned' };
-    _showInviteMsg(code, 'Employee');
+    empCode = 'AMS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    company.invites[email] = { email, code: empCode, program: company.program || 'fmcsa', role: 'employee', createdAt: Date.now(), status: 'assigned' };
+    _showInviteMsg(empCode, 'Employee');
   }
 
   saveCompanyProfile(company);
   showToast('Employee seat assigned.', 'success');
   _refreshAll(company);
+
+  /* Supabase sync */
+  const _empProgram = (company.program || 'fmcsa').toLowerCase();
+  if (empCode) _syncInviteToSupabase(company.id, empCode, 'employee', _empProgram);
+  _syncSeatAssignmentToSupabase(company.id, email, email, 'employee', _empProgram);
 }
 
 function assignSupervisorSeat(emailParam) {
@@ -384,6 +390,11 @@ function assignSupervisorSeat(emailParam) {
   saveCompanyProfile(company);
   showToast(completedTs ? 'Supervisor annual renewal assigned.' : 'Supervisor seat assigned.', 'success');
   _refreshAll(company);
+
+  /* Supabase sync */
+  const _supProgram = (company.program || 'fmcsa').toLowerCase();
+  _syncInviteToSupabase(company.id, supCode, 'supervisor', _supProgram);
+  _syncSeatAssignmentToSupabase(company.id, email, email, 'supervisor', _supProgram);
 }
 
 function assignDerSeat(emailParam) {
@@ -419,6 +430,11 @@ function assignDerSeat(emailParam) {
   saveCompanyProfile(company);
   showToast('DER seat assigned.', 'success');
   _refreshAll(company);
+
+  /* Supabase sync */
+  const _derProgram = (company.program || 'fmcsa').toLowerCase();
+  _syncInviteToSupabase(company.id, derCode, 'der', _derProgram);
+  _syncSeatAssignmentToSupabase(company.id, email, email, 'der', _derProgram);
 }
 
 /* helpers */
@@ -765,6 +781,41 @@ window.revokeSeat = function (type, email) {
   saveCompanyProfile(company);
   renderSeatAssignments(company);
 };
+
+/* =========================================================
+   SUPABASE SYNC HELPERS — writes to DB alongside localStorage
+========================================================= */
+async function _syncInviteToSupabase(companyId, code, module, program) {
+  try {
+    await db.from("invite_codes").insert([{ code, company_id: companyId, module, program }]);
+  } catch(e) { console.warn("Supabase invite sync failed:", e); }
+}
+
+async function _syncSeatAssignmentToSupabase(companyId, email, name, module, program) {
+  try {
+    await db.from("seat_assignments").upsert([{
+      company_id: companyId, employee_email: email, employee_name: name, module, program
+    }], { onConflict: "company_id,employee_email,module" });
+    await db.from("activity_log").insert([{
+      company_id: companyId, user_email: email,
+      action: "seat_assigned", details: { module, program }
+    }]);
+  } catch(e) { console.warn("Supabase seat sync failed:", e); }
+}
+
+async function _syncRevokeSeatToSupabase(companyId, email, module) {
+  try {
+    await db.from("seat_assignments")
+      .update({ status: "revoked" })
+      .eq("company_id", companyId)
+      .eq("employee_email", email)
+      .eq("module", module);
+    await db.from("activity_log").insert([{
+      company_id: companyId, user_email: email,
+      action: "seat_revoked", details: { module }
+    }]);
+  } catch(e) { console.warn("Supabase revoke sync failed:", e); }
+}
 
 /* =========================================================
    BUY SEATS — Stripe Checkout
