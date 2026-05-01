@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <title>Create Company Account | AMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="/frontend/css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
 </head>
 
 <body>
@@ -18,10 +19,9 @@
     </div>
 
     <h2>Create Company Account</h2>
+    <p>This account is for company administrators who manage employee seats.</p>
 
-    <p>
-      This account is for company administrators who manage employee seats.
-    </p>
+    <div id="msgBox" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px;"></div>
 
     <form id="companyRegisterForm" class="auth-form">
 
@@ -61,130 +61,129 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary">
-          Create Company Account
-        </button>
+        <button type="submit" class="btn-primary">Create Company Account</button>
       </div>
 
-      <p style="margin-top:14px; text-align:center;">
-        Already have an account?
-        <a href="login.html">Login</a>
+      <p style="margin-top:14px;text-align:center;">
+        Already have an account? <a href="login.html">Login</a>
       </p>
 
     </form>
-
   </div>
 </main>
 
 <script>
+function showMsg(msg, type) {
+  const box = document.getElementById("msgBox");
+  box.style.display = "block";
+  box.style.background = type === "error" ? "#fef2f2" : type === "success" ? "#f0fdf4" : "#eff6ff";
+  box.style.color = type === "error" ? "#dc2626" : type === "success" ? "#16a34a" : "#2563eb";
+  box.textContent = msg;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
 
   const form = document.getElementById("companyRegisterForm");
   if (!form) return;
 
-  form.addEventListener("submit", function (e) {
-
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const companyName = document.getElementById("companyName").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const password = document.getElementById("password").value;
+    const firstName       = document.getElementById("firstName").value.trim();
+    const lastName        = document.getElementById("lastName").value.trim();
+    const companyName     = document.getElementById("companyName").value.trim();
+    const phone           = document.getElementById("phone").value.trim();
+    const email           = document.getElementById("email").value.trim().toLowerCase();
+    const password        = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+    const program         = (new URLSearchParams(window.location.search).get("program") || "faa").toLowerCase();
 
     if (!firstName || !lastName || !companyName || !phone || !email || !password || !confirmPassword) {
-      alert("Please complete all fields.");
-      return;
+      showMsg("Please complete all fields.", "error"); return;
     }
-
     if (password.length < 6) {
-      alert("Password must be at least 6 characters.");
-      return;
+      showMsg("Password must be at least 6 characters.", "error"); return;
     }
-
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
+      showMsg("Passwords do not match.", "error"); return;
     }
 
-    const users = JSON.parse(localStorage.getItem("ams_users") || "[]");
+    showMsg("Creating your account...", "info");
 
-    if (users.find(u => u.email === email)) {
-      alert("An account with this email already exists.");
-      return;
+    try {
+      /* 1. Check duplicate email */
+      const { data: existing } = await db.from("users").select("id").eq("email", email);
+      if (existing && existing.length > 0) {
+        showMsg("An account with this email already exists.", "error"); return;
+      }
+
+      /* 2. Create company in Supabase */
+      const { data: company, error: companyErr } = await db.from("companies").insert([{
+        name:        companyName,
+        admin_email: email,
+        program,
+        seats: {
+          employee:   { total: 0, used: 0 },
+          supervisor: { total: 0, used: 0 },
+          der:        { total: 0, used: 0 }
+        }
+      }]).select().single();
+
+      if (companyErr) throw companyErr;
+
+      /* 3. Create admin user in Supabase */
+      const { data: newUser, error: userErr } = await db.from("users").insert([{
+        email,
+        password_hash: password,
+        name:          firstName + " " + lastName,
+        type:          "company",
+        role:          "company_admin",
+        program,
+        company_id:    company.id,
+        verified:      true
+      }]).select().single();
+
+      if (userErr) throw userErr;
+
+      /* 4. Set localStorage session (same shape as before) */
+      const sessionUser = {
+        id:        newUser.id,
+        firstName,
+        lastName,
+        fullName:  firstName + " " + lastName,
+        company:   companyName,
+        phone,
+        email,
+        role:      "company_admin",
+        type:      "company",
+        companyId: company.id,
+        program
+      };
+
+      const profileKey = program === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
+      const companyProfile = {
+        id:       company.id,
+        name:     companyName,
+        email,
+        program,
+        seats:    company.seats,
+        invites:  {},
+        usedSeats: { employee: {}, supervisor: {}, der: {} }
+      };
+
+      localStorage.setItem("amsUser",      JSON.stringify(sessionUser));
+      localStorage.setItem("amsProgram",   program);
+      localStorage.setItem(profileKey,     JSON.stringify(companyProfile));
+      localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
+
+      showMsg("Account created! Redirecting...", "success");
+      setTimeout(() => window.location.href = "company-dashboard.html", 1000);
+
+    } catch (err) {
+      console.error("Register company error:", err);
+      showMsg("Something went wrong. Please try again.", "error");
     }
-
-    /* =========================
-       PROGRAM FROM URL
-    ========================= */
-    const program =
-      new URLSearchParams(window.location.search).get("program") || "faa";
-
-    /* =========================
-       COMPANY PROFILE
-    ========================= */
-    const companyId = "comp-" + Date.now();
-
-    const companyProfile = {
-      id: companyId,
-      name: companyName,
-      program, //
-      createdAt: Date.now(),
-      seats: {
-        employee: { total: 0, used: 0 },
-        supervisor: { total: 0, used: 0 },
-        der: { total: 0, used: 0 }
-    },
-      usedSeats: {
-        employee: {},
-        supervisor: {},
-        der: {}
-    },
-      invites: {},
-      modules: [],
-      employees: {}
-    };
-
-    const _progKey = program.toLowerCase() === "fmcsa" ? "companyProfile_fmcsa" : "companyProfile_faa";
-    localStorage.setItem(_progKey, JSON.stringify(companyProfile));
-    localStorage.setItem("companyProfile", JSON.stringify(companyProfile));
-
-    /* =========================
-       CREATE ADMIN USER
-    ========================= */
-    const companyAdminUser = {
-      id: "admin-" + email,
-      firstName,
-      lastName,
-      company: companyName,
-      phone,
-      email,
-      password,
-      role: "company_admin",
-      type: "company",
-      companyId,
-      program,
-      createdAt: Date.now()
-    };
-
-    users.push(companyAdminUser);
-    localStorage.setItem("ams_users", JSON.stringify(users));
-
-    /* =========================
-       START SESSION
-    ========================= */
-    localStorage.setItem("amsUser", JSON.stringify(companyAdminUser));
-    localStorage.setItem("amsProgram", program);
-
-    /* =========================
-       REDIRECT
-    ========================= */
-    window.location.href = "company-dashboard.html";
-
   });
-
 });
 </script>
 
