@@ -1,3 +1,18 @@
+/* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt) {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+    await db.from('training_progress').upsert([{
+      user_id:      u.id,
+      module,
+      program,
+      completed:    true,
+      completed_at: completedAt || new Date().toISOString()
+    }], { onConflict: 'user_id,module,program' });
+  } catch(e) { console.warn('Supabase progress save failed:', e); }
+}
+
 /* =========================================================
    FMCSA DRUG & ALCOHOL MODULE (MODULE B)
    Mirrors Supervisor Architecture
@@ -525,6 +540,7 @@ function gradeAlcoholQuiz() {
 
   if (score >= PASS_SCORE_ALCOHOL) {
     localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
+    saveTrainingProgress("fmcsa-supervisor-b", "fmcsa", new Date().toISOString());
     localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
 
     let certId = localStorage.getItem(MODULE_B_CERT_ID_KEY);
