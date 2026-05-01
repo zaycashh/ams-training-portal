@@ -1,3 +1,24 @@
+/* bcrypt helpers via Cloudflare Worker */
+async function hashPassword(password) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/hash", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password })
+  });
+  const data = await res.json();
+  if (!data.hash) throw new Error("Hashing failed");
+  return data.hash;
+}
+
+async function verifyPassword(password, hash) {
+  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, hash })
+  });
+  const data = await res.json();
+  return data.match === true;
+}
 /* =========================================================
    EMPLOYEE REGISTRATION — Supabase-backed
 ========================================================= */
@@ -61,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
       /* 4. Create employee user */
       const { data: newUser, error: userErr } = await db.from("users").insert([{
         email,
-        password_hash:   password,
+        password_hash:   await hashPassword(password),
         name:            firstName + " " + lastName,
         type:            "company",
         role:            "employee",
