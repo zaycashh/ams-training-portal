@@ -1,3 +1,18 @@
+/* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt) {
+  try {
+    const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
+    if (!u || !u.id) return;
+    await db.from('training_progress').upsert([{
+      user_id:      u.id,
+      module,
+      program,
+      completed:    true,
+      completed_at: completedAt || new Date().toISOString()
+    }], { onConflict: 'user_id,module,program' });
+  } catch(e) { console.warn('Supabase progress save failed:', e); }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
 function goDashboard() {
@@ -393,6 +408,7 @@ if (submitBtn) {
     /* ── PASS ── */
     if (scorePercent >= PASS_PERCENT) {
       localStorage.setItem(COMPLETED_KEY, "true");
+      saveTrainingProgress("fmcsa-employee", "fmcsa", new Date().toISOString());
       localStorage.setItem(QUIZ_KEY, "true");
 
       let certId = localStorage.getItem(CERT_ID_KEY);
