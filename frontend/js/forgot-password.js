@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({
             email,
             resetLink,
-            name: user.name || ""
+            name: users[0].name || users[0].full_name || ""
           })
         });
       }
