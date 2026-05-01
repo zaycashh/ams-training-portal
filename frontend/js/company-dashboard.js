@@ -817,6 +817,97 @@ async function _syncRevokeSeatToSupabase(companyId, email, module) {
   } catch(e) { console.warn("Supabase revoke sync failed:", e); }
 }
 
+
+/* =========================================================
+   BILLING HISTORY — pulls from Supabase purchases table
+========================================================= */
+async function renderBillingHistory() {
+  const el = document.getElementById('billingHistory');
+  if (!el) return;
+
+  const user = JSON.parse(localStorage.getItem('amsUser') || 'null');
+  if (!user || !user.email) return;
+
+  el.innerHTML = '<p style="color:var(--color-text-muted);font-size:14px;padding:8px 0;">Loading...</p>';
+
+  try {
+    const { data: purchases, error } = await db
+      .from('purchases')
+      .select('*')
+      .eq('email', user.email)
+      .order('purchased_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!purchases || purchases.length === 0) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-lucide="receipt" style="width:22px;height:22px;"></i></div>
+          <h4>No invoices yet</h4>
+          <p>Past seat purchases will appear here.</p>
+        </div>`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      return;
+    }
+
+    const MODULE_LABELS = {
+      'employee':             'FAA Employee (1 seat)',
+      'supervisor':           'FAA Supervisor (1 seat)',
+      'der':                  'FAA DER (1 seat)',
+      'employee_5pack':       'FAA Employee (5-pack)',
+      'supervisor_3pack':     'FAA Supervisor (3-pack)',
+      'fmcsa_employee':       'FMCSA Employee (1 seat)',
+      'fmcsa':                'FMCSA Supervisor (1 seat)',
+      'der_fmcsa':            'FMCSA DER (1 seat)',
+      'fmcsa_employee_5pack': 'FMCSA Employee (5-pack)',
+      'fmcsa_supervisor_3pack': 'FMCSA Supervisor (3-pack)'
+    };
+
+    const AMOUNTS = {
+      'employee': '$21.00', 'supervisor': '$31.00', 'der': '$51.00',
+      'employee_5pack': '$95.00', 'supervisor_3pack': '$83.00',
+      'fmcsa_employee': '$21.00', 'fmcsa': '$31.00', 'der_fmcsa': '$51.00',
+      'fmcsa_employee_5pack': '$95.00', 'fmcsa_supervisor_3pack': '$83.00'
+    };
+
+    const rows = purchases.map(function(p) {
+      const date = new Date(p.purchased_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+      const label = MODULE_LABELS[p.module] || p.module;
+      const amount = AMOUNTS[p.module] || '—';
+      return `
+        <tr>
+          <td style="padding:10px 12px;font-size:14px;border-bottom:1px solid var(--color-divider);">${date}</td>
+          <td style="padding:10px 12px;font-size:14px;border-bottom:1px solid var(--color-divider);">${label}</td>
+          <td style="padding:10px 12px;font-size:14px;border-bottom:1px solid var(--color-divider);">${p.seats || 1} seat(s)</td>
+          <td style="padding:10px 12px;font-size:14px;border-bottom:1px solid var(--color-divider);font-weight:600;color:var(--color-primary);">${amount}</td>
+          <td style="padding:10px 12px;font-size:13px;border-bottom:1px solid var(--color-divider);">
+            <span style="background:var(--color-success-surface);color:var(--color-success);padding:2px 8px;border-radius:999px;font-weight:600;">Paid</span>
+          </td>
+        </tr>`;
+    }).join('');
+
+    el.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:var(--color-surface-offset);">
+              <th style="padding:10px 12px;font-size:12px;font-weight:700;text-align:left;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;">Date</th>
+              <th style="padding:10px 12px;font-size:12px;font-weight:700;text-align:left;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;">Product</th>
+              <th style="padding:10px 12px;font-size:12px;font-weight:700;text-align:left;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;">Seats</th>
+              <th style="padding:10px 12px;font-size:12px;font-weight:700;text-align:left;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;">Amount</th>
+              <th style="padding:10px 12px;font-size:12px;font-weight:700;text-align:left;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.05em;">Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+
+  } catch(err) {
+    console.error('Billing history error:', err);
+    el.innerHTML = '<p style="color:var(--color-text-muted);font-size:14px;padding:8px 0;">Could not load billing history.</p>';
+  }
+}
+
 /* =========================================================
    BUY SEATS — Stripe Checkout
 ========================================================= */
