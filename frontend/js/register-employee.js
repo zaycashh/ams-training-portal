@@ -1,144 +1,394 @@
-/* bcrypt helpers via Cloudflare Worker */
-async function hashPassword(password) {
-  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/hash", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password })
-  });
-  const data = await res.json();
-  if (!data.hash) throw new Error("Hashing failed");
-  return data.hash;
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Employee Account | AMS Training Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg:#f7f6f2;--color-surface:#faf9f7;--color-surface-2:#ffffff;
+      --color-surface-offset:#f0ede8;--color-divider:#e2dfd9;--color-border:#d6d3cc;
+      --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-surface:#e6f2f2;
+      --color-success:#437a22;--color-success-surface:#edf5e7;
+      --color-danger:#c0392b;--color-danger-surface:#fdecea;
+      --color-blue:#006494;--color-blue-surface:#e6f0f7;
+      --color-warning:#964219;
+      --radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+      --shadow-card:0 1px 3px oklch(0.2 0.01 80/.06),0 4px 14px oklch(0.2 0.01 80/.07);
+      --shadow-lg:0 12px 36px oklch(0.2 0.01 80/.12);
+      --transition:180ms cubic-bezier(0.16,1,0.3,1);
+      --font-body:'DM Sans','Helvetica Neue',sans-serif;--font-ui:'Inter',sans-serif;
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+      --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;
+      --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);
+      --text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+      --text-base:clamp(1rem,.95rem + .25vw,1.125rem);
+      --text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+    }
+    [data-theme="dark"] {
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#222120;
+      --color-surface-offset:#252422;--color-divider:#2e2d2b;--color-border:#393836;
+      --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+      --color-primary:#4f98a3;--color-primary-hover:#3a8490;--color-primary-surface:#1c3436;
+      --color-success:#6daa45;--color-success-surface:#1e2f16;
+      --color-danger:#e05c4b;--color-danger-surface:#2e1a18;
+      --color-blue:#5591c7;--color-blue-surface:#1a2b38;
+      --color-warning:#bb653b;
+      --shadow-card:0 1px 3px oklch(0 0 0/.3),0 4px 14px oklch(0 0 0/.25);
+      --shadow-lg:0 12px 36px oklch(0 0 0/.4);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-font-smoothing:antialiased;}
+    body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);min-height:100dvh;display:flex;flex-direction:column;}
+    button{cursor:pointer;border:none;background:none;font:inherit;color:inherit;}
+    a{text-decoration:none;}
+
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-8);background:var(--color-surface);border-bottom:1px solid var(--color-divider);}
+    .topbar-brand{display:flex;align-items:center;gap:var(--space-3);}
+    .logo-mark{width:34px;height:34px;background:var(--color-primary);border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;}
+    .logo-mark svg{color:#fff;}
+    .brand-name{font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text);}
+    .brand-name span{display:block;font-size:var(--text-xs);font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--color-text-muted);}
+    .icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-text-muted);transition:background var(--transition),color var(--transition);}
+    .icon-btn:hover{background:var(--color-surface-offset);color:var(--color-text);}
+
+    /* PAGE */
+    .page{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:var(--space-8) var(--space-4);}
+
+    /* CARD */
+    .auth-card{width:100%;max-width:480px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);padding:var(--space-8);}
+
+    /* BACK */
+    .back-link{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);margin-bottom:var(--space-6);transition:color var(--transition);}
+    .back-link:hover{color:var(--color-primary);}
+
+    /* HEADER */
+    .card-icon-wrap{width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-blue-surface);color:var(--color-blue);display:grid;place-items:center;margin-bottom:var(--space-5);}
+    .card-title{font-family:var(--font-ui);font-size:var(--text-lg);font-weight:700;color:var(--color-text);margin-bottom:var(--space-2);}
+    .card-sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-6);line-height:1.6;}
+
+    /* INVITE NOTICE */
+    .invite-notice{
+      display:flex;align-items:flex-start;gap:var(--space-3);
+      padding:var(--space-3) var(--space-4);
+      background:var(--color-primary-surface);
+      border:1px solid color-mix(in oklab,var(--color-primary) 25%,transparent);
+      border-radius:var(--radius-md);
+      font-size:var(--text-xs);color:var(--color-primary);line-height:1.5;
+      margin-bottom:var(--space-6);
+    }
+    .invite-notice svg{flex-shrink:0;margin-top:1px;}
+
+    /* FORM */
+    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);}
+    @media(max-width:480px){.form-row-2{grid-template-columns:1fr;}}
+    .form-group{display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-5);}
+    .form-label{font-family:var(--font-ui);font-size:var(--text-xs);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-muted);}
+    .input-wrap{position:relative;}
+    .input-field{width:100%;padding:var(--space-3) var(--space-4);padding-right:2.75rem;background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text);font-family:var(--font-body);transition:border-color var(--transition),box-shadow var(--transition);outline:none;}
+    .input-field:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 15%,transparent);}
+    .input-field::placeholder{color:var(--color-text-faint);}
+    .input-icon{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-faint);display:grid;place-items:center;pointer-events:none;}
+    .toggle-pw{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-muted);display:grid;place-items:center;transition:color var(--transition);}
+    .toggle-pw:hover{color:var(--color-text);}
+
+    /* INVITE CODE FIELD — highlighted */
+    .input-field.invite-input{
+      border-color:var(--color-primary);
+      background:var(--color-primary-surface);
+      font-family:var(--font-ui);font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    }
+    .input-field.invite-input:focus{box-shadow:0 0 0 3px color-mix(in oklab,var(--color-primary) 20%,transparent);}
+
+    /* STRENGTH */
+    .strength-wrap{margin-top:var(--space-2);}
+    .strength-bar{height:4px;border-radius:var(--radius-full);background:var(--color-surface-offset);overflow:hidden;}
+    .strength-fill{height:100%;border-radius:var(--radius-full);width:0%;transition:width .3s ease,background .3s ease;}
+    .strength-label{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1);min-height:1.2em;}
+
+    /* DIVIDER */
+    .form-divider{height:1px;background:var(--color-divider);margin:var(--space-2) 0 var(--space-5);}
+
+    /* BUTTON */
+    .btn-primary{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);background:var(--color-primary);color:#fff;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;font-family:var(--font-ui);box-shadow:0 1px 3px oklch(0.3 0.08 192/.35);transition:background var(--transition),box-shadow var(--transition),transform var(--transition);margin-top:var(--space-2);}
+    .btn-primary:hover{background:var(--color-primary-hover);box-shadow:0 3px 8px oklch(0.3 0.08 192/.4);}
+    .btn-primary:active{transform:translateY(1px);}
+
+    /* ALERT */
+    .alert{display:none;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:var(--text-sm);line-height:1.5;margin-top:var(--space-5);}
+    .alert.show{display:flex;}
+    .alert-success{background:var(--color-success-surface);color:var(--color-success);}
+    .alert-error{background:var(--color-danger-surface);color:var(--color-danger);}
+
+    /* FOOTER */
+    .card-footer{text-align:center;margin-top:var(--space-6);font-size:var(--text-sm);color:var(--color-text-muted);}
+    .card-footer a{color:var(--color-primary);font-weight:600;}
+    .card-footer a:hover{text-decoration:underline;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="brand-name">AMS<span>Training Portal</span></div>
+  </div>
+  <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</header>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="auth-card">
+
+    <!-- BACK -->
+    <a href="register-select.html" class="back-link">
+      <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+      Back to Registration Options
+    </a>
+
+    <!-- ICON + HEADING -->
+    <div class="card-icon-wrap">
+      <i data-lucide="user-check" style="width:22px;height:22px;"></i>
+    </div>
+    <h1 class="card-title">Create Employee Account</h1>
+    <p class="card-sub">This account requires a valid company invite code provided by your employer.</p>
+
+    <!-- INVITE NOTICE -->
+    <div class="invite-notice">
+      <i data-lucide="info" style="width:15px;height:15px;"></i>
+      <span>Your invite code was sent by your company administrator. Enter it exactly as provided — it's case-insensitive.</span>
+    </div>
+
+    <!-- FORM -->
+    <form id="employeeRegisterForm">
+
+      <!-- NAME ROW -->
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <div class="input-wrap">
+            <input class="input-field" type="text" id="firstName" placeholder="Jane" required autocomplete="given-name" />
+            <span class="input-icon"><i data-lucide="user" style="width:15px;height:15px;"></i></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last Name</label>
+          <div class="input-wrap">
+            <input class="input-field" type="text" id="lastName" placeholder="Smith" required autocomplete="family-name" />
+            <span class="input-icon"><i data-lucide="user" style="width:15px;height:15px;"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHONE -->
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone Number</label>
+        <div class="input-wrap">
+          <input class="input-field" type="tel" id="phone" placeholder="(123) 456-7890" required autocomplete="tel" />
+          <span class="input-icon"><i data-lucide="phone" style="width:15px;height:15px;"></i></span>
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <div class="input-wrap">
+          <input class="input-field" type="email" id="email" placeholder="name@company.com" required autocomplete="email" />
+          <span class="input-icon"><i data-lucide="mail" style="width:15px;height:15px;"></i></span>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- PASSWORD -->
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <input class="input-field" type="password" id="password" placeholder="Create a password" required autocomplete="new-password" />
+          <button type="button" class="toggle-pw" onclick="togglePw('password','eyeP')" aria-label="Show password">
+            <i data-lucide="eye" id="eyeP" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+        <div class="strength-wrap">
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+      </div>
+
+      <!-- CONFIRM PASSWORD -->
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm Password</label>
+        <div class="input-wrap">
+          <input class="input-field" type="password" id="confirmPassword" placeholder="Re-enter your password" required autocomplete="new-password" />
+          <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword','eyeC')" aria-label="Show password">
+            <i data-lucide="eye" id="eyeC" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- INVITE CODE -->
+      <div class="form-group">
+        <label class="form-label" for="inviteCode">
+          <i data-lucide="key" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>
+          Invite Code
+        </label>
+        <div class="input-wrap">
+          <input class="input-field invite-input" type="text" id="inviteCode"
+            placeholder="AMS-XXXXXX" required autocomplete="off" />
+          <span class="input-icon"><i data-lucide="key" style="width:15px;height:15px;"></i></span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        <i data-lucide="user-plus" style="width:15px;height:15px;"></i>
+        Create Employee Account
+      </button>
+
+    </form>
+
+    <!-- FEEDBACK -->
+    <div id="msg" class="alert"></div>
+
+    <!-- FOOTER -->
+    <p class="card-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+<!-- DARK MODE -->
+<script>
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.setAttribute('data-theme',d);
+  function upd(){if(!t)return;t.innerHTML=d==='dark'
+    ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+    :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
+  upd();t&&t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);upd();});
+})();
+</script>
+
+<!-- SHOW/HIDE PASSWORD -->
+<script>
+function togglePw(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon  = document.getElementById(iconId);
+  const isHidden = input.type === "password";
+  input.type = isHidden ? "text" : "password";
+  icon.setAttribute("data-lucide", isHidden ? "eye-off" : "eye");
+  lucide.createIcons();
 }
+</script>
 
-async function verifyPassword(password, hash) {
-  const res = await fetch("https://ams-checkout.josealfonsodejesus.workers.dev/verify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password, hash })
-  });
-  const data = await res.json();
-  return data.match === true;
-}
-/* =========================================================
-   EMPLOYEE REGISTRATION — Supabase-backed
-========================================================= */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-  const form = document.getElementById("employeeRegisterForm");
-  if (!form) return;
-
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const firstName  = document.getElementById("firstName").value.trim();
-    const lastName   = document.getElementById("lastName").value.trim();
-    const phone      = document.getElementById("phone").value.trim();
-    const email      = document.getElementById("email").value.trim().toLowerCase();
-    const password   = document.getElementById("password").value;
-    const inviteCode = document.getElementById("inviteCode").value.trim();
-    const programFromURL = (new URLSearchParams(window.location.search).get("program") || "faa").toLowerCase();
-
-    if (!firstName || !lastName || !phone || !email || !password || !inviteCode) {
-      showMsg("Please complete all fields.", "error");
-      return;
-    }
-    if (password.length < 8) {
-      showMsg("Password must be at least 8 characters.", "error");
-      return;
-    }
-
-    showMsg("Verifying invite code...", "info");
-
-    try {
-      /* 1. Validate invite code in Supabase */
-      const { data: invite, error: inviteErr } = await db
-        .from("invite_codes")
-        .select("*, companies(*)")
-        .eq("code", inviteCode)
-        .eq("used", false)
-        .single();
-
-      if (inviteErr || !invite) {
-        showMsg("Invalid or expired invite code.", "error");
-        return;
-      }
-
-      const company = invite.companies;
-
-      /* 2. Program lock */
-      if (company.program !== programFromURL) {
-        showMsg("This invite is only valid for " + company.program.toUpperCase() + " registration.", "error");
-        return;
-      }
-
-      /* 3. Check duplicate */
-      const { data: existing } = await db.from("users").select("id").eq("email", email);
-      if (existing && existing.length > 0) {
-        showMsg("An account with this email already exists.", "error");
-        return;
-      }
-
-      /* 4. Create employee user */
-      const { data: newUser, error: userErr } = await db.from("users").insert([{
-        email,
-        password_hash:   await hashPassword(password),
-        name:            firstName + " " + lastName,
-        type:            "company",
-        role:            "employee",
-        program:         company.program,
-        company_id:      company.id,
-        assigned_module: invite.module,
-        verified:        true
-      }]).select().single();
-
-      if (userErr) throw userErr;
-
-      /* 5. Mark invite as used */
-      await db.from("invite_codes").update({ used: true, used_by: email }).eq("code", inviteCode);
-
-      /* 6. Log seat assignment */
-      await db.from("seat_assignments").insert([{
-        company_id:     company.id,
-        employee_id:    newUser.id,
-        employee_email: email,
-        employee_name:  firstName + " " + lastName,
-        module:         invite.module,
-        program:        company.program
-      }]);
-
-      /* 7. Set session */
-      const sessionUser = {
-        id:        newUser.id,
-        email:     newUser.email,
-        firstName,
-        lastName,
-        fullName:  firstName + " " + lastName,
-        phone,
-        role:      "employee",
-        type:      "company",
-        companyId: company.id,
-        program:   company.program,
-        seat:      invite.module
-      };
-
-      localStorage.setItem("amsUser",    JSON.stringify(sessionUser));
-      localStorage.setItem("amsProgram", company.program);
-
-      /* 8. Log activity */
-      await db.from("activity_log").insert([{
-        company_id: company.id,
-        user_email: email,
-        action:     "employee_registered",
-        details:    { name: firstName + " " + lastName, module: invite.module }
-      }]);
-
-      showMsg("Account created successfully. Redirecting...", "success");
-      setTimeout(() => window.location.replace("dashboard.html"), 1000);
-
-    } catch (err) {
-      console.error("Register employee error:", err);
-      showMsg("Something went wrong. Please try again.", "error");
-    }
-  });
+<!-- STRENGTH METER -->
+<script>
+document.getElementById("password").addEventListener("input", function () {
+  const val   = this.value;
+  const fill  = document.getElementById("strengthFill");
+  const label = document.getElementById("strengthLabel");
+  let score = 0;
+  if (val.length >= 8)           score++;
+  if (/[A-Z]/.test(val))        score++;
+  if (/[0-9]/.test(val))        score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { pct:"0%",   color:"transparent",          text:"" },
+    { pct:"25%",  color:"var(--color-danger)",   text:"Weak" },
+    { pct:"50%",  color:"var(--color-warning)",  text:"Fair" },
+    { pct:"75%",  color:"var(--color-blue)",     text:"Good" },
+    { pct:"100%", color:"var(--color-success)",  text:"Strong" },
+  ];
+  const lvl = levels[val.length === 0 ? 0 : score] || levels[0];
+  fill.style.width      = lvl.pct;
+  fill.style.background = lvl.color;
+  label.textContent     = lvl.text;
 });
+</script>
+
+<!-- MSG HELPER -->
+<script>
+function showMsg(text, type) {
+  const el = document.getElementById("msg");
+  el.className = "alert show alert-" + (type || "error");
+  el.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" style="width:16px;height:16px;flex-shrink:0;margin-top:2px;"></i><span>${text}</span>`;
+  lucide.createIcons();
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+</script>
+
+<script src="../js/register-employee.js"></script>
+
+<script>
+lucide.createIcons();
+
+/* Pre-fill from invite link: ?code=AMS-XXX&program=faa&role=employee&email=x@y.com */
+(function prefillFromInvite() {
+  const params  = new URLSearchParams(window.location.search);
+  const code    = params.get('code');
+  const program = params.get('program');
+  const role    = params.get('role');
+  const email   = params.get('email');
+
+  if (code) {
+    const codeEl = document.getElementById('inviteCode');
+    if (codeEl) {
+      codeEl.value    = code;
+      codeEl.readOnly = true;
+      codeEl.style.background = '#f0fdf4';
+      codeEl.style.color      = '#15803d';
+      codeEl.style.fontWeight = '600';
+    }
+  }
+
+  if (email) {
+    const emailEl = document.getElementById('email');
+    if (emailEl) {
+      emailEl.value    = email;
+      emailEl.readOnly = true;
+      emailEl.style.background = '#f0fdf4';
+    }
+  }
+
+  /* Show a banner telling the employee which program/role they're joining */
+  if (program || role) {
+    const form = document.getElementById('employeeRegisterForm');
+    if (form) {
+      const programLabel = program ? program.toUpperCase() : '';
+      const roleLabel    = role    ? (role.charAt(0).toUpperCase() + role.slice(1)) : 'Employee';
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px;color:#15803d;display:flex;align-items:center;gap:8px;';
+      banner.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        You're registering for <strong>${programLabel} ${roleLabel} Training</strong>`;
+      form.insertBefore(banner, form.firstChild);
+    }
+  }
+
+  /* Store program in localStorage so register-employee.js can read it */
+  if (program) localStorage.setItem('inviteProgram', program.toLowerCase());
+  if (role)    localStorage.setItem('inviteRole',    role.toLowerCase());
+})();
+</script>
+</body>
+</html>
