@@ -311,9 +311,12 @@ function assignEmployeeSeat(emailParam) {
   showToast('Employee seat assigned.', 'success');
   _refreshAll(company);
 
-  /* Supabase sync */
+  /* Supabase sync + invite email */
   const _empProgram = (company.program || 'fmcsa').toLowerCase();
-  if (empCode) _syncInviteToSupabase(company.id, empCode, 'employee', _empProgram);
+  if (empCode) {
+    _syncInviteToSupabase(company.id, empCode, 'employee', _empProgram);
+    _sendInviteEmail(email, empCode, 'employee', _empProgram);
+  }
   _syncSeatAssignmentToSupabase(company.id, email, email, 'employee', _empProgram);
 }
 
@@ -392,9 +395,10 @@ function assignSupervisorSeat(emailParam) {
   showToast(completedTs ? 'Supervisor annual renewal assigned.' : 'Supervisor seat assigned.', 'success');
   _refreshAll(company);
 
-  /* Supabase sync */
+  /* Supabase sync + invite email */
   const _supProgram = (company.program || 'fmcsa').toLowerCase();
   _syncInviteToSupabase(company.id, supCode, 'supervisor', _supProgram);
+  _sendInviteEmail(email, supCode, 'supervisor', _supProgram);
   _syncSeatAssignmentToSupabase(company.id, email, email, 'supervisor', _supProgram);
 }
 
@@ -432,9 +436,10 @@ function assignDerSeat(emailParam) {
   showToast('DER seat assigned.', 'success');
   _refreshAll(company);
 
-  /* Supabase sync */
+  /* Supabase sync + invite email */
   const _derProgram = (company.program || 'fmcsa').toLowerCase();
   _syncInviteToSupabase(company.id, derCode, 'der', _derProgram);
+  _sendInviteEmail(email, derCode, 'der', _derProgram);
   _syncSeatAssignmentToSupabase(company.id, email, email, 'der', _derProgram);
 }
 
@@ -786,6 +791,27 @@ window.revokeSeat = function (type, email) {
 /* =========================================================
    SUPABASE SYNC HELPERS — writes to DB alongside localStorage
 ========================================================= */
+/* Send invite email via Cloudflare Worker → Resend */
+async function _sendInviteEmail(email, code, role, program) {
+  try {
+    const company = getCompanyProfile();
+    const base = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+    const registerLink = `${base}register-employee.html?code=${encodeURIComponent(code)}&program=${encodeURIComponent(program)}&role=${encodeURIComponent(role)}&email=${encodeURIComponent(email)}`;
+    await fetch('https://ams-checkout.josealfonsodejesus.workers.dev/send-invite-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        inviteCode:   code,
+        program,
+        role,
+        companyName:  company.name || company.companyName || '',
+        registerLink
+      })
+    });
+  } catch(e) { console.warn('Invite email failed:', e); }
+}
+
 async function _syncInviteToSupabase(companyId, code, module, program) {
   try {
     await db.from("invite_codes").insert([{ code, company_id: companyId, module, program }]);
