@@ -815,7 +815,7 @@
     makeQR("faaVerifySupQR", certId);
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
 
     const params  = new URLSearchParams(window.location.search);
     const certId  = (params.get("id") || "").trim();
@@ -829,16 +829,42 @@
       return;
     }
 
-    /* ── Search ALL localStorage keys across every user ─────────────
-       Keys we check per user email:
-         fmcsaModuleBCertificateId_<email>   → Supervisor
-         fmcsaModuleACertificateId_<email>   → Supervisor (fallback)
-         fmcsaDERCertificateId_<email>       → DER
-         fmcsaEmployeeCertificateId_<email>  → Employee
-         amsCertificates_<email>             → registry array fallback
-    ─────────────────────────────────────────────────────────────── */
-
     let found = null; // { name, certId, type, email }
+
+    /* ── 1. Try Supabase first (works on any device) ──────────────── */
+    try {
+      const SUPABASE_URL = 'https://yfxwfjyjiolbflxrgjse.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmeHdmanlqaW9sYmZseHJnanNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1OTg0OTcsImV4cCI6MjA5MzE3NDQ5N30.9KFngqbmR6DYctDgy-l_xWmhoumldlD3BGb_Ysiv0cU';
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/training_progress?cert_id=eq.${encodeURIComponent(certId)}&select=module,program,email,completed_at`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      );
+      const rows = await res.json();
+      if (rows && rows.length > 0) {
+        const row = rows[0];
+        // Get user name from users table
+        const uRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/users?email=eq.${encodeURIComponent(row.email)}&select=name,full_name`,
+          { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+        );
+        const uRows = await uRes.json();
+        const name = (uRows && uRows[0]) ? (uRows[0].name || uRows[0].full_name || row.email) : row.email;
+        // Map module to type
+        const typeMap = {
+          'fmcsa-employee':   'employee',
+          'fmcsa-supervisor-a': 'supervisor',
+          'fmcsa-supervisor-b': 'supervisor',
+          'fmcsa-der':        'der',
+          'faa-employee':     'faa_employee',
+          'faa-supervisor':   'faa_supervisor',
+          'faa-der':          'faa_der'
+        };
+        found = { name, certId, type: typeMap[row.module] || 'employee', email: row.email, completedAt: row.completed_at };
+      }
+    } catch(e) { console.warn('Supabase cert lookup failed:', e); }
+
+    /* ── 2. Fall back to localStorage (same device) ───────────────── */
+    if (!found) {
 
     /* Collect all unique emails from localStorage keys */
     const emails = new Set();
@@ -887,6 +913,8 @@
         }
       } catch(e) {}
     }
+
+    } // end localStorage fallback
 
     loading.style.display = "none";
 
