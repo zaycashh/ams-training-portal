@@ -1,15 +1,18 @@
-* ── Save training progress to Supabase (non-blocking) ── */
-async function saveTrainingProgress(module, program, completedAt) {
+/* ── Save training progress to Supabase (non-blocking) ── */
+async function saveTrainingProgress(module, program, completedAt, certId) {
   try {
     const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
     if (!u || !u.id) return;
-    await db.from('training_progress').upsert([{
+    const row = {
       user_id:      u.id,
+      email:        u.email || '',
       module,
       program,
       completed:    true,
       completed_at: completedAt || new Date().toISOString()
-    }], { onConflict: 'user_id,module,program' });
+    };
+    if (certId) row.cert_id = certId;
+    await db.from('training_progress').upsert([row], { onConflict: 'email,module,program' });
   } catch(e) { console.warn('Supabase progress save failed:', e); }
 }
 
@@ -361,7 +364,7 @@ function handleFAASupervisorQuizResult(score, total) {
 ========================= */
 function finishFAASupervisorTraining() {
   localStorage.setItem(FAA_SUP_COMPLETED_KEY, "true");
-  saveTrainingProgress("faa-supervisor", "faa", new Date().toISOString());
+  saveTrainingProgress("faa-supervisor", "faa", new Date().toISOString(), localStorage.getItem(FAA_SUP_CERT_KEY));
   localStorage.setItem(FAA_SUP_DATE_KEY, Date.now());
   lockToFAASupervisorCertificate();
 }
