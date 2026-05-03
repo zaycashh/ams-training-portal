@@ -1,15 +1,18 @@
 /* ── Save training progress to Supabase (non-blocking) ── */
-async function saveTrainingProgress(module, program, completedAt) {
+async function saveTrainingProgress(module, program, completedAt, certId) {
   try {
     const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
     if (!u || !u.id) return;
-    await db.from('training_progress').upsert([{
+    const row = {
       user_id:      u.id,
+      email:        u.email || '',
       module,
       program,
       completed:    true,
       completed_at: completedAt || new Date().toISOString()
-    }], { onConflict: 'user_id,module,program' });
+    };
+    if (certId) row.cert_id = certId;
+    await db.from('training_progress').upsert([row], { onConflict: 'email,module,program' });
   } catch(e) { console.warn('Supabase progress save failed:', e); }
 }
 
@@ -299,7 +302,7 @@ function gradeQuiz() {
     if (typeof generateSupervisorCertificate === "function") generateSupervisorCertificate();
 
     localStorage.setItem(`fmcsaModuleACompleted_${email}`, "true");
-    saveTrainingProgress("fmcsa-supervisor-a", "fmcsa", new Date().toISOString());
+    saveTrainingProgress("fmcsa-supervisor-a", "fmcsa", new Date().toISOString(), localStorage.getItem(`fmcsaModuleACertificateId_${email}`));
     localStorage.setItem(`fmcsaModuleADate_${email}`, Date.now());
 
     let certId = localStorage.getItem(`fmcsaModuleACertificateId_${email}`);
