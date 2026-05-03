@@ -1,15 +1,18 @@
 /* ── Save training progress to Supabase (non-blocking) ── */
-async function saveTrainingProgress(module, program, completedAt) {
+async function saveTrainingProgress(module, program, completedAt, certId) {
   try {
     const u = JSON.parse(localStorage.getItem('amsUser') || 'null');
     if (!u || !u.id) return;
-    await db.from('training_progress').upsert([{
+    const row = {
       user_id:      u.id,
+      email:        u.email || '',
       module,
       program,
       completed:    true,
       completed_at: completedAt || new Date().toISOString()
-    }], { onConflict: 'user_id,module,program' });
+    };
+    if (certId) row.cert_id = certId;
+    await db.from('training_progress').upsert([row], { onConflict: 'email,module,program' });
   } catch(e) { console.warn('Supabase progress save failed:', e); }
 }
 
@@ -540,7 +543,7 @@ function gradeAlcoholQuiz() {
 
   if (score >= PASS_SCORE_ALCOHOL) {
     localStorage.setItem(MODULE_B_COMPLETED_KEY, "true");
-    saveTrainingProgress("fmcsa-supervisor-b", "fmcsa", new Date().toISOString());
+    saveTrainingProgress("fmcsa-supervisor-b", "fmcsa", new Date().toISOString(), localStorage.getItem(`fmcsaModuleBCertificateId_${email}`));
     localStorage.setItem(`fmcsaModuleBDate_${email}`, Date.now());
 
     let certId = localStorage.getItem(MODULE_B_CERT_ID_KEY);
